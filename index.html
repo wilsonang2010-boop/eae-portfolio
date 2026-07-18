@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ang How Cheng Wilson | Aspiring Pilot</title>
+<meta name="description" content="Portfolio of Ang How Cheng Wilson, applicant to the Diploma in Aerospace Electronics at Singapore Polytechnic. Leadership, aerospace competitions, and a long-term goal of becoming an RSAF pilot." />
+<meta name="keywords" content="Aerospace Electronics, Singapore Polytechnic, EAE, Wilson Ang, RSAF, Avionics, SAFMC, NPCC" />
+<meta name="author" content="Ang How Cheng Wilson" />
+<meta name="robots" content="index, follow" />
+<meta name="theme-color" content="#0B1120" />
+
+<!-- Open Graph -->
+<meta property="og:title" content="Ang How Cheng Wilson | Aspiring Pilot" />
+<meta property="og:description" content="Applicant to the Diploma in Aerospace Electronics at Singapore Polytechnic. Leadership, aerospace competitions, and a goal of becoming an RSAF pilot." />
+<meta property="og:type" content="profile" />
+<meta property="og:image" content="images/og-cover.jpg" />
+<meta property="og:image:alt" content="Ang How Cheng Wilson, Aerospace Electronics portfolio" />
+<meta property="profile:first_name" content="Wilson" />
+<meta property="profile:last_name" content="Ang" />
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Ang How Cheng Wilson | Aspiring Pilot" />
+<meta name="twitter:description" content="Applicant to the Diploma in Aerospace Electronics at Singapore Polytechnic." />
+<meta name="twitter:image" content="images/og-cover.jpg" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ════════════════════════════════════════════════════════════
+   Modern Aerospace Engineering, restrained and Swiss-influenced.
+   Palette and type live in these tokens; change here to re-theme.
+   ════════════════════════════════════════════════════════════ */
+:root{
+  --bg:#0B1120;
+  --bg-alt:#0D1424;
+  --card:#111827;
+  --card-hover:#141d30;
+  --border:rgba(148,163,184,0.14);
+  --border-strong:rgba(148,163,184,0.26);
+  --blue:#2563EB;
+  --blue-bright:#3B82F6;
+  --blue-soft:rgba(37,99,235,0.12);
+  --white:#F8FAFC;
+  --slate-100:#E2E8F0;
+  --slate-300:#CBD5E1;
+  --slate-400:#94A3B8;
+  --slate-500:#64748B;
+
+  --font:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --container:1160px;
+  --radius:14px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--slate-300);
+  font-family:var(--font);
+  font-size:16px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body.no-scroll{overflow:hidden;}
+img{max-width:100%; display:block;}
+a{color:inherit; text-decoration:none;}
+button{font-family:inherit; cursor:pointer; background:none; border:none; color:inherit;}
+ul{list-style:none;}
+input,textarea{font-family:inherit;}
+h1,h2,h3,h4{color:var(--white); font-weight:600; line-height:1.15; letter-spacing:-0.02em;}
+
+.container{max-width:var(--container); margin:0 auto; padding:0 24px;}
+@media(min-width:768px){.container{padding:0 40px;}}
+
+/* ── Skip link ─────────────────────────────────────────────── */
+.skip-link{
+  position:absolute; left:16px; top:-64px; z-index:200;
+  background:var(--blue); color:#fff; padding:12px 20px; border-radius:0 0 10px 10px;
+  font-size:13px; font-weight:500; transition:top .2s var(--ease);
+}
+.skip-link:focus{top:0;}
+
+/* ── Shared type helpers ───────────────────────────────────── */
+.eyebrow{
+  display:inline-block; font-size:12px; font-weight:600; letter-spacing:0.16em;
+  text-transform:uppercase; color:var(--blue-bright); margin-bottom:18px;
+}
+.section-title{font-size:clamp(1.8rem,3.4vw,2.6rem);}
+.section-intro{margin-top:18px; max-width:640px; color:var(--slate-400); font-size:1.02rem;}
+.section-head{margin-bottom:64px;}
+.section-head.center{text-align:center;}
+.section-head.center .section-intro{margin-left:auto; margin-right:auto;}
+
+section{padding:104px 0;}
+section.alt{background:var(--bg-alt);}
+@media(min-width:768px){section{padding:128px 0;}}
+
+/* ── Buttons ───────────────────────────────────────────────── */
+.btn{
+  display:inline-flex; align-items:center; gap:9px;
+  font-size:14px; font-weight:500; letter-spacing:0.01em;
+  padding:13px 24px; border-radius:10px;
+  transition:background .25s var(--ease), border-color .25s var(--ease), color .25s var(--ease), transform .25s var(--ease);
+}
+.btn svg{width:16px; height:16px;}
+.btn-primary{background:var(--blue); color:#fff;}
+.btn-primary:hover{background:var(--blue-bright); transform:translateY(-1px);}
+.btn-outline{border:1px solid var(--border-strong); color:var(--slate-100);}
+.btn-outline:hover{border-color:var(--slate-400); color:var(--white); transform:translateY(-1px);}
+.btn-ghost{color:var(--slate-300); padding:10px 14px;}
+.btn-ghost:hover{color:var(--white);}
+
+/* ── Cards ─────────────────────────────────────────────────── */
+.card{
+  background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+  transition:border-color .3s var(--ease), transform .3s var(--ease), background .3s var(--ease);
+}
+.card:hover{border-color:var(--border-strong); background:var(--card-hover); transform:translateY(-3px);}
+
+/* ── Media / image placeholders ────────────────────────────── */
+.media{position:relative; overflow:hidden; background:#0E1626; border-radius:var(--radius);}
+.media img{width:100%; height:100%; object-fit:cover; transition:transform .6s var(--ease);}
+.media .ph{
+  position:absolute; inset:0; display:none; flex-direction:column;
+  align-items:center; justify-content:center; gap:10px; text-align:center; padding:18px;
+  background:
+    linear-gradient(135deg,#0F1930 0%,#0B1424 100%);
+}
+.media.empty .ph{display:flex;}
+.media.empty img{opacity:0;}
+.media .ph svg{width:26px; height:26px; color:var(--slate-500);}
+.media .ph .lbl{font-size:12px; font-weight:500; color:var(--slate-400); letter-spacing:0.02em;}
+.media .ph .path{font-size:11px; color:var(--slate-500); font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+
+/* ── Reveal on scroll (subtle) ─────────────────────────────────
+   Hidden state only applies once JS confirms it's running (html.js).
+   Without JS, or if the reveal never fires, content stays visible. */
+.js .reveal{opacity:0; transform:translateY(18px); transition:opacity .7s var(--ease), transform .7s var(--ease);}
+.js .reveal.in{opacity:1; transform:none;}
+.js .reveal-l{opacity:0; transform:translateX(-22px); transition:opacity .7s var(--ease), transform .7s var(--ease);}
+.js .reveal-l.in{opacity:1; transform:none;}
+.js .reveal-r{opacity:0; transform:translateX(22px); transition:opacity .7s var(--ease), transform .7s var(--ease);}
+.js .reveal-r.in{opacity:1; transform:none;}
+[data-delay="1"]{transition-delay:.08s;}
+[data-delay="2"]{transition-delay:.16s;}
+[data-delay="3"]{transition-delay:.24s;}
+
+/* ── Scroll progress ───────────────────────────────────────── */
+#progress{position:fixed; top:0; left:0; height:2px; width:0; background:var(--blue); z-index:90; transition:width .1s linear;}
+
+/* ══════════ HEADER / NAV ══════════ */
+header{
+  position:fixed; inset-inline:0; top:0; z-index:80;
+  transition:background .3s var(--ease), border-color .3s var(--ease);
+  border-bottom:1px solid transparent;
+}
+header.scrolled{background:rgba(11,17,32,0.82); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-bottom-color:var(--border);}
+.nav{display:flex; align-items:center; justify-content:space-between; height:68px;}
+.brand{display:flex; align-items:center; gap:11px; font-weight:600; color:var(--white); font-size:15px; letter-spacing:-0.01em;}
+.brand .mark{
+  width:34px; height:34px; border-radius:9px; background:var(--blue-soft);
+  display:flex; align-items:center; justify-content:center; color:var(--blue-bright);
+}
+.brand .mark svg{width:18px; height:18px;}
+.nav-links{display:none; align-items:center; gap:26px;}
+.nav-links a{font-size:13.5px; font-weight:500; color:var(--slate-400); transition:color .2s var(--ease); white-space:nowrap;}
+.nav-links a:hover,.nav-links a.active{color:var(--white);}
+@media(min-width:1180px){.nav-links{display:flex;}}
+.menu-btn{display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:10px; border:1px solid var(--border); color:var(--slate-100);}
+.menu-btn:hover{border-color:var(--border-strong);}
+.menu-btn svg{width:20px; height:20px;}
+@media(min-width:1180px){.menu-btn{display:none;}}
+
+/* Full-screen mobile menu */
+#drawer{
+  position:fixed; inset:0; z-index:100; background:rgba(11,17,32,0.98); backdrop-filter:blur(6px);
+  transform:translateX(100%); transition:transform .4s var(--ease);
+  display:flex; flex-direction:column; padding:24px;
+}
+#drawer.open{transform:none;}
+#drawer .drawer-top{display:flex; align-items:center; justify-content:space-between; height:44px;}
+#drawer .drawer-links{margin-top:26px; overflow-y:auto; display:grid; gap:4px;}
+#drawer .drawer-links a{
+  font-size:19px; font-weight:500; color:var(--slate-100); padding:12px 8px;
+  border-bottom:1px solid var(--border); transition:color .2s var(--ease), padding-left .2s var(--ease);
+}
+#drawer .drawer-links a:hover{color:var(--white); padding-left:16px;}
+#drawer .drawer-links a .idx{color:var(--slate-500); font-size:12px; margin-right:14px;}
+
+/* ══════════ HERO ══════════ */
+#home{
+  position:relative; min-height:100vh; display:flex; align-items:center;
+  padding-top:68px; overflow:hidden;
+}
+.hero-bg{position:absolute; inset:0; z-index:0;}
+.hero-bg .media{position:absolute; inset:0; border-radius:0;}
+.hero-bg .media img{width:100%; height:100%; object-fit:cover;}
+.hero-bg .overlay{
+  position:absolute; inset:0;
+  background:
+    linear-gradient(180deg, rgba(11,17,32,0.72) 0%, rgba(11,17,32,0.86) 55%, rgba(11,17,32,0.97) 100%),
+    radial-gradient(120% 90% at 15% 20%, rgba(37,99,235,0.10), transparent 55%);
+}
+/* fallback backdrop when no hero photo is present */
+.hero-bg .media.empty{background:radial-gradient(130% 100% at 20% 10%, #14213c 0%, #0B1120 60%);}
+.hero-bg .media.empty .ph{background:transparent;}
+.hero-inner{position:relative; z-index:2; width:100%;}
+.hero-tag{
+  display:inline-flex; align-items:center; gap:9px; padding:7px 14px; border-radius:999px;
+  border:1px solid var(--border-strong); background:rgba(17,24,39,0.5);
+  font-size:12.5px; font-weight:500; color:var(--slate-300); margin-bottom:28px;
+}
+.hero-tag .dot{width:7px; height:7px; border-radius:50%; background:var(--blue-bright);}
+.hero h1{font-size:clamp(2.5rem,6vw,4.2rem); letter-spacing:-0.035em; color:var(--white);}
+.hero .subtitle{margin-top:14px; font-size:clamp(1.05rem,2vw,1.35rem); font-weight:500; color:var(--blue-bright);}
+.hero .lede{margin-top:26px; max-width:620px; font-size:1.05rem; color:var(--slate-300);}
+.hero-actions{margin-top:38px; display:flex; flex-wrap:wrap; gap:14px;}
+.hero-meta{
+  margin-top:64px; display:flex; flex-wrap:wrap; gap:36px;
+  padding-top:30px; border-top:1px solid var(--border);
+}
+.hero-meta .item .k{font-size:1.5rem; font-weight:700; color:var(--white); letter-spacing:-0.02em;}
+.hero-meta .item .v{font-size:12.5px; color:var(--slate-400); margin-top:2px;}
+.scroll-cue{
+  position:absolute; left:50%; bottom:26px; transform:translateX(-50%); z-index:2;
+  color:var(--slate-500); display:flex; flex-direction:column; align-items:center; gap:6px;
+  font-size:11px; letter-spacing:0.12em; text-transform:uppercase;
+}
+.scroll-cue svg{width:18px; height:18px; animation:nudge 2.4s var(--ease) infinite;}
+@keyframes nudge{0%,100%{transform:translateY(0);} 50%{transform:translateY(5px);}}
+
+/* ══════════ ABOUT ══════════ */
+.about-grid{display:grid; grid-template-columns:1fr; gap:56px; align-items:start;}
+@media(min-width:900px){.about-grid{grid-template-columns:1.3fr 0.9fr;}}
+.about-body p{margin-bottom:20px; color:var(--slate-300);}
+.about-body p:last-child{margin-bottom:0;}
+.about-body strong{color:var(--white); font-weight:600;}
+.about-side{display:grid; gap:16px;}
+.fact{display:flex; gap:14px; padding:18px 20px; background:var(--card); border:1px solid var(--border); border-radius:12px;}
+.fact svg{width:20px; height:20px; color:var(--blue-bright); flex-shrink:0; margin-top:2px;}
+.fact .ft{font-size:12px; color:var(--slate-500); letter-spacing:0.02em;}
+.fact .fv{color:var(--white); font-weight:500; font-size:15px;}
+
+/* ══════════ TIMELINE ══════════ */
+.timeline{position:relative; max-width:920px; margin:0 auto;}
+.timeline::before{content:""; position:absolute; left:15px; top:6px; bottom:6px; width:1px; background:var(--border);}
+@media(min-width:820px){.timeline::before{left:50%;}}
+.tl-item{position:relative; padding-left:52px; margin-bottom:52px;}
+.tl-item:last-child{margin-bottom:0;}
+@media(min-width:820px){
+  .tl-item{padding-left:0; width:50%;}
+  .tl-item.left{left:0; padding-right:52px; text-align:right;}
+  .tl-item.right{left:50%; padding-left:52px;}
+}
+.tl-dot{
+  position:absolute; left:8px; top:6px; width:16px; height:16px; border-radius:50%;
+  background:var(--bg); border:2px solid var(--blue); z-index:2;
+}
+@media(min-width:820px){
+  .tl-item.left .tl-dot{left:auto; right:-8px;}
+  .tl-item.right .tl-dot{left:-8px;}
+}
+.tl-year{display:inline-block; font-size:12.5px; font-weight:600; color:var(--blue-bright); letter-spacing:0.04em; margin-bottom:8px;}
+.tl-item h3{font-size:1.2rem; margin-bottom:10px;}
+.tl-item p{color:var(--slate-400); font-size:0.97rem;}
+.tl-media{margin-top:16px;}
+.tl-media .media{aspect-ratio:16/10;}
+@media(min-width:820px){.tl-item.left .tl-media{direction:ltr;}}
+
+/* ══════════ EXPERIENCE ══════════ */
+.grid{display:grid; grid-template-columns:1fr; gap:24px;}
+@media(min-width:640px){.grid.cols-2{grid-template-columns:repeat(2,1fr);}}
+@media(min-width:640px){.grid.cols-3{grid-template-columns:repeat(2,1fr);}}
+@media(min-width:1000px){.grid.cols-3{grid-template-columns:repeat(3,1fr);}}
+.exp-card{overflow:hidden; display:flex; flex-direction:column;}
+.exp-card .media{aspect-ratio:16/10; border-radius:0;}
+.exp-card:hover .media img{transform:scale(1.04);}
+.exp-body{padding:24px;}
+.exp-body .role{font-size:1.12rem; margin-bottom:4px;}
+.exp-body .org{font-size:13px; color:var(--blue-bright); font-weight:500; margin-bottom:14px;}
+.exp-body p{font-size:0.94rem; color:var(--slate-400); margin-bottom:16px;}
+.tags{display:flex; flex-wrap:wrap; gap:8px;}
+.tag{font-size:11.5px; font-weight:500; color:var(--slate-300); padding:5px 11px; border:1px solid var(--border); border-radius:999px;}
+
+/* ══════════ LEADERSHIP ══════════ */
+.lead-card{padding:28px;}
+.lead-card .ico{width:44px; height:44px; border-radius:11px; background:var(--blue-soft); color:var(--blue-bright); display:flex; align-items:center; justify-content:center; margin-bottom:18px;}
+.lead-card .ico svg{width:22px; height:22px;}
+.lead-card h3{font-size:1.1rem; margin-bottom:4px;}
+.lead-card .sub{font-size:12.5px; color:var(--slate-500); margin-bottom:14px;}
+.lead-card p{font-size:0.94rem; color:var(--slate-400);}
+.lead-values{margin-top:56px; display:flex; flex-wrap:wrap; justify-content:center; gap:12px;}
+.lead-values .v{display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--slate-300); padding:9px 16px; border:1px solid var(--border); border-radius:999px;}
+.lead-values .v svg{width:15px; height:15px; color:var(--blue-bright);}
+
+/* ══════════ ACHIEVEMENTS ══════════ */
+.ach-card{display:flex; gap:16px; padding:22px 24px; align-items:flex-start;}
+.ach-card .ico{width:40px; height:40px; border-radius:10px; background:var(--blue-soft); color:var(--blue-bright); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.ach-card .ico svg{width:20px; height:20px;}
+.ach-card h3{font-size:1.02rem; margin-bottom:3px;}
+.ach-card .yr{font-size:12px; color:var(--blue-bright); font-weight:500; margin-bottom:6px;}
+.ach-card p{font-size:0.9rem; color:var(--slate-400);}
+
+/* ══════════ CERTIFICATES ══════════ */
+.cert-card{overflow:hidden;}
+.cert-card .media{aspect-ratio:4/3; border-radius:0; border-bottom:1px solid var(--border);}
+.cert-foot{padding:18px 22px; display:flex; align-items:center; justify-content:space-between; gap:12px;}
+.cert-foot .ct{font-size:0.98rem; color:var(--white); font-weight:500;}
+.cert-foot .ci{font-size:12px; color:var(--slate-500); margin-top:2px;}
+.cert-dl{display:inline-flex; align-items:center; gap:7px; font-size:12.5px; font-weight:500; color:var(--slate-300); padding:8px 13px; border:1px solid var(--border); border-radius:9px; transition:border-color .2s var(--ease), color .2s var(--ease); white-space:nowrap;}
+.cert-dl:hover{border-color:var(--border-strong); color:var(--white);}
+.cert-dl svg{width:14px; height:14px;}
+
+/* ══════════ GALLERY (masonry) ══════════ */
+.masonry{columns:2; column-gap:16px;}
+@media(min-width:720px){.masonry{columns:3;}}
+@media(min-width:1040px){.masonry{columns:4;}}
+.masonry .cell{break-inside:avoid; margin-bottom:16px; position:relative; border-radius:12px; overflow:hidden; display:block; width:100%; text-align:left;}
+.masonry .cell .media{border-radius:12px;}
+.masonry .cell:hover .media img{transform:scale(1.05);}
+.masonry .cap{
+  position:absolute; inset:0; display:flex; align-items:flex-end; padding:14px;
+  background:linear-gradient(to top, rgba(7,11,20,0.82), transparent 55%);
+  opacity:0; transition:opacity .3s var(--ease);
+}
+.masonry .cell:hover .cap,.masonry .cell:focus-visible .cap{opacity:1;}
+.masonry .cap .cat{font-size:11px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--blue-bright);}
+.masonry .cap .ttl{display:block; font-size:13.5px; color:var(--white); font-weight:500; margin-top:2px;}
+
+/* ══════════ SKILLS ══════════ */
+.skills-wrap{display:grid; grid-template-columns:1fr; gap:40px;}
+@media(min-width:760px){.skills-wrap{grid-template-columns:1fr 1fr;}}
+.skill-group h3{font-size:1.05rem; margin-bottom:18px; display:flex; align-items:center; gap:10px;}
+.skill-group h3 svg{width:18px; height:18px; color:var(--blue-bright);}
+.skill-tags{display:flex; flex-wrap:wrap; gap:10px;}
+.skill-tags .s{font-size:14px; font-weight:500; color:var(--slate-100); padding:10px 16px; background:var(--card); border:1px solid var(--border); border-radius:10px; transition:border-color .2s var(--ease), transform .2s var(--ease);}
+.skill-tags .s:hover{border-color:var(--border-strong); transform:translateY(-2px);}
+
+/* ══════════ WHY AEROSPACE ══════════ */
+.why-grid{display:grid; grid-template-columns:1fr; gap:22px;}
+@media(min-width:760px){.why-grid{grid-template-columns:1fr 1fr;}}
+.why-lead{max-width:760px; font-size:1.15rem; color:var(--slate-100); margin-bottom:52px;}
+.why-lead strong{color:var(--white); font-weight:600;}
+.why-item{padding:26px; display:flex; gap:16px;}
+.why-item .ico{width:40px; height:40px; border-radius:10px; background:var(--blue-soft); color:var(--blue-bright); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.why-item .ico svg{width:20px; height:20px;}
+.why-item h3{font-size:1.02rem; margin-bottom:7px;}
+.why-item p{font-size:0.93rem; color:var(--slate-400);}
+
+/* ══════════ CAREER GOALS ══════════ */
+.goals-list{max-width:760px; margin:0 auto; display:grid; gap:2px;}
+.goal-row{display:flex; gap:20px; align-items:flex-start; padding:22px 4px; border-bottom:1px solid var(--border);}
+.goal-row:last-child{border-bottom:none;}
+.goal-num{font-size:13px; font-weight:600; color:var(--blue-bright); width:30px; flex-shrink:0; padding-top:2px; letter-spacing:0.04em;}
+.goal-row p{color:var(--slate-200); font-size:1.02rem; color:var(--slate-300);}
+.goal-row strong{color:var(--white); font-weight:600;}
+
+/* ══════════ CONTACT ══════════ */
+.contact-grid{display:grid; grid-template-columns:1fr; gap:44px; align-items:start;}
+@media(min-width:900px){.contact-grid{grid-template-columns:0.9fr 1.1fr;}}
+.contact-links{display:grid; gap:14px;}
+.c-link{display:flex; align-items:center; gap:16px; padding:18px 20px; background:var(--card); border:1px solid var(--border); border-radius:12px; transition:border-color .25s var(--ease), transform .25s var(--ease);}
+.c-link:hover{border-color:var(--border-strong); transform:translateY(-2px);}
+.c-link .ico{width:42px; height:42px; border-radius:11px; background:var(--blue-soft); color:var(--blue-bright); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.c-link .ico svg{width:19px; height:19px;}
+.c-link .k{font-size:12px; color:var(--slate-500);}
+.c-link .val{color:var(--white); font-weight:500; font-size:14.5px; word-break:break-word;}
+form.contact-form{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:28px;}
+.field{margin-bottom:18px;}
+.field label{display:block; font-size:12.5px; font-weight:500; color:var(--slate-400); margin-bottom:7px;}
+.field input,.field textarea{
+  width:100%; background:var(--bg); border:1px solid var(--border); border-radius:10px;
+  padding:12px 15px; font-size:14.5px; color:var(--white); outline:none;
+  transition:border-color .2s var(--ease);
+}
+.field input::placeholder,.field textarea::placeholder{color:var(--slate-500);}
+.field input:focus,.field textarea:focus{border-color:var(--blue);}
+.field input[aria-invalid="true"],.field textarea[aria-invalid="true"]{border-color:#F87171;}
+.field textarea{resize:vertical; min-height:120px;}
+.field .err{display:block; font-size:12px; color:#F87171; margin-top:6px; min-height:14px;}
+.form-status{font-size:13px; color:var(--blue-bright); text-align:center; min-height:18px; margin-top:6px;}
+
+/* ══════════ TESTIMONIALS ══════════ */
+.tm-grid{display:grid; grid-template-columns:1fr; gap:24px; max-width:820px; margin:0 auto;}
+.tm-card{padding:32px; display:flex; flex-direction:column;}
+@media(min-width:760px){.tm-card{padding:40px;}}
+.tm-mark{color:var(--blue-bright); opacity:.45; margin-bottom:18px;}
+.tm-mark svg{width:30px; height:30px;}
+.tm-text{font-size:1rem; line-height:1.75; color:var(--slate-100); font-style:normal;}
+.tm-text p{margin-bottom:16px;}
+.tm-text p:last-child{margin-bottom:0;}
+.tm-author{display:flex; align-items:center; gap:14px; margin-top:24px; padding-top:20px; border-top:1px solid var(--border);}
+.tm-avatar{width:46px; height:46px; border-radius:50%; overflow:hidden; flex-shrink:0;}
+.tm-avatar .media{width:100%; height:100%; border-radius:50%;}
+.tm-avatar .media .ph{padding:0; background:var(--blue-soft);}
+.tm-avatar .media .ph svg{width:20px; height:20px; color:var(--blue-bright);}
+.tm-name{color:var(--white); font-weight:600; font-size:14.5px;}
+.tm-role{display:block; color:var(--slate-500); font-size:12.5px; margin-top:1px;}
+
+/* ══════════ FOOTER ══════════ */
+footer{border-top:1px solid var(--border); padding:40px 0;}
+.foot-inner{display:flex; flex-direction:column; gap:16px; align-items:center; text-align:center;}
+@media(min-width:720px){.foot-inner{flex-direction:row; justify-content:space-between; text-align:left;}}
+.foot-brand{display:flex; align-items:center; gap:11px; color:var(--white); font-weight:600; font-size:14.5px;}
+.foot-brand .mark{width:30px; height:30px; border-radius:8px; background:var(--blue-soft); color:var(--blue-bright); display:flex; align-items:center; justify-content:center;}
+.foot-brand .mark svg{width:16px; height:16px;}
+.foot-note{font-size:12.5px; color:var(--slate-500);}
+
+/* ── Back to top ───────────────────────────────────────────── */
+#top-btn{
+  position:fixed; right:22px; bottom:22px; z-index:70; width:44px; height:44px; border-radius:11px;
+  background:var(--card); border:1px solid var(--border-strong); color:var(--slate-100);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; transform:translateY(12px); pointer-events:none; transition:opacity .3s var(--ease), transform .3s var(--ease), border-color .2s var(--ease);
+}
+#top-btn.show{opacity:1; transform:none; pointer-events:auto;}
+#top-btn:hover{border-color:var(--slate-400);}
+#top-btn svg{width:18px; height:18px;}
+
+/* ══════════ LIGHTBOX ══════════ */
+#lightbox{position:fixed; inset:0; z-index:120; background:rgba(7,11,20,0.95); backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; padding:24px;}
+#lightbox.open{display:flex;}
+#lightbox .stage{display:flex; flex-direction:column; align-items:center; max-width:900px;}
+#lightbox img{max-height:74vh; width:auto; border-radius:12px; border:1px solid var(--border);}
+#lightbox .lb-cap{margin-top:16px; font-size:13px; color:var(--slate-400); text-align:center;}
+#lightbox .lb-cap .cat{color:var(--blue-bright); font-weight:600; letter-spacing:0.06em; text-transform:uppercase; font-size:11px;}
+#lightbox button{position:absolute; color:var(--slate-300); width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-radius:10px; transition:color .2s var(--ease), background .2s var(--ease);}
+#lightbox button:hover{color:var(--white); background:rgba(148,163,184,0.1);}
+#lightbox .lb-close{top:20px; right:20px;}
+#lightbox .lb-prev{left:16px; top:50%; transform:translateY(-50%);}
+#lightbox .lb-next{right:16px; top:50%; transform:translateY(-50%);}
+#lightbox svg{width:24px; height:24px;}
+
+::selection{background:rgba(37,99,235,0.35); color:#fff;}
+:focus-visible{outline:2px solid var(--blue-bright); outline-offset:3px; border-radius:4px;}
+::-webkit-scrollbar{width:10px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:#1e293b; border-radius:999px;}
+::-webkit-scrollbar-thumb:hover{background:#334155;}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms !important; transition-duration:.001ms !important; scroll-behavior:auto !important;}
+  .reveal,.reveal-l,.reveal-r{opacity:1 !important; transform:none !important;}
+}
+</style>
+</head>
+<body>
+<script>document.documentElement.className += ' js';</script>
+
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="progress" role="presentation"></div>
+
+<!-- ══════════ HEADER ══════════ -->
+<header id="site-header">
+  <div class="container nav">
+    <a href="#home" class="brand" aria-label="Wilson Ang home">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.8 16 14l3.5-3.5a2.1 2.1 0 0 0-3-3L13 11 7.2 9.2a1 1 0 0 0-1 .25l-.9.9a.5.5 0 0 0 .12.8L10 14l-2.5 2.5H5l-1.2 1.2a.5.5 0 0 0 .13.8L7 20l1.5 3.07a.5.5 0 0 0 .8.13L10.5 22v-2.5l3.05 4.3a.5.5 0 0 0 .8.12l.9-.9a1 1 0 0 0 .25-1Z"/></svg>
+      </span>
+      <span>Wilson Ang</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#about">About</a>
+      <a href="#journey">Journey</a>
+      <a href="#experience">Experience</a>
+      <a href="#leadership">Leadership</a>
+      <a href="#achievements">Achievements</a>
+      <a href="#certificates">Certificates</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#skills">Skills</a>
+      <a href="#why">Why Aerospace</a>
+      <a href="#goals">Goals</a>
+      <a href="#testimonials">Testimonials</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <button class="menu-btn" id="menu-open" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- ══════════ MOBILE DRAWER ══════════ -->
+<div id="drawer" aria-hidden="true">
+  <div class="drawer-top">
+    <span class="brand"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.8 16 14l3.5-3.5a2.1 2.1 0 0 0-3-3L13 11 7.2 9.2a1 1 0 0 0-1 .25l-.9.9a.5.5 0 0 0 .12.8L10 14l-2.5 2.5H5l-1.2 1.2a.5.5 0 0 0 .13.8L7 20l1.5 3.07a.5.5 0 0 0 .8.13L10.5 22v-2.5l3.05 4.3a.5.5 0 0 0 .8.12l.9-.9a1 1 0 0 0 .25-1Z"/></svg></span>Wilson Ang</span>
+    <button class="menu-btn" id="menu-close" type="button" aria-label="Close menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+  <nav class="drawer-links" aria-label="Mobile">
+    <a href="#about"><span class="idx">01</span>About Me</a>
+    <a href="#journey"><span class="idx">02</span>My Journey</a>
+    <a href="#experience"><span class="idx">03</span>Experience</a>
+    <a href="#leadership"><span class="idx">04</span>Leadership</a>
+    <a href="#achievements"><span class="idx">05</span>Achievements</a>
+    <a href="#certificates"><span class="idx">06</span>Certificates</a>
+    <a href="#gallery"><span class="idx">07</span>Gallery</a>
+    <a href="#skills"><span class="idx">08</span>Skills</a>
+    <a href="#why"><span class="idx">09</span>Why Aerospace Electronics</a>
+    <a href="#goals"><span class="idx">10</span>Career Goals</a>
+    <a href="#testimonials"><span class="idx">11</span>Testimonials</a>
+    <a href="#contact"><span class="idx">12</span>Contact</a>
+  </nav>
+</div>
+
+<main id="main">
+
+<!-- ══════════ HERO ══════════ -->
+<section id="home">
+  <div class="hero-bg" aria-hidden="true">
+    <div class="media">
+      <img src="images/hero-aircraft.jpg" alt="" loading="eager" />
+      <div class="ph">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+        <span class="lbl">Cinematic aircraft photo</span>
+        <span class="path">images/hero-aircraft.jpg</span>
+      </div>
+    </div>
+    <div class="overlay"></div>
+  </div>
+
+  <div class="container hero-inner">
+    <div class="hero">
+      <span class="hero-tag reveal"><span class="dot"></span> Diploma in Aerospace Electronics · Singapore Polytechnic</span>
+      <h1 class="reveal" data-delay="1">Ang How Cheng Wilson</h1>
+      <p class="subtitle reveal" data-delay="1">Aspiring Pilot</p>
+      <p class="lede reveal" data-delay="2">
+        My fascination with aerospace began with a single flypast over Marina Bay. Since then,
+        I have actively pursued opportunities to understand how aircraft fly, how avionics
+        systems work, and how engineering makes flight possible. Through leadership experiences,
+        technical competitions and independent learning, I hope to build the knowledge and
+        skills needed to contribute to Singapore's aerospace industry.
+      </p>
+      <div class="hero-actions reveal" data-delay="2">
+        <a href="#journey" class="btn btn-primary">
+          Explore My Journey
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="#achievements" class="btn btn-outline">View Achievements</a>
+      </div>
+
+      <div class="hero-meta reveal" data-delay="3">
+        <div class="item"><div class="k">NPCC</div><div class="v">Staff Sergeant &amp; Cadet Leader</div></div>
+        <div class="item"><div class="k">SAFMC</div><div class="v">Flying Machine Team Leader</div></div>
+        <div class="item"><div class="k">RSAF</div><div class="v">Long-term pilot aspiration</div></div>
+      </div>
+    </div>
+  </div>
+
+  <a href="#about" class="scroll-cue" aria-label="Scroll to About">
+    <span>Scroll</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+  </a>
+</section>
+
+<!-- ══════════ ABOUT ══════════ -->
+<section id="about">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow reveal">About Me</span>
+      <h2 class="section-title reveal">A curiosity that never landed</h2>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-body reveal-l">
+        <p>
+          Aviation, for me, started as a question I couldn't put down: how does something so
+          heavy stay in the air, and who makes sure it keeps doing so? That question has quietly
+          shaped most of what I choose to spend my time on.
+        </p>
+        <p>
+          I'm drawn to the systems behind flight, especially the <strong>avionics and electronics</strong>
+          that let a pilot trust their instruments. I enjoy taking a technical problem apart,
+          understanding why it behaves the way it does, and working patiently toward a fix. A lot
+          of what I know I've picked up outside the classroom, through competitions, an online
+          flight-mechanics course, and simply reading about how aircraft work.
+        </p>
+        <p>
+          Leadership has been the other half of my growth. Guiding junior cadets and leading a
+          competition team taught me that engineering rarely happens alone. It depends on
+          communication, trust, and doing the unglamorous work well.
+        </p>
+        <p>
+          My long-term goal is to become an <strong>RSAF pilot</strong>, and a strong foundation
+          in aerospace electronics is how I intend to get there, by understanding the aircraft from
+          the inside out before I ever fly one.
+        </p>
+      </div>
+
+      <div class="about-side reveal-r">
+        <div class="fact">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.5 8 12 8 12s8-6.5 8-12a8 8 0 0 0-8-8Z"/></svg>
+          <div><div class="ft">Based in</div><div class="fv">Singapore</div></div>
+        </div>
+        <div class="fact">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>
+          <div><div class="ft">Applying to</div><div class="fv">SP · Aerospace Electronics</div></div>
+        </div>
+        <div class="fact">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 15 2 5 3-2 3 2-1-6"/><path d="M9 15 8 20 5 18 2 20l1-6"/><circle cx="12" cy="8" r="6"/></svg>
+          <div><div class="ft">Long-term goal</div><div class="fv">RSAF Pilot</div></div>
+        </div>
+        <div class="fact">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2Z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7Z"/></svg>
+          <div><div class="ft">Learning beyond school</div><div class="fv">Competitions &amp; courses</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ JOURNEY ══════════ -->
+<section id="journey" class="alt">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow reveal">My Journey</span>
+      <h2 class="section-title reveal">From a flypast to a flight path</h2>
+      <p class="section-intro reveal">The moments, in and out of uniform, that turned a childhood question into a direction.</p>
+    </div>
+
+    <div class="timeline">
+
+      <article class="tl-item right reveal-r">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <span class="tl-year">2018</span>
+        <h3>The beginning</h3>
+        <p>At the Marina Bay National Day Parade, I watched RSAF F-15SGs and F-16Cs roar overhead with my family. I wanted to know how aircraft stay up, how they manoeuvre, and how their electronic systems work together. That curiosity became my starting point.</p>
+      </article>
+
+      <article class="tl-item left reveal-l">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <span class="tl-year">2023</span>
+        <h3>Joined the NPCC</h3>
+        <p>I joined the National Police Cadet Corps, where discipline, teamwork and resilience stopped being words and became daily habits. It's where I first learned to lead by doing.</p>
+        <div class="tl-media">
+          <div class="media"><img src="images/journey-2023-npcc.jpg" alt="NPCC training" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">images/journey-2023-npcc.jpg</span></div></div>
+        </div>
+      </article>
+
+      <article class="tl-item right reveal-r">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <span class="tl-year">2023 – Present</span>
+        <h3>Class Chairperson</h3>
+        <p>Leading my class taught me organisation and communication under real pressure. I delegated tasks, coordinated classroom projects, and kept a group of peers moving in the same direction.</p>
+        <div class="tl-media">
+          <div class="media"><img src="images/journey-2023-chairperson.jpg" alt="Class chairperson responsibilities" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">images/journey-2023-chairperson.jpg</span></div></div>
+        </div>
+      </article>
+
+      <article class="tl-item left reveal-l">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <span class="tl-year">2025</span>
+        <h3>Cadet Leader, Staff Sergeant</h3>
+        <p>As a Staff Sergeant I trained and guided junior cadets through their training. Watching them grow into capable, confident cadets is the part of leadership I'm proudest of.</p>
+      </article>
+
+      <article class="tl-item right reveal-r">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <span class="tl-year">2025 – 2026</span>
+        <h3>PREPMUN &amp; DHAPMUN</h3>
+        <p>Model United Nations pushed me well outside my comfort zone. Preparing positions and debating them sharpened my public speaking, research, critical thinking and confidence.</p>
+        <div class="tl-media">
+          <div class="media"><img src="images/journey-2026-mun.jpg" alt="Model United Nations" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">images/journey-2026-mun.jpg</span></div></div>
+        </div>
+      </article>
+
+      <article class="tl-item left reveal-l">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <span class="tl-year">2026</span>
+        <h3>Basic Flight Mechanics</h3>
+        <p>I completed an online Basic Flight Mechanics course, working through lift, drag, thrust, control surfaces and how an aircraft turns. It gave me the vocabulary to understand what I'd only watched from the ground.</p>
+        <div class="tl-media">
+          <div class="media"><img src="images/journey-2026-coursera.jpg" alt="Flight mechanics course" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">images/journey-2026-coursera.jpg</span></div></div>
+        </div>
+      </article>
+
+      <article class="tl-item right reveal-r">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <span class="tl-year">2026</span>
+        <h3>Singapore Amazing Flying Machine Competition</h3>
+        <p>As team leader, I ran our planning, design, building, testing, photography and presentation. We worked through a nose-heavy airframe, wings that kept breaking, missing teammates, and an aircraft that spun 720° on a test flight. Solving each problem one at a time taught me real resilience, and we came away with a participation certificate and a lot more than that.</p>
+        <div class="tl-media">
+          <div class="media"><img src="images/journey-2026-safmc.jpg" alt="Flying machine competition build" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">images/journey-2026-safmc.jpg</span></div></div>
+        </div>
+      </article>
+
+      <article class="tl-item left reveal-l">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <span class="tl-year">2026</span>
+        <h3>Singapore Airshow</h3>
+        <p>Seeing fifth-generation fighters in person for the first time, the F-35A and F-35B, was unforgettable, along with the F-16 and the AIM-9 Sidewinder and AIM-120 AMRAAM. Looking into real cockpits and avionics made me realise how much there still is to learn, and pulled me further toward aerospace electronics.</p>
+        <div class="tl-media">
+          <div class="media"><img src="images/journey-2026-airshow.jpg" alt="Singapore Airshow aircraft" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">images/journey-2026-airshow.jpg</span></div></div>
+        </div>
+      </article>
+
+      <article class="tl-item right reveal-r">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <span class="tl-year">2026</span>
+        <h3>Singapore Polytechnic Open House</h3>
+        <p>Visiting the AeroHub and the commercial flight simulator showed me exactly what studying aerospace electronics would feel like. The Commercial Flight Theory elective, avionics and aircraft-wiring modules, internships with aerospace companies, and the link to the Singapore Youth Flying Club made the choice clear, and gave me a strong foundation for my goal of becoming an RSAF pilot.</p>
+        <div class="tl-media">
+          <div class="media"><img src="images/journey-2026-sp.jpg" alt="Singapore Polytechnic open house" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">images/journey-2026-sp.jpg</span></div></div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ EXPERIENCE ══════════ -->
+<section id="experience">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow reveal">Experience</span>
+      <h2 class="section-title reveal">Where I've put in the hours</h2>
+      <p class="section-intro reveal">A few of the roles that shaped how I work and what I can do.</p>
+    </div>
+
+    <div class="grid cols-3">
+      <article class="card exp-card reveal">
+        <div class="media"><img src="images/exp-npcc.jpg" alt="NPCC cadet leadership" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">images/exp-npcc.jpg</span></div></div>
+        <div class="exp-body">
+          <h3 class="role">Cadet Leader</h3>
+          <div class="org">National Police Cadet Corps · Staff Sergeant</div>
+          <p>Trained and mentored junior cadets, planned training segments, and held the standard for discipline and turnout across the squad.</p>
+          <ul class="tags"><li class="tag">Leadership</li><li class="tag">Mentoring</li><li class="tag">Discipline</li></ul>
+        </div>
+      </article>
+
+      <article class="card exp-card reveal" data-delay="1">
+        <div class="media"><img src="images/exp-chairperson.jpg" alt="Class chairperson" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">images/exp-chairperson.jpg</span></div></div>
+        <div class="exp-body">
+          <h3 class="role">Class Chairperson</h3>
+          <div class="org">Secondary School · 2023–Present</div>
+          <p>Coordinated classroom projects and delegated responsibilities, acting as the link between classmates and teachers to keep things running smoothly.</p>
+          <ul class="tags"><li class="tag">Organisation</li><li class="tag">Communication</li><li class="tag">Responsibility</li></ul>
+        </div>
+      </article>
+
+      <article class="card exp-card reveal" data-delay="2">
+        <div class="media"><img src="images/exp-safmc.jpg" alt="SAFMC team leader" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">images/exp-safmc.jpg</span></div></div>
+        <div class="exp-body">
+          <h3 class="role">Team Leader</h3>
+          <div class="org">Singapore Amazing Flying Machine Competition</div>
+          <p>Led design, build and flight testing of our aircraft, troubleshooting weight balance and structural failures under a tight competition timeline.</p>
+          <ul class="tags"><li class="tag">Problem Solving</li><li class="tag">Teamwork</li><li class="tag">Engineering</li></ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ LEADERSHIP ══════════ -->
+<section id="leadership" class="alt">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow reveal">Leadership</span>
+      <h2 class="section-title reveal">Leading by example</h2>
+      <p class="section-intro reveal">Three roles that taught me responsibility means doing the work you ask of others.</p>
+    </div>
+
+    <div class="grid cols-3">
+      <article class="card lead-card reveal">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m12 15 2 5 3-2 3 2-1-6"/><path d="M9 15 8 20 5 18 2 20l1-6"/><circle cx="12" cy="8" r="6"/></svg></div>
+        <h3>Staff Sergeant</h3>
+        <div class="sub">National Police Cadet Corps</div>
+        <p>Guided junior cadets through training with patience and a clear standard, learning that trust is earned by showing up first and leaving last.</p>
+      </article>
+
+      <article class="card lead-card reveal" data-delay="1">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/></svg></div>
+        <h3>Class Chairperson</h3>
+        <div class="sub">2023 – Present</div>
+        <p>Kept a class of peers organised and heard by delegating fairly, communicating clearly, and helping classmates rather than simply directing them.</p>
+      </article>
+
+      <article class="card lead-card reveal" data-delay="2">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2Z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7Z"/></svg></div>
+        <h3>SAFMC Team Leader</h3>
+        <div class="sub">Flying Machine Competition</div>
+        <p>Held a team together through repeated build failures, dividing work to people's strengths and keeping morale up when the aircraft wouldn't cooperate.</p>
+      </article>
+    </div>
+
+    <div class="lead-values reveal">
+      <span class="v"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Communication</span>
+      <span class="v"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Responsibility</span>
+      <span class="v"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Helping others</span>
+      <span class="v"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Leading by example</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ ACHIEVEMENTS ══════════ -->
+<section id="achievements">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow reveal">Achievements</span>
+      <h2 class="section-title reveal">Highlights along the way</h2>
+    </div>
+
+    <div class="grid cols-2">
+      <article class="card ach-card reveal">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2Z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7Z"/></svg></div>
+        <div>
+          <div class="yr">2026</div>
+          <h3>SAFMC Participant &amp; Team Leader</h3>
+          <p>Led a team through the full design–build–test cycle at the Singapore Amazing Flying Machine Competition and earned a participation certificate.</p>
+        </div>
+      </article>
+
+      <article class="card ach-card reveal" data-delay="1">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 15 8l6 .9-4.5 4.4 1 6L12 16.8 6.5 19.3l1-6L3 8.9 9 8Z"/></svg></div>
+        <div>
+          <div class="yr">2025 – 2026</div>
+          <h3>PREPMUN Delegate</h3>
+          <p>Represented an assigned nation in committee, researching positions and debating resolutions to build confidence in public speaking.</p>
+        </div>
+      </article>
+
+      <article class="card ach-card reveal">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 15 8l6 .9-4.5 4.4 1 6L12 16.8 6.5 19.3l1-6L3 8.9 9 8Z"/></svg></div>
+        <div>
+          <div class="yr">2025 – 2026</div>
+          <h3>DHAPMUN Delegate</h3>
+          <p>A second Model UN experience that sharpened my research, critical thinking and ability to argue a position under scrutiny.</p>
+        </div>
+      </article>
+
+      <article class="card ach-card reveal" data-delay="1">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5Z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg></div>
+        <div>
+          <div class="yr">2026</div>
+          <h3>Basic Flight Mechanics Certificate</h3>
+          <p>Completed an online course covering lift, drag, thrust, control surfaces and the principles behind how an aircraft turns.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CERTIFICATES ══════════ -->
+<section id="certificates" class="alt">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow reveal">Certificates</span>
+      <h2 class="section-title reveal">Verified &amp; on record</h2>
+      <p class="section-intro reveal">Replace each preview with a scan of the certificate; the download button links to the same file.</p>
+    </div>
+
+    <div class="grid cols-3">
+      <article class="card cert-card reveal">
+        <div class="media"><img src="images/cert-safmc.jpg" alt="SAFMC participation certificate" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H4z"/><path d="M8 20l4-3 4 3"/></svg><span class="path">images/cert-safmc.jpg</span></div></div>
+        <div class="cert-foot">
+          <div><div class="ct">SAFMC Participation</div><div class="ci">2026</div></div>
+          <a class="cert-dl" href="images/cert-safmc.jpg" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Download
+          </a>
+        </div>
+      </article>
+
+      <article class="card cert-card reveal" data-delay="1">
+        <div class="media"><img src="images/cert-flight-mechanics.jpg" alt="Basic Flight Mechanics certificate" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H4z"/><path d="M8 20l4-3 4 3"/></svg><span class="path">images/cert-flight-mechanics.jpg</span></div></div>
+        <div class="cert-foot">
+          <div><div class="ct">Basic Flight Mechanics</div><div class="ci">2026</div></div>
+          <a class="cert-dl" href="images/cert-flight-mechanics.jpg" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Download
+          </a>
+        </div>
+      </article>
+
+      <article class="card cert-card reveal" data-delay="2">
+        <div class="media"><img src="images/cert-mun.jpg" alt="Model United Nations certificate" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H4z"/><path d="M8 20l4-3 4 3"/></svg><span class="path">images/cert-mun.jpg</span></div></div>
+        <div class="cert-foot">
+          <div><div class="ct">Model UN: PREPMUN / DHAPMUN</div><div class="ci">2025 – 2026</div></div>
+          <a class="cert-dl" href="images/cert-mun.jpg" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Download
+          </a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ GALLERY ══════════ -->
+<section id="gallery">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow reveal">Gallery</span>
+      <h2 class="section-title reveal">Moments &amp; makes</h2>
+      <p class="section-intro reveal">Click any image to view it larger. Arrow keys navigate; Escape closes.</p>
+    </div>
+
+    <div class="masonry reveal">
+      <button class="cell" type="button" data-src="images/gallery-airshow-1.jpg" data-cat="Singapore Airshow" data-title="F-35 on static display">
+        <div class="media" style="aspect-ratio:3/4"><img src="images/gallery-airshow-1.jpg" alt="Singapore Airshow" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">gallery-airshow-1.jpg</span></div></div>
+        <span class="cap"><span><span class="cat">Singapore Airshow</span><span class="ttl">F-35 static display</span></span></span>
+      </button>
+
+      <button class="cell" type="button" data-src="images/gallery-safmc-1.jpg" data-cat="SAFMC" data-title="Our flying machines and SAFMC 2026 medals">
+        <div class="media" style="aspect-ratio:4/3"><img src="images/gallery-safmc-1.jpg" alt="SAFMC gliders and medals on display" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">gallery-safmc-1.jpg</span></div></div>
+        <span class="cap"><span><span class="cat">SAFMC</span><span class="ttl">Flying machines &amp; medals</span></span></span>
+      </button>
+
+      <button class="cell" type="button" data-src="images/gallery-npcc-1.jpg" data-cat="NPCC" data-title="Cadet training">
+        <div class="media" style="aspect-ratio:1/1"><img src="images/gallery-npcc-1.jpg" alt="NPCC" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">gallery-npcc-1.jpg</span></div></div>
+        <span class="cap"><span><span class="cat">NPCC</span><span class="ttl">Cadet training</span></span></span>
+      </button>
+
+      <button class="cell" type="button" data-src="images/gallery-sp-1.jpg" data-cat="SP Open House" data-title="In a fighter cockpit at the SP Open House">
+        <div class="media" style="aspect-ratio:3/4"><img src="images/gallery-sp-1.jpg" alt="Fighter jet cockpit and avionics panel" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">gallery-sp-1.jpg</span></div></div>
+        <span class="cap"><span><span class="cat">SP Open House</span><span class="ttl">In the cockpit</span></span></span>
+      </button>
+
+      <button class="cell" type="button" data-src="images/gallery-aircraft-1.jpg" data-cat="Aircraft" data-title="F-16 up close">
+        <div class="media" style="aspect-ratio:4/3"><img src="images/gallery-aircraft-1.jpg" alt="Aircraft" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">gallery-aircraft-1.jpg</span></div></div>
+        <span class="cap"><span><span class="cat">Aircraft</span><span class="ttl">F-16 up close</span></span></span>
+      </button>
+
+      <button class="cell" type="button" data-src="images/gallery-projects-1.jpg" data-cat="Aircraft" data-title="Static aircraft display">
+        <div class="media" style="aspect-ratio:1/1"><img src="images/gallery-projects-1.jpg" alt="Static aircraft display at the Singapore Airshow" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">gallery-projects-1.jpg</span></div></div>
+        <span class="cap"><span><span class="cat">Aircraft</span><span class="ttl">Static aircraft display</span></span></span>
+      </button>
+
+      <button class="cell" type="button" data-src="images/gallery-projects-2.jpg" data-cat="Model UN" data-title="Model United Nations delegation">
+        <div class="media" style="aspect-ratio:3/4"><img src="images/gallery-projects-2.jpg" alt="Model United Nations delegation" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">gallery-projects-2.jpg</span></div></div>
+        <span class="cap"><span><span class="cat">Model UN</span><span class="ttl">MUN delegation</span></span></span>
+      </button>
+
+      <button class="cell" type="button" data-src="images/gallery-safmc-build.jpg" data-cat="SAFMC" data-title="Balsa glider airframe on the workbench">
+        <div class="media" style="aspect-ratio:4/3"><img src="images/gallery-safmc-build.jpg" alt="Balsa glider airframe under construction" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">gallery-safmc-build.jpg</span></div></div>
+        <span class="cap"><span><span class="cat">SAFMC</span><span class="ttl">Balsa airframe build</span></span></span>
+      </button>
+
+      <button class="cell" type="button" data-src="images/gallery-safmc-team.jpg" data-cat="SAFMC" data-title="Our team at the Singapore Amazing Flying Machine Competition 2026">
+        <div class="media" style="aspect-ratio:16/9"><img src="images/gallery-safmc-team.jpg" alt="SAFMC 2026 team under the competition banner" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="path">gallery-safmc-team.jpg</span></div></div>
+        <span class="cap"><span><span class="cat">SAFMC</span><span class="ttl">Team, SAFMC 2026</span></span></span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SKILLS ══════════ -->
+<section id="skills" class="alt">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow reveal">Skills</span>
+      <h2 class="section-title reveal">What I bring</h2>
+      <p class="section-intro reveal">Built through competitions, cadet leadership and independent study. Not a self-rated bar in sight.</p>
+    </div>
+
+    <div class="skills-wrap">
+      <div class="skill-group reveal-l">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9zM9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/></svg>Technical</h3>
+        <div class="skill-tags">
+          <span class="s">Avionics</span>
+          <span class="s">Electronics</span>
+          <span class="s">Aircraft Systems</span>
+          <span class="s">Flight Mechanics</span>
+          <span class="s">Problem Solving</span>
+          <span class="s">Critical Thinking</span>
+        </div>
+      </div>
+
+      <div class="skill-group reveal-r">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg>Personal</h3>
+        <div class="skill-tags">
+          <span class="s">Leadership</span>
+          <span class="s">Teamwork</span>
+          <span class="s">Communication</span>
+          <span class="s">Adaptability</span>
+          <span class="s">Resilience</span>
+          <span class="s">Public Speaking</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ WHY AEROSPACE ELECTRONICS ══════════ -->
+<section id="why">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow reveal">Why Aerospace Electronics</span>
+      <h2 class="section-title reveal">The right foundation for where I'm going</h2>
+    </div>
+
+    <p class="why-lead reveal">
+      I chose Aerospace Electronics because it provides the technical knowledge needed to
+      understand modern aircraft systems, and because it sits exactly where my
+      <strong>engineering curiosity</strong> and my <strong>aviation ambitions</strong> meet.
+    </p>
+
+    <div class="why-grid">
+      <article class="card why-item reveal">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l3-8 6 16 3-8h4"/></svg></div>
+        <div><h3>Flight theory that supports my goal</h3><p>The Commercial Flight Theory elective strengthens my understanding of flight, complementing my long-term aspiration of becoming an RSAF pilot.</p></div>
+      </article>
+
+      <article class="card why-item reveal" data-delay="1">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0 5 5l-2 2a4 4 0 0 1-5-5Z"/><path d="m9 11 4 4-6 6H3v-4Z"/></svg></div>
+        <div><h3>Hands-on engineering skills</h3><p>The avionics, electronics and aircraft-wiring modules let me build practical skills rather than just theory, which is the kind of work I already enjoy.</p></div>
+      </article>
+
+      <article class="card why-item reveal">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-3"/><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01"/></svg></div>
+        <div><h3>Real industry exposure</h3><p>Internships and partnerships with aerospace companies would place me inside real aerospace environments and prepare me for future opportunities.</p></div>
+      </article>
+
+      <article class="card why-item reveal" data-delay="1">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 15 8l6 .9-4.5 4.4 1 6L12 16.8 6.5 19.3l1-6L3 8.9 9 8Z"/></svg></div>
+        <div><h3>A foundation for both paths</h3><p>Whether in engineering or the cockpit, this diploma gives me the ideal technical grounding, plus a connection to the Singapore Youth Flying Club.</p></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CAREER GOALS ══════════ -->
+<section id="goals" class="alt">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow reveal">Career Goals</span>
+      <h2 class="section-title reveal">A realistic flight plan</h2>
+      <p class="section-intro reveal">Clear steps, taken one at a time.</p>
+    </div>
+
+    <div class="goals-list">
+      <div class="goal-row reveal"><span class="goal-num">01</span><p>Graduate from Singapore Polytechnic with a strong <strong>Diploma in Aerospace Electronics</strong>.</p></div>
+      <div class="goal-row reveal"><span class="goal-num">02</span><p>Gain hands-on <strong>industry experience</strong> through internships and aerospace partnerships.</p></div>
+      <div class="goal-row reveal"><span class="goal-num">03</span><p>Keep <strong>learning continuously</strong> by deepening my knowledge of avionics and aircraft systems.</p></div>
+      <div class="goal-row reveal"><span class="goal-num">04</span><p>Pursue opportunities with the <strong>Singapore Youth Flying Club</strong>.</p></div>
+      <div class="goal-row reveal"><span class="goal-num">05</span><p>Build a <strong>strong technical foundation</strong> that supports both engineering and flying.</p></div>
+      <div class="goal-row reveal"><span class="goal-num">06</span><p>Work steadily toward becoming an <strong>RSAF pilot</strong>.</p></div>
+      <div class="goal-row reveal"><span class="goal-num">07</span><p>Contribute meaningfully to <strong>Singapore's aerospace sector</strong>.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ TESTIMONIALS ══════════ -->
+<section id="testimonials">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow reveal">Testimonials</span>
+      <h2 class="section-title reveal">In others' words</h2>
+      <p class="section-intro reveal">A few words from the people who have taught and guided me.</p>
+    </div>
+
+    <div class="tm-grid">
+      <figure class="card tm-card reveal">
+        <div class="tm-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.5 6C5 6 3 8 3 10.5c0 2.2 1.6 4 3.7 4.4-.2 1.7-1.2 3-2.7 3.6-.3.1-.4.5-.2.8.1.2.4.3.6.2 2.9-1 4.8-3.6 4.8-7.2V10.5C9 8 8.5 6 7.5 6Zm10 0C15 6 13 8 13 10.5c0 2.2 1.6 4 3.7 4.4-.2 1.7-1.2 3-2.7 3.6-.3.1-.4.5-.2.8.1.2.4.3.6.2 2.9-1 4.8-3.6 4.8-7.2V10.5C19 8 18.5 6 17.5 6Z"/></svg>
+        </div>
+        <blockquote class="tm-text">
+          <p>I am pleased to write this letter in strong support of Wilson's application for the Early Admissions Exercise (EAE) to the Diploma in Aeronautical Engineering at Singapore Polytechnic.</p>
+          <p>As Wilson's Home Teacher at Pasir Ris Secondary School, I have observed him to be a responsible, disciplined, and mature young man who earns the trust of both his teachers and classmates.</p>
+          <p>Wilson's leadership skills are well-evidenced by his role as Class Chairperson, where he consistently takes the initiative to foster a supportive classroom environment and handle responsibilities with composure. His well-rounded development and strong commitment to school life are further reflected in his excellent LEAPS 2.0 profile.</p>
+          <p>What truly distinguishes Wilson as an ideal candidate for Aeronautical Engineering is his strong passion for STEM and hands-on innovation. As a member of the National Police Cadet Corps (NPCC), he has developed stellar personal discipline and the ability to operate effectively under pressure. Complementing this mindset is his keen technical aptitude; in 2026, he represented the school in the prestigious Singapore Amazing Flying Machine Competition (SAFMC) under the Tinkers Club. This experience challenged him to apply engineering principles to real-world flight dynamics, proving his meticulous attention to detail.</p>
+          <p>The aeronautical field demands individuals who are meticulous, disciplined, and proactive. Wilson possesses exactly this rare combination of a structured mindset from his NPCC training and the creative problem-solving skills demonstrated in the SAFMC.</p>
+          <p>I recommend Wilson for admission without reservation. I am highly confident that he will bring the same level of technical curiosity and perseverance to Singapore Polytechnic and make meaningful contributions to your institution.</p>
+          <p>Should you require any further information, please feel free to contact me.</p>
+        </blockquote>
+        <figcaption class="tm-author">
+          <span class="tm-avatar">
+            <span class="media">
+              <img src="images/testimonial-1.jpg" alt="" loading="lazy" />
+              <span class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+            </span>
+          </span>
+          <span>
+            <span class="tm-name">Ms Khew Sing Eian</span>
+            <span class="tm-role">Home Teacher, Class 4E5, Pasir Ris Secondary School</span>
+          </span>
+        </figcaption>
+      </figure>
+
+      <figure class="card tm-card reveal" data-delay="1">
+        <div class="tm-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.5 6C5 6 3 8 3 10.5c0 2.2 1.6 4 3.7 4.4-.2 1.7-1.2 3-2.7 3.6-.3.1-.4.5-.2.8.1.2.4.3.6.2 2.9-1 4.8-3.6 4.8-7.2V10.5C9 8 8.5 6 7.5 6Zm10 0C15 6 13 8 13 10.5c0 2.2 1.6 4 3.7 4.4-.2 1.7-1.2 3-2.7 3.6-.3.1-.4.5-.2.8.1.2.4.3.6.2 2.9-1 4.8-3.6 4.8-7.2V10.5C19 8 18.5 6 17.5 6Z"/></svg>
+        </div>
+        <blockquote class="tm-text">Replace this with your second testimonial. Paste exactly what your teacher, CCA officer or mentor wrote about you here.</blockquote>
+        <figcaption class="tm-author">
+          <span class="tm-avatar">
+            <span class="media">
+              <img src="images/testimonial-2.jpg" alt="" loading="lazy" />
+              <span class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+            </span>
+          </span>
+          <span>
+            <span class="tm-name">Name of referee</span>
+            <span class="tm-role">Role, Organisation</span>
+          </span>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CONTACT ══════════ -->
+<section id="contact" class="alt">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow reveal">Contact</span>
+      <h2 class="section-title reveal">Get in touch</h2>
+      <p class="section-intro reveal">This page is for Singapore Polytechnic admissions and my teachers. The best way to reach me is by email, or through the form below.</p>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-links reveal-l">
+        <a class="c-link" href="mailto:wilson.ang2010@gmail.com">
+          <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg></span>
+          <span><span class="k">Email</span><span class="val">wilson.ang2010@gmail.com</span></span>
+        </a>
+        <a class="c-link" href="https://github.com/wilsonang2010-boop" target="_blank" rel="noopener noreferrer">
+          <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.2-1.5 6.2-6.7A5.2 5.2 0 0 0 20 4.8 4.8 4.8 0 0 0 19.9 1S18.7.6 16 2.5a13.4 13.4 0 0 0-7 0C6.3.6 5.1 1 5.1 1A4.8 4.8 0 0 0 5 4.8a5.2 5.2 0 0 0-1.5 3.7c0 5.2 3.2 6.4 6.2 6.7a3.4 3.4 0 0 0-.9 2.6V22"/></svg></span>
+          <span><span class="k">GitHub</span><span class="val">github.com/wilsonang2010-boop</span></span>
+        </a>
+      </div>
+
+      <form class="contact-form reveal-r" id="contact-form" novalidate>
+        <div class="field">
+          <label for="cf-name">Name</label>
+          <input type="text" id="cf-name" name="name" autocomplete="name" placeholder="Your name" required aria-describedby="e-name" />
+          <span class="err" id="e-name" role="alert"></span>
+        </div>
+        <div class="field">
+          <label for="cf-email">Email</label>
+          <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="you@example.com" required aria-describedby="e-email" />
+          <span class="err" id="e-email" role="alert"></span>
+        </div>
+        <div class="field">
+          <label for="cf-msg">Message</label>
+          <textarea id="cf-msg" name="message" rows="5" placeholder="Say hello…" required aria-describedby="e-msg"></textarea>
+          <span class="err" id="e-msg" role="alert"></span>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">
+          Send message
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/></svg>
+        </button>
+        <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <div class="container foot-inner">
+    <span class="foot-brand">
+      <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.8 16 14l3.5-3.5a2.1 2.1 0 0 0-3-3L13 11 7.2 9.2a1 1 0 0 0-1 .25l-.9.9a.5.5 0 0 0 .12.8L10 14l-2.5 2.5H5l-1.2 1.2a.5.5 0 0 0 .13.8L7 20l1.5 3.07a.5.5 0 0 0 .8.13L10.5 22v-2.5l3.05 4.3a.5.5 0 0 0 .8.12l.9-.9a1 1 0 0 0 .25-1Z"/></svg></span>
+      Ang How Cheng Wilson
+    </span>
+    <p class="foot-note">Diploma in Aerospace Electronics · Early Admissions Exercise</p>
+    <p class="foot-note">© <span id="year">2026</span> Wilson Ang</p>
+  </div>
+</footer>
+
+<button id="top-btn" type="button" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+</button>
+
+<!-- ══════════ LIGHTBOX ══════════ -->
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer" aria-hidden="true">
+  <button class="lb-close" id="lb-close" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  <button class="lb-prev" id="lb-prev" type="button" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18 9 12l6-6"/></svg></button>
+  <button class="lb-next" id="lb-next" type="button" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+  <div class="stage">
+    <img id="lb-img" src="" alt="" />
+    <p class="lb-cap" id="lb-cap"></p>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* 1. Image placeholder fallback. Each .media holds an <img> plus a dashed
+     note naming the file to drop in; show the note if the image is missing. */
+  function markEmpty(img){ var m = img.closest('.media'); if (m) m.classList.add('empty'); }
+  Array.prototype.forEach.call(document.querySelectorAll('.media img'), function(img){
+    img.addEventListener('error', function(){ markEmpty(img); });
+    if (img.complete && img.naturalWidth === 0) markEmpty(img);
+  });
+
+  /* 2. Header state, scroll progress, back-to-top, active nav link. */
+  var header = document.getElementById('site-header');
+  var progress = document.getElementById('progress');
+  var topBtn = document.getElementById('top-btn');
+  var navAnchors = Array.prototype.slice.call(document.querySelectorAll('.nav-links a'));
+  var sections = navAnchors.map(function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  var ticking = false;
+
+  function onScroll(){
+    var y = window.pageYOffset;
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    header.classList.toggle('scrolled', y > 12);
+    progress.style.width = (max > 0 ? (y / max) * 100 : 0) + '%';
+    topBtn.classList.toggle('show', y > 700);
+
+    var current = null;
+    sections.forEach(function(s){ if (s.getBoundingClientRect().top <= 120) current = s.id; });
+    navAnchors.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + current); });
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){ if (!ticking){ requestAnimationFrame(onScroll); ticking = true; } }, { passive:true });
+  onScroll();
+  topBtn.addEventListener('click', function(){ window.scrollTo({ top:0, behavior: reduce ? 'auto' : 'smooth' }); });
+
+  /* 3. Mobile drawer. */
+  var drawer = document.getElementById('drawer');
+  var openBtn = document.getElementById('menu-open');
+  var closeBtn = document.getElementById('menu-close');
+  function setDrawer(open){
+    drawer.classList.toggle('open', open);
+    drawer.setAttribute('aria-hidden', String(!open));
+    openBtn.setAttribute('aria-expanded', String(open));
+    document.body.classList.toggle('no-scroll', open);
+    (open ? closeBtn : openBtn).focus();
+  }
+  openBtn.addEventListener('click', function(){ setDrawer(true); });
+  closeBtn.addEventListener('click', function(){ setDrawer(false); });
+  Array.prototype.forEach.call(drawer.querySelectorAll('a'), function(a){ a.addEventListener('click', function(){ setDrawer(false); }); });
+
+  /* 4. Reveal on scroll. Content must never stay hidden, so if the observer
+     hasn't revealed any above-the-fold element shortly after load, we assume
+     it isn't firing (older browser, stalled renderer) and show everything. */
+  var revealEls = document.querySelectorAll('.reveal, .reveal-l, .reveal-r');
+  function revealAll(){ Array.prototype.forEach.call(revealEls, function(el){ el.classList.add('in'); }); }
+
+  if (!('IntersectionObserver' in window) || reduce){
+    revealAll();
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold:0.12, rootMargin:'0px 0px -50px 0px' });
+    Array.prototype.forEach.call(revealEls, function(el){ io.observe(el); });
+
+    // Failsafe: normally the hero has revealed within a frame; if nothing has
+    // after 900ms, the observer isn't delivering, so reveal everything outright.
+    setTimeout(function(){
+      if (!document.querySelector('.reveal.in, .reveal-l.in, .reveal-r.in')) revealAll();
+    }, 900);
+  }
+
+  /* 5. Gallery lightbox. */
+  var cells = Array.prototype.slice.call(document.querySelectorAll('.masonry .cell'));
+  var lb = document.getElementById('lightbox');
+  var lbImg = document.getElementById('lb-img');
+  var lbCap = document.getElementById('lb-cap');
+  var lbClose = document.getElementById('lb-close');
+  var lbPrev = document.getElementById('lb-prev');
+  var lbNext = document.getElementById('lb-next');
+  var idx = 0, lastFocus = null;
+
+  function render(i){
+    idx = (i + cells.length) % cells.length;
+    var c = cells[idx];
+    lbImg.src = c.getAttribute('data-src');
+    lbImg.alt = c.getAttribute('data-title') || '';
+    lbCap.innerHTML = '<span class="cat">' + (c.getAttribute('data-cat') || '') + '</span> · ' +
+                      (c.getAttribute('data-title') || '') + '  (' + (idx+1) + '/' + cells.length + ')';
+  }
+  function openLb(i){
+    lastFocus = document.activeElement;
+    render(i);
+    lb.classList.add('open');
+    lb.setAttribute('aria-hidden','false');
+    document.body.classList.add('no-scroll');
+    lbClose.focus();
+  }
+  function closeLb(){
+    lb.classList.remove('open');
+    lb.setAttribute('aria-hidden','true');
+    document.body.classList.remove('no-scroll');
+    if (lastFocus) lastFocus.focus();
+  }
+  cells.forEach(function(c, i){ c.addEventListener('click', function(){ openLb(i); }); });
+  lbClose.addEventListener('click', closeLb);
+  lbPrev.addEventListener('click', function(){ render(idx - 1); });
+  lbNext.addEventListener('click', function(){ render(idx + 1); });
+  lb.addEventListener('click', function(e){ if (e.target === lb) closeLb(); });
+
+  document.addEventListener('keydown', function(e){
+    if (lb.classList.contains('open')){
+      if (e.key === 'Escape') closeLb();
+      else if (e.key === 'ArrowLeft') render(idx - 1);
+      else if (e.key === 'ArrowRight') render(idx + 1);
+      else if (e.key === 'Tab'){
+        var f = [lbClose, lbPrev, lbNext], at = f.indexOf(document.activeElement);
+        e.preventDefault();
+        f[(at + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
+      }
+      return;
+    }
+    if (e.key === 'Escape' && drawer.classList.contains('open')) setDrawer(false);
+  });
+
+  /* 6. Contact form: validate, then hand off to the visitor's mail client.
+     To use a form service instead, add action+method to the <form> and remove this. */
+  var form = document.getElementById('contact-form');
+  var status = document.getElementById('form-status');
+  var MAIL_TO = 'wilson.ang2010@gmail.com';
+  function setErr(input, id, msg){
+    document.getElementById(id).textContent = msg || '';
+    input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+    return !msg;
+  }
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var n = document.getElementById('cf-name'), m = document.getElementById('cf-email'), g = document.getElementById('cf-msg');
+    var ok = true;
+    ok = setErr(n, 'e-name', n.value.trim() ? '' : 'Please enter your name') && ok;
+    ok = setErr(m, 'e-email', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m.value.trim()) ? '' : 'Please enter a valid email') && ok;
+    ok = setErr(g, 'e-msg', g.value.trim() ? '' : 'Please enter a message') && ok;
+    if (!ok){ status.textContent = 'Please check the fields above.'; return; }
+    var subject = 'Portfolio enquiry from ' + n.value.trim();
+    var body = n.value.trim() + ' (' + m.value.trim() + ') wrote:\n\n' + g.value.trim();
+    window.location.href = 'mailto:' + MAIL_TO + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    status.textContent = 'Opening your email app…';
+    setTimeout(function(){ status.textContent = ''; form.reset(); }, 4000);
+  });
+
+  /* 7. Footer year. */
+  document.getElementById('year').textContent = new Date().getFullYear();
+})();
+</script>
+
+</body>
+</html>

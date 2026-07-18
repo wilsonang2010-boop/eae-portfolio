@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell($py = Get-Command python -ErrorAction SilentlyContinue; if \\($py\\) { \"python: $\\($py.Source\\)\" } else { \"no python\" }; $node = Get-Command node -ErrorAction SilentlyContinue; if \\($node\\) { \"node: $\\($node.Source\\)\" } else { \"no node\" })",
+      "Bash(rm -f \"C:/Users/Administrator/OneDrive/coding/.claude/serve.py\" \"C:/Users/Administrator/OneDrive/coding/.claude/launch.json\")",
+      "Bash(rmdir \"C:/Users/Administrator/OneDrive/coding/.claude\")",
+      "Bash(ls \"C:/Users/Administrator/OneDrive/coding\" ; echo \"---\" ; ls \"C:/Users/Administrator/OneDrive\" 2>/dev/null | head -20 ; echo \"---\" ; ls \"C:/Users/Administrator/Pictures\" 2>/dev/null | head -20 ; echo \"---\" ; ls \"C:/Users/Administrator/Downloads\" 2>/dev/null | head -30)",
+      "Bash(rm -f \"C:/Users/Administrator/OneDrive/coding/.claude/serve.py\" \"C:/Users/Administrator/OneDrive/coding/.claude/launch.json\"; ls -la \"C:/Users/Administrator/OneDrive/coding\"; echo \"---\"; ls -la \"C:/Users/Administrator/OneDrive/coding/.claude\")",
+      "PowerShell(python -m pip install pypdf --quiet --disable-pip-version-check 2>&1)",
+      "PowerShell(python -c \"import pypdf; print\\('installed', pypdf.__version__\\)\")",
+      "PowerShell(python \"C:\\\\Users\\\\ADMINI~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Administrator-OneDrive-coding\\\\b1effd95-9d8a-47a4-890f-b29a82abca8e\\\\scratchpad\\\\extract.py\")",
+      "Bash(rm -f \"C:/Users/Administrator/OneDrive/coding/.claude/serve.py\" \"C:/Users/Administrator/OneDrive/coding/.claude/launch.json\"; ls \"C:/Users/Administrator/OneDrive/coding\")"
+    ]
+  }
+}
