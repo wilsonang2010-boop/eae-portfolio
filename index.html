@@ -307,6 +307,11 @@ header.scrolled{background:rgba(11,17,32,0.82); backdrop-filter:blur(14px); -web
 .ach-card h3{font-size:1.02rem; margin-bottom:3px;}
 .ach-card .yr{font-size:12px; color:var(--blue-bright); font-weight:500; margin-bottom:6px;}
 .ach-card p{font-size:0.9rem; color:var(--slate-400);}
+.ach-card.feature{grid-column:1 / -1; flex-direction:column; gap:16px;}
+.ach-card.feature .head-row{display:flex; gap:16px; align-items:flex-start;}
+.ach-card.feature ul{list-style:none; display:grid; gap:11px;}
+.ach-card.feature ul li{position:relative; padding-left:20px; font-size:0.9rem; color:var(--slate-400); line-height:1.55;}
+.ach-card.feature ul li::before{content:""; position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:var(--blue-bright);}
 
 /* ══════════ CERTIFICATES ══════════ */
 .cert-card{overflow:hidden;}
@@ -810,6 +815,22 @@ footer{border-top:1px solid var(--border); padding:40px 0;}
     </div>
 
     <div class="grid cols-2">
+      <article class="card ach-card feature reveal">
+        <div class="head-row">
+          <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H4z"/><path d="M2 20h20"/><path d="M9 8h6M9 12h6"/></svg></div>
+          <div>
+            <div class="yr">2026 · GE Aerospace × Forage</div>
+            <h3>Explore Electrical Engineering Job Simulation</h3>
+          </div>
+        </div>
+        <ul>
+          <li>I designed an aircraft electrical system from scratch and worked through navigation faults under harsh conditions, and it only deepened my love for how every part of an aerospace system fits together.</li>
+          <li>I got hands-on with electrical distribution planning and circuit breaker selection, learning to hold my own work to real aerospace standards using the same industry tools engineers rely on.</li>
+          <li>I learned to think under pressure, diagnosing avionics issues and finding ways to keep systems reliable when the environment fights back, using simulation software to test how conditions affect performance.</li>
+          <li>I put real care into the writing side too, producing design proposals and assessment plans that follow the strict safety protocols aerospace engineering demands.</li>
+        </ul>
+      </article>
+
       <article class="card ach-card reveal">
         <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2Z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7Z"/></svg></div>
         <div>
@@ -884,6 +905,16 @@ footer{border-top:1px solid var(--border); padding:40px 0;}
         <div class="cert-foot">
           <div><div class="ct">Model UN: PREPMUN / DHAPMUN</div><div class="ci">2025 – 2026</div></div>
           <a class="cert-dl" href="images/cert-mun.jpg" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Download
+          </a>
+        </div>
+      </article>
+
+      <article class="card cert-card reveal" data-delay="3">
+        <div class="media"><img src="images/cert-forage.jpg" alt="GE Aerospace Electrical Engineering Job Simulation certificate" loading="lazy" /><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H4z"/><path d="M8 20l4-3 4 3"/></svg><span class="path">images/cert-forage.jpg</span></div></div>
+        <div class="cert-foot">
+          <div><div class="ct">GE Aerospace: Electrical Engineering</div><div class="ci">2026</div></div>
+          <a class="cert-dl" href="images/cert-forage.jpg" download>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Download
           </a>
         </div>
