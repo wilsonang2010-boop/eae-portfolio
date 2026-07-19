@@ -28,6 +28,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Trial font: a free geometric-sans in the same family as Anthropic's product typeface. Not the actual licensed font — swap or revert if it's not your taste. -->
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
 
 <style>
 /* ════════════════════════════════════════════════════════════
@@ -50,7 +53,7 @@
   --slate-400:#94A3B8;
   --slate-500:#64748B;
 
-  --font:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --font:'General Sans','Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
   --container:1160px;
   --radius:14px;
   --ease:cubic-bezier(.22,.61,.36,1);
@@ -417,6 +420,33 @@ footer{border-top:1px solid var(--border); padding:40px 0;}
 .foot-brand .mark{width:30px; height:30px; border-radius:8px; background:var(--blue-soft); color:var(--blue-bright); display:flex; align-items:center; justify-content:center;}
 .foot-brand .mark svg{width:16px; height:16px;}
 .foot-note{font-size:12.5px; color:var(--slate-500);}
+
+/* ══════════ CLAUDE CODE NOTICE ══════════ */
+.cc-notice{
+  position:relative; overflow:hidden; max-width:var(--container); margin:0 auto; padding:12px 22px 12px 58px;
+  border:1px solid var(--border); border-radius:999px; background:var(--blue-soft);
+  display:flex; align-items:center; gap:8px; font-size:12.5px; line-height:1.5; color:var(--slate-400);
+}
+.cc-notice strong{color:var(--white); font-weight:600;}
+.cc-mascot{position:absolute; left:10px; bottom:6px; width:26px; height:26px; color:var(--blue-bright); animation:cc-walk 10s linear infinite;}
+.cc-mascot .cc-bob{animation:cc-bob .45s ease-in-out infinite alternate;}
+.cc-leg{transform-box:fill-box; transform-origin:top center;}
+.cc-leg-l{animation:cc-leg-l .45s ease-in-out infinite;}
+.cc-leg-r{animation:cc-leg-r .45s ease-in-out infinite;}
+
+@keyframes cc-walk{
+  0%{left:10px; transform:scaleX(1);}
+  47%{left:calc(100% - 36px); transform:scaleX(1);}
+  50%{left:calc(100% - 36px); transform:scaleX(-1);}
+  97%{left:10px; transform:scaleX(-1);}
+  100%{left:10px; transform:scaleX(1);}
+}
+@keyframes cc-bob{from{transform:translateY(0);} to{transform:translateY(-2.5px);}}
+@keyframes cc-leg-l{0%,100%{transform:rotate(20deg);} 50%{transform:rotate(-20deg);}}
+@keyframes cc-leg-r{0%,100%{transform:rotate(-20deg);} 50%{transform:rotate(20deg);}}
+@media(prefers-reduced-motion: reduce){
+  .cc-mascot, .cc-mascot .cc-bob, .cc-leg-l, .cc-leg-r{animation:none;}
+}
 
 /* ── Back to top ───────────────────────────────────────────── */
 #top-btn{
@@ -1119,6 +1149,23 @@ footer{border-top:1px solid var(--border); padding:40px 0;}
 </main>
 
 <!-- ══════════ FOOTER ══════════ -->
+<div class="container">
+  <div class="cc-notice">
+    <span class="cc-mascot" aria-hidden="true">
+      <svg viewBox="0 0 40 40">
+        <g class="cc-bob">
+          <path d="M20 4c1.5 6 3 8 9 9-6 1-7.5 3-9 9-1.5-6-3-8-9-9 6-1 7.5-3 9-9Z" fill="currentColor"/>
+          <circle cx="17" cy="15" r="1.1" fill="#070B14"/>
+          <circle cx="23" cy="15" r="1.1" fill="#070B14"/>
+        </g>
+        <path class="cc-leg cc-leg-l" d="M17 24v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path class="cc-leg cc-leg-r" d="M23 24v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span>Built with <strong>Claude Code</strong> · every prompt on this site was written by Ang How Cheng Wilson.</span>
+  </div>
+</div>
+
 <footer>
   <div class="container foot-inner">
     <span class="foot-brand">
