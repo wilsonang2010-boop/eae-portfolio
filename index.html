@@ -431,29 +431,26 @@ footer{border-top:1px solid var(--border); padding:40px 0;}
 .cc-topbar .cc-inner{position:relative; width:100%; max-width:var(--container); margin:0 auto; padding:0 22px 0 54px; display:flex; align-items:center; justify-content:center; height:100%;}
 .cc-topbar span.cc-text{font-size:12px; color:var(--slate-400); text-align:center;}
 .cc-topbar span.cc-text strong{color:var(--white); font-weight:600;}
-.cc-mascot{position:absolute; left:14px; bottom:2px; width:28px; height:28px; color:#F0A868; animation:cc-walk 18s linear infinite;}
-.cc-mascot .cc-bob{animation:cc-bob .4s ease-in-out infinite alternate;}
-.cc-claw,.cc-leg{transform-box:fill-box; transform-origin:center;}
-.cc-claw-l{animation:cc-claw-l .8s ease-in-out infinite;}
-.cc-claw-r{animation:cc-claw-r .8s ease-in-out infinite;}
-.cc-leg{transform-origin:top center;}
-.cc-leg-a{animation:cc-leg-l .35s ease-in-out infinite;}
-.cc-leg-b{animation:cc-leg-r .35s ease-in-out infinite;}
+.cc-mascot{
+  position:absolute; left:14px; bottom:3px; width:26px; height:24px; image-rendering:pixelated;
+  animation:cc-walk 18s linear infinite;
+  filter:drop-shadow(1px 0 0 #fff) drop-shadow(-1px 0 0 #fff) drop-shadow(0 1px 0 #fff) drop-shadow(0 -1px 0 #fff);
+}
+.cc-mascot .cc-bob{animation:cc-bob .4s steps(2) infinite alternate;}
+.cc-leg-a{animation:cc-stomp .3s steps(1) infinite;}
+.cc-leg-b{animation:cc-stomp .3s steps(1) infinite; animation-delay:.15s;}
 
 @keyframes cc-walk{
   0%{left:14px; transform:scaleX(1);}
-  48%{left:calc(100% - 44px); transform:scaleX(1);}
-  50%{left:calc(100% - 44px); transform:scaleX(-1);}
+  48%{left:calc(100% - 40px); transform:scaleX(1);}
+  50%{left:calc(100% - 40px); transform:scaleX(-1);}
   98%{left:14px; transform:scaleX(-1);}
   100%{left:14px; transform:scaleX(1);}
 }
-@keyframes cc-bob{from{transform:translateY(0);} to{transform:translateY(-2px);}}
-@keyframes cc-claw-l{0%,100%{transform:rotate(-6deg);} 50%{transform:rotate(8deg);}}
-@keyframes cc-claw-r{0%,100%{transform:rotate(6deg);} 50%{transform:rotate(-8deg);}}
-@keyframes cc-leg-l{0%,100%{transform:rotate(18deg);} 50%{transform:rotate(-18deg);}}
-@keyframes cc-leg-r{0%,100%{transform:rotate(-18deg);} 50%{transform:rotate(18deg);}}
+@keyframes cc-bob{from{transform:translateY(0);} to{transform:translateY(-1.5px);}}
+@keyframes cc-stomp{0%,49%{transform:translateY(0);} 50%,100%{transform:translateY(-2px);}}
 @media(prefers-reduced-motion: reduce){
-  .cc-mascot, .cc-mascot .cc-bob, .cc-claw-l, .cc-claw-r, .cc-leg-a, .cc-leg-b{animation:none;}
+  .cc-mascot, .cc-mascot .cc-bob, .cc-leg-a, .cc-leg-b{animation:none;}
 }
 @media(max-width:640px){.cc-topbar span.cc-text{font-size:10.5px;}}
 
@@ -505,20 +502,15 @@ footer{border-top:1px solid var(--border); padding:40px 0;}
 <div class="cc-topbar">
   <div class="cc-inner">
     <span class="cc-mascot" aria-hidden="true">
-      <svg viewBox="0 0 44 32">
+      <svg viewBox="0 0 40 36" shape-rendering="crispEdges">
         <g class="cc-bob">
-          <ellipse cx="22" cy="16" rx="10" ry="7" fill="currentColor"/>
-          <path d="M17 10c-1-3-1-4 0-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-          <path d="M27 10c1-3 1-4 0-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-          <circle cx="16.6" cy="5" r="1.6" fill="#1a0e05"/>
-          <circle cx="27.4" cy="5" r="1.6" fill="#1a0e05"/>
-          <path class="cc-claw cc-claw-l" d="M10 14c-3-1-5-3-6-6 2 1 4 1 6 0 1 2 1 4 0 6Z" fill="currentColor"/>
-          <path class="cc-claw cc-claw-r" d="M34 14c3-1 5-3 6-6-2 1-4 1-6 0-1 2-1 4 0 6Z" fill="currentColor"/>
+          <rect x="2" y="2" width="36" height="24" rx="7" fill="#E2764A"/>
+          <rect x="2" y="15" width="36" height="11" fill="#E2764A"/>
+          <rect x="10" y="11" width="6" height="6" fill="#1a0e05"/>
+          <rect x="24" y="11" width="6" height="6" fill="#1a0e05"/>
         </g>
-        <path class="cc-leg cc-leg-a" d="M14 22l-3 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <path class="cc-leg cc-leg-b" d="M18 23l-2 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <path class="cc-leg cc-leg-a" d="M26 23l2 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <path class="cc-leg cc-leg-b" d="M30 22l3 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <rect class="cc-leg-a" x="9" y="23" width="6" height="7" fill="#fff"/>
+        <rect class="cc-leg-b" x="25" y="23" width="6" height="7" fill="#fff"/>
       </svg>
     </span>
     <span class="cc-text">Built with <strong>Claude Code</strong> · every prompt on this site was written by Ang How Cheng Wilson.</span>
