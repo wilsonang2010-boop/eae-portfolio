@@ -1,0 +1,1983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#070b16">
+<title>EAE Mission Control</title>
+<style>
+:root{
+  --bg:#070b16;
+  --bg-2:#0b1122;
+  --card:#0e1526;
+  --card-2:#121a2f;
+  --line:#1c2740;
+  --line-2:#263353;
+  --text:#e8ecf4;
+  --muted:#8b96ad;
+  --faint:#5b6680;
+  --red:#e4002b;
+  --red-soft:rgba(228,0,43,.12);
+  --cyan:#59c2e8;
+  --cyan-soft:rgba(89,194,232,.10);
+  --green:#3ecf8e;
+  --green-soft:rgba(62,207,142,.12);
+  --amber:#f0b429;
+  --amber-soft:rgba(240,180,41,.12);
+  --radius:14px;
+  --nav-h:64px;
+  --sidebar-w:236px;
+  font-size:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.55;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+input,textarea,select{font:inherit;color:var(--text)}
+textarea{resize:vertical}
+a{color:var(--cyan);text-decoration:none}
+::selection{background:rgba(89,194,232,.25)}
+
+/* ---------- layout ---------- */
+#app{display:flex;min-height:100vh}
+#sidebar{
+  width:var(--sidebar-w);
+  background:var(--bg-2);
+  border-right:1px solid var(--line);
+  position:fixed;inset:0 auto 0 0;
+  padding:24px 14px;
+  display:none;
+  flex-direction:column;gap:2px;
+  z-index:40;
+  overflow-y:auto;
+}
+#sidebar .brand{padding:0 10px 18px;border-bottom:1px solid var(--line);margin-bottom:14px}
+#sidebar .brand h1{font-size:.95rem;letter-spacing:.14em;font-weight:700}
+#sidebar .brand h1 .red{color:var(--red)}
+#sidebar .brand p{font-size:.68rem;color:var(--muted);letter-spacing:.06em;margin-top:3px}
+.navbtn{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 12px;border-radius:10px;
+  color:var(--muted);font-size:.88rem;font-weight:500;
+  width:100%;text-align:left;
+  transition:background .15s,color .15s;
+}
+.navbtn svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.navbtn:hover{background:var(--card);color:var(--text)}
+.navbtn.active{background:var(--card-2);color:var(--text)}
+.navbtn.active svg{color:var(--red)}
+#sidebar .sb-count{margin-top:auto;padding:14px 12px 4px;border-top:1px solid var(--line);font-size:.72rem;color:var(--faint);letter-spacing:.05em}
+#sidebar .sb-count b{color:var(--text);font-variant-numeric:tabular-nums}
+
+#main{
+  flex:1;min-width:0;
+  padding:20px 16px calc(var(--nav-h) + 34px);
+  max-width:960px;margin:0 auto;
+  animation:fadein .28s ease;
+}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+#bottomnav{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  height:calc(var(--nav-h) + env(safe-area-inset-bottom));
+  padding-bottom:env(safe-area-inset-bottom);
+  background:rgba(9,14,27,.92);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border-top:1px solid var(--line);
+  display:flex;
+}
+#bottomnav button{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  color:var(--faint);font-size:.62rem;letter-spacing:.04em;font-weight:600;
+}
+#bottomnav button svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#bottomnav button.active{color:var(--text)}
+#bottomnav button.active svg{color:var(--red)}
+
+@media(min-width:900px){
+  #sidebar{display:flex}
+  #bottomnav{display:none}
+  #main{margin-left:var(--sidebar-w);padding:36px 40px 60px;max-width:calc(var(--sidebar-w) + 980px)}
+}
+
+/* ---------- shared components ---------- */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:18px;
+  margin-bottom:14px;
+}
+.card h3{font-size:.78rem;letter-spacing:.14em;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:12px}
+.pagehead{margin-bottom:18px}
+.pagehead h2{font-size:1.35rem;font-weight:700;letter-spacing:-.01em}
+.pagehead p{color:var(--muted);font-size:.85rem;margin-top:2px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:11px 18px;border-radius:10px;
+  font-size:.86rem;font-weight:600;
+  background:var(--card-2);border:1px solid var(--line-2);
+  transition:transform .12s,background .15s,border-color .15s;
+  min-height:44px;
+}
+.btn:hover{border-color:var(--faint)}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--red);border-color:var(--red);color:#fff}
+.btn.primary:hover{background:#c50026;border-color:#c50026}
+.btn.ghost{background:transparent}
+.btn.small{padding:7px 12px;min-height:36px;font-size:.78rem;border-radius:8px}
+.btn.full{width:100%}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.pill{
+  display:inline-block;padding:3px 10px;border-radius:99px;
+  font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+}
+.pill.red{background:var(--red-soft);color:#ff6b8a}
+.pill.orange{background:var(--amber-soft);color:var(--amber)}
+.pill.yellow{background:rgba(240,220,100,.1);color:#e8d96a}
+.pill.cyan{background:var(--cyan-soft);color:var(--cyan)}
+.pill.green{background:var(--green-soft);color:var(--green)}
+.pill.grey{background:rgba(139,150,173,.12);color:var(--muted)}
+.tagrow{display:flex;flex-wrap:wrap;gap:6px}
+
+.progressbar{height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+.progressbar > div{height:100%;background:var(--cyan);border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.progressbar.red > div{background:var(--red)}
+.progressbar.green > div{background:var(--green)}
+
+.check{
+  display:flex;align-items:flex-start;gap:11px;
+  padding:9px 4px;cursor:pointer;border-radius:8px;
+  font-size:.9rem;color:var(--text);
+  transition:background .12s;
+  user-select:none;-webkit-user-select:none;
+}
+.check:hover{background:rgba(255,255,255,.02)}
+.check .box{
+  width:21px;height:21px;flex:none;margin-top:1px;
+  border:1.6px solid var(--line-2);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s,border-color .15s;
+}
+.check .box svg{width:13px;height:13px;stroke:#fff;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:0;transform:scale(.5);transition:opacity .15s,transform .15s}
+.check.on .box{background:var(--red);border-color:var(--red)}
+.check.on .box svg{opacity:1;transform:scale(1)}
+.check.on span.lbl{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--faint)}
+
+textarea.field,input.field{
+  width:100%;background:var(--bg-2);border:1px solid var(--line);
+  border-radius:10px;padding:11px 13px;font-size:.88rem;
+  color:var(--text);outline:none;transition:border-color .15s;
+}
+textarea.field:focus,input.field:focus{border-color:var(--cyan)}
+textarea.field::placeholder,input.field::placeholder{color:var(--faint)}
+label.fieldlabel{display:block;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:14px 0 6px}
+
+details.acc{border:1px solid var(--line);border-radius:var(--radius);background:var(--card);margin-bottom:12px;overflow:hidden}
+details.acc > summary{
+  list-style:none;cursor:pointer;padding:16px 18px;
+  display:flex;align-items:center;gap:12px;
+  font-weight:600;font-size:.92rem;
+}
+details.acc > summary::-webkit-details-marker{display:none}
+details.acc > summary .chev{margin-left:auto;flex:none;transition:transform .2s;color:var(--faint)}
+details.acc[open] > summary .chev{transform:rotate(90deg)}
+details.acc .acc-body{padding:0 18px 18px;border-top:1px solid var(--line);padding-top:14px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:560px){.grid3{grid-template-columns:1fr 1fr}}
+
+.stat{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 16px;
+}
+.stat .v{font-size:1.45rem;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat .k{font-size:.68rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin-top:2px}
+
+.divider{height:1px;background:var(--line);margin:16px 0}
+.hint{font-size:.78rem;color:var(--faint);line-height:1.5}
+.warn-msg{background:var(--amber-soft);border:1px solid rgba(240,180,41,.3);color:var(--amber);padding:10px 14px;border-radius:10px;font-size:.82rem;margin-top:10px}
+.motto{
+  text-align:center;color:var(--muted);font-size:.85rem;font-style:italic;
+  padding:14px 0 4px;letter-spacing:.02em;
+}
+
+/* ---------- countdown ---------- */
+.hero{
+  background:linear-gradient(160deg,#0d1428 0%,#0a0f1f 60%,#0d1226 100%);
+  border:1px solid var(--line);border-radius:18px;
+  padding:26px 20px 22px;margin-bottom:16px;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(600px 200px at 85% -20%,rgba(89,194,232,.09),transparent 65%),
+             radial-gradient(500px 220px at 5% 120%,rgba(228,0,43,.08),transparent 60%);
+  pointer-events:none;
+}
+.hero > *{position:relative}
+.hero .kicker{font-size:.66rem;letter-spacing:.28em;color:var(--red);font-weight:700;text-transform:uppercase}
+.hero h2{font-size:1.6rem;font-weight:800;letter-spacing:.02em;margin-top:6px}
+.hero .sub{color:var(--muted);font-size:.85rem;margin-top:2px}
+.hero .when{margin-top:10px;font-size:.82rem;color:var(--cyan);font-weight:600;letter-spacing:.04em}
+.countdown{display:flex;gap:10px;margin-top:18px}
+.countdown .unit{
+  flex:1;text-align:center;background:rgba(255,255,255,.03);
+  border:1px solid var(--line);border-radius:12px;padding:12px 4px 10px;
+}
+.countdown .unit .n{font-size:1.7rem;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.countdown .unit .u{font-size:.6rem;letter-spacing:.16em;color:var(--muted);font-weight:700;margin-top:1px}
+.mission-time{
+  margin-top:18px;text-align:center;font-size:1.15rem;font-weight:800;
+  letter-spacing:.12em;color:var(--green);
+}
+
+/* readiness ring */
+.readiness{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.ring{position:relative;width:118px;height:118px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .track{stroke:var(--line);fill:none;stroke-width:9}
+.ring .fill{stroke:var(--red);fill:none;stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset .8s cubic-bezier(.4,0,.2,1)}
+.ring .ring-label{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.ring .ring-label .pct{font-size:1.5rem;font-weight:800;font-variant-numeric:tabular-nums}
+.ring .ring-label .cap{font-size:.55rem;letter-spacing:.1em;color:var(--muted);font-weight:700}
+.rank-badge{font-size:.72rem;letter-spacing:.18em;font-weight:800;color:var(--cyan);text-transform:uppercase}
+
+/* mock mode */
+#mockoverlay{
+  position:fixed;inset:0;z-index:100;background:var(--bg);
+  display:none;flex-direction:column;
+  padding:calc(14px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom));
+  overflow-y:auto;
+}
+#mockoverlay.open{display:flex;animation:fadein .25s ease}
+.mock-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.mock-q{
+  font-size:1.35rem;font-weight:700;line-height:1.35;letter-spacing:-.01em;
+  margin:14px 0 6px;
+}
+@media(min-width:700px){.mock-q{font-size:1.7rem}}
+.mock-timer{
+  font-size:2.6rem;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+  text-align:center;padding:8px 0;
+}
+.mock-timer.over{color:var(--amber)}
+.mock-timer.prep{color:var(--cyan)}
+.score-steps{display:flex;gap:6px}
+.score-steps button{
+  flex:1;min-height:42px;border-radius:9px;border:1px solid var(--line-2);
+  background:var(--card);font-weight:700;font-size:.9rem;color:var(--muted);
+}
+.score-steps button.sel{background:var(--red);border-color:var(--red);color:#fff}
+.scorerow{margin-bottom:12px}
+.scorerow .sk{font-size:.7rem;letter-spacing:.12em;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:6px;display:flex;justify-content:space-between}
+
+/* modal */
+#modal-back{
+  position:fixed;inset:0;z-index:120;background:rgba(4,7,14,.7);
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  display:none;align-items:center;justify-content:center;padding:22px;
+}
+#modal-back.open{display:flex;animation:fadein .2s ease}
+#modal{
+  background:var(--card-2);border:1px solid var(--line-2);border-radius:16px;
+  max-width:420px;width:100%;padding:22px;
+}
+#modal h4{font-size:1.05rem;font-weight:700;margin-bottom:8px}
+#modal p{color:var(--muted);font-size:.88rem;margin-bottom:18px}
+#modal .row{display:flex;gap:10px;justify-content:flex-end}
+
+/* toast */
+#toast{
+  position:fixed;left:50%;bottom:calc(var(--nav-h) + 20px);transform:translateX(-50%) translateY(20px);
+  background:var(--card-2);border:1px solid var(--line-2);color:var(--text);
+  padding:11px 20px;border-radius:99px;font-size:.84rem;font-weight:600;
+  opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:130;
+  white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(min-width:900px){#toast{bottom:28px}}
+
+/* framework arrows */
+.framework-steps{display:flex;flex-direction:column;gap:0}
+.fstep{padding:12px 14px;background:var(--bg-2);border:1px solid var(--line);border-radius:10px}
+.fstep b{color:var(--red);font-size:.75rem;letter-spacing:.16em}
+.fstep p{font-size:.86rem;color:var(--muted);margin-top:2px}
+.farrow{text-align:center;color:var(--faint);font-size:.9rem;padding:2px 0}
+
+/* memory triggers chain */
+.trigchain{display:flex;flex-direction:column;align-items:center;gap:0;padding:6px 0}
+.trigchain .t{
+  background:var(--bg-2);border:1px solid var(--line);border-radius:8px;
+  padding:6px 16px;font-size:.78rem;font-weight:700;letter-spacing:.12em;
+}
+.trigchain .a{color:var(--faint);font-size:.8rem;line-height:1.4}
+
+/* achievements */
+.ach{display:flex;gap:13px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.ach:last-child{border-bottom:none}
+.ach .medal{
+  width:38px;height:38px;flex:none;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bg-2);border:1px solid var(--line);color:var(--faint);
+}
+.ach.unlocked .medal{background:var(--green-soft);border-color:rgba(62,207,142,.35);color:var(--green)}
+.ach .t1{font-size:.86rem;font-weight:700}
+.ach .t2{font-size:.75rem;color:var(--muted)}
+.ach.unlocked .t1{color:var(--text)}
+.ach:not(.unlocked) .t1{color:var(--muted)}
+.ach .medal svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.bigquote{
+  text-align:center;font-size:1.05rem;font-weight:700;line-height:1.7;
+  padding:26px 18px;letter-spacing:.03em;
+}
+.stopstudy{
+  background:var(--red);color:#fff;border-radius:var(--radius);
+  text-align:center;padding:26px 18px;margin-bottom:14px;
+  font-weight:800;letter-spacing:.2em;font-size:1.3rem;
+}
+.qmeta{font-size:.8rem;color:var(--muted);margin-bottom:10px}
+.qmeta b{color:var(--cyan);font-weight:600}
+ul.kp{margin:0 0 4px 18px;font-size:.87rem;color:var(--text)}
+ul.kp li{margin-bottom:4px}
+.model-box{
+  background:var(--bg-2);border:1px solid var(--line);border-radius:10px;
+  padding:14px;font-size:.86rem;line-height:1.7;color:#c8d0e0;white-space:pre-line;
+}
+.donotmemo{
+  display:inline-block;background:var(--red-soft);color:#ff6b8a;
+  font-size:.64rem;font-weight:800;letter-spacing:.14em;
+  padding:4px 10px;border-radius:6px;margin-bottom:8px;
+}
+.counter-btn{display:flex;align-items:center;gap:12px}
+.counter-btn .n{font-size:1.1rem;font-weight:800;font-variant-numeric:tabular-nums;min-width:34px;text-align:center}
+.conf-dots{display:flex;gap:7px}
+.conf-dots button{
+  width:34px;height:34px;border-radius:8px;border:1px solid var(--line-2);
+  background:var(--card);color:var(--muted);font-weight:700;font-size:.8rem;
+}
+.conf-dots button.sel{background:var(--cyan);border-color:var(--cyan);color:#04121c}
+.day-date{font-size:.7rem;color:var(--faint);letter-spacing:.08em;font-weight:600}
+.today-tag{background:var(--red);color:#fff;font-size:.6rem;font-weight:800;letter-spacing:.1em;padding:3px 8px;border-radius:5px}
+.done-tag{background:var(--green-soft);color:var(--green);font-size:.6rem;font-weight:800;letter-spacing:.1em;padding:3px 8px;border-radius:5px}
+.taskhead{display:flex;align-items:baseline;justify-content:space-between;margin:16px 0 4px}
+.taskhead h5{font-size:.8rem;letter-spacing:.1em;font-weight:800;color:var(--cyan);text-transform:uppercase}
+.taskhead span{font-size:.7rem;color:var(--faint);font-weight:600}
+.mock-hist{padding:12px 0;border-bottom:1px solid var(--line);font-size:.85rem}
+.mock-hist:last-child{border:none}
+.rec-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+audio{width:100%;margin-top:8px;height:38px}
+.sheet-menu{position:fixed;inset:auto 0 0 0;z-index:110;background:var(--card-2);
+  border-top:1px solid var(--line-2);border-radius:18px 18px 0 0;
+  padding:14px 14px calc(20px + env(safe-area-inset-bottom));
+  transform:translateY(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+}
+.sheet-menu.open{transform:none}
+#sheet-back{position:fixed;inset:0;z-index:105;background:rgba(4,7,14,.55);display:none}
+#sheet-back.open{display:block}
+.sheet-menu .grab{width:38px;height:4px;border-radius:99px;background:var(--line-2);margin:0 auto 12px}
+</style>
+</head>
+<body>
+<div id="app">
+  <aside id="sidebar"></aside>
+  <main id="main"></main>
+  <nav id="bottomnav"></nav>
+</div>
+
+<div id="mockoverlay"></div>
+<div id="sheet-back"></div>
+<div class="sheet-menu" id="sheet"></div>
+<div id="modal-back"><div id="modal"></div></div>
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ================= DATA ================= */
+
+const INTERVIEW_TS = Date.UTC(2026, 6, 29, 8, 0, 0); // 29 Jul 2026, 16:00 SGT (UTC+8)
+const STOP_STUDY_TS = Date.UTC(2026, 6, 29, 7, 30, 0); // 15:30 SGT
+const LS_KEY = "eaeMissionControl.v1";
+
+const FRAMEWORK = [
+  { k: "POINT", d: "Directly answer the question." },
+  { k: "PROOF", d: "Give specific evidence from something I actually did." },
+  { k: "LESSON", d: "Explain what I learned or how I developed." },
+  { k: "LINK", d: "Connect it back to Aerospace Electronics, Singapore Polytechnic, engineering, or my future." }
+];
+const FRAMEWORK_EXAMPLE = [
+  { k: "POINT", d: "“I’m persistent when solving problems.”" },
+  { k: "PROOF", d: "“During SAFMC, our aircraft experienced stability and structural problems.”" },
+  { k: "LESSON", d: "“I learnt to troubleshoot systematically, test changes and learn from failed designs.”" },
+  { k: "LINK", d: "“That problem-solving process strengthened my interest in engineering and is something I want to develop further through DASE.”" }
+];
+
+/* ---------- 7-day plan ---------- */
+const DAYS = [
+  {
+    id: "thu", date: "2026-07-23", name: "Thursday", title: "Build the Foundation", target: 90,
+    objective: "Build the foundation of my interview identity and stop relying on scripts.",
+    success: "I should be able to answer all three without memorising exact sentences while keeping the same core ideas.",
+    tasks: [
+      { id: "t1", title: "Task 1 — Personal fact sheet", mins: 30,
+        intro: "Create/review my one-page personal fact sheet. I must know bullet points for:",
+        items: ["SAFMC 2026","GE Aerospace Electrical Engineering Job Simulation","Basic Flight Mechanics course","NPCC — Staff Sergeant / cadet leadership","Class chairperson","SP AeroHub / SP visit","Singapore Airshow 2026","My aviation interest","My long-term career aspiration","My strongest personal qualities"] },
+      { id: "t2", title: "Task 2 — Master the structures", mins: 30,
+        intro: "Master the structure of:",
+        items: ["Tell me about yourself","Why Aerospace Electronics?","Why Singapore Polytechnic?"] },
+      { id: "t3", title: "Task 3 — Practise aloud", mins: 30,
+        intro: "For EACH of the three questions:",
+        items: ["Answer aloud without reading","Record myself","Listen back once","Identify one thing to improve","Answer again","Give the answer 3 times using slightly different wording"] }
+    ]
+  },
+  {
+    id: "fri", date: "2026-07-24", name: "Friday", title: "Master DASE", target: 90,
+    objective: "Know the Diploma in Aerospace Electronics better than the average applicant.",
+    success: "I can discuss DASE naturally instead of reciting facts from SP’s website.",
+    tasks: [
+      { id: "t1", title: "Task 1 — Research / review", mins: 40,
+        intro: "Research/review:",
+        items: ["What DASE teaches","Avionics","Electrical and electronic engineering foundations","Digital electronics","Aircraft electronic systems","Practical/hands-on learning","SP AeroHub","Industry opportunities","Internships / work-based learning","Possible careers","Further study pathways","How DASE differs from Aeronautical Engineering"] },
+      { id: "t2", title: "Task 2 — Practise", mins: 30,
+        intro: "Practise answering aloud:",
+        items: ["What do you know about the course?","What can graduates do in the industry?","Why Aerospace Electronics?","Why Aerospace Electronics instead of Aeronautical Engineering?","Which part of the course interests you most?","Why SP?"] },
+      { id: "t3", title: "Task 3 — In my own words", mins: 20,
+        intro: "Without reading anything:",
+        items: ["Explain DASE in my own words without reading a website","Explain why DASE fits ME specifically","Practise at least 3 follow-up questions"] }
+    ]
+  },
+  {
+    id: "sat", date: "2026-07-25", name: "Saturday", title: "Master My Stories", target: 90,
+    objective: "Build four powerful stories that can answer many behavioural questions. Use: SITUATION → PROBLEM → ACTION → RESULT → LESSON.",
+    success: "I can adapt the same story to different questions instead of memorising a separate story for every possible question.",
+    tasks: [
+      { id: "t1", title: "Story 1 — SAFMC", mins: 15,
+        intro: "Prepare (uses: engineering, failure, problem solving, teamwork, leadership, persistence):",
+        items: ["What the competition was","My role","What we designed/built","Problems encountered","Weight distribution / stability issues","Structural problems/failures","What I personally did","How we tested/improved","What I learnt"] },
+      { id: "t2", title: "Story 2 — GE Aerospace + Flight Mechanics", mins: 15,
+        intro: "Prepare (uses: initiative, technical curiosity, self-directed learning, genuine aerospace interest):",
+        items: ["Why I took them","What I learnt","Electrical systems","Power distribution","Circuit protection","Troubleshooting","Flight mechanics","Lift / drag / stability / control","How these strengthened my interest"] },
+      { id: "t3", title: "Story 3 — NPCC Staff Sergeant", mins: 15,
+        intro: "Prepare (uses: leadership, discipline, responsibility, teamwork):",
+        items: ["Leadership responsibilities","Discipline","Working with cadets","Communication","Responsibility","Example of leadership challenge","What I learnt"] },
+      { id: "t4", title: "Story 4 — Class Chairperson / MUN", mins: 15,
+        intro: "Prepare (uses: communication, confidence, teamwork, growth):",
+        items: ["Communication","Working with different personalities","Confidence","Responsibility","Speaking under pressure","Personal development"] },
+      { id: "t5", title: "Final 30 minutes — Random drill", mins: 30,
+        intro: "Answer random behavioural questions using these stories:",
+        items: ["Answered at least 5 random behavioural questions aloud","Reused the same stories across different questions"] }
+    ]
+  },
+  {
+    id: "sun", date: "2026-07-26", name: "Sunday", title: "Difficult Questions", target: 90,
+    objective: "Become comfortable answering questions that challenge my application.",
+    success: "I can stay calm when challenged and answer without becoming defensive.",
+    tasks: [
+      { id: "t1", title: "45 min — Build strong structures", mins: 45,
+        intro: "Develop strong answer structures for:",
+        items: ["Why should we offer you a place?","Why DASE if your ultimate goal is becoming a pilot?","What is your biggest weakness?","Why should we choose you over someone with better grades?","What happens if you do not become an RSAF pilot?","What happens if you do not get EAE?","Tell me about a failure.","How would you contribute to Singapore as an engineer?","Why engineering?","What makes you different from other applicants?"] },
+      { id: "t2", title: "45 min — Aloud with follow-ups", mins: 45,
+        intro: "Answer them aloud with unexpected follow-ups:",
+        items: ["Answered all 10 aloud without notes","Handled at least one follow-up per question","Stayed calm and non-defensive throughout"] }
+    ]
+  },
+  {
+    id: "mon", date: "2026-07-27", name: "Monday", title: "Full Mock Interview #1", target: 90,
+    objective: "Simulate the real interview.",
+    success: "I completed a serious, timed, no-notes mock and fixed my three weakest answers.",
+    tasks: [
+      { id: "t1", title: "Rules — set up properly", mins: 5,
+        intro: "Before starting:",
+        items: ["No notes","Sit properly","Wear reasonably appropriate clothing","Treat it seriously"] },
+      { id: "t2", title: "30 min — Mock interview", mins: 30,
+        intro: "Run the mock (use Mock Interview Mode → Standard):",
+        items: ["30-minute mock interview completed","Included follow-up questions","Included group-interview-style questions"] },
+      { id: "t3", title: "Review every answer", mins: 25,
+        intro: "Score each answer on CONTENT / SPECIFICITY / CONFIDENCE / CONCISENESS (in-app), then review:",
+        items: ["Did I answer the actual question?","Did I give evidence?","Did I explain what I learnt?","Did I connect it back to DASE/SP?","Did I ramble?","Did I sound memorised?","Did I use “um” excessively?","Did I maintain good eye contact?","Was my answer too long?"] },
+      { id: "t4", title: "Final 30 min — Fix the weakest three", mins: 30,
+        intro: "Identify and fix ONLY these weaknesses:",
+        items: ["Weakest answer #1 identified and re-practised","Weakest answer #2 identified and re-practised","Weakest answer #3 identified and re-practised"] }
+    ]
+  },
+  {
+    id: "tue", date: "2026-07-28", name: "Tuesday", title: "Pressure Test", target: 90,
+    objective: "Make this harder than the real interview.",
+    success: "I can stay composed, think before answering and respond naturally even when challenged.",
+    tasks: [
+      { id: "t1", title: "45 min — Pressure interview", mins: 45,
+        intro: "Run Mock Interview Mode → Pressure. Includes questions such as “What actually makes you different?”, “Why shouldn’t we give this place to someone who actually wants to become an engineer?”, “What exactly did YOU contribute to SAFMC?”, “Convince us in 30 seconds why you belong here.”",
+        items: ["Completed a full pressure mock","Did not get defensive at any point","Paused to think before answering hard questions"] },
+      { id: "t2", title: "25 min — Review weak answers", mins: 25,
+        intro: "Go back over what cracked under pressure:",
+        items: ["Reviewed every answer scored 3 or below","Rebuilt each weak answer with POINT → PROOF → LESSON → LINK"] },
+      { id: "t3", title: "20 min — Final clean run", mins: 20,
+        intro: "One clean, calm interview run:",
+        items: ["Completed a final clean run without notes","Kept every answer inside its target time"] }
+    ]
+  },
+  {
+    id: "wed", date: "2026-07-29", name: "Wednesday", title: "Interview Day", target: 45,
+    objective: "Stay sharp without cramming. Maximum preparation: 30–45 minutes.",
+    success: "Calm, early, prepared — and studying STOPPED by 3:30 PM.",
+    tasks: [
+      { id: "t1", title: "Review ONLY", mins: 40,
+        intro: "Light review — nothing new:",
+        items: ["Who am I?","Why DASE?","Why SP?","Why me?","What evidence proves my claims?","Four Golden Stories","POINT → PROOF → LESSON → LINK"] },
+      { id: "t2", title: "Do NOT", mins: 0,
+        intro: "Tick these to confirm you are NOT doing them:",
+        items: ["Cram scripts for hours","Rewrite answers","Panic-read everything","Compare myself with other candidates"] },
+      { id: "t3", title: "Before leaving", mins: 5,
+        intro: "Logistics:",
+        items: ["Appropriate outfit","Documents ready","Portfolio accessible","Phone charged","Know venue/location","Leave with enough travel buffer","Aim to arrive 30–45 minutes early"] }
+    ]
+  }
+];
+
+/* ---------- Question bank: 17 core questions ---------- */
+const QUESTIONS = [
+  {
+    id: "q1", tier: "red", q: "Tell me about yourself.",
+    tests: "Identity, communication, motivation and overall fit.",
+    points: ["Wilson Ang","Secondary 4, Pasir Ris Secondary School","Long-standing aviation interest","Interest beyond flying — aircraft systems","SAFMC","Flight Mechanics","GE Aerospace","NPCC / leadership","Why DASE","Future in aviation"],
+    structure: "Name & school → three themes (aviation passion, initiative, leadership) → evidence for each → why DASE → future.",
+    target: [90, 120],
+    model: "Good morning, and thank you for giving me this opportunity.\n\nMy name is Wilson Ang, and I’m currently a Secondary 4 student at Pasir Ris Secondary School.\n\nI would describe myself through three main areas: my passion for aviation, my willingness to take initiative in learning, and my experience in leadership and teamwork.\n\nAviation has been a strong interest of mine for many years. Over time, I realised that what interests me isn’t only flying aircraft, but also understanding the engineering and electronic systems that allow them to operate safely and effectively.\n\nTo explore that interest, I participated in the Singapore Amazing Flying Machine Competition as a team leader, where my team went through the process of designing, building and testing an aircraft. We faced challenges involving stability, weight distribution and structural problems, which taught me how important testing, troubleshooting and persistence are in engineering.\n\nI also completed a Basic Flight Mechanics course to understand more of the theory behind flight, and later completed the GE Aerospace Electrical Engineering Job Simulation, where I gained exposure to aircraft electrical systems, power distribution and troubleshooting.\n\nOutside aerospace, I’ve developed myself through leadership. I serve as a Staff Sergeant and cadet leader in NPCC and have also served as a class chairperson. These experiences have taught me discipline, responsibility, communication and teamwork.\n\nOverall, I see myself as someone who is curious, willing to learn and persistent when facing challenges. I’m applying for Aerospace Electronics at Singapore Polytechnic because I want to turn my interest in aviation into real technical knowledge and hands-on skills, particularly in avionics and aircraft systems.\n\nIn the long term, I hope to build a career in aviation, with the aspiration of becoming an RSAF pilot, while having a strong technical understanding of the aircraft and systems I may eventually work with.",
+    triggers: ["WILSON","SEC 4","AVIATION","NOT JUST FLYING — SYSTEMS","SAFMC","FLIGHT MECHANICS","GE AEROSPACE","NPCC / LEADERSHIP","DASE","FUTURE IN AVIATION"],
+    followUps: ["Which of those experiences shaped you the most, and why?","You mentioned a lot of activities — which one would you drop if you had to, and why?","What would your classmates say about you?"]
+  },
+  {
+    id: "q2", tier: "red", q: "What do you know about the Diploma in Aerospace Electronics?",
+    tests: "Research and genuine course understanding.",
+    points: ["Avionics/electronics","Electrical/electronic foundations","Digital electronics","Aircraft systems","Hands-on learning","AeroHub","Industry exposure","Career pathways"],
+    structure: "What the course teaches → how it teaches (hands-on, AeroHub) → where it leads (industry, further study) → why that matches me.",
+    target: [60, 90],
+    model: "DASE focuses on the electronics and electrical systems behind aircraft — avionics. It builds foundations in electrical and electronic engineering and digital electronics, then applies them to aircraft electronic and communication systems. What stands out to me is how hands-on it is: SP has facilities like AeroHub where students work on real aerospace equipment, and there is strong industry exposure through internships. Graduates can go into avionics and aircraft maintenance roles or continue to further studies. That mix of electronics depth and direct aircraft application is exactly what I’m looking for.",
+    followUps: ["Which module are you most looking forward to?","What do you expect to find hardest in the course?","How is DASE different from Aeronautical Engineering?"]
+  },
+  {
+    id: "q3", tier: "red", q: "Why Aerospace Electronics?",
+    tests: "Whether I specifically want THIS diploma.",
+    points: ["Interest in systems behind aircraft","Avionics/electronics","Troubleshooting","GE Aerospace experience","Flight mechanics","SAFMC","Technical understanding"],
+    structure: "POINT: I want to understand the systems behind aircraft → PROOF: SAFMC, GE Aerospace, Flight Mechanics → LESSON: I enjoy troubleshooting and electronics → LINK: DASE turns that into real skill.",
+    target: [60, 90],
+    model: "My interest in aviation goes beyond aircraft themselves — what fascinates me is the systems that make them work. Through SAFMC I experienced designing, building and debugging an aircraft; through the GE Aerospace job simulation I explored electrical systems, power distribution and troubleshooting; and the Basic Flight Mechanics course gave me the theory side. Each of those pushed me toward the electronics behind flight rather than just the airframe. Aerospace Electronics is the course that takes exactly that interest — avionics, aircraft electrical systems, troubleshooting — and develops it into real technical capability.",
+    followUps: ["What evidence proves you care about electronics, not just aircraft?","If DASE had no aircraft content, would you still enjoy the electronics?"]
+  },
+  {
+    id: "q4", tier: "red", q: "Why Singapore Polytechnic?",
+    tests: "Why SP specifically rather than any aerospace course.",
+    points: ["SP reputation/learning environment","AeroHub visit","Hands-on facilities","Course structure","Industry relevance","I could picture myself studying there"],
+    structure: "What I saw at SP (AeroHub, facilities) → what convinced me (hands-on structure, industry links) → personal fit (“I could picture myself studying there”).",
+    target: [60, 90],
+    model: "I visited SP and saw AeroHub for myself — the hands-on facilities made the course feel real rather than theoretical. SP has a strong reputation and learning environment, and the way DASE is structured, with practical work and industry-relevant training, matches the way I learn best: by building and testing. After the visit I could genuinely picture myself studying there, which isn’t something I could say about every campus.",
+    followUps: ["Why SP instead of another polytechnic offering aerospace?","What specifically did you see at AeroHub that stuck with you?"]
+  },
+  {
+    id: "q5", tier: "red", q: "Why should we offer you a place?",
+    tests: "Self-belief backed by concrete evidence.",
+    points: ["Basic Flight Mechanics","SAFMC","GE Aerospace","Airshow","AeroHub","NPCC leadership","Class chairperson"],
+    structure: "Core idea: “I’ve demonstrated my interest through action, not words.” Then stack the evidence, then the core message.",
+    target: [60, 90],
+    model: "I believe you should offer me a place because I’ve tried to demonstrate my interest in aerospace through action rather than simply saying that I’m passionate about it. I took the Basic Flight Mechanics course, led a team in SAFMC through real design failures, completed the GE Aerospace electrical engineering simulation, visited the Singapore Airshow and SP’s AeroHub, and built leadership experience through NPCC and as class chairperson. I’m not choosing aerospace simply because aircraft look interesting — I have actively explored the field, experienced its challenges and continued pursuing it.",
+    followUps: ["Everyone applying can list activities. What makes yours different?","Which single experience best proves you belong here?"]
+  },
+  {
+    id: "q6", tier: "red", q: "What engineering activities or courses have you participated in?",
+    tests: "Depth of real engineering exposure — what you DID, not what you attended.",
+    points: ["SAFMC","Basic Flight Mechanics","GE Aerospace Electrical Engineering Job Simulation"],
+    structure: "For each: what I DID → what went wrong → what I learnt → why it mattered.",
+    target: [60, 90],
+    model: "Three main ones. In SAFMC I led a team designing, building and testing an aircraft — we hit stability, weight-distribution and structural problems, and I learnt to test and iterate instead of guessing. The Basic Flight Mechanics course gave me the theory behind lift, drag, stability and control. And in the GE Aerospace Electrical Engineering Job Simulation I worked through aircraft electrical systems, power distribution, circuit protection and troubleshooting tasks. Together they showed me that the part of engineering I enjoy most is diagnosing problems in systems — which is why I’m applying for Aerospace Electronics.",
+    followUps: ["Pick one problem from SAFMC and walk me through exactly how you solved it.","What did the GE simulation teach you that school didn’t?"]
+  },
+  {
+    id: "q7", tier: "red", q: "How would you contribute to Singapore as an engineer?",
+    tests: "Maturity, purpose beyond yourself, understanding of the industry’s role.",
+    points: ["Singapore aerospace capability","Safety","Reliability","Technology","Aviation connectivity","Defence if appropriate","Continuous learning","Contribution beyond getting a qualification"],
+    structure: "Singapore’s aerospace role → what engineers protect (safety, reliability) → my contribution (skills + continuous learning) → beyond the qualification.",
+    target: [60, 90],
+    model: "Singapore is a major aviation hub, and that position depends on engineers who keep aircraft safe and reliable. As an aerospace electronics engineer I’d contribute directly to that — maintaining and improving the avionics systems that flight safety depends on, and helping Singapore stay at the front of aerospace technology. If my path leads toward the RSAF, that becomes a contribution to Singapore’s defence as well. Either way, I see it as more than getting a qualification: it’s committing to continuous learning in a field Singapore genuinely depends on.",
+    followUps: ["Which part of Singapore’s aerospace industry do you think needs young engineers most?","What recent development in aerospace interests you?"]
+  },
+  {
+    id: "q8", tier: "orange", q: "What can DASE graduates do in the industry?",
+    tests: "Whether you researched outcomes, not just the brochure.",
+    points: ["Avionics","Aircraft maintenance","Electrical/electronic roles","Unmanned aircraft systems","Aerospace industry","Further studies"],
+    structure: "Group the pathways: avionics & maintenance → broader electronics roles → UAS → further study → which one attracts me.",
+    target: [45, 75],
+    model: "Graduates can work in avionics and aircraft maintenance — testing, repairing and certifying the electronic systems on aircraft — or in broader electrical and electronic engineering roles across the aerospace industry. There are growing opportunities in unmanned aircraft systems too. Others continue to university engineering degrees. The avionics and systems-troubleshooting path is the one that attracts me most.",
+    followUps: ["Which of those paths do you see yourself taking?","What does an avionics technician actually do day to day?"]
+  },
+  {
+    id: "q9", tier: "orange", q: "Why DASE if you want to become an RSAF pilot?",
+    tests: "Whether DASE is a genuine choice or just a backup route.",
+    points: ["Pilot is a long-term aspiration, but my interest goes beyond flying","Avionics","Aircraft electronics","Electrical systems","How aircraft systems work together","Troubleshooting","DASE is NOT merely a backup route","Valuable technical foundation and real career pathways in its own right"],
+    structure: "Acknowledge the aspiration → separate it from the interest (systems, not just flying) → DASE has value in its own right → a pilot who understands the aircraft’s systems is stronger, and if the pilot route closes, this is still my field.",
+    target: [60, 90],
+    model: "Becoming a pilot is a long-term aspiration, but my interest in aviation goes beyond flying. What I genuinely want to understand is avionics, aircraft electronics, electrical systems, how all the systems work together, and how to troubleshoot them — that’s exactly what DASE teaches. So DASE is not a backup route for me. It provides a valuable technical foundation and meaningful aerospace career pathways in its own right. If I do become a pilot, I’ll be one who deeply understands the aircraft I fly; and if I don’t, aerospace electronics is still the field I want to build my career in.",
+    followUps: ["So if the RSAF rejects you, you’d be happy as an engineer for 40 years?","Why shouldn’t we give this place to someone whose first choice is engineering?"]
+  },
+  {
+    id: "q10", tier: "orange", q: "Tell us about a challenge or failure.",
+    tests: "Honesty, resilience, and whether you actually learn from setbacks.",
+    points: ["Primary story: SAFMC","Situation → Problem → Action → Result → Lesson"],
+    structure: "SAFMC story: Situation (competition, my role) → Problem (stability, weight distribution, structural failure) → Action (what I personally did) → Result → Lesson (systematic testing, persistence).",
+    target: [60, 90],
+    model: "During SAFMC, my team’s aircraft ran into serious stability and structural problems — designs we were confident in failed in testing. As team leader I had to keep the team from just patching symptoms: we broke the problem down, adjusted weight distribution, reinforced the structure, and tested one change at a time to see what actually helped. The aircraft improved with each iteration, but more importantly I learnt that failure in engineering is information — the fix comes from systematic testing, not luck. That mindset is exactly what I want to keep developing in DASE.",
+    followUps: ["What would you do differently if you did SAFMC again?","Tell me about a failure that was entirely your own fault."]
+  },
+  {
+    id: "q11", tier: "orange", q: "What are your strengths?",
+    tests: "Self-awareness — and whether you can PROVE claims instead of listing adjectives.",
+    points: ["Curiosity","Persistence","Leadership","Willingness to learn","Never just list adjectives — PROVE each strength"],
+    structure: "Pick 2–3 strengths, each as POINT → PROOF: curiosity (self-signed courses), persistence (SAFMC failures), leadership (NPCC, chairperson).",
+    target: [45, 90],
+    model: "I’d pick three, each with evidence. Curiosity — I signed up for the Flight Mechanics course and the GE Aerospace simulation on my own initiative, because I wanted to understand what school didn’t cover. Persistence — in SAFMC our aircraft kept failing, and I kept the team testing and iterating instead of giving up. And leadership — as an NPCC Staff Sergeant and class chairperson I’ve learnt to take responsibility for people, not just tasks.",
+    followUps: ["Which of those strengths is weakest under pressure?","Give me an example where your persistence actually cost you."]
+  },
+  {
+    id: "q12", tier: "orange", q: "What is your weakness?",
+    tests: "Genuine self-awareness — not a fake “I work too hard” answer.",
+    points: ["Be genuine","Not a fake weakness","Explain what I am doing to improve","Show self-awareness"],
+    structure: "Name a real weakness → concrete example of it costing you → what you are actively doing about it → evidence of progress.",
+    target: [45, 75],
+    model: "(Write YOUR OWN genuine weakness in My Notes — this must be real.) A strong shape: “A real weakness of mine is X. For example, [specific moment it hurt me]. I’ve been working on it by [concrete action], and I’ve seen progress — [small evidence]. I know it’s still something to manage.” Avoid “I’m a perfectionist / I work too hard.” Good honest options if true: speaking up too little in unfamiliar groups; taking on too much personally instead of delegating; being impatient with theory before seeing the application.",
+    followUps: ["How would your teammates describe your biggest weakness?","Has that weakness ever affected your team in NPCC or SAFMC?"]
+  },
+  {
+    id: "q13", tier: "orange", q: "Tell us about your leadership experience.",
+    tests: "Whether your leadership is real responsibility or just a title.",
+    points: ["NPCC Staff Sergeant","Cadet leadership","Class chairperson","SAFMC team leadership"],
+    structure: "Pick 1–2 roles → concrete responsibility → a specific challenge → what it taught you about leading people.",
+    target: [60, 90],
+    model: "My main leadership roles are NPCC Staff Sergeant and class chairperson, plus leading my SAFMC team. In NPCC I’m responsible for training and discipline of cadets — which taught me that leadership is mostly communication and consistency, not giving orders. In SAFMC, leading meant keeping the team focused when our aircraft kept failing — deciding what to test next and keeping morale up. Each role taught a different side: NPCC taught discipline and responsibility, chairperson taught working with many personalities, SAFMC taught leading through a technical problem.",
+    followUps: ["Tell me about a time your team disagreed with your decision.","What kind of leader are you NOT?"]
+  },
+  {
+    id: "q14", tier: "yellow", q: "Where do you see yourself in 5–10 years?",
+    tests: "Whether you have direction — and whether DASE fits it.",
+    points: ["DASE → technical foundation","Further development / industry","Aviation career","Possible RSAF pathway"],
+    structure: "DASE (technical foundation) → further development or industry experience → an aviation career → RSAF as a possible pathway, with the technical base either way.",
+    target: [45, 75],
+    model: "In the next few years, DASE gives me the technical foundation — avionics, electronics, real hands-on skill. From there I’d either build industry experience in aerospace or continue further studies in engineering. In 5–10 years I see myself in an aviation career in Singapore — ideally pursuing the RSAF pilot pathway, but whichever direction it goes, I want to be someone with genuine technical understanding of the aircraft and systems I work with.",
+    followUps: ["What’s your plan if the RSAF pathway doesn’t work out?","Degree or industry after DASE — which and why?"]
+  },
+  {
+    id: "q15", tier: "yellow", q: "Why should we choose you over another applicant?",
+    tests: "Confidence without arrogance — can you sell yourself without attacking others?",
+    points: ["Do NOT compare myself to unknown candidates","“I cannot speak for other applicants, but I can show what I bring”","Sustained interest","Initiative","Technical exploration","Leadership","Persistence"],
+    structure: "Refuse the comparison gracefully → pivot to what I bring → evidence stack → close on sustained commitment.",
+    target: [45, 75],
+    model: "I can’t speak for other applicants, but I can show what I bring. My interest in aerospace isn’t recent or theoretical — I’ve sustained it through SAFMC, a flight mechanics course, the GE Aerospace simulation, the Airshow and visiting AeroHub, all on my own initiative. On top of that I bring leadership from NPCC and as class chairperson, and persistence proven by working through real design failures. What I offer is passion backed by action, and I’d keep bringing that same initiative into DASE.",
+    followUps: ["What if the other applicant has better grades?","What would you add to a project team of DASE students?"]
+  },
+  {
+    id: "q16", tier: "yellow", q: "What if you do not get into EAE?",
+    tests: "Resilience — does the goal survive a closed door?",
+    points: ["Resilience","Continue working toward aerospace","Improve academically","Seek other routes","Goal does not disappear because one route closes"],
+    structure: "Accept it calmly → the goal stays → concrete plan B (grades, JAE, other routes) → the setback becomes fuel.",
+    target: [45, 75],
+    model: "I’d be disappointed, but the goal wouldn’t disappear because one route closed. I’d focus on my O-Levels to qualify for DASE through the regular JAE route, and keep building my aerospace foundation in the meantime — the same way I’ve been doing with courses and competitions. EAE is the route I want, but it’s the destination I’m committed to, not just this one door.",
+    followUps: ["And if JAE doesn’t work out either?","Doesn’t needing EAE suggest you doubt your grades?"]
+  },
+  {
+    id: "q17", tier: "yellow", q: "Do you have any questions for us?",
+    tests: "Genuine curiosity — never ask something the website answers.",
+    points: ["“What qualities do you notice in students who tend to do particularly well in DASE?”","“How early do students get opportunities to work hands-on with avionics or aircraft-related systems?”","“For students especially interested in avionics, what opportunities outside the normal curriculum would you recommend?”"],
+    structure: "Ask ONE or TWO of the prepared questions. Listen properly to the answer — they notice.",
+    target: [30, 60],
+    model: "Prepared questions:\n\n1. “What qualities do you notice in students who tend to do particularly well in DASE?”\n\n2. “How early do students get opportunities to work hands-on with avionics or aircraft-related systems?”\n\n3. “For students who are especially interested in avionics, what opportunities outside the normal curriculum would you recommend taking advantage of?”\n\nDo NOT ask anything easily answered by the website (fees, modules list, cut-off points).",
+    followUps: []
+  }
+];
+
+const TIER_LABEL = { red: "MUST MASTER", orange: "LIKELY", yellow: "PREPARE" };
+
+const PRESSURE_QUESTIONS = [
+  "Everyone applying says they’re passionate about aerospace. What actually makes you different?",
+  "Why should we give you a place?",
+  "You keep mentioning becoming a pilot. Why shouldn’t we give this engineering place to someone who actually wants to become an engineer?",
+  "What exactly did YOU contribute to SAFMC instead of your teammates?",
+  "Why SP instead of another polytechnic?",
+  "Why not Aeronautical Engineering?",
+  "What if you fail to become a pilot?",
+  "What is your biggest weakness?",
+  "Why should we choose you if another applicant has stronger grades?",
+  "What evidence proves you genuinely care about electronics rather than just aircraft?",
+  "Tell me about something you failed at.",
+  "What if you realise DASE is harder than expected?",
+  "Convince us in 30 seconds that you belong in DASE.",
+  "What would you contribute to your classmates?",
+  "What would your teammates say is difficult about working with you?",
+  "What recent development in aerospace interests you?",
+  "Why should Singapore invest a place in you?"
+];
+
+const GENERIC_FOLLOWUPS = [
+  "Can you give me a specific example of that?",
+  "Why does that matter for this course?",
+  "What did YOU personally do in that situation?",
+  "And what did you learn from it?",
+  "How does that connect to Aerospace Electronics?",
+  "If that’s true, what evidence proves it?",
+  "Keep it to one sentence — what’s the core of your answer?"
+];
+
+/* ---------- Golden Stories ---------- */
+const STORIES = [
+  { id: "safmc", title: "SAFMC", icon: "plane",
+    tags: ["Engineering","Failure","Problem-solving","Teamwork","Leadership","Persistence"],
+    answers: ["Tell me about a failure","Tell me about a challenge","Tell me about teamwork","Tell me about leadership","Describe your engineering experience","How do you solve problems?"] },
+  { id: "ge", title: "GE Aerospace + Flight Mechanics", icon: "zap",
+    tags: ["Initiative","Technical curiosity","Avionics","Electrical systems","Self-directed learning"],
+    answers: ["Show initiative","Prove technical curiosity","Prove genuine aerospace interest","Describe self-directed learning"] },
+  { id: "npcc", title: "NPCC Staff Sergeant", icon: "shield",
+    tags: ["Leadership","Discipline","Responsibility","Communication","Teamwork"],
+    answers: ["Tell me about leadership","Show discipline","Show responsibility","Tell me about teamwork"] },
+  { id: "chair", title: "Class Chairperson / MUN", icon: "mic",
+    tags: ["Communication","Confidence","Working with people","Speaking under pressure","Personal growth"],
+    answers: ["Show communication skills","Show confidence","Tell me about teamwork","Show personal growth"] }
+];
+const STORY_FIELDS = [
+  { id: "situation", label: "Situation" },
+  { id: "problem", label: "Problem" },
+  { id: "action", label: "My Action (specifically what I did)" },
+  { id: "result", label: "Result" },
+  { id: "lesson", label: "Lesson" }
+];
+
+/* ---------- Fact sheet ---------- */
+const FACTS = [
+  { h: "SAFMC 2026", items: ["Team leadership","Aircraft design/build/test","Problem-solving","Stability","Weight distribution","Structural issues","Iteration"] },
+  { h: "Basic Flight Mechanics", items: ["Lift","Drag","Stability","Aircraft control","Flight theory"] },
+  { h: "GE Aerospace Electrical Engineering Job Simulation", items: ["Aircraft electrical systems","Power distribution","Circuit protection","Troubleshooting"] },
+  { h: "NPCC", items: ["Staff Sergeant","Cadet leadership","Discipline","Responsibility","Teamwork"] },
+  { h: "Class Chairperson", items: ["Leadership","Communication","Responsibility"] },
+  { h: "Other", items: ["Singapore Airshow 2026","SP AeroHub / SP visit","Strong long-term aviation interest"] }
+];
+
+const GROUP_RULES = [
+  "Listen when others speak",
+  "Do not interrupt",
+  "Do not dominate",
+  "Maintain engaged body language",
+  "Do not panic if someone gives a strong answer first",
+  "Do not copy another applicant’s answer",
+  "Build on a point only if I can add something original",
+  "Speak clearly and confidently",
+  "Make eye contact with the panel",
+  "Treat other applicants respectfully",
+  "Remember: they are assessing how I interact with people too"
+];
+
+const RANKS = [
+  { min: 0, max: 20, name: "GROUND SCHOOL" },
+  { min: 21, max: 40, name: "SYSTEMS CHECK" },
+  { min: 41, max: 60, name: "TAXI READY" },
+  { min: 61, max: 80, name: "CLEARED FOR TAKEOFF" },
+  { min: 81, max: 95, name: "MISSION READY" },
+  { min: 96, max: 100, name: "INTERVIEW READY" }
+];
+
+const ACHIEVEMENTS = [
+  { id: "firstFlight", name: "FIRST FLIGHT", desc: "Complete first practice session." },
+  { id: "noScript", name: "NO SCRIPT", desc: "Answer Tell Me About Yourself without notes." },
+  { id: "avionicsReady", name: "AVIONICS READY", desc: "Master all DASE course questions." },
+  { id: "pressureTested", name: "PRESSURE TESTED", desc: "Complete a pressure mock." },
+  { id: "fullSystems", name: "FULL SYSTEMS CHECK", desc: "Complete all 4 Golden Stories." },
+  { id: "missionReady", name: "MISSION READY", desc: "Reach 90% readiness." }
+];
+const DASE_QIDS = ["q2", "q3", "q8"]; // "all DASE course questions"
+
+const SCORE_KEYS = [
+  { id: "content", label: "Content" },
+  { id: "specificity", label: "Specificity" },
+  { id: "confidence", label: "Confidence" },
+  { id: "conciseness", label: "Conciseness" }
+];
+
+/* ================= STATE ================= */
+
+const DEFAULT_STATE = () => ({
+  checks: {},            // any checkbox id -> true
+  dayNotes: {},          // dayId -> text
+  daysCompleted: {},     // dayId -> true
+  q: {},                 // qid -> {notes, practice, confidence, withNotes, withoutNotes, followups, mastered}
+  stories: {},           // storyId -> {situation, problem, action, result, lesson, ready}
+  mocks: [],             // [{ts, mode, results:[{q, scores:{}, well, improve, skipped}]}]
+  reflections: {},       // date -> {improved, struggle, offguard, tomorrow}
+  activity: {},          // date -> true (for streak)
+  settings: { hideModels: false }
+});
+
+let S;
+function loadState() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    S = raw ? Object.assign(DEFAULT_STATE(), JSON.parse(raw)) : DEFAULT_STATE();
+    S.settings = Object.assign({ hideModels: false }, S.settings);
+  } catch (e) { S = DEFAULT_STATE(); }
+}
+let saveT = null;
+function save() {
+  clearTimeout(saveT);
+  saveT = setTimeout(() => {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {}
+  }, 120);
+}
+function qState(id) {
+  if (!S.q[id]) S.q[id] = { notes: "", practice: 0, confidence: 0, withNotes: false, withoutNotes: false, followups: false, mastered: false };
+  return S.q[id];
+}
+function storyState(id) {
+  if (!S.stories[id]) S.stories[id] = { situation: "", problem: "", action: "", result: "", lesson: "", ready: false };
+  return S.stories[id];
+}
+
+/* ================= TIME / SGT ================= */
+
+const sgtDateFmt = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Singapore", year: "numeric", month: "2-digit", day: "2-digit" });
+function sgtToday() { return sgtDateFmt.format(new Date()); } // YYYY-MM-DD
+function logActivity() {
+  const d = sgtToday();
+  if (!S.activity[d]) { S.activity[d] = true; save(); }
+}
+function streak() {
+  let n = 0;
+  let d = new Date();
+  // walk back day by day in SGT
+  for (let i = 0; i < 400; i++) {
+    const key = sgtDateFmt.format(d);
+    if (S.activity[key]) { n++; d = new Date(d.getTime() - 86400000); }
+    else if (i === 0) { d = new Date(d.getTime() - 86400000); } // today may not have activity yet — check yesterday
+    else break;
+  }
+  return n;
+}
+function todaysDay() {
+  const t = sgtToday();
+  return DAYS.find(d => d.date === t) || null;
+}
+function isInterviewDay() { return sgtToday() === "2026-07-29"; }
+function pastStopStudy() { return Date.now() >= STOP_STUDY_TS && Date.now() < INTERVIEW_TS + 6 * 3600000; }
+function missionArrived() { return Date.now() >= INTERVIEW_TS; }
+
+/* ================= PROGRESS ================= */
+
+function dayItemIds(day) {
+  const ids = [];
+  day.tasks.forEach(t => t.items.forEach((_, i) => ids.push(`day.${day.id}.${t.id}.${i}`)));
+  return ids;
+}
+function dayProgress(day) {
+  const ids = dayItemIds(day);
+  const done = ids.filter(id => S.checks[id]).length;
+  return { done, total: ids.length, pct: ids.length ? Math.round(done / ids.length * 100) : 0 };
+}
+function counts() {
+  const daysDone = DAYS.filter(d => S.daysCompleted[d.id]).length;
+  const mastered = QUESTIONS.filter(q => qState(q.id).mastered).length;
+  const storiesReady = STORIES.filter(st => storyState(st.id).ready).length;
+  const mocksDone = S.mocks.length;
+  const practiceTotal = QUESTIONS.reduce((a, q) => a + qState(q.id).practice, 0);
+  return { daysDone, mastered, storiesReady, mocksDone, practiceTotal };
+}
+function readiness() {
+  const c = counts();
+  const mockConf = S.mocks.length
+    ? S.mocks.reduce((a, m) => a + mockAvg(m), 0) / S.mocks.length / 5
+    : 0;
+  const pct =
+    (c.daysDone / 7) * 25 +
+    (c.mastered / 17) * 30 +
+    (c.storiesReady / 4) * 20 +
+    Math.min(c.mocksDone, 2) / 2 * 10 + mockConf * 5 +
+    Math.min(c.practiceTotal, 51) / 51 * 10;
+  return Math.min(100, Math.round(pct));
+}
+function mockAvg(m) {
+  const scored = m.results.filter(r => !r.skipped && r.scores);
+  if (!scored.length) return 0;
+  let s = 0, n = 0;
+  scored.forEach(r => SCORE_KEYS.forEach(k => { if (r.scores[k.id]) { s += r.scores[k.id]; n++; } }));
+  return n ? s / n : 0;
+}
+function rankFor(pct) {
+  return (RANKS.find(r => pct >= r.min && pct <= r.max) || RANKS[0]).name;
+}
+function achievementUnlocked(id) {
+  const c = counts();
+  switch (id) {
+    case "firstFlight": return c.practiceTotal >= 1 || c.mocksDone >= 1;
+    case "noScript": return !!qState("q1").withoutNotes;
+    case "avionicsReady": return DASE_QIDS.every(q => qState(q).mastered);
+    case "pressureTested": return S.mocks.some(m => m.mode === "pressure");
+    case "fullSystems": return c.storiesReady === 4;
+    case "missionReady": return readiness() >= 90;
+    default: return false;
+  }
+}
+
+/* ================= HELPERS ================= */
+
+const $ = sel => document.querySelector(sel);
+function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+function toast(msg) {
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove("show"), 2200);
+}
+function confirmModal(title, body, okLabel, onOk, danger) {
+  const back = $("#modal-back"), m = $("#modal");
+  m.innerHTML = `<h4>${esc(title)}</h4><p>${esc(body)}</p>
+    <div class="row">
+      <button class="btn ghost" id="m-cancel">Cancel</button>
+      <button class="btn ${danger ? "primary" : ""}" id="m-ok">${esc(okLabel)}</button>
+    </div>`;
+  back.classList.add("open");
+  $("#m-cancel").onclick = () => back.classList.remove("open");
+  $("#m-ok").onclick = () => { back.classList.remove("open"); onOk(); };
+  back.onclick = e => { if (e.target === back) back.classList.remove("open"); };
+}
+
+/* svg icons */
+const ICONS = {
+  home: '<svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>',
+  plan: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 9h18"/></svg>',
+  qbank: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.2 9.2a2.8 2.8 0 1 1 3.9 2.6c-.8.4-1.1 1-1.1 1.9"/><circle cx="12" cy="17" r=".4"/></svg>',
+  stories: '<svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2 2 2 0 0 0 2 2h13"/></svg>',
+  mock: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
+  fact: '<svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 13h6M9 17h6"/></svg>',
+  group: '<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 15.2c2.2.3 3.7 1.9 4.1 4.3"/></svg>',
+  day: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg>',
+  notes: '<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+  settings: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+  more: '<svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>',
+  chev: '<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>',
+  tick: '<svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>',
+  lock: '<svg viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  medal: '<svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="m8.5 14-2 7 5.5-3 5.5 3-2-7"/></svg>',
+  plane: '<svg viewBox="0 0 24 24"><path d="M10.5 13.5 3 11l1.5-1.5L11 10l4.5-4.5a1.8 1.8 0 0 1 2.5 2.5L13.5 12.5l.5 6.5L12.5 20.5l-2-7z"/></svg>'
+};
+
+/* checkbox binding: any element .check[data-key] toggles S.checks[key] */
+function checkHtml(key, label, extraClass) {
+  const on = !!S.checks[key];
+  return `<div class="check ${on ? "on" : ""} ${extraClass || ""}" data-key="${esc(key)}" role="checkbox" aria-checked="${on}" tabindex="0">
+    <div class="box">${ICONS.tick}</div><span class="lbl">${esc(label)}</span>
+  </div>`;
+}
+document.addEventListener("click", e => {
+  const c = e.target.closest(".check[data-key]");
+  if (!c) return;
+  const key = c.dataset.key;
+  S.checks[key] = !S.checks[key];
+  if (!S.checks[key]) delete S.checks[key];
+  c.classList.toggle("on", !!S.checks[key]);
+  c.setAttribute("aria-checked", !!S.checks[key]);
+  logActivity();
+  save();
+  if (c.dataset.rerender) render();
+  else refreshDynamicBits();
+});
+document.addEventListener("keydown", e => {
+  if ((e.key === " " || e.key === "Enter") && e.target.classList && e.target.classList.contains("check")) {
+    e.preventDefault(); e.target.click();
+  }
+});
+
+/* refresh progress bars / counters on current page without full re-render */
+function refreshDynamicBits() {
+  document.querySelectorAll("[data-dayprog]").forEach(el => {
+    const day = DAYS.find(d => d.id === el.dataset.dayprog);
+    if (!day) return;
+    const p = dayProgress(day);
+    const bar = el.querySelector(".progressbar > div");
+    if (bar) bar.style.width = p.pct + "%";
+    const lbl = el.querySelector("[data-dayprog-label]");
+    if (lbl) lbl.textContent = `${p.done}/${p.total} tasks`;
+  });
+}
+
+/* ================= ROUTER / NAV ================= */
+
+const VIEWS = [
+  { id: "dashboard", label: "Dashboard", short: "Home", icon: "home" },
+  { id: "plan", label: "7-Day Plan", short: "Plan", icon: "plan" },
+  { id: "questions", label: "Question Bank", short: "Questions", icon: "qbank" },
+  { id: "stories", label: "Golden Stories", short: "Stories", icon: "stories" },
+  { id: "mock", label: "Mock Interview", short: "Mock", icon: "mock" },
+  { id: "factsheet", label: "Fact Sheet", short: "Facts", icon: "fact" },
+  { id: "group", label: "Group Interview", short: "Group", icon: "group" },
+  { id: "interviewday", label: "Interview Day", short: "Day", icon: "day" },
+  { id: "notes", label: "Notes & Reflection", short: "Notes", icon: "notes" },
+  { id: "settings", label: "Settings", short: "Settings", icon: "settings" }
+];
+const BOTTOM_IDS = ["dashboard", "plan", "questions", "mock"];
+const SHEET_IDS = ["stories", "factsheet", "group", "interviewday", "notes", "settings"];
+
+function currentView() {
+  const h = location.hash.replace(/^#\/?/, "") || "dashboard";
+  return VIEWS.some(v => v.id === h) ? h : "dashboard";
+}
+function nav(id) { location.hash = "/" + id; }
+window.addEventListener("hashchange", () => { closeSheet(); render(); window.scrollTo(0, 0); });
+
+function renderNav() {
+  const cur = currentView();
+  $("#sidebar").innerHTML = `
+    <div class="brand"><h1>EAE <span class="red">MISSION</span> CONTROL</h1><p>SP AEROSPACE ELECTRONICS</p></div>
+    ${VIEWS.map(v => `<button class="navbtn ${cur === v.id ? "active" : ""}" onclick="nav('${v.id}')">${ICONS[v.icon]}${v.label}</button>`).join("")}
+    <div class="sb-count">READINESS <b>${readiness()}%</b> · ${rankFor(readiness())}</div>`;
+  const inSheet = SHEET_IDS.includes(cur);
+  $("#bottomnav").innerHTML =
+    BOTTOM_IDS.map(id => {
+      const v = VIEWS.find(x => x.id === id);
+      return `<button class="${cur === id ? "active" : ""}" onclick="nav('${id}')">${ICONS[v.icon]}<span>${v.short}</span></button>`;
+    }).join("") +
+    `<button class="${inSheet ? "active" : ""}" onclick="openSheet()">${ICONS.more}<span>More</span></button>`;
+}
+function openSheet() {
+  $("#sheet").innerHTML = `<div class="grab"></div>` +
+    SHEET_IDS.map(id => {
+      const v = VIEWS.find(x => x.id === id);
+      return `<button class="navbtn" style="font-size:.95rem;padding:13px 12px" onclick="nav('${v.id}')">${ICONS[v.icon]}${v.label}</button>`;
+    }).join("");
+  $("#sheet").classList.add("open");
+  $("#sheet-back").classList.add("open");
+}
+function closeSheet() {
+  $("#sheet").classList.remove("open");
+  $("#sheet-back").classList.remove("open");
+}
+document.addEventListener("DOMContentLoaded", () => {
+  $("#sheet-back").addEventListener("click", closeSheet);
+});
+
+/* ================= VIEWS ================= */
+
+function render() {
+  renderNav();
+  const v = currentView();
+  const fn = {
+    dashboard: viewDashboard, plan: viewPlan, questions: viewQuestions,
+    stories: viewStories, mock: viewMockHome, factsheet: viewFactSheet,
+    group: viewGroup, interviewday: viewInterviewDay, notes: viewNotes, settings: viewSettings
+  }[v];
+  $("#main").innerHTML = fn();
+  afterRender(v);
+}
+
+/* ---------- dashboard ---------- */
+function frameworkCardHtml(compact) {
+  return `<div class="card">
+    <h3>Core Answer Framework</h3>
+    <div class="framework-steps">
+      ${FRAMEWORK.map((f, i) => `
+        ${i ? '<div class="farrow">↓</div>' : ""}
+        <div class="fstep"><b>${f.k}</b><p>${esc(f.d)}</p></div>`).join("")}
+    </div>
+    ${compact ? "" : `
+    <details style="margin-top:14px"><summary style="cursor:pointer;font-size:.8rem;color:var(--cyan);font-weight:600">Show worked example</summary>
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+        ${FRAMEWORK_EXAMPLE.map(f => `<div class="fstep"><b>${f.k}</b><p>${esc(f.d)}</p></div>`).join("")}
+      </div>
+    </details>`}
+  </div>`;
+}
+
+function viewDashboard() {
+  const pct = readiness();
+  const c = counts();
+  const day = todaysDay();
+  const r = 52, circ = 2 * Math.PI * r;
+  const missionCard = interviewDayCardOrTodayCard(day);
+  return `
+  <div class="hero">
+    <div class="kicker">Interview Preparation</div>
+    <h2>EAE MISSION CONTROL</h2>
+    <div class="sub">SP Diploma in Aerospace Electronics</div>
+    <div class="when">Wednesday, 29 July 2026 — 4:00 PM SGT</div>
+    ${missionArrived()
+      ? `<div class="mission-time">MISSION TIME — YOU’RE READY.</div>`
+      : `<div class="countdown" id="countdown">
+          ${["DAYS","HOURS","MINUTES","SECONDS"].map(u => `<div class="unit"><div class="n" data-cd="${u}">–</div><div class="u">${u}</div></div>`).join("")}
+        </div>`}
+  </div>
+
+  <div class="card">
+    <h3>Overall Interview Readiness</h3>
+    <div class="readiness">
+      <div class="ring">
+        <svg width="118" height="118" viewBox="0 0 118 118">
+          <circle class="track" cx="59" cy="59" r="${r}"/>
+          <circle class="fill" cx="59" cy="59" r="${r}" stroke-dasharray="${circ}" stroke-dashoffset="${circ * (1 - pct / 100)}"/>
+        </svg>
+        <div class="ring-label"><div class="pct">${pct}%</div><div class="cap">READY</div></div>
+      </div>
+      <div style="flex:1;min-width:200px">
+        <div class="rank-badge">${rankFor(pct)}</div>
+        <div class="hint" style="margin-top:6px">Readiness combines daily checklist completion, question mastery, practice repetitions, Golden Story readiness and mock interviews.</div>
+        <div class="progressbar red" style="margin-top:12px"><div style="width:${pct}%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid3" style="margin-bottom:14px">
+    <div class="stat"><div class="v">${c.daysDone} / 7</div><div class="k">Days Completed</div></div>
+    <div class="stat"><div class="v">${c.mastered} / 17</div><div class="k">Questions Mastered</div></div>
+    <div class="stat"><div class="v">${c.storiesReady} / 4</div><div class="k">Golden Stories Ready</div></div>
+    <div class="stat"><div class="v">${c.mocksDone}</div><div class="k">Mock Interviews</div></div>
+    <div class="stat"><div class="v">${streak()}</div><div class="k">Practice Streak (days)</div></div>
+    <div class="stat"><div class="v">${c.practiceTotal}</div><div class="k">Practice Reps</div></div>
+  </div>
+
+  ${missionCard}
+  ${frameworkCardHtml(false)}
+
+  <div class="card">
+    <h3>Achievements</h3>
+    ${ACHIEVEMENTS.map(a => {
+      const on = achievementUnlocked(a.id);
+      return `<div class="ach ${on ? "unlocked" : ""}">
+        <div class="medal">${on ? ICONS.medal : ICONS.lock}</div>
+        <div><div class="t1">${a.name}</div><div class="t2">${esc(a.desc)}</div></div>
+        ${on ? '<span class="pill green" style="margin-left:auto">UNLOCKED</span>' : ""}
+      </div>`;
+    }).join("")}
+  </div>
+
+  <div class="motto">“Don’t memorise words. Master your story.”</div>`;
+}
+
+function interviewDayCardOrTodayCard(day) {
+  if (isInterviewDay()) {
+    return `<div class="card" style="border-color:var(--red)">
+      <h3 style="color:#ff6b8a">⬤ Interview Day</h3>
+      <p style="font-size:.95rem;font-weight:600;margin-bottom:10px">Today is the day. Stay sharp — no cramming.</p>
+      <button class="btn primary full" onclick="nav('interviewday')">Open Interview Day Mode</button>
+    </div>`;
+  }
+  if (!day) {
+    const before = Date.now() < Date.UTC(2026, 6, 22, 16, 0, 0);
+    return `<div class="card">
+      <h3>Today’s Mission</h3>
+      <p style="font-size:.9rem;color:var(--muted)">${before || sgtToday() < "2026-07-23"
+        ? "The 7-day plan begins Thursday, 23 July 2026. Until then: review the framework, browse the Question Bank, and start filling in your Golden Stories."
+        : "The 7-day plan window has passed — but the Question Bank, stories and mock mode are always open."}</p>
+      <button class="btn full" style="margin-top:12px" onclick="nav('plan')">View the 7-Day Plan</button>
+    </div>`;
+  }
+  const p = dayProgress(day);
+  const remaining = p.total - p.done;
+  const estMins = p.total ? Math.round(day.target * (remaining / p.total)) : 0;
+  return `<div class="card" data-dayprog="${day.id}">
+    <h3>Today’s Mission — ${day.name}</h3>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <span style="font-size:1.05rem;font-weight:700">${esc(day.title)}</span>
+      ${S.daysCompleted[day.id] ? '<span class="done-tag">COMPLETE</span>' : '<span class="today-tag">TODAY</span>'}
+    </div>
+    <p style="font-size:.87rem;color:var(--muted);margin-bottom:12px">${esc(day.objective)}</p>
+    <div class="progressbar"><div style="width:${p.pct}%"></div></div>
+    <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:.76rem;color:var(--faint)">
+      <span data-dayprog-label>${p.done}/${p.total} tasks</span>
+      <span>~${estMins} min remaining · target ${day.target} min</span>
+    </div>
+    <button class="btn primary full" style="margin-top:14px" onclick="nav('plan');setTimeout(()=>openDay('${day.id}'),50)">Start Today’s Session</button>
+  </div>`;
+}
+
+let cdTimer = null;
+function startCountdown() {
+  clearInterval(cdTimer);
+  const tick = () => {
+    const el = $("#countdown");
+    if (!el) { clearInterval(cdTimer); return; }
+    let diff = INTERVIEW_TS - Date.now();
+    if (diff <= 0) { render(); return; }
+    const d = Math.floor(diff / 86400000); diff -= d * 86400000;
+    const h = Math.floor(diff / 3600000); diff -= h * 3600000;
+    const m = Math.floor(diff / 60000); diff -= m * 60000;
+    const s = Math.floor(diff / 1000);
+    const set = (u, v) => { const n = el.querySelector(`[data-cd="${u}"]`); if (n) n.textContent = String(v).padStart(2, "0"); };
+    set("DAYS", d); set("HOURS", h); set("MINUTES", m); set("SECONDS", s);
+  };
+  tick();
+  cdTimer = setInterval(tick, 1000);
+}
+
+/* ---------- 7-day plan ---------- */
+function viewPlan() {
+  const today = sgtToday();
+  return `
+  <div class="pagehead"><h2>7-Day Preparation Plan</h2><p>Thursday 23 July → Wednesday 29 July · one focused session per day</p></div>
+  ${DAYS.map(day => {
+    const p = dayProgress(day);
+    const isToday = day.date === today;
+    const done = !!S.daysCompleted[day.id];
+    return `<details class="acc" id="acc-${day.id}" ${isToday && !done ? "open" : ""} data-dayprog="${day.id}">
+      <summary>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span>${day.name} — ${esc(day.title)}</span>
+            ${done ? '<span class="done-tag">COMPLETE</span>' : isToday ? '<span class="today-tag">TODAY</span>' : ""}
+          </div>
+          <div class="day-date">${day.date === "2026-07-29" ? "INTERVIEW 4:00 PM · max prep 30–45 min" : "TARGET " + day.target + " MIN"} · <span data-dayprog-label>${p.done}/${p.total} tasks</span></div>
+          <div class="progressbar" style="margin-top:8px;max-width:340px"><div style="width:${p.pct}%"></div></div>
+        </div>
+        ${ICONS.chev}
+      </summary>
+      <div class="acc-body">
+        <p style="font-size:.88rem;color:var(--muted)"><b style="color:var(--text)">Objective:</b> ${esc(day.objective)}</p>
+        ${day.tasks.map(t => `
+          <div class="taskhead"><h5>${esc(t.title)}</h5>${t.mins ? `<span>${t.mins} MIN</span>` : ""}</div>
+          <p class="hint" style="margin-bottom:4px">${esc(t.intro)}</p>
+          ${t.items.map((it, i) => checkHtml(`day.${day.id}.${t.id}.${i}`, it)).join("")}
+        `).join("")}
+        <div class="divider"></div>
+        <p class="hint"><b style="color:var(--green)">Success criteria:</b> ${esc(day.success)}</p>
+        <label class="fieldlabel">Notes for ${day.name}</label>
+        <textarea class="field" rows="3" placeholder="What went well, what to fix tomorrow…" data-daynote="${day.id}">${esc(S.dayNotes[day.id] || "")}</textarea>
+        <div style="margin-top:14px">
+          ${done
+            ? `<button class="btn full" onclick="uncompleteDay('${day.id}')">✓ Day complete — tap to reopen</button>`
+            : `<button class="btn primary full" onclick="completeDay('${day.id}')">Complete Day</button>`}
+        </div>
+      </div>
+    </details>`;
+  }).join("")}
+  <div class="motto">“Don’t memorise words. Master your story.”</div>`;
+}
+function openDay(id) {
+  const el = document.getElementById("acc-" + id);
+  if (el) { el.open = true; el.scrollIntoView({ behavior: "smooth", block: "start" }); }
+}
+function completeDay(id) {
+  const day = DAYS.find(d => d.id === id);
+  const p = dayProgress(day);
+  const doIt = () => {
+    S.daysCompleted[id] = true;
+    logActivity(); save(); render();
+    toast(`${day.name} complete — ${readiness()}% ready`);
+  };
+  if (p.done < p.total) {
+    confirmModal("Tasks still unchecked", `${p.total - p.done} of ${p.total} tasks are not checked yet. Complete the day anyway?`, "Complete anyway", doIt, true);
+  } else doIt();
+}
+function uncompleteDay(id) {
+  delete S.daysCompleted[id]; save(); render();
+}
+document.addEventListener("input", e => {
+  const t = e.target;
+  if (t.dataset && t.dataset.daynote) { S.dayNotes[t.dataset.daynote] = t.value; save(); }
+  if (t.dataset && t.dataset.qnote) { qState(t.dataset.qnote).notes = t.value; save(); }
+  if (t.dataset && t.dataset.storyfield) {
+    const [sid, f] = t.dataset.storyfield.split(".");
+    storyState(sid)[f] = t.value; save();
+    const btn = document.querySelector(`[data-storyready="${sid}"]`);
+    if (btn) updateStoryReadyBtn(sid);
+  }
+  if (t.dataset && t.dataset.reflect) {
+    const d = sgtToday();
+    if (!S.reflections[d]) S.reflections[d] = {};
+    S.reflections[d][t.dataset.reflect] = t.value; save();
+  }
+});
+
+/* ---------- question bank ---------- */
+function viewQuestions() {
+  const hide = S.settings.hideModels;
+  const groups = [["red", "MUST MASTER"], ["orange", "LIKELY"], ["yellow", "PREPARE"]];
+  return `
+  <div class="pagehead"><h2>Question Bank</h2><p>17 core questions · master the ideas, not the wording</p></div>
+  <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px">
+    <div>
+      <div style="font-size:.88rem;font-weight:700">Hide Model Answers mode</div>
+      <div class="hint">Show only the question, what it tests, memory triggers and your own notes.</div>
+    </div>
+    <button class="btn small ${hide ? "primary" : ""}" onclick="toggleHideModels()">${hide ? "ON" : "OFF"}</button>
+  </div>
+  ${groups.map(([tier, label]) => `
+    <h3 style="font-size:.72rem;letter-spacing:.18em;color:${tier === "red" ? "#ff6b8a" : tier === "orange" ? "var(--amber)" : "#e8d96a"};font-weight:800;margin:20px 0 10px">${label}</h3>
+    ${QUESTIONS.filter(q => q.tier === tier).map(questionCard).join("")}
+  `).join("")}
+  <div class="motto">“Don’t memorise words. Master your story.”</div>`;
+}
+function questionCard(q) {
+  const st = qState(q.id);
+  const hide = S.settings.hideModels;
+  const num = QUESTIONS.indexOf(q) + 1;
+  return `<details class="acc" id="qc-${q.id}">
+    <summary>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span class="pill ${q.tier}">${TIER_LABEL[q.tier]}</span>
+          ${st.mastered ? '<span class="pill green">MASTERED</span>' : ""}
+          ${st.confidence ? `<span class="pill grey">CONF ${st.confidence}/5</span>` : ""}
+        </div>
+        <div style="margin-top:6px;font-size:.95rem">${num}. ${esc(q.q)}</div>
+      </div>
+      ${ICONS.chev}
+    </summary>
+    <div class="acc-body">
+      <p class="qmeta"><b>What they’re testing:</b> ${esc(q.tests)}</p>
+      ${hide ? "" : `
+        <label class="fieldlabel" style="margin-top:4px">Key talking points</label>
+        <ul class="kp">${q.points.map(p => `<li>${esc(p)}</li>`).join("")}</ul>
+        <label class="fieldlabel">Suggested structure</label>
+        <p style="font-size:.86rem;color:#c8d0e0">${esc(q.structure)}</p>
+        <label class="fieldlabel">Model answer</label>
+        <details>
+          <summary style="cursor:pointer;font-size:.8rem;color:var(--cyan);font-weight:600;margin-bottom:8px">Expand reference answer</summary>
+          <div class="donotmemo">DO NOT MEMORISE WORD-FOR-WORD</div>
+          <div class="model-box">${esc(q.model)}</div>
+        </details>
+      `}
+      ${q.triggers ? `
+        <label class="fieldlabel">Memory triggers only</label>
+        <div class="trigchain">${q.triggers.map((t, i) => `${i ? '<div class="a">↓</div>' : ""}<div class="t">${esc(t)}</div>`).join("")}</div>` : ""}
+      <label class="fieldlabel">My notes</label>
+      <textarea class="field" rows="3" placeholder="Your own points, in your own words…" data-qnote="${q.id}">${esc(st.notes)}</textarea>
+
+      <label class="fieldlabel">Practice count</label>
+      <div class="counter-btn">
+        <button class="btn small" onclick="bumpPractice('${q.id}')">+1 practised aloud</button>
+        <span class="n" id="pc-${q.id}">${st.practice}</span>
+        <span class="hint">target ≥ 3</span>
+      </div>
+
+      <label class="fieldlabel">Confidence (1–5)</label>
+      <div class="conf-dots" id="conf-${q.id}">
+        ${[1,2,3,4,5].map(n => `<button class="${st.confidence === n ? "sel" : ""}" onclick="setConf('${q.id}',${n})">${n}</button>`).join("")}
+      </div>
+
+      <label class="fieldlabel">Mastery checklist</label>
+      ${qCheckHtml(q.id, "withNotes", "Can answer with notes")}
+      ${qCheckHtml(q.id, "withoutNotes", "Can answer without notes")}
+      ${qCheckHtml(q.id, "followups", "Can handle follow-up questions")}
+      ${qCheckHtml(q.id, "mastered", "MASTERED")}
+    </div>
+  </details>`;
+}
+function qCheckHtml(qid, field, label) {
+  const on = !!qState(qid)[field];
+  return `<div class="check ${on ? "on" : ""}" data-qcheck="${qid}.${field}" role="checkbox" aria-checked="${on}" tabindex="0">
+    <div class="box">${ICONS.tick}</div><span class="lbl" style="${field === "mastered" ? "font-weight:700;letter-spacing:.04em" : ""}">${esc(label)}</span></div>`;
+}
+document.addEventListener("click", e => {
+  const c = e.target.closest(".check[data-qcheck]");
+  if (!c) return;
+  const [qid, field] = c.dataset.qcheck.split(".");
+  const st = qState(qid);
+  st[field] = !st[field];
+  c.classList.toggle("on", st[field]);
+  logActivity(); save(); renderNav();
+  if (field === "mastered" && st[field]) toast("Question mastered ✓ — " + readiness() + "% ready");
+});
+function bumpPractice(qid) {
+  const st = qState(qid);
+  st.practice++;
+  logActivity(); save();
+  const el = document.getElementById("pc-" + qid);
+  if (el) el.textContent = st.practice;
+  renderNav();
+}
+function setConf(qid, n) {
+  const st = qState(qid);
+  st.confidence = st.confidence === n ? 0 : n;
+  logActivity(); save();
+  const wrap = document.getElementById("conf-" + qid);
+  if (wrap) [...wrap.children].forEach((b, i) => b.classList.toggle("sel", i + 1 === st.confidence));
+  renderNav();
+}
+function toggleHideModels() {
+  S.settings.hideModels = !S.settings.hideModels;
+  save(); render();
+  toast(S.settings.hideModels ? "Model answers hidden — speak naturally" : "Model answers visible");
+}
+
+/* ---------- golden stories ---------- */
+function viewStories() {
+  return `
+  <div class="pagehead"><h2>Golden Stories</h2><p>Four stories, endlessly re-usable · SITUATION → PROBLEM → ACTION → RESULT → LESSON</p></div>
+  ${STORIES.map(st => {
+    const s = storyState(st.id);
+    const filled = STORY_FIELDS.filter(f => (s[f.id] || "").trim()).length;
+    return `<details class="acc">
+      <summary>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:.98rem">${esc(st.title)}</span>
+            ${s.ready ? '<span class="pill green">READY</span>' : `<span class="pill grey">${filled}/5 FIELDS</span>`}
+          </div>
+          <div class="tagrow" style="margin-top:7px">${st.tags.map(t => `<span class="pill cyan">${esc(t)}</span>`).join("")}</div>
+        </div>
+        ${ICONS.chev}
+      </summary>
+      <div class="acc-body">
+        ${STORY_FIELDS.map(f => `
+          <label class="fieldlabel">${f.label}</label>
+          <textarea class="field" rows="2" data-storyfield="${st.id}.${f.id}" placeholder="…">${esc(s[f.id] || "")}</textarea>
+        `).join("")}
+        <label class="fieldlabel">Questions this story can answer</label>
+        <ul class="kp">${st.answers.map(a => `<li>${esc(a)}</li>`).join("")}</ul>
+        <button class="btn full ${s.ready ? "" : "primary"}" style="margin-top:10px" data-storyready="${st.id}" onclick="toggleStoryReady('${st.id}')">${s.ready ? "✓ Marked ready — tap to unmark" : "Mark Story Ready"}</button>
+      </div>
+    </details>`;
+  }).join("")}
+  <div class="motto">One strong story beats five memorised answers.</div>`;
+}
+function toggleStoryReady(id) {
+  const s = storyState(id);
+  if (!s.ready) {
+    const filled = STORY_FIELDS.filter(f => (s[f.id] || "").trim()).length;
+    if (filled < 5) {
+      confirmModal("Story incomplete", `Only ${filled}/5 fields are filled in. Mark ready anyway?`, "Mark ready", () => { s.ready = true; logActivity(); save(); render(); }, true);
+      return;
+    }
+  }
+  s.ready = !s.ready;
+  logActivity(); save(); render();
+  if (s.ready) toast("Story ready ✓ — " + readiness() + "% ready");
+}
+function updateStoryReadyBtn() {} /* placeholder — full render handles state */
+
+/* ---------- fact sheet ---------- */
+function viewFactSheet() {
+  return `
+  <div class="pagehead"><h2>Personal Fact Sheet</h2><p>My evidence, at a glance</p></div>
+  <div class="card">
+    <div class="grid2">
+      <div><label class="fieldlabel" style="margin-top:0">Name</label><p style="font-weight:700">Wilson Ang</p></div>
+      <div><label class="fieldlabel" style="margin-top:0">Level</label><p style="font-weight:700">Secondary 4</p></div>
+      <div><label class="fieldlabel">School</label><p style="font-weight:700">Pasir Ris Secondary School</p></div>
+      <div><label class="fieldlabel">Target</label><p style="font-weight:700">Singapore Polytechnic<br>Diploma in Aerospace Electronics</p></div>
+    </div>
+  </div>
+  ${FACTS.map(f => `
+    <div class="card">
+      <h3>${esc(f.h)}</h3>
+      <div class="tagrow">${f.items.map(i => `<span class="pill grey" style="text-transform:none;letter-spacing:0;font-size:.76rem;font-weight:600;padding:5px 12px">${esc(i)}</span>`).join("")}</div>
+    </div>`).join("")}
+  <div class="card">
+    <h3>Career Aspiration</h3>
+    <p style="font-size:.9rem">Build a career in aviation, with an aspiration toward the RSAF while developing strong technical knowledge of aircraft and avionics systems.</p>
+  </div>`;
+}
+
+/* ---------- group interview ---------- */
+function viewGroup() {
+  return `
+  <div class="pagehead"><h2>Group Interview Rules</h2><p>They are watching how you interact, not just what you say</p></div>
+  <div class="card">
+    ${GROUP_RULES.map((r, i) => checkHtml("group." + i, r)).join("")}
+  </div>
+  <div class="card" style="border-color:rgba(89,194,232,.35)">
+    <p style="text-align:center;font-size:.92rem;font-weight:600;color:var(--cyan)">“Another candidate giving a good answer does not make your answer worse.”</p>
+  </div>`;
+}
+
+/* ---------- interview day ---------- */
+function viewInterviewDay() {
+  const live = isInterviewDay();
+  const stop = pastStopStudy();
+  const trig = (title, lines) => `
+    <div class="card">
+      <h3>${title}</h3>
+      ${lines.map(l => `<p style="font-size:.92rem;font-weight:600;margin-bottom:3px">${esc(l)}</p>`).join("")}
+    </div>`;
+  return `
+  <div class="pagehead"><h2>Interview Day Mode</h2><p>Wednesday, 29 July 2026 · 4:00 PM SGT ${live ? "· TODAY" : ""}</p></div>
+  ${stop && !missionArrived() ? `
+    <div class="stopstudy">STOP STUDYING.</div>
+    <div class="bigquote">You have prepared.<br>Listen carefully.<br>Think before answering.<br>Speak naturally.<br>Use evidence.<br>Have a conversation.</div>` : ""}
+  ${missionArrived() ? `<div class="card" style="border-color:var(--green)"><p class="mission-time" style="margin:0">MISSION TIME — YOU’RE READY.</p></div>` : ""}
+  <div class="grid2">
+    ${""/* memory triggers, deliberately short */}
+  </div>
+  ${trig("Who am I?", ["Aviation + initiative + leadership"])}
+  ${trig("Why DASE?", ["Avionics + systems + electronics + problem-solving"])}
+  ${trig("Why SP?", ["AeroHub + hands-on + course fit + industry relevance"])}
+  ${trig("Why me?", ["Passion backed by action"])}
+  ${trig("My evidence", ["SAFMC","Flight Mechanics","GE Aerospace","NPCC","Leadership"])}
+  ${trig("My framework", ["POINT","PROOF","LESSON","LINK"])}
+  ${trig("My stories", ["SAFMC","GE / Flight Mechanics","NPCC","Chairperson / MUN"])}
+  <div class="card">
+    <h3>Departure checklist</h3>
+    ${["Appropriate outfit","Portfolio ready","Documents ready","Phone charged","Venue confirmed","Travel route confirmed","Leave early","Arrive 30–45 minutes early"].map((c, i) => checkHtml("dday." + i, c)).join("")}
+  </div>
+  ${!stop ? `<div class="bigquote">“YOU ARE NOT HERE TO RECITE.<br>YOU ARE HERE TO HAVE A CONVERSATION ABOUT SOMETHING<br>YOU HAVE SPENT YEARS CARING ABOUT.”</div>` : ""}`;
+}
+
+/* ---------- notes / reflection ---------- */
+const REFLECT_FIELDS = [
+  { id: "improved", label: "Today I improved:" },
+  { id: "struggle", label: "I still struggle with:" },
+  { id: "offguard", label: "Question that caught me off guard:" },
+  { id: "tomorrow", label: "Tomorrow I need to:" }
+];
+function viewNotes() {
+  const today = sgtToday();
+  const r = S.reflections[today] || {};
+  const past = Object.keys(S.reflections).filter(d => d !== today).sort().reverse();
+  return `
+  <div class="pagehead"><h2>Notes & Reflection</h2><p>${today} · auto-saved</p></div>
+  <div class="card">
+    <h3>Today’s Reflection</h3>
+    ${REFLECT_FIELDS.map(f => `
+      <label class="fieldlabel">${f.label}</label>
+      <textarea class="field" rows="2" data-reflect="${f.id}" placeholder="…">${esc(r[f.id] || "")}</textarea>`).join("")}
+  </div>
+  ${past.length ? `<div class="card"><h3>Previous days</h3>
+    ${past.map(d => {
+      const p = S.reflections[d];
+      const body = REFLECT_FIELDS.filter(f => (p[f.id] || "").trim())
+        .map(f => `<p style="font-size:.84rem;margin-bottom:6px"><b style="color:var(--cyan);font-size:.72rem;letter-spacing:.06em">${f.label}</b><br>${esc(p[f.id])}</p>`).join("");
+      return body ? `<div style="padding:10px 0;border-bottom:1px solid var(--line)"><div class="day-date" style="margin-bottom:6px">${d}</div>${body}</div>` : "";
+    }).join("")}
+  </div>` : ""}`;
+}
+
+/* ---------- settings ---------- */
+function viewSettings() {
+  return `
+  <div class="pagehead"><h2>Settings</h2><p>App preferences & data</p></div>
+  <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+    <div>
+      <div style="font-size:.9rem;font-weight:700">Hide Model Answers</div>
+      <div class="hint">Train yourself to speak from triggers, not scripts.</div>
+    </div>
+    <button class="btn small ${S.settings.hideModels ? "primary" : ""}" onclick="toggleHideModels()">${S.settings.hideModels ? "ON" : "OFF"}</button>
+  </div>
+  <div class="card">
+    <h3>Data</h3>
+    <p class="hint" style="margin-bottom:12px">All progress is stored locally on this device (localStorage). Nothing is uploaded anywhere.</p>
+    <button class="btn full" style="border-color:rgba(228,0,43,.5);color:#ff6b8a" onclick="resetProgress()">Reset All Progress</button>
+  </div>
+  <div class="card">
+    <h3>About</h3>
+    <p class="hint">EAE MISSION CONTROL — interview preparation dashboard for the Singapore Polytechnic Diploma in Aerospace Electronics EAE interview, Wednesday 29 July 2026, 4:00 PM SGT.</p>
+  </div>`;
+}
+function resetProgress() {
+  confirmModal(
+    "Reset all progress?",
+    "This permanently erases every checkbox, note, practice count, confidence rating, story and mock interview result on this device. This cannot be undone.",
+    "Erase everything",
+    () => {
+      localStorage.removeItem(LS_KEY);
+      loadState(); render();
+      toast("Progress reset");
+    },
+    true
+  );
+}
+
+/* ================= MOCK INTERVIEW MODE ================= */
+
+const MOCK_MODES = [
+  { id: "standard", name: "Standard Mock", desc: "15–30 minutes · normal interview difficulty · core questions + follow-ups.", n: 10 },
+  { id: "pressure", name: "Pressure Mock", desc: "Hard follow-ups and challenging questions. Harder than the real thing.", n: 10 },
+  { id: "quickfire", name: "Quick Fire", desc: "7 questions · shorter answer timers · think fast, answer tight.", n: 7 },
+  { id: "random", name: "Random", desc: "A randomised mix of core and pressure questions.", n: 8 }
+];
+
+function viewMockHome() {
+  const hist = S.mocks.slice().reverse().slice(0, 8);
+  return `
+  <div class="pagehead"><h2>Mock Interview</h2><p>Full-screen simulation · one question at a time · self-scored</p></div>
+  ${MOCK_MODES.map(m => `
+    <div class="card" style="display:flex;align-items:center;gap:14px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.95rem;font-weight:700">${m.name}</div>
+        <div class="hint">${m.desc}</div>
+      </div>
+      <button class="btn primary small" onclick="startMock('${m.id}')">Start</button>
+    </div>`).join("")}
+  <div class="card">
+    <h3>Suggested answer times</h3>
+    <ul class="kp">
+      <li>Tell me about yourself: <b>90–120 s</b></li>
+      <li>Major motivation questions: <b>60–90 s</b></li>
+      <li>Normal interview questions: <b>45–90 s</b></li>
+      <li>Quick factual questions: <b>30–60 s</b></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Mock history (${S.mocks.length})</h3>
+    ${hist.length ? hist.map(m => {
+      const avg = mockAvg(m);
+      const d = new Date(m.ts).toLocaleString("en-SG", { timeZone: "Asia/Singapore", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+      return `<div class="mock-hist">
+        <div style="display:flex;justify-content:space-between;gap:8px">
+          <b>${(MOCK_MODES.find(x => x.id === m.mode) || {}).name || m.mode}</b>
+          <span style="color:${avg >= 4 ? "var(--green)" : avg >= 3 ? "var(--amber)" : "#ff6b8a"};font-weight:700">${avg ? avg.toFixed(1) : "–"}/5</span>
+        </div>
+        <div class="hint">${d} · ${m.results.filter(r => !r.skipped).length} answered</div>
+      </div>`;
+    }).join("") : '<p class="hint">No mocks yet. Your first one is the hardest — start it.</p>'}
+  </div>`;
+}
+
+/* ----- session state ----- */
+let MK = null; // {mode, queue:[], i, phase, results:[], timer stuff}
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]; } return a; }
+function coreToMockQ(q, targetOverride) {
+  return { text: q.q, qid: q.id, target: targetOverride || q.target || [45, 90], followUps: (q.followUps && q.followUps.length) ? q.followUps : GENERIC_FOLLOWUPS };
+}
+function pressureToMockQ(t, targetOverride) {
+  const target = /30 seconds/.test(t) ? [20, 35] : (targetOverride || [45, 90]);
+  return { text: t, qid: null, target, followUps: GENERIC_FOLLOWUPS };
+}
+function buildQueue(mode) {
+  if (mode === "standard") {
+    const red = shuffle(QUESTIONS.filter(q => q.tier === "red")).map(q => coreToMockQ(q));
+    const rest = shuffle(QUESTIONS.filter(q => q.tier !== "red")).slice(0, 3).map(q => coreToMockQ(q));
+    const group = pressureToMockQ("What would you contribute to your classmates?");
+    return red.concat(rest, [group]).slice(0, 10);
+  }
+  if (mode === "pressure") return shuffle(PRESSURE_QUESTIONS).slice(0, 10).map(t => pressureToMockQ(t));
+  if (mode === "quickfire") return shuffle(QUESTIONS).slice(0, 7).map(q => coreToMockQ(q, [30, 60]));
+  // random
+  const mix = shuffle(QUESTIONS.map(q => coreToMockQ(q)).concat(PRESSURE_QUESTIONS.map(t => pressureToMockQ(t))));
+  return mix.slice(0, 8);
+}
+
+function startMock(mode) {
+  MK = {
+    mode, queue: buildQueue(mode), i: 0, results: [],
+    phase: "brief", prepOn: true,
+    t: 0, running: false, int: null,
+    followIdx: 0, rec: null, recURL: null, chunks: []
+  };
+  $("#mockoverlay").classList.add("open");
+  renderMock();
+}
+function mockCleanupTimers() { if (MK && MK.int) { clearInterval(MK.int); MK.int = null; } }
+function exitMock(force) {
+  const doExit = () => {
+    mockCleanupTimers(); stopRecCleanup();
+    MK = null;
+    $("#mockoverlay").classList.remove("open");
+    render();
+  };
+  if (!force && MK && MK.phase === "done") { doExit(); return; }
+  if (!force && MK && MK.results.some(r => !r.skipped)) {
+    confirmModal("End mock interview?", "Progress so far will be saved as a completed mock.", "Save & exit", () => { finishMock(); }, false);
+  } else if (!force && MK && MK.phase !== "brief" && MK.phase !== "done") {
+    confirmModal("Abandon mock?", "Nothing answered yet — this mock will not be saved.", "Abandon", doExit, true);
+  } else doExit();
+}
+
+function fmtT(s) { return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+
+function renderMock() {
+  if (!MK) return;
+  const o = $("#mockoverlay");
+  const modeName = (MOCK_MODES.find(m => m.id === MK.mode) || {}).name || "Mock";
+  const top = `<div class="mock-top">
+    <span class="pill ${MK.mode === "pressure" ? "red" : "cyan"}">${modeName.toUpperCase()}</span>
+    <span style="font-size:.78rem;color:var(--faint);font-weight:600">${MK.phase === "done" ? "" : `Q ${Math.min(MK.i + 1, MK.queue.length)} / ${MK.queue.length}`}</span>
+    <button class="btn small ghost" onclick="exitMock()">Exit</button>
+  </div>`;
+
+  if (MK.phase === "brief") {
+    o.innerHTML = top + `
+      <div style="max-width:560px;margin:6vh auto 0;width:100%">
+        <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:6px">${modeName}</h2>
+        <p class="hint" style="margin-bottom:18px">${MK.queue.length} questions. Sit properly. No notes. Answer aloud — actually speak.</p>
+        <div class="check ${MK.prepOn ? "on" : ""}" id="prep-toggle" onclick="MK.prepOn=!MK.prepOn;this.classList.toggle('on',MK.prepOn)">
+          <div class="box">${ICONS.tick}</div><span class="lbl">10-second preparation timer before each answer</span>
+        </div>
+        <button class="btn primary full" style="margin-top:20px" onclick="mockBegin()">Begin</button>
+      </div>`;
+    return;
+  }
+
+  if (MK.phase === "done") { renderMockSummary(); return; }
+
+  const q = MK.queue[MK.i];
+  const [lo, hi] = q.target;
+
+  if (MK.phase === "prep") {
+    o.innerHTML = top + `
+      <div style="max-width:640px;margin:4vh auto 0;width:100%;text-align:center">
+        <div class="hint" style="letter-spacing:.2em;font-weight:800">PREPARE</div>
+        <div class="mock-q" style="text-align:center">${esc(q.text)}</div>
+        <div class="mock-timer prep" id="mock-timer">${MK.t}</div>
+        <button class="btn primary" onclick="mockStartAnswer()">Answer now</button>
+      </div>`;
+    return;
+  }
+
+  if (MK.phase === "answer") {
+    o.innerHTML = top + `
+      <div style="max-width:640px;margin:2vh auto 0;width:100%">
+        <div class="mock-q">${esc(q.text)}</div>
+        <div class="hint" style="text-align:center">target ${lo}–${hi} s</div>
+        <div class="mock-timer ${MK.t > hi ? "over" : ""}" id="mock-timer">${fmtT(MK.t)}</div>
+        <div id="followup-box"></div>
+        <div style="display:flex;gap:10px;margin-top:14px">
+          <button class="btn" style="flex:1" id="pausebtn" onclick="mockPause()">${MK.running ? "Pause" : "Resume"}</button>
+          <button class="btn" style="flex:1" onclick="mockShowFollowUp()">Show Follow-Up</button>
+        </div>
+        <button class="btn primary full" style="margin-top:10px" onclick="mockStopAndScore()">Stop & Score</button>
+        <div class="rec-row" id="rec-row"></div>
+        <button class="btn ghost full small" style="margin-top:14px;color:var(--faint)" onclick="mockSkip()">Skip this question</button>
+      </div>`;
+    renderRecRow();
+    return;
+  }
+
+  if (MK.phase === "score") {
+    const res = MK.results[MK.results.length - 1];
+    o.innerHTML = top + `
+      <div style="max-width:640px;margin:1vh auto 0;width:100%">
+        <div class="hint" style="letter-spacing:.16em;font-weight:800">SELF-SCORE</div>
+        <div class="mock-q" style="font-size:1.05rem">${esc(q.text)}</div>
+        <div class="hint" style="margin-bottom:14px">You spoke for ${fmtT(res.secs)} (target ${lo}–${hi} s).</div>
+        ${SCORE_KEYS.map(k => `
+          <div class="scorerow">
+            <div class="sk"><span>${k.label}</span><span>/ 5</span></div>
+            <div class="score-steps" data-scorekey="${k.id}">
+              ${[1,2,3,4,5].map(n => `<button onclick="mockSetScore('${k.id}',${n},this)">${n}</button>`).join("")}
+            </div>
+          </div>`).join("")}
+        <label class="fieldlabel">What went well?</label>
+        <textarea class="field" rows="2" id="mk-well"></textarea>
+        <label class="fieldlabel">What needs improvement?</label>
+        <textarea class="field" rows="2" id="mk-improve"></textarea>
+        <div class="rec-row" id="rec-row"></div>
+        <button class="btn primary full" style="margin-top:16px" onclick="mockNext()">${MK.i + 1 >= MK.queue.length ? "Finish Mock" : "Next Question"}</button>
+      </div>`;
+    renderRecRow(true);
+    return;
+  }
+}
+
+function mockBegin() {
+  MK.i = 0; mockLoadQuestion();
+}
+function mockLoadQuestion() {
+  mockCleanupTimers(); stopRecCleanup();
+  MK.followIdx = 0;
+  if (MK.prepOn) {
+    MK.phase = "prep"; MK.t = 10;
+    renderMock();
+    MK.int = setInterval(() => {
+      MK.t--;
+      const el = document.getElementById("mock-timer");
+      if (el) el.textContent = MK.t;
+      if (MK.t <= 0) mockStartAnswer();
+    }, 1000);
+  } else mockStartAnswer();
+}
+function mockStartAnswer() {
+  mockCleanupTimers();
+  MK.phase = "answer"; MK.t = 0; MK.running = true;
+  renderMock();
+  MK.int = setInterval(() => {
+    if (!MK.running) return;
+    MK.t++;
+    const el = document.getElementById("mock-timer");
+    if (el) {
+      el.textContent = fmtT(MK.t);
+      el.classList.toggle("over", MK.t > MK.queue[MK.i].target[1]);
+    }
+  }, 1000);
+}
+function mockPause() {
+  MK.running = !MK.running;
+  const b = document.getElementById("pausebtn");
+  if (b) b.textContent = MK.running ? "Pause" : "Resume";
+}
+function mockShowFollowUp() {
+  const q = MK.queue[MK.i];
+  const list = q.followUps.length ? q.followUps : GENERIC_FOLLOWUPS;
+  const f = list[MK.followIdx % list.length];
+  MK.followIdx++;
+  const box = document.getElementById("followup-box");
+  if (box) box.innerHTML = `<div class="warn-msg" style="border-color:rgba(89,194,232,.35);background:var(--cyan-soft);color:var(--cyan)"><b>Follow-up:</b> ${esc(f)}</div>`;
+}
+function mockSkip() {
+  mockCleanupTimers(); stopRecCleanup();
+  MK.results.push({ q: MK.queue[MK.i].text, qid: MK.queue[MK.i].qid, skipped: true });
+  mockAdvance();
+}
+function mockStopAndScore() {
+  mockCleanupTimers();
+  stopRecordingIfActive();
+  MK.results.push({ q: MK.queue[MK.i].text, qid: MK.queue[MK.i].qid, secs: MK.t, scores: {}, well: "", improve: "" });
+  MK.phase = "score";
+  renderMock();
+}
+function mockSetScore(key, n, btn) {
+  const res = MK.results[MK.results.length - 1];
+  res.scores[key] = n;
+  const row = btn.parentElement;
+  [...row.children].forEach((b, i) => b.classList.toggle("sel", i + 1 === n));
+}
+function mockNext() {
+  const res = MK.results[MK.results.length - 1];
+  const missing = SCORE_KEYS.filter(k => !res.scores[k.id]);
+  const wellEl = document.getElementById("mk-well"), impEl = document.getElementById("mk-improve");
+  if (wellEl) res.well = wellEl.value;
+  if (impEl) res.improve = impEl.value;
+  const go = () => {
+    if (res.qid) { qState(res.qid).practice++; }
+    mockAdvance();
+  };
+  if (missing.length) {
+    confirmModal("Unscored categories", `You haven’t scored: ${missing.map(k => k.label).join(", ")}. Continue anyway?`, "Continue", go, false);
+  } else go();
+}
+function mockAdvance() {
+  stopRecCleanup();
+  MK.i++;
+  if (MK.i >= MK.queue.length) finishMock();
+  else mockLoadQuestion();
+}
+function finishMock() {
+  if (!MK || MK.phase === "done") return;
+  mockCleanupTimers(); stopRecCleanup();
+  const answered = MK.results.filter(r => !r.skipped);
+  if (answered.length) {
+    S.mocks.push({ ts: Date.now(), mode: MK.mode, results: MK.results });
+    logActivity(); save();
+  }
+  MK.phase = "done";
+  renderMock();
+  renderNav();
+}
+function renderMockSummary() {
+  const o = $("#mockoverlay");
+  const answered = MK.results.filter(r => !r.skipped && r.scores);
+  if (!answered.length) {
+    o.innerHTML = `<div class="mock-top"><span></span><button class="btn small ghost" onclick="exitMock(true)">Close</button></div>
+      <div style="max-width:560px;margin:10vh auto 0;text-align:center">
+        <h2 style="font-weight:800">Mock abandoned</h2>
+        <p class="hint" style="margin-top:8px">No answers were scored, so nothing was saved.</p>
+        <button class="btn primary" style="margin-top:20px" onclick="exitMock(true)">Back to Mission Control</button>
+      </div>`;
+    return;
+  }
+  const catAvg = {};
+  SCORE_KEYS.forEach(k => {
+    const vals = answered.map(r => r.scores[k.id]).filter(Boolean);
+    catAvg[k.id] = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+  });
+  const sorted = SCORE_KEYS.slice().sort((a, b) => catAvg[b.id] - catAvg[a.id]);
+  const strongest = sorted[0], weakest = sorted[sorted.length - 1];
+  const overall = mockAvg({ results: MK.results });
+  const weakQs = answered
+    .map(r => ({ r, avg: SCORE_KEYS.reduce((a, k) => a + (r.scores[k.id] || 0), 0) / SCORE_KEYS.filter(k => r.scores[k.id]).length }))
+    .filter(x => x.avg && x.avg <= 3);
+  o.innerHTML = `
+    <div class="mock-top"><span class="pill green">COMPLETE</span><span></span><button class="btn small ghost" onclick="exitMock(true)">Close</button></div>
+    <div style="max-width:600px;margin:2vh auto 0;width:100%">
+      <h2 style="font-weight:800;font-size:1.4rem">Mock debrief</h2>
+      <div class="grid2" style="margin-top:14px">
+        <div class="stat"><div class="v">${overall.toFixed(1)}/5</div><div class="k">Mock Score</div></div>
+        <div class="stat"><div class="v">${answered.length}</div><div class="k">Answered</div></div>
+        <div class="stat"><div class="v" style="color:var(--green);font-size:1rem">${strongest.label}</div><div class="k">Strongest Area (${catAvg[strongest.id].toFixed(1)})</div></div>
+        <div class="stat"><div class="v" style="color:#ff6b8a;font-size:1rem">${weakest.label}</div><div class="k">Weakest Area (${catAvg[weakest.id].toFixed(1)})</div></div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h3>Questions needing more practice</h3>
+        ${weakQs.length
+          ? weakQs.map(x => `<p style="font-size:.87rem;padding:7px 0;border-bottom:1px solid var(--line)">${esc(x.r.q)} <span style="color:#ff6b8a;font-weight:700;float:right">${x.avg.toFixed(1)}</span></p>`).join("")
+          : '<p class="hint">Nothing scored 3 or below. Strong run.</p>'}
+      </div>
+      <button class="btn primary full" onclick="exitMock(true)">Back to Mission Control</button>
+      <div class="motto">Score honestly — flattering yourself here costs you on Wednesday.</div>
+    </div>`;
+}
+
+/* ----- optional microphone recording ----- */
+const RECORDING_SUPPORTED = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+function renderRecRow(playbackMode) {
+  const row = document.getElementById("rec-row");
+  if (!row || !RECORDING_SUPPORTED) return;
+  if (MK.recURL) {
+    row.innerHTML = `
+      <button class="btn small" onclick="deleteRecording()">Delete recording</button>
+      <span class="hint">recorded — listen back:</span>
+      <audio controls src="${MK.recURL}"></audio>`;
+  } else if (MK.rec) {
+    row.innerHTML = `<button class="btn small" style="border-color:var(--red);color:#ff6b8a" onclick="stopRecordingIfActive(true)">■ Stop recording</button><span class="hint">recording…</span>`;
+  } else if (!playbackMode) {
+    row.innerHTML = `<button class="btn small" onclick="startRecording()">● Record answer</button><span class="hint">optional</span>`;
+  } else {
+    row.innerHTML = "";
+  }
+}
+function startRecording() {
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+    if (!MK) { stream.getTracks().forEach(t => t.stop()); return; }
+    MK.chunks = [];
+    MK.rec = new MediaRecorder(stream);
+    MK.rec.ondataavailable = e => { if (e.data.size) MK.chunks.push(e.data); };
+    MK.rec.onstop = () => {
+      stream.getTracks().forEach(t => t.stop());
+      if (MK && MK.chunks.length) {
+        MK.recURL = URL.createObjectURL(new Blob(MK.chunks, { type: MK.rec.mimeType || "audio/webm" }));
+      }
+      if (MK) { MK.rec = null; renderRecRow(MK.phase === "score"); }
+    };
+    MK.rec.start();
+    renderRecRow();
+  }).catch(() => toast("Microphone unavailable — recording is optional"));
+}
+function stopRecordingIfActive(rerender) {
+  if (MK && MK.rec && MK.rec.state !== "inactive") MK.rec.stop();
+  else if (rerender) renderRecRow();
+}
+function deleteRecording() {
+  if (MK && MK.recURL) { URL.revokeObjectURL(MK.recURL); MK.recURL = null; }
+  renderRecRow(MK && MK.phase === "score");
+}
+function stopRecCleanup() {
+  if (!MK) return;
+  if (MK.rec && MK.rec.state !== "inactive") { try { MK.rec.stop(); } catch (e) {} }
+  if (MK.recURL) { URL.revokeObjectURL(MK.recURL); MK.recURL = null; }
+  MK.rec = null; MK.chunks = [];
+}
+
+/* ================= AFTER-RENDER / INIT ================= */
+
+function afterRender(v) {
+  if (v === "dashboard") startCountdown();
+  else clearInterval(cdTimer);
+}
+
+loadState();
+render();
+
+/* keep time-sensitive views fresh (interview-day 3:30 PM switch, day rollover) */
+setInterval(() => {
+  const v = currentView();
+  if (v === "interviewday") {
+    const active = document.activeElement;
+    if (!active || (active.tagName !== "TEXTAREA" && active.tagName !== "INPUT")) render();
+  }
+}, 60000);
+
+</script>
+</body>
+</html>
