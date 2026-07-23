@@ -3,10 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mission Control">
 <meta name="theme-color" content="#070b16">
 <title>EAE Mission Control</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
 :root{
   --bg:#070b16;
@@ -1566,8 +1571,17 @@ function viewSettings() {
     <button class="btn small ${S.settings.hideModels ? "primary" : ""}" onclick="toggleHideModels()">${S.settings.hideModels ? "ON" : "OFF"}</button>
   </div>
   <div class="card">
+    <h3>Install as an app</h3>
+    <p class="hint" style="margin-bottom:12px" id="install-hint">Add Mission Control to your home screen to launch it full-screen, with its own icon, and use it offline.</p>
+    <button class="btn full" id="install-btn" style="display:none" onclick="triggerInstall()">Install app</button>
+    <div id="ios-install" style="display:none">
+      <p class="hint">On iPhone/iPad: tap the <b>Share</b> icon in Safari, then <b>“Add to Home Screen.”</b></p>
+    </div>
+    <div id="installed-note" style="display:none"><p class="hint" style="color:var(--green)">✓ Running as an installed app.</p></div>
+  </div>
+  <div class="card">
     <h3>Data</h3>
-    <p class="hint" style="margin-bottom:12px">All progress is stored locally on this device (localStorage). Nothing is uploaded anywhere.</p>
+    <p class="hint" style="margin-bottom:12px">All progress is stored locally on this device (localStorage). Nothing is uploaded anywhere. Once installed, the app also works fully offline.</p>
     <button class="btn full" style="border-color:rgba(228,0,43,.5);color:#ff6b8a" onclick="resetProgress()">Reset All Progress</button>
   </div>
   <div class="card">
@@ -1964,6 +1978,53 @@ function stopRecCleanup() {
 function afterRender(v) {
   if (v === "dashboard") startCountdown();
   else clearInterval(cdTimer);
+  if (v === "settings") refreshInstallUI();
+}
+
+/* ---------- PWA: service worker + install ---------- */
+let deferredPrompt = null;
+function isStandalone() {
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+}
+function isIOS() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+}
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (currentView() === "settings") refreshInstallUI();
+});
+window.addEventListener("appinstalled", () => {
+  deferredPrompt = null;
+  toast("Mission Control installed");
+  if (currentView() === "settings") refreshInstallUI();
+});
+function triggerInstall() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.finally(() => { deferredPrompt = null; refreshInstallUI(); });
+}
+function refreshInstallUI() {
+  const btn = document.getElementById("install-btn");
+  const ios = document.getElementById("ios-install");
+  const note = document.getElementById("installed-note");
+  const hint = document.getElementById("install-hint");
+  if (!btn) return;
+  if (isStandalone()) {
+    btn.style.display = "none"; if (ios) ios.style.display = "none";
+    if (note) note.style.display = "block"; if (hint) hint.style.display = "none";
+  } else if (deferredPrompt) {
+    btn.style.display = "flex"; if (ios) ios.style.display = "none";
+  } else if (isIOS()) {
+    btn.style.display = "none"; if (ios) ios.style.display = "block";
+  } else {
+    btn.style.display = "none"; if (ios) ios.style.display = "none";
+  }
+}
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  });
 }
 
 loadState();
