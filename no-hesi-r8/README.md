@@ -1,8 +1,10 @@
 # NO HESI · 中国高速 (China Expressway)
 
-A self-contained pseudo-3D highway racer inspired by "No Hesi" — thread the gaps in
-traffic at speed, but with two twists: a **semi-manual gearbox** and **adjustable power
-steering**. Set on a Chinese expressway heading toward Shanghai.
+A self-contained **first-person** pseudo-3D highway racer inspired by "No Hesi" — thread the
+gaps in traffic at speed from behind the wheel, with two twists: a **semi-manual gearbox**
+and **adjustable power steering**. Set on a Chinese divided expressway heading toward
+Shanghai — proper lane markings, concrete barriers, gantry signs, and a driver's-eye
+cockpit with dashboard, steering wheel, and door mirrors.
 
 Everything lives in a single file: [`index.html`](index.html) (HTML + CSS + JS, no build,
 no dependencies). Open it in any modern browser.
@@ -14,13 +16,13 @@ no dependencies). Open it in any modern browser.
 | `W` / `↑` | Throttle |
 | `S` / `↓` | Brake |
 | `A` / `D` | Steer / change lanes |
-| `K` | Shift up |
-| `L` | Shift down |
-| `Space` | Shift up (alt) |
+| `K` / `Space` | Shift up |
+| `J` / `L` | Shift down |
 | `P` | Pause |
 
-On touch devices: hold the left / right half of the screen to steer (holding also applies
-throttle), and double-tap a side to up/down-shift.
+On-screen **▲ / ▼** paddles (bottom corners) shift up/down too — handy with a mouse or on
+touch. On touch devices, hold the left / right half of the screen to steer (holding also
+applies throttle).
 
 ## Semi-manual shifting
 
@@ -42,9 +44,9 @@ higher values make quick lane-changes easier but the car harder to hold straight
 ## China setting
 
 Shanghai skyline on the horizon (Oriental Pearl-style tower and a twisting supertall),
-green overhead gantry signs with Chinese city names (上海 / 杭州 / 南京 / 苏州 …),
-red-and-white expressway guardrails, roadside pagodas, red lanterns, and blue Chinese
-licence plates on the traffic.
+green overhead gantry signs with Chinese city names (上海 / 杭州 / 南京 / 苏州 …), a concrete
+median and metal guardrail, light poles, roadside trees, and blue Chinese licence plates on
+the traffic.
 
 ## Notes
 

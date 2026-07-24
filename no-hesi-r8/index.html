@@ -6,12 +6,10 @@
 <title>NO HESI · 中国高速 — China Expressway</title>
 <style>
   :root{
-    --ink:#0b1220;
-    --panel:rgba(10,16,28,.72);
+    --panel:rgba(12,16,24,.72);
     --line:rgba(255,255,255,.14);
-    --hot:#e23b3b;      /* China red */
+    --hot:#e23b3b;
     --gold:#f4c04a;
-    --green:#1f8a4c;
     --cyan:#54d7ff;
     --txt:#eef3fb;
     --dim:#9fb0c8;
@@ -23,106 +21,96 @@
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,"PingFang SC","Microsoft YaHei",sans-serif;
     overflow:hidden;-webkit-user-select:none;user-select:none;touch-action:none;
   }
-  #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#05070d}
-  canvas#game{display:block;width:100%;height:100%;background:#0a1830;image-rendering:auto}
+  canvas#game{position:fixed;inset:0;display:block;width:100%;height:100%;background:#8fb7d9}
 
-  /* ---------- HUD ---------- */
   .hud{position:fixed;pointer-events:none;z-index:5}
-  .top-left{top:14px;left:14px}
-  .top-right{top:14px;right:14px;text-align:right}
-  .brand{
-    font-weight:800;letter-spacing:.06em;font-size:15px;line-height:1;
-    background:var(--panel);border:1px solid var(--line);border-radius:10px;
-    padding:8px 11px;backdrop-filter:blur(6px);
-  }
-  .brand b{color:var(--hot)}
-  .brand .cn{color:var(--gold);font-weight:700}
-  .sub{display:block;margin-top:4px;font-size:10.5px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase}
-
-  .stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 11px;backdrop-filter:blur(6px);margin-top:8px;display:inline-block;min-width:120px}
-  .stat .k{font-size:10px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase}
-  .stat .v{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+  .top-left{top:12px;left:12px}
+  .top-right{top:12px;right:12px;text-align:right}
+  .brand{font-weight:800;letter-spacing:.05em;font-size:14px;line-height:1;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 11px;backdrop-filter:blur(6px)}
+  .brand b{color:var(--hot)} .brand .cn{color:var(--gold)}
+  .brand .sub{display:block;margin-top:4px;font-size:10px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:7px 11px;backdrop-filter:blur(6px);margin-top:7px;display:inline-block;min-width:118px}
+  .stat .k{font-size:9.5px;color:var(--dim);letter-spacing:.13em;text-transform:uppercase}
+  .stat .v{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15}
   .stat .v small{font-size:11px;color:var(--dim);font-weight:600}
 
-  /* speed + gear cluster bottom-center */
-  .cluster{
-    position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:6;
-    display:flex;align-items:flex-end;gap:14px;pointer-events:none;
-  }
-  .speedo{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 16px;text-align:center;backdrop-filter:blur(6px)}
-  .speedo .num{font-size:46px;font-weight:800;line-height:.9;font-variant-numeric:tabular-nums}
-  .speedo .unit{font-size:12px;color:var(--dim);letter-spacing:.2em}
-  .gearbox{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 14px;text-align:center;backdrop-filter:blur(6px);min-width:92px}
-  .gearbox .g{font-size:40px;font-weight:800;line-height:.9;color:var(--gold)}
-  .gearbox .lab{font-size:10px;color:var(--dim);letter-spacing:.16em;text-transform:uppercase;margin-top:2px}
-
-  /* tach */
-  .tach{width:220px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px;backdrop-filter:blur(6px)}
-  .tach .row{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
-  .tach .bar{height:14px;border-radius:7px;background:#0c1526;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.08)}
-  .tach .fill{position:absolute;inset:0;width:0%;background:linear-gradient(90deg,#2fd27a 0%,#f4c04a 62%,#e23b3b 84%);transition:width .05s linear}
+  /* speed + gear cluster */
+  .cluster{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:6;display:flex;align-items:flex-end;gap:12px;pointer-events:none}
+  .tach{width:210px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:9px 12px;backdrop-filter:blur(6px)}
+  .tach .row{display:flex;justify-content:space-between;font-size:9.5px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+  .tach .bar{height:13px;border-radius:7px;background:#0c1526;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.08)}
+  .tach .fill{position:absolute;inset:0;width:0%;background:linear-gradient(90deg,#2fd27a 0%,#f4c04a 62%,#e23b3b 84%)}
   .tach .redline{position:absolute;top:0;bottom:0;left:84%;width:2px;background:rgba(255,80,80,.9)}
-  .shiftlight{margin-top:7px;height:8px;border-radius:5px;background:#20130f;opacity:.35}
+  .shiftlight{margin-top:6px;height:7px;border-radius:5px;background:#20130f;opacity:.35}
   .shiftlight.on{background:var(--hot);opacity:1;box-shadow:0 0 14px rgba(226,59,59,.9)}
+  .speedo{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px 16px;text-align:center;backdrop-filter:blur(6px)}
+  .speedo .num{font-size:44px;font-weight:800;line-height:.9;font-variant-numeric:tabular-nums}
+  .speedo .unit{font-size:11px;color:var(--dim);letter-spacing:.2em}
+  .gearbox{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px 12px;text-align:center;backdrop-filter:blur(6px);min-width:78px}
+  .gearbox .g{font-size:38px;font-weight:800;line-height:.9;color:var(--gold)}
+  .gearbox .lab{font-size:9.5px;color:var(--dim);letter-spacing:.15em;text-transform:uppercase;margin-top:2px}
 
-  /* power steering control */
-  .steerctl{
-    position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:6;
-    background:var(--panel);border:1px solid var(--line);border-radius:12px;
-    padding:8px 14px;backdrop-filter:blur(6px);pointer-events:auto;
-    display:flex;align-items:center;gap:12px;
+  /* power steering */
+  .steerctl{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:6;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 14px;backdrop-filter:blur(6px);pointer-events:auto;display:flex;align-items:center;gap:11px}
+  .steerctl .lab{font-size:10px;color:var(--dim);letter-spacing:.13em;text-transform:uppercase}
+  .steerctl .val{font-size:13px;font-weight:800;color:var(--cyan);min-width:40px;text-align:right;font-variant-numeric:tabular-nums}
+  .steerctl input[type=range]{width:150px;accent-color:var(--cyan);cursor:pointer}
+  @media (max-width:600px){
+    .brand{display:none}                      /* free the top-left during play */
+    .steerctl{top:6px;padding:6px 11px;gap:8px}
+    .steerctl .lab-en{display:none}           /* keep just 动力转向 */
+    .steerctl input[type=range]{width:104px}
+    .top-left{top:50px} .top-right{top:50px}  /* below the steering row */
+    .stat{min-width:98px;padding:6px 9px;margin-top:6px}
+    .stat .v{font-size:17px}
+    .tach{display:none}
   }
-  .steerctl .lab{font-size:10.5px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase}
-  .steerctl .val{font-size:13px;font-weight:800;color:var(--cyan);min-width:38px;text-align:right;font-variant-numeric:tabular-nums}
-  .steerctl input[type=range]{width:170px;accent-color:var(--cyan);cursor:pointer}
-  @media (max-width:560px){ .steerctl input[type=range]{width:120px} .tach{display:none} }
 
-  /* overlay */
+  /* shift paddles */
+  .paddle{position:fixed;bottom:96px;z-index:7;pointer-events:auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;color:#fff;backdrop-filter:blur(6px);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;width:74px;height:74px;transition:transform .05s,background .1s}
+  .paddle:active{transform:scale(.94);background:rgba(226,59,59,.35)}
+  .paddle .ar{font-size:26px;line-height:1;font-weight:800}
+  .paddle .t{font-size:10px;letter-spacing:.1em;margin-top:3px;color:var(--dim)}
+  #padUp{right:14px} #padDown{left:14px}
+  @media (max-width:600px){ .paddle{width:64px;height:64px;bottom:104px} }
+
   .overlay{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:radial-gradient(120% 120% at 50% 0%,rgba(9,17,34,.86),rgba(3,5,10,.96));backdrop-filter:blur(3px)}
   .card{max-width:520px;width:calc(100% - 40px);background:linear-gradient(180deg,rgba(16,24,42,.96),rgba(9,14,26,.96));border:1px solid var(--line);border-radius:18px;padding:26px 26px 22px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
   .card h1{margin:0 0 2px;font-size:30px;letter-spacing:.02em}
-  .card h1 b{color:var(--hot)}
-  .card .cn{color:var(--gold)}
-  .card .tag{color:var(--dim);font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:16px}
+  .card h1 b{color:var(--hot)} .card .cn{color:var(--gold)}
+  .card .tag{color:var(--dim);font-size:12px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:16px}
   .keys{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;margin:14px 0 18px;font-size:13.5px}
   .keys .kk{color:var(--dim)}
   .keys kbd{display:inline-block;min-width:20px;text-align:center;background:#0c1526;border:1px solid rgba(255,255,255,.16);border-bottom-width:2px;border-radius:6px;padding:2px 7px;font-family:inherit;font-size:12px;color:#fff;margin-right:3px}
   .btn{appearance:none;border:none;cursor:pointer;width:100%;padding:14px;border-radius:12px;font-size:16px;font-weight:800;letter-spacing:.04em;color:#fff;background:linear-gradient(180deg,#ef4b4b,#c62b2b);box-shadow:0 10px 24px rgba(226,59,59,.35)}
   .btn:active{transform:translateY(1px)}
-  .fine{margin-top:12px;font-size:11px;color:var(--dim);text-align:center;line-height:1.5}
-  .fine b{color:var(--gold)}
+  .fine{margin-top:12px;font-size:11px;color:var(--dim);text-align:center;line-height:1.5} .fine b{color:var(--gold)}
   .hidden{display:none!important}
-
-  /* crash flash */
   #flash{position:fixed;inset:0;z-index:8;background:var(--hot);opacity:0;pointer-events:none}
-  .toast{position:fixed;left:50%;top:38%;transform:translateX(-50%);z-index:9;font-size:34px;font-weight:800;color:#fff;text-shadow:0 4px 20px rgba(0,0,0,.6);opacity:0;pointer-events:none;letter-spacing:.04em}
-
-  .hint{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);z-index:6;font-size:13px;color:var(--gold);font-weight:700;letter-spacing:.05em;opacity:0;transition:opacity .2s;text-shadow:0 2px 10px rgba(0,0,0,.6);pointer-events:none}
+  .toast{position:fixed;left:50%;top:34%;transform:translateX(-50%);z-index:9;font-size:30px;font-weight:800;color:#fff;text-shadow:0 4px 20px rgba(0,0,0,.6);opacity:0;pointer-events:none;letter-spacing:.03em}
+  .hint{position:fixed;left:50%;bottom:190px;transform:translateX(-50%);z-index:6;font-size:13px;color:var(--gold);font-weight:700;letter-spacing:.04em;opacity:0;transition:opacity .2s;text-shadow:0 2px 10px rgba(0,0,0,.6);pointer-events:none}
   .hint.show{opacity:1}
 </style>
 </head>
 <body>
-<div id="stage"><canvas id="game"></canvas></div>
+<canvas id="game"></canvas>
 
-<!-- Power steering -->
 <div class="steerctl">
-  <span class="lab">动力转向 · Power Steering</span>
+  <span class="lab"><span class="lab-cn">动力转向</span><span class="lab-en"> · Power Steering</span></span>
   <input id="steer" type="range" min="30" max="200" value="100" step="5" />
   <span class="val" id="steerVal">1.00×</span>
 </div>
 
-<!-- HUD -->
 <div class="hud top-left">
   <div class="brand"><b>NO&nbsp;HESI</b> <span class="cn">中国高速</span><span class="sub">China Expressway</span></div>
   <div class="stat"><div class="k">Distance 里程</div><div class="v" id="dist">0<small> km</small></div></div>
   <div class="stat"><div class="k">Overtakes 超车</div><div class="v" id="passes">0</div></div>
 </div>
 <div class="hud top-right">
-  <div class="stat"><div class="k">Next City 前方</div><div class="v" id="city" style="font-size:16px">上海 Shanghai</div></div>
+  <div class="stat"><div class="k">Ahead 前方</div><div class="v" id="city" style="font-size:15px">上海 Shanghai</div></div>
   <div class="stat"><div class="k">Best 最佳</div><div class="v" id="best">0<small> km</small></div></div>
 </div>
 
-<!-- cluster -->
 <div class="cluster">
   <div class="tach">
     <div class="row"><span>RPM ×1000</span><span id="rpmnum">0</span></div>
@@ -133,31 +121,33 @@
   <div class="gearbox"><div class="g" id="gear">1</div><div class="lab">Gear 挡位</div></div>
 </div>
 
+<div class="paddle" id="padDown"><div class="ar">▼</div><div class="t">DOWN</div></div>
+<div class="paddle" id="padUp"><div class="ar">▲</div><div class="t">UP</div></div>
+
 <div class="hint" id="hint">↑ UPSHIFT</div>
 <div id="flash"></div>
 <div class="toast" id="toast"></div>
 
-<!-- Start overlay -->
 <div class="overlay" id="overlay">
   <div class="card">
     <h1><b>NO&nbsp;HESI</b> <span class="cn">中国</span></h1>
-    <div class="tag">China Expressway · Semi-Manual · Weave the traffic</div>
+    <div class="tag">First-person · China Expressway · Semi-manual</div>
     <p style="margin:0 0 6px;color:#cdd8ec;font-size:14px;line-height:1.55">
-      Blast down a Chinese expressway toward Shanghai. Don't lift — thread the gaps in traffic,
-      row your own gears, and keep the needle out of the red.
+      You're behind the wheel on a Chinese divided expressway toward Shanghai. Weave through
+      traffic, row your own gears, and keep the needle out of the red.
     </p>
     <div class="keys">
       <div><kbd>W</kbd><kbd>↑</kbd> <span class="kk">Throttle</span></div>
       <div><kbd>S</kbd><kbd>↓</kbd> <span class="kk">Brake</span></div>
-      <div><kbd>A</kbd><kbd>D</kbd> <span class="kk">Steer / lanes</span></div>
-      <div><kbd>K</kbd> / <kbd>L</kbd> <span class="kk">Shift up / down</span></div>
-      <div><kbd>Space</kbd> <span class="kk">Also upshift</span></div>
+      <div><kbd>A</kbd><kbd>D</kbd> <span class="kk">Steer</span></div>
+      <div><kbd>K</kbd> <span class="kk">Shift up</span></div>
+      <div><kbd>J</kbd> / <kbd>L</kbd> <span class="kk">Shift down</span></div>
       <div><kbd>P</kbd> <span class="kk">Pause</span></div>
     </div>
-    <p class="fine">Semi-manual gearbox: you shift, the clutch is automatic. Hit the <b>rev limiter</b> and you stop
-      accelerating until you <b>upshift</b>. Tune <b>Power Steering</b> up top any time — higher = sharper, twitchier.</p>
+    <p class="fine">On-screen <b>▲ / ▼</b> paddles shift too (great on touch). Hit the <b>rev limiter</b>
+      and you stop pulling until you upshift; <b>downshift</b> for engine braking into a gap.
+      Tune <b>Power Steering</b> up top any time.</p>
     <button class="btn" id="startBtn">开始 · START ENGINE</button>
-    <p class="fine">Tip: on mobile, tap-hold left / right halves to steer; drag the top slider for steering feel.</p>
   </div>
 </div>
 
@@ -165,189 +155,126 @@
 (function(){
 "use strict";
 
-/* ============================================================
-   NO HESI · China Expressway
-   Pseudo-3D endless highway racer with a semi-manual gearbox
-   and adjustable power steering.
-   ============================================================ */
+/* ================= NO HESI · China Expressway (first-person) ================= */
 
 var canvas = document.getElementById('game');
 var ctx = canvas.getContext('2d');
-
-// ---- render size (device-pixel aware) ----
-var W = 0, H = 0, DPR = 1;
+var W=0,H=0,DPR=1;
 function resize(){
-  DPR = Math.min(2, window.devicePixelRatio || 1);
-  W = Math.floor(window.innerWidth);
-  H = Math.floor(window.innerHeight);
-  canvas.width = Math.floor(W * DPR);
-  canvas.height = Math.floor(H * DPR);
-  canvas.style.width = W + 'px';
-  canvas.style.height = H + 'px';
+  DPR = Math.min(2, window.devicePixelRatio||1);
+  W = Math.floor(window.innerWidth); H = Math.floor(window.innerHeight);
+  canvas.width=Math.floor(W*DPR); canvas.height=Math.floor(H*DPR);
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
   ctx.setTransform(DPR,0,0,DPR,0,0);
 }
-window.addEventListener('resize', resize);
-resize();
+window.addEventListener('resize', resize); resize();
 
-// ---- pseudo-3D constants ----
+/* ---- pseudo-3D constants (first-person, low camera) ---- */
 var segmentLength = 200;
-var rumbleLength  = 3;
-var roadWidth     = 2200;
-var lanes         = 4;               // Chinese expressway: wide
+var roadWidth     = 2100;
+var lanes         = 3;                 // one carriageway, 3 lanes, same direction
 var fieldOfView   = 100;
-var cameraHeight  = 1100;
-var cameraDepth   = 1 / Math.tan((fieldOfView/2) * Math.PI/180);
-var drawDistance  = 260;
-var fogDensity    = 4.2;
-var playerZ       = cameraHeight * cameraDepth;
+var cameraHeight  = 1050;              // driver eye height (low = in the car)
+var cameraDepth   = 1/Math.tan((fieldOfView/2)*Math.PI/180);
+var drawDistance  = 240;
+var playerZ       = cameraHeight*cameraDepth;
+var horizonY      = 0;                 // set each frame
 
-var segments = [];
-var trackLength = 0;
+var segments=[], trackLength=0;
 
-// ---- colors (China theme: red/white guardrails) ----
-var COLORS = {
-  SKY:  '#8fb7d9',
-  LIGHT:{ road:'#4a4f57', grass:'#3f7a45', rumble:'#d9dde3', lane:'#e9edf3' },
-  DARK: { road:'#43484f', grass:'#39703e', rumble:'#c9302c', lane:null },
-  START:{ road:'#dddddd', grass:'#dddddd', rumble:'#dddddd' },
-  FINISH:{road:'#222222', grass:'#222222', rumble:'#222222' }
-};
-
-// ---- track building ---------------------------------------
-function lastY(){ return segments.length===0 ? 0 : segments[segments.length-1].p2.world.y; }
-function addSegment(curve, y){
-  var n = segments.length;
+/* ---- track: HIGHWAY (mostly straight, gentle bends, gentle hills) ---- */
+function lastY(){ return segments.length===0?0:segments[segments.length-1].p2.world.y; }
+function addSegment(curve,y){
+  var n=segments.length;
   segments.push({
     index:n,
-    p1:{ world:{y:lastY(), z:n*segmentLength}, camera:{}, screen:{} },
-    p2:{ world:{y:y,      z:(n+1)*segmentLength}, camera:{}, screen:{} },
-    curve:curve,
-    sprites:[],
-    cars:[],
-    color: Math.floor(n/rumbleLength)%2 ? COLORS.DARK : COLORS.LIGHT
+    p1:{world:{y:lastY(),z:n*segmentLength},camera:{},screen:{}},
+    p2:{world:{y:y,z:(n+1)*segmentLength},camera:{},screen:{}},
+    curve:curve, sprites:[],
+    color:(Math.floor(n/4)%2)  // asphalt tone toggle (very subtle)
   });
 }
-function easeIn(a,b,p){ return a + (b-a)*Math.pow(p,2); }
-function easeInOut(a,b,p){ return a + (b-a)*((-Math.cos(p*Math.PI)/2)+0.5); }
-function addRoad(enter, hold, leave, curve, y){
-  var startY = lastY();
-  var endY = startY + (y||0)*segmentLength;
-  var total = enter+hold+leave, n;
-  for(n=0;n<enter;n++) addSegment(easeIn(0,curve,n/enter), easeInOut(startY, endY, n/total));
-  for(n=0;n<hold; n++) addSegment(curve,                    easeInOut(startY, endY, (enter+n)/total));
-  for(n=0;n<leave;n++) addSegment(easeInOut(curve,0,n/leave),easeInOut(startY, endY, (enter+hold+n)/total));
+function easeInOut(a,b,p){ return a+(b-a)*((-Math.cos(p*Math.PI)/2)+0.5); }
+function easeIn(a,b,p){ return a+(b-a)*p*p; }
+function addRoad(enter,hold,leave,curve,y){
+  var startY=lastY(), endY=startY+(y||0)*segmentLength, total=enter+hold+leave,n;
+  for(n=0;n<enter;n++) addSegment(easeIn(0,curve,n/enter), easeInOut(startY,endY,n/total));
+  for(n=0;n<hold;n++)  addSegment(curve,                    easeInOut(startY,endY,(enter+n)/total));
+  for(n=0;n<leave;n++) addSegment(easeInOut(curve,0,n/leave),easeInOut(startY,endY,(enter+hold+n)/total));
 }
-var LEN = {NONE:0,SHORT:25,MEDIUM:50,LONG:100};
-var CURVE={NONE:0,EASY:2,MEDIUM:4,HARD:6};
-var HILL={NONE:0,LOW:20,MEDIUM:40,HIGH:60};
-
+var CITY_SIGNS=['上海 SHANGHAI','杭州 HANGZHOU','南京 NANJING','苏州 SUZHOU','宁波 NINGBO','无锡 WUXI'];
 function buildTrack(){
-  segments = [];
-  addRoad(30, 30, 30, 0, 0);                                   // launch straight
-  addRoad(LEN.LONG, LEN.LONG, LEN.MEDIUM, CURVE.EASY, HILL.LOW);
-  addRoad(LEN.MEDIUM, LEN.MEDIUM, LEN.MEDIUM, -CURVE.MEDIUM, -HILL.MEDIUM);
-  addRoad(LEN.LONG, LEN.LONG, LEN.LONG, 0, HILL.MEDIUM);
-  addRoad(LEN.MEDIUM, LEN.MEDIUM, LEN.MEDIUM, CURVE.HARD, HILL.LOW);
-  addRoad(LEN.LONG, LEN.MEDIUM, LEN.MEDIUM, -CURVE.EASY, -HILL.LOW);
-  addRoad(LEN.MEDIUM, LEN.MEDIUM, LEN.MEDIUM, CURVE.MEDIUM, HILL.MEDIUM);
-  addRoad(LEN.LONG, LEN.LONG, LEN.MEDIUM, -CURVE.HARD, -HILL.MEDIUM);
-  addRoad(LEN.MEDIUM, LEN.MEDIUM, LEN.MEDIUM, CURVE.EASY, HILL.LOW);
-  addRoad(LEN.LONG, LEN.LONG, LEN.LONG, 0, 0);
-  addRoad(LEN.MEDIUM, LEN.MEDIUM, LEN.MEDIUM, -CURVE.MEDIUM, HILL.HIGH);
-  addRoad(LEN.MEDIUM, LEN.MEDIUM, LEN.MEDIUM, CURVE.MEDIUM, -HILL.HIGH);
-  addRoad(LEN.LONG, LEN.LONG, LEN.MEDIUM, 0, 0);
+  segments=[];
+  addRoad(40,80,40,0,0);                    // long launch straight
+  addRoad(30,120,30, 1.6, 12);              // gentle right, slight rise
+  addRoad(40,160,40, 0, -8);
+  addRoad(30,90,30, -1.8, 10);              // gentle left
+  addRoad(40,200,40, 0, 0);                 // long straight
+  addRoad(30,110,30, 2.2, -14);
+  addRoad(40,120,40, 0, 8);
+  addRoad(30,120,30, -1.4, 0);
+  addRoad(40,200,40, 0.6, 6);
+  addRoad(40,160,40, 0, 0);
+  trackLength=segments.length*segmentLength;
 
-  // start/finish rumble tint
-  for(var i=0;i<rumbleLength;i++){ segments[i].color = COLORS.START; }
-
-  trackLength = segments.length * segmentLength;
-  addRoadsideSprites();
+  // roadside furniture + overhead gantry city signs + light poles
+  for(var n=30;n<segments.length;n++){
+    var s=segments[n];
+    if(n%18===0) s.sprites.push({type:'pole', side:1});
+    if(n%18===9) s.sprites.push({type:'pole', side:-1});
+    if(n%7===3)  s.sprites.push({type:'tree', side:1, o:1.55+Math.random()*1.2});
+    if(n%9===5)  s.sprites.push({type:'tree', side:-1, o:1.6+Math.random()*1.3});
+    if(n%160===60) s.sprites.push({type:'sign', text:CITY_SIGNS[(n/160|0)%CITY_SIGNS.length]});
+  }
   resetTraffic();
 }
 
-// roadside decorations (China flavour) + overhead city signs
-var CITY_SIGNS = ['上海 SHANGHAI','杭州 HANGZHOU','南京 NANJING','苏州 SUZHOU','宁波 NINGBO','无锡 WUXI'];
-function addRoadsideSprites(){
-  var signEvery = 220;
-  for(var n=20;n<segments.length;n++){
-    var s = segments[n];
-    // scattered roadside objects
-    if(n%9===0){ s.sprites.push({ type:'pagoda',  offset: -2.2 - Math.random()*0.8 }); }
-    if(n%11===4){ s.sprites.push({ type:'lantern', offset: 1.15 + Math.random()*0.15 }); }
-    if(n%7===2){ s.sprites.push({ type:'tree', offset: (Math.random()<.5?-1:1)*(1.3+Math.random()*1.4) }); }
-    if(n%13===6){ s.sprites.push({ type:'tree', offset: -1.2 - Math.random()*1.6 }); }
-    // overhead green gantry sign with a Chinese city name
-    if(n%signEvery===40){
-      s.sprites.push({ type:'sign', offset:0, text: CITY_SIGNS[(n/ signEvery|0) % CITY_SIGNS.length] });
-    }
-  }
-}
-
-// ---- traffic ----------------------------------------------
-var TRAFFIC_TYPES = [
-  {c:'#e8eaed', roof:'#c7ccd4', name:'sedan',  w:0.90, spd:[70,120]},
-  {c:'#2b6cb0', roof:'#1e4e82', name:'sedan',  w:0.92, spd:[80,130]},
-  {c:'#c0392b', roof:'#8e281f', name:'sedan',  w:0.92, spd:[75,125]},
-  {c:'#2f2f34', roof:'#151518', name:'suv',    w:1.02, spd:[70,110]},
-  {c:'#f2c14e', roof:'#ca9c2f', name:'taxi',   w:0.88, spd:[70,115]},
-  {c:'#d8dde4', roof:'#aeb4bd', name:'bus',    w:1.35, spd:[55,85], long:true},
-  {c:'#3d566e', roof:'#243546', name:'truck',  w:1.30, spd:[55,80], long:true},
+/* ---- traffic (realistic, same direction) ---- */
+var TYPES=[
+  {name:'sedan', body:'#dfe3e8', roof:'#c2c7cf', w:0.72, spd:[62,105]},
+  {name:'sedan', body:'#2e6fb0', roof:'#20517f', w:0.74, spd:[70,120]},
+  {name:'sedan', body:'#b23b34', roof:'#84271f', w:0.74, spd:[66,110]},
+  {name:'sedan', body:'#2b2e33', roof:'#17191d', w:0.74, spd:[74,125]},
+  {name:'suv',   body:'#3a4657', roof:'#232c38', w:0.84, spd:[60,100], tall:true},
+  {name:'taxi',  body:'#e7b53c', roof:'#0e1116', w:0.72, spd:[60,100]},
+  {name:'van',   body:'#e8ecef', roof:'#cfd4d9', w:0.86, spd:[54,86],  tall:true, longv:true},
+  {name:'truck', body:'#37506a', roof:'#213244', w:0.98, spd:[50,74],  tall:true, longv:true},
+  {name:'bus',   body:'#c9502e', roof:'#9a3c22', w:1.02, spd:[52,78],  tall:true, longv:true},
 ];
-var cars = [];
-var TOTAL_CARS = 42;
-var laneOffsets = [-0.66,-0.22,0.22,0.66]; // 4 lanes across the half-road (-1..1)
-
+var LANE_X=[-0.62,0,0.62];                 // lane centres in road-half units (-1..1)
+var cars=[], TOTAL_CARS=34;
 function resetTraffic(){
-  cars = [];
+  cars=[];
   for(var i=0;i<TOTAL_CARS;i++){
-    var t = TRAFFIC_TYPES[(Math.random()*TRAFFIC_TYPES.length)|0];
-    var lane = laneOffsets[(Math.random()*laneOffsets.length)|0];
-    var z = Math.floor(Math.random()*segments.length)*segmentLength;
-    var spd = t.spd[0] + Math.random()*(t.spd[1]-t.spd[0]);
-    cars.push({ type:t, offset:lane, z:z, speed:spd, len:(t.long?segmentLength*1.6:segmentLength*0.9) });
+    var t=TYPES[(Math.random()*TYPES.length)|0];
+    cars.push({
+      type:t, offset:LANE_X[(Math.random()*LANE_X.length)|0],
+      z:Math.floor(Math.random()*segments.length)*segmentLength,
+      speed:t.spd[0]+Math.random()*(t.spd[1]-t.spd[0]),
+      zlen:(t.longv?segmentLength*1.5:segmentLength*0.85),
+      brake:Math.random()<0.12, _ahead:undefined
+    });
   }
 }
 
-// ---- gearbox (semi-manual) --------------------------------
-var GEAR_TOP = [70,120,165,210,265,330];   // km/h ceiling per gear (1..6)
-var IDLE_RPM = 900, REDLINE = 7600, RPM_MAX = 8200;
-var gear = 0;                              // 0-indexed
-var rpm = IDLE_RPM;
+/* ---- semi-manual gearbox ---- */
+var GEAR_TOP=[62,108,152,196,248,312];     // km/h ceiling per gear
+var IDLE_RPM=850, REDLINE=7400, RPM_MAX=8000;
+var gear=0, rpm=IDLE_RPM;
+function torqueCurve(t){ t=Math.max(0,Math.min(1,t)); return 0.32+0.68*Math.sin(t*Math.PI); }
 
-function torqueCurve(t){                    // t = rev fraction within gear (0..1)
-  t = Math.max(0, Math.min(1, t));
-  return 0.30 + 0.70 * Math.sin(t*Math.PI); // weak at idle & near redline, peak mid-range
-}
-
-// ---- player / world state ---------------------------------
-var position = 0;      // metres along track
-var speed    = 0;      // km/h  (also the raw sim unit)
-var playerX  = 0;      // -1..1 lateral (road-half units at centre)
-var kmhTop   = 330;
-var POS_SCALE = 26;    // metres per (km/h * second)
-
-// tuning
-var BRAKE_FORCE    = 150;   // km/h per s
-var COAST_DRAG     = 16;    // km/h per s (off throttle)
-var LIMITER_BRAKE  = 45;    // approach speed at gear ceiling
-var OFFROAD_MAX    = 78;    // km/h on the shoulder
-var OFFROAD_DECEL  = 130;
-var STEER_BASE     = 2.35;  // playerX units/sec at full lock, ×powerSteering
-var CENTRIFUGAL    = 0.32;  // outward push on curves
-
-var powerSteering = 1.00;   // adjustable
-
-// game meta
+/* ---- state ---- */
+var position=0, speed=0, playerX=0, kmhTop=312, POS_SCALE=26;
+var BRAKE_FORCE=150, COAST_DRAG=15, LIMITER_BRAKE=48;
+var STEER_BASE=2.15, CENTRIFUGAL=0.30;
+var powerSteering=1.00, wheelAngle=0;
 var running=false, paused=false, gameOver=false;
-var distanceKm=0, passes=0, best=0;
-var invuln=0, shake=0;
+var distanceKm=0, passes=0, best=0, invuln=0, shake=0, scrapeT=0;
+try{ best=parseFloat(localStorage.getItem('nohesi_best_cn')||'0')||0; }catch(e){}
+document.getElementById('best').innerHTML=Math.floor(best)+'<small> km</small>';
 
-try{ best = parseFloat(localStorage.getItem('nohesi_best_cn')||'0')||0; }catch(e){}
-document.getElementById('best').innerHTML = Math.floor(best)+'<small> km</small>';
-
-// ---- input ------------------------------------------------
-var keys = {};
-var touchSteer = 0, touchThrottle=false;
+/* ---- input ---- */
+var keys={}, touchSteer=0, touchThrottle=false;
 function keyName(e){
   switch(e.keyCode){
     case 38: case 87: return 'up';
@@ -355,735 +282,514 @@ function keyName(e){
     case 37: case 65: return 'left';
     case 39: case 68: return 'right';
     case 75: return 'shiftup';   // K
+    case 74: return 'shiftdown'; // J
     case 76: return 'shiftdown'; // L
     case 32: return 'shiftup';   // Space
-    case 80: return 'pause';     // P
+    case 80: return 'pause';
   }
   return null;
 }
-window.addEventListener('keydown', function(e){
-  var k = keyName(e);
-  if(!k) return;
+window.addEventListener('keydown',function(e){
+  var k=keyName(e); if(!k) return;
   if(k==='pause'){ if(running) togglePause(); e.preventDefault(); return; }
-  if(k==='shiftup' && !keys.shiftup){ shiftUp(); }
-  if(k==='shiftdown' && !keys.shiftdown){ shiftDown(); }
+  if(k==='shiftup'   && !keys.shiftup)   shiftUp();
+  if(k==='shiftdown' && !keys.shiftdown) shiftDown();
   keys[k]=true;
   if(['up','down','left','right'].indexOf(k)>=0 || e.keyCode===32) e.preventDefault();
 });
-window.addEventListener('keyup', function(e){
-  var k = keyName(e); if(k) keys[k]=false;
-});
+window.addEventListener('keyup',function(e){ var k=keyName(e); if(k) keys[k]=false; });
 
-// touch steering: left / right screen halves; hold = throttle too
-function setupTouch(){
+/* touch: hold a screen half to steer + throttle */
+(function(){
   function handle(ev){
-    ev.preventDefault();
-    touchSteer = 0; touchThrottle = false;
-    var t = ev.touches;
-    if(!t || !t.length) return;
-    touchThrottle = true;
+    ev.preventDefault(); touchSteer=0; touchThrottle=false;
+    var t=ev.touches; if(!t||!t.length) return;
     for(var i=0;i<t.length;i++){
-      // ignore touches on the steering slider row (top area)
-      if(t[i].clientY < 56) { touchThrottle=false; continue; }
-      touchSteer += (t[i].clientX < W/2) ? -1 : 1;
+      if(t[i].clientY<60) continue;                 // ignore slider row
+      touchThrottle=true;
+      touchSteer += (t[i].clientX<W/2)?-1:1;
     }
-    touchSteer = Math.max(-1,Math.min(1,touchSteer));
+    touchSteer=Math.max(-1,Math.min(1,touchSteer));
   }
-  ['touchstart','touchmove'].forEach(function(n){ canvas.addEventListener(n, handle, {passive:false}); });
-  ['touchend','touchcancel'].forEach(function(n){ canvas.addEventListener(n, function(ev){
-    if(ev.touches && ev.touches.length){ handle(ev); } else { touchSteer=0; touchThrottle=false; }
-  }, {passive:false}); });
-  // double-tap right side to upshift, left to downshift
-  var lastTap=0, lastX=0;
-  canvas.addEventListener('touchend', function(ev){
-    var now = performance.now();
-    if(now - lastTap < 280){ if(lastX > W/2) shiftUp(); else shiftDown(); }
-    lastTap = now;
-    if(ev.changedTouches && ev.changedTouches.length) lastX = ev.changedTouches[0].clientX;
-  });
-}
-setupTouch();
+  ['touchstart','touchmove'].forEach(function(n){ canvas.addEventListener(n,handle,{passive:false}); });
+  ['touchend','touchcancel'].forEach(function(n){ canvas.addEventListener(n,function(ev){
+    if(ev.touches&&ev.touches.length) handle(ev); else {touchSteer=0;touchThrottle=false;}
+  },{passive:false}); });
+})();
 
-// power steering slider
-var steerEl = document.getElementById('steer');
-var steerVal = document.getElementById('steerVal');
-function syncSteer(){
-  powerSteering = parseInt(steerEl.value,10)/100;
-  steerVal.textContent = powerSteering.toFixed(2)+'×';
+/* shift paddles (click + touch) */
+function bindPaddle(id, fn){
+  var el=document.getElementById(id);
+  el.addEventListener('click', function(e){ e.preventDefault(); fn(); });
+  el.addEventListener('touchstart', function(e){ e.preventDefault(); e.stopPropagation(); fn(); }, {passive:false});
 }
-steerEl.addEventListener('input', syncSteer);
-syncSteer();
+bindPaddle('padUp', shiftUp);
+bindPaddle('padDown', shiftDown);
 
-// ---- shifting ---------------------------------------------
-function shiftUp(){
-  if(!running || paused || gameOver) return;
-  if(gear < GEAR_TOP.length-1){ gear++; flashHint('↑ GEAR '+(gear+1)); }
-}
-function shiftDown(){
-  if(!running || paused || gameOver) return;
-  if(gear > 0){ gear--; flashHint('↓ GEAR '+(gear+1)); }
-}
+/* power steering */
+var steerEl=document.getElementById('steer'), steerVal=document.getElementById('steerVal');
+function syncSteer(){ powerSteering=parseInt(steerEl.value,10)/100; steerVal.textContent=powerSteering.toFixed(2)+'×'; }
+steerEl.addEventListener('input',syncSteer); syncSteer();
 
-var hintEl = document.getElementById('hint'), hintT=0;
-function flashHint(txt){ hintEl.textContent = txt; hintEl.classList.add('show'); hintT = 0.9; }
+/* ---- shifting ---- */
+function shiftUp(){ if(!running||paused||gameOver) return; if(gear<GEAR_TOP.length-1){ gear++; flashHint('▲ GEAR '+(gear+1)); } }
+function shiftDown(){ if(!running||paused||gameOver) return; if(gear>0){ gear--; flashHint('▼ GEAR '+(gear+1)); } }
+var hintEl=document.getElementById('hint'), hintT=0;
+function flashHint(t){ hintEl.textContent=t; hintEl.classList.add('show'); hintT=0.85; }
 
-// ---- collision helpers ------------------------------------
-function overlap(x1,w1,x2,w2){
-  return Math.abs(x1 - x2) < (w1+w2)*0.5;
-}
+/* ---- helpers ---- */
+function findSegment(z){ return segments[Math.floor(z/segmentLength)%segments.length]; }
+function pctRemain(z,total){ return (z%total)/total; }
+function interp(a,b,p){ return a+(b-a)*p; }
+function wrapDelta(d){ if(d<-trackLength/2)d+=trackLength; if(d>trackLength/2)d-=trackLength; return d; }
 
-// ---- update -----------------------------------------------
+/* ---- update ---- */
 function update(dt){
-  if(paused || gameOver) return;
+  if(paused||gameOver) return;
+  var throttle=keys.up||touchThrottle, braking=keys.down;
 
-  var throttle = keys.up || touchThrottle;
-  var braking  = keys.down;
+  var steerInput=0;
+  if(keys.left) steerInput-=1; if(keys.right) steerInput+=1; steerInput+=touchSteer;
+  steerInput=Math.max(-1,Math.min(1,steerInput));
 
-  // steering input
-  var steerInput = 0;
-  if(keys.left)  steerInput -= 1;
-  if(keys.right) steerInput += 1;
-  steerInput += touchSteer;
-  steerInput = Math.max(-1,Math.min(1,steerInput));
+  /* gearbox */
+  var gTop=GEAR_TOP[gear], gBot=gear>0?GEAR_TOP[gear-1]:0;
+  var revFrac=speed/gTop;
+  rpm=IDLE_RPM+Math.max(0,Math.min(1.08,revFrac))*(REDLINE-IDLE_RPM);
+  if(rpm>RPM_MAX)rpm=RPM_MAX;
+  var tt=(speed-gBot)/(gTop-gBot);
 
-  // --- gearbox / rpm / acceleration ---
-  var gTop = GEAR_TOP[gear];
-  var gBot = gear>0 ? GEAR_TOP[gear-1] : 0;
-  // tach reads across the whole gear (rises to redline at the ceiling, drops on upshift)
-  var revFrac = speed / gTop;
-  rpm = IDLE_RPM + Math.max(0, Math.min(1.08, revFrac)) * (REDLINE - IDLE_RPM);
-  if(rpm > RPM_MAX) rpm = RPM_MAX;
-  // torque, however, depends on where you sit in THIS gear's powerband:
-  // upshift too early and you bog down at the bottom of the band.
-  var tt = (speed - gBot) / (gTop - gBot);
+  var atLimiter=false;
+  if(throttle&&!braking){
+    if(speed<gTop-0.2){ speed+=60*torqueCurve(tt)*dt; if(speed>gTop)speed=gTop; }
+    else { atLimiter=true; speed+=(gTop-speed)*Math.min(1,LIMITER_BRAKE*dt); rpm=REDLINE+Math.abs(Math.sin(performance.now()/40))*450; }
+  } else if(braking){ speed-=BRAKE_FORCE*dt; }
+  else { speed-=COAST_DRAG*dt; }
+  if(speed>gTop){ speed-=LIMITER_BRAKE*dt; if(speed<gTop)speed=gTop; rpm=RPM_MAX; atLimiter=true; }
+  if(speed<0)speed=0;
 
-  var atLimiter = false;
-  if(throttle && !braking){
-    if(speed < gTop - 0.2){
-      var accel = 62 * torqueCurve(tt);      // km/h per s
-      speed += accel*dt;
-      if(speed > gTop) speed = gTop;
-    } else {
-      // rev limiter: bounce against the ceiling
-      atLimiter = true;
-      speed += (gTop - speed) * Math.min(1, LIMITER_BRAKE*dt/Math.max(1,gTop-speed+1));
-      rpm = REDLINE + Math.abs(Math.sin(performance.now()/40))*400; // flutter
-    }
-  } else if(braking){
-    speed -= BRAKE_FORCE*dt;
-  } else {
-    speed -= COAST_DRAG*dt;                   // engine braking / drag
-  }
+  /* steering */
+  var speedFrac=speed/kmhTop;
+  var baseSeg=findSegment(position);
+  playerX+=steerInput*STEER_BASE*powerSteering*dt*(0.5+0.5*speedFrac);
+  playerX-=baseSeg.curve*CENTRIFUGAL*speedFrac*dt;
 
-  // if current gear ceiling is below our speed (e.g. just downshifted) -> engine brake toward it
-  if(speed > gTop){
-    speed -= LIMITER_BRAKE*dt;
-    if(speed < gTop) speed = gTop;
-    rpm = RPM_MAX;
-    atLimiter = true;
-  }
+  /* barrier scrape (stay on the carriageway) */
+  var EDGE=0.92;
+  if(playerX>EDGE){ playerX=EDGE; if(speed>60){ speed-=90*dt; scrapeT=0.25; shake=Math.max(shake,3); } }
+  if(playerX<-EDGE){ playerX=-EDGE; if(speed>60){ speed-=90*dt; scrapeT=0.25; shake=Math.max(shake,3); } }
 
-  if(speed < 0) speed = 0;
+  /* advance */
+  position+=speed*POS_SCALE*dt; while(position>=trackLength)position-=trackLength; while(position<0)position+=trackLength;
+  for(var i=0;i<cars.length;i++){ var c=cars[i]; c.z+=c.speed*POS_SCALE*dt; while(c.z>=trackLength)c.z-=trackLength; }
 
-  // --- offroad penalty ---
-  var offroad = Math.abs(playerX) > 1;
-  if(offroad && speed > OFFROAD_MAX){
-    speed -= OFFROAD_DECEL*dt;
-    if(speed < OFFROAD_MAX) speed = OFFROAD_MAX;
-    shake = Math.max(shake, 3);
-  }
-
-  // --- steering ---
-  var speedFrac = speed / kmhTop;
-  var baseSeg = findSegment(position);
-  // player command steering (power steering scales authority)
-  playerX += steerInput * STEER_BASE * powerSteering * dt * (0.55 + 0.45*speedFrac);
-  // centrifugal from the curve you're on
-  playerX -= baseSeg.curve * CENTRIFUGAL * speedFrac * dt;
-  // gentle self-centre at very high steering assist is NOT applied (keeps it twitchy on purpose)
-
-  // clamp lateral (allow a bit onto the shoulder)
-  if(playerX < -1.35) playerX = -1.35;
-  if(playerX >  1.35) playerX =  1.35;
-
-  // --- advance along track ---
-  position += speed * POS_SCALE * dt;
-  while(position >= trackLength){ position -= trackLength; }
-  while(position < 0){ position += trackLength; }
-
-  // --- move traffic ---
-  for(var i=0;i<cars.length;i++){
-    var c = cars[i];
-    c.z += c.speed * POS_SCALE * dt;
-    while(c.z >= trackLength) c.z -= trackLength;
-  }
-
-  // --- collisions ---
-  if(invuln>0) invuln -= dt;
-  var pW = 0.42;
-  var pFront = position + playerZ*0.35;
+  /* collisions — tight, fair hitbox */
+  if(invuln>0) invuln-=dt;
+  var pZ=position+70, pHW=0.16, PZLEN=110;
   for(var j=0;j<cars.length;j++){
-    var car = cars[j];
-    // relative distance forward (handle wrap)
-    var d = car.z - position;
-    if(d < -trackLength/2) d += trackLength;
-    if(d >  trackLength/2) d -= trackLength;
-    if(d > -car.len && d < segmentLength*2.4){
-      // we're overlapping in z with this car's body
-      if(invuln<=0 && overlap(playerX, pW, car.offset, car.type.w*0.55)){
-        // only count as a hit if we were actually catching it (we're faster)
-        if(speed > car.speed - 2){
-          crash(car);
-        }
+    var car=cars[j];
+    var dz=wrapDelta(car.z-pZ);
+    var zTouch=(PZLEN+car.zlen)*0.5;
+    if(Math.abs(dz)<zTouch){
+      var carHW=car.type.w*0.30;                 // realistic half-width in road units
+      if(invuln<=0 && Math.abs(playerX-car.offset) < (pHW+carHW)){
+        crash(car);
       }
     }
-    // scoring: we just passed a car we were behind
-    if(!car.passed && d < 0 && d > -segmentLength*3 && speed > car.speed){
-      // approximate: mark passed when it falls behind
-    }
+    /* overtake scoring */
+    var ahead=wrapDelta(car.z-position)>0;
+    if(car._ahead!==undefined && car._ahead && !ahead && speed>car.speed) passes++;
+    car._ahead=ahead;
   }
 
-  // scoring via distance
-  distanceKm += speed * dt / 3600 * 25; // scaled so the odometer feels game-y
-  updateHUD(throttle, atLimiter);
+  distanceKm+=Math.max(0,speed)*dt/3600*25;   // odometer only ever climbs
+  wheelAngle+=((steerInput*0.6)-wheelAngle)*Math.min(1,dt*10);
 
-  // fx timers
-  if(shake>0){ shake -= dt*10; if(shake<0) shake=0; }
+  updateHUD(atLimiter);
+  if(shake>0){ shake-=dt*10; if(shake<0)shake=0; }
+  if(scrapeT>0) scrapeT-=dt;
   if(hintT>0){ hintT-=dt; if(hintT<=0) hintEl.classList.remove('show'); }
 }
 
-// passing detection (separate, simpler): track each car's previous side
-function detectPasses(dt){
-  for(var i=0;i<cars.length;i++){
-    var c = cars[i];
-    var d = c.z - position;
-    if(d < -trackLength/2) d += trackLength;
-    if(d >  trackLength/2) d -= trackLength;
-    var ahead = d > 0;
-    if(c._ahead === undefined){ c._ahead = ahead; continue; }
-    if(c._ahead && !ahead){ // was ahead, now behind => overtook
-      passes++;
-    }
-    c._ahead = ahead;
-  }
-}
-
 function crash(car){
-  invuln = 1.1;
-  var hard = car.type.long ? 0.30 : 0.45;
-  speed = speed * hard;
-  // downshift automatically if we've dropped below the gear range
-  while(gear>0 && speed < (gear>1?GEAR_TOP[gear-1]:0)*0.6){ gear--; }
-  shake = 8;
-  flashCrash();
-  showToast(car.type.long ? '碰撞! HEAVY HIT' : '刮蹭! CONTACT');
-  // knock sideways a touch
-  playerX += (playerX < car.offset ? -0.25 : 0.25);
+  invuln=1.0;
+  speed*=car.type.longv?0.42:0.55;
+  while(gear>0 && speed<(gear>1?GEAR_TOP[gear-1]:0)*0.6) gear--;
+  shake=8; flashCrash();
+  showToast(car.type.longv?'碰撞! COLLISION':'刮蹭! CONTACT');
+  playerX+=(playerX<car.offset?-0.18:0.18);
 }
 
-// ---- projection & rendering -------------------------------
-function findSegment(z){ return segments[Math.floor(z/segmentLength) % segments.length]; }
-function percentRemaining(z, total){ return (z%total)/total; }
-function interpolate(a,b,p){ return a+(b-a)*p; }
-
-function project(p, cameraX, cameraY, cameraZ, camDepth, width, height, rw){
-  p.camera.x = (p.world.x || 0) - cameraX;
-  p.camera.y = (p.world.y || 0) - cameraY;
-  p.camera.z = (p.world.z || 0) - cameraZ;
-  if(p.camera.z < 1) p.camera.z = 1; // avoid div by ~0 / behind camera
-  p.screen.scale = camDepth / p.camera.z;
-  p.screen.x = Math.round((width/2)  + (p.screen.scale * p.camera.x * width/2));
-  p.screen.y = Math.round((height/2) - (p.screen.scale * p.camera.y * height/2));
-  p.screen.w = Math.round( p.screen.scale * rw * width/2 );
+/* ================= RENDER ================= */
+function project(p,camX,camY,camZ,depth,w,h,rw){
+  p.camera.x=(p.world.x||0)-camX;
+  p.camera.y=(p.world.y||0)-camY;
+  p.camera.z=(p.world.z||0)-camZ;
+  if(p.camera.z<1)p.camera.z=1;
+  p.screen.scale=depth/p.camera.z;
+  p.screen.x=Math.round((w/2)+(p.screen.scale*p.camera.x*w/2));
+  p.screen.y=Math.round((h/2)-(p.screen.scale*p.camera.y*h/2));
+  p.screen.w=Math.round(p.screen.scale*rw*w/2);
 }
+function poly(x1,y1,x2,y2,x3,y3,x4,y4,c){ ctx.fillStyle=c; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.lineTo(x3,y3); ctx.lineTo(x4,y4); ctx.closePath(); ctx.fill(); }
+function rr(x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
 
-function polygon(x1,y1,x2,y2,x3,y3,x4,y4,color){
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.lineTo(x3,y3); ctx.lineTo(x4,y4);
-  ctx.closePath(); ctx.fill();
-}
+function render(){
+  var base=findSegment(position), basePct=pctRemain(position,segmentLength);
+  var plSeg=findSegment(position+playerZ), plPct=pctRemain(position+playerZ,segmentLength);
+  var playerY=interp(plSeg.p1.world.y,plSeg.p2.world.y,plPct);
+  var camX=playerX*roadWidth, camY=cameraHeight+playerY, camZ=position;
 
-function fog(amount){ return Math.max(0, Math.min(1, amount)); }
+  var sx=shake>0?(Math.random()-0.5)*shake*2:0, sy=shake>0?(Math.random()-0.5)*shake:0;
+  // idle/engine micro-rumble
+  if(running){ sy+=Math.sin(performance.now()/60)*0.4*(0.4+speed/kmhTop*0.6); }
 
-// draw the parallax sky + Shanghai skyline
-var skyShift = 0;
-function drawBackground(baseSeg){
-  // sky gradient (hazy China sky)
-  var g = ctx.createLinearGradient(0,0,0,H*0.62);
-  g.addColorStop(0,'#a7c6e0');
-  g.addColorStop(0.55,'#c9dcec');
-  g.addColorStop(1,'#e6eef4');
-  ctx.fillStyle = g;
-  ctx.fillRect(0,0,W,H*0.62);
+  ctx.save(); ctx.translate(sx,sy);
 
-  // hazy sun
-  ctx.save();
-  var sunX = W*0.72, sunY = H*0.16;
-  var sg = ctx.createRadialGradient(sunX,sunY,4,sunX,sunY,120);
-  sg.addColorStop(0,'rgba(255,246,214,.95)');
-  sg.addColorStop(1,'rgba(255,246,214,0)');
-  ctx.fillStyle=sg; ctx.fillRect(sunX-140,sunY-140,280,280);
+  drawSky(base);
+
+  var maxy=H, x=0, dx=-(base.curve*basePct), drawn=[];
+  for(var n=0;n<drawDistance;n++){
+    var seg=segments[(base.index+n)%segments.length];
+    var looped=seg.index<base.index, zoff=camZ-(looped?trackLength:0);
+    project(seg.p1, camX-x,      camY, zoff, cameraDepth, W,H,roadWidth);
+    project(seg.p2, camX-x-dx,   camY, zoff, cameraDepth, W,H,roadWidth);
+    x+=dx; dx+=seg.curve;
+    if(seg.p1.camera.z<=cameraDepth || seg.p2.screen.y>=seg.p1.screen.y || seg.p2.screen.y>=maxy) continue;
+    drawSegment(seg, n);
+    maxy=seg.p2.screen.y;
+    drawn.push(seg);
+  }
+  horizonY=maxy;
+
+  // barriers (far -> near so nearer overlays)
+  for(var b=drawn.length-1;b>=0;b--) drawBarriers(drawn[b]);
+
+  // roadside sprites far -> near
+  var sp=[]; for(var d2=0;d2<drawn.length;d2++){ var sg=drawn[d2]; for(var si=0;si<sg.sprites.length;si++) sp.push({sg:sg,s:sg.sprites[si]}); }
+  for(var s2=sp.length-1;s2>=0;s2--) drawSprite(sp[s2].sg, sp[s2].s);
+
+  // traffic far -> near
+  var vis=[];
+  for(var ci=0;ci<cars.length;ci++){ var c=cars[ci], dd=wrapDelta(c.z-position); if(dd<0||dd>drawDistance*segmentLength) continue; vis.push({c:c,d:dd}); }
+  vis.sort(function(a,b){ return b.d-a.d; });
+  for(var vi=0;vi<vis.length;vi++){
+    var vc=vis[vi].c, vd=vis[vi].d, cseg=findSegment(vc.z), cp=pctRemain(vc.z,segmentLength);
+    var cy=interp(cseg.p1.world.y,cseg.p2.world.y,cp);
+    var pp={world:{x:vc.offset*roadWidth,y:cy,z:position+vd},camera:{},screen:{}};
+    project(pp,camX,camY,position,cameraDepth,W,H,roadWidth);
+    if(pp.screen.scale<=0) continue;
+    var cw=pp.screen.scale*roadWidth*(W/2)*0.26*vc.type.w, ch=cw*(vc.type.tall?1.15:0.82);
+    if(cw<2||pp.screen.y>H+ch) continue;
+    var fog=1-Math.pow(vd/(drawDistance*segmentLength),1.7);
+    ctx.globalAlpha=Math.max(0.12,Math.min(1,fog));
+    drawCar(vc.type, pp.screen.x, pp.screen.y, cw, ch, vc.__brake);
+    ctx.globalAlpha=1;
+  }
+
+  drawSpeedLines();
   ctx.restore();
 
-  // parallax offset from curve accumulation + position
-  skyShift = (baseSeg.curve*4 + skyShift*0)|0;
-  var px = -(position/segmentLength)*0.6 - baseSeg.curve*22;
-
-  drawSkyline(px);
-  drawHills(px);
+  drawCockpit();   // fixed to screen (steady)
+  drawVignette();
 }
 
-function drawHills(px){
-  var horizon = H*0.60;
-  ctx.fillStyle = '#7fa06f';
-  ctx.beginPath();
-  ctx.moveTo(0,horizon);
-  var base = (px*0.5)%400;
-  for(var x=-400;x<=W+400;x+=200){
-    var xx = x - (base%200);
-    ctx.lineTo(xx, horizon - 26 - 22*Math.sin((x+px*0.5)/160));
-    ctx.lineTo(xx+100, horizon - 10 - 18*Math.cos((x+px*0.5)/120));
+/* sky, sun, hills, distant city */
+function drawSky(base){
+  var hy=H*0.52;
+  var g=ctx.createLinearGradient(0,0,0,hy);
+  g.addColorStop(0,'#5b93c9'); g.addColorStop(0.6,'#9cc0e0'); g.addColorStop(1,'#d7e6f1');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,hy+2);
+  // sun haze
+  var sunX=W*0.70, sunY=H*0.15;
+  var sg=ctx.createRadialGradient(sunX,sunY,4,sunX,sunY,150);
+  sg.addColorStop(0,'rgba(255,250,228,.9)'); sg.addColorStop(1,'rgba(255,250,228,0)');
+  ctx.fillStyle=sg; ctx.fillRect(sunX-160,sunY-160,320,320);
+  var px=-(position/segmentLength)*0.5 - base.curve*20;
+  drawCity(px,hy); drawHills(px,hy);
+}
+function drawHills(px,hy){
+  ctx.fillStyle='#79997e';
+  ctx.beginPath(); ctx.moveTo(0,hy);
+  for(var x=-200;x<=W+200;x+=140){
+    ctx.lineTo(x-(px*0.5)%140, hy-24-20*Math.sin((x+px*0.5)/150));
   }
-  ctx.lineTo(W,horizon); ctx.closePath(); ctx.fill();
+  ctx.lineTo(W,hy); ctx.closePath(); ctx.globalAlpha=0.9; ctx.fill(); ctx.globalAlpha=1;
 }
-
-function drawSkyline(px){
-  var horizon = H*0.60;
-  var ox = (px*1.1) % (W+600);
-  ctx.save();
-  ctx.globalAlpha = 0.55;
-  ctx.fillStyle = '#9fb4c9';
-  // simple repeating city blocks
+function drawCity(px,hy){
+  ctx.save(); ctx.globalAlpha=0.42; ctx.fillStyle='#9fb4c9';
+  var scaleH=H/720;
   for(var k=-1;k<=2;k++){
-    var bx = k*(W*0.9) - (px*0.9)%(W*0.9);
-    drawCityBlock(bx, horizon);
+    var bx=k*(W*0.85)-(px*0.9)%(W*0.85);
+    var hts=[60,110,80,140,100,70,130,90,55,120], x=bx;
+    for(var i=0;i<hts.length;i++){ var h=hts[i]*scaleH,w=24*scaleH; ctx.fillRect(x,hy-h,w,h); x+=w+9; }
+    // pearl tower + supertall
+    var cx=bx+150*scaleH;
+    ctx.fillRect(cx-2,hy-200*scaleH,4,200*scaleH);
+    ctx.beginPath(); ctx.arc(cx,hy-140*scaleH,11*scaleH,0,7); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx,hy-90*scaleH,8*scaleH,0,7); ctx.fill();
+    var tx=cx+58*scaleH; ctx.beginPath(); ctx.moveTo(tx,hy); ctx.lineTo(tx+4,hy-185*scaleH); ctx.lineTo(tx+18,hy-195*scaleH); ctx.lineTo(tx+28,hy); ctx.closePath(); ctx.fill();
   }
   ctx.restore();
-}
-function drawCityBlock(bx, horizon){
-  // generic towers
-  var heights = [70,120,90,150,110,80,140,100,60,130];
-  var x = bx;
-  for(var i=0;i<heights.length;i++){
-    var h = heights[i]* (H/720);
-    var w = 26*(H/720);
-    ctx.fillRect(x, horizon-h, w, h);
-    x += w+10;
-  }
-  // Oriental Pearl-ish tower + Shanghai Tower silhouettes near centre
-  var cx = bx + 150*(H/720);
-  // pearl tower: mast with two spheres
-  ctx.fillRect(cx-2, horizon-210*(H/720), 4, 210*(H/720));
-  ctx.beginPath(); ctx.arc(cx, horizon-150*(H/720), 12*(H/720),0,7); ctx.fill();
-  ctx.beginPath(); ctx.arc(cx, horizon-95*(H/720), 9*(H/720),0,7); ctx.fill();
-  // twisting supertall
-  var tx = cx+60*(H/720);
-  ctx.beginPath();
-  ctx.moveTo(tx, horizon);
-  ctx.lineTo(tx+4, horizon-190*(H/720));
-  ctx.lineTo(tx+20, horizon-200*(H/720));
-  ctx.lineTo(tx+30, horizon);
-  ctx.closePath(); ctx.fill();
 }
 
-// ---- roadside & sign sprites ------------------------------
-function drawSprite(sp, scale, destX, destY, clipY){
-  var s = scale * roadWidth * (W/2);
-  if(sp.type==='sign'){
-    drawGantry(sp, scale, destX, destY);
-    return;
+/* one road segment: terrain band, asphalt, edge + lane lines */
+function drawSegment(seg,n){
+  var p1=seg.p1.screen, p2=seg.p2.screen;
+  // roadside terrain (embankment) full band
+  ctx.fillStyle = seg.color? '#5f6d4d':'#63714f';
+  ctx.fillRect(0,p2.y,W,p1.y-p2.y);
+  // shoulder (paved strip just outside the road) — draw slightly wider than road
+  var sh1=p1.w*0.10, sh2=p2.w*0.10;
+  poly(p1.x-p1.w-sh1,p1.y, p1.x+p1.w+sh1,p1.y, p2.x+p2.w+sh2,p2.y, p2.x-p2.w-sh2,p2.y, seg.color?'#3d4149':'#3f434b');
+  // asphalt
+  poly(p1.x-p1.w,p1.y, p1.x+p1.w,p1.y, p2.x+p2.w,p2.y, p2.x-p2.w,p2.y, seg.color?'#34373d':'#363940');
+  // solid white edge lines
+  var el1=p1.w*0.03, el2=p2.w*0.03;
+  poly(p1.x-p1.w,p1.y, p1.x-p1.w+el1,p1.y, p2.x-p2.w+el2,p2.y, p2.x-p2.w,p2.y, '#dfe3e6');
+  poly(p1.x+p1.w-el1,p1.y, p1.x+p1.w,p1.y, p2.x+p2.w,p2.y, p2.x+p2.w-el2,p2.y, '#dfe3e6');
+  // dashed lane markers (3 lanes => 2 interior lines), dashes via segment parity
+  if((seg.index%6)<3){
+    var lw1=p1.w*2/lanes, lw2=p2.w*2/lanes, m1=p1.w*0.022, m2=p2.w*0.022;
+    var lx1=p1.x-p1.w+lw1, lx2=p2.x-p2.w+lw2;
+    for(var l=1;l<lanes;l++){
+      poly(lx1-m1,p1.y, lx1+m1,p1.y, lx2+m2,p2.y, lx2-m2,p2.y, '#d9dde0');
+      lx1+=lw1; lx2+=lw2;
+    }
   }
-  // ground objects: size relative to projected scale
-  var unit = scale * cameraDepth; // shrink with distance
-  var size = unit * 3400;
-  if(size < 3) return;
-  var x = destX, yBottom = destY;
-  if(sp.type==='pagoda') drawPagoda(x, yBottom, size);
-  else if(sp.type==='lantern') drawLantern(x, yBottom, size);
-  else if(sp.type==='tree') drawTree(x, yBottom, size);
 }
 
-function drawPagoda(x,y,s){
-  s = Math.min(s, H*0.5);
-  var w = s*0.9;
-  ctx.save();
-  // body
-  ctx.fillStyle='#b23a34';
-  ctx.fillRect(x-w*0.22, y-s*0.62, w*0.44, s*0.62);
-  // roofs (3 tiers)
-  ctx.fillStyle='#7a1e1a';
-  for(var t=0;t<3;t++){
-    var ry = y - s*0.62 - t*s*0.22;
-    var rw = w*(0.62 - t*0.14);
-    ctx.beginPath();
-    ctx.moveTo(x-rw, ry);
-    ctx.lineTo(x+rw, ry);
-    ctx.lineTo(x+rw*0.55, ry - s*0.14);
-    ctx.lineTo(x-rw*0.55, ry - s*0.14);
-    ctx.closePath(); ctx.fill();
-  }
-  // gold finial
-  ctx.fillStyle='#f4c04a';
-  ctx.fillRect(x-1.5, y-s*0.62-3*s*0.22 - s*0.06, 3, s*0.06);
-  ctx.restore();
+/* raised barriers: concrete median (left) + metal guardrail (right) */
+function drawBarriers(seg){
+  var p1=seg.p1.screen, p2=seg.p2.screen;
+  // LEFT concrete Jersey barrier
+  wall(p1.x-p1.w, p1.y, p1.w, p2.x-p2.w, p2.y, p2.w, -1, '#b7bbc0','#d6d9dd','#7f858c', 0.15);
+  // RIGHT metal guardrail
+  wall(p1.x+p1.w, p1.y, p1.w, p2.x+p2.w, p2.y, p2.w, 1, '#aeb4bb','#e6e9ec','#83898f', 0.11);
 }
-function drawLantern(x,y,s){
-  s = Math.min(s, H*0.4);
-  ctx.save();
-  ctx.strokeStyle='#5a3a1a'; ctx.lineWidth=Math.max(1,s*0.03);
-  ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x,y-s*0.7); ctx.stroke();
-  ctx.strokeStyle='#3a2510';
-  ctx.beginPath(); ctx.moveTo(x,y-s*0.7); ctx.lineTo(x+s*0.22,y-s*0.72); ctx.stroke();
-  // lantern
-  ctx.fillStyle='#e23b3b';
-  ctx.beginPath(); ctx.ellipse(x+s*0.22, y-s*0.62, s*0.10, s*0.14, 0,0,7); ctx.fill();
-  ctx.fillStyle='#f4c04a';
-  ctx.fillRect(x+s*0.22-s*0.10, y-s*0.63, s*0.20, s*0.02);
-  ctx.restore();
+function wall(x1,y1,w1, x2,y2,w2, side, face, top, shadow, hFrac){
+  var h1=w1*hFrac, h2=w2*hFrac;
+  var t=side*Math.max(2,w1*0.04), tt=side*Math.max(1,w2*0.04); // slight outward thickness
+  // shadow at base
+  poly(x1,y1, x1+t*1.6,y1, x2+tt*1.6,y2, x2,y2, shadow);
+  // face
+  poly(x1,y1, x2,y2, x2,y2-h2, x1,y1-h1, face);
+  // top cap
+  poly(x1,y1-h1, x2,y2-h2, x2+tt,y2-h2, x1+t,y1-h1, top);
+}
+
+/* roadside sprites */
+function drawSprite(seg, s){
+  var p=seg.p1.screen, sc=p.scale;
+  if(s.type==='sign'){ drawGantry(seg,s); return; }
+  var unit=sc*cameraDepth, size=unit*3200;
+  if(size<3) return;
+  var x=p.x + sc*(s.side*(1.12+ (s.o||0)) )*roadWidth*(W/2), y=p.y;
+  if(s.type==='pole') drawPole(x,y,size,p.x);
+  else if(s.type==='tree') drawTree(x,y,size);
+}
+function drawPole(x,y,s,roadCx){
+  s=Math.min(s,H*0.7);
+  ctx.strokeStyle='#8a9098'; ctx.lineWidth=Math.max(1,s*0.02);
+  ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x,y-s*0.9); ctx.stroke();
+  // arm reaching toward the road
+  var dir=(x>roadCx)?-1:1;
+  ctx.beginPath(); ctx.moveTo(x,y-s*0.9); ctx.lineTo(x+dir*s*0.28,y-s*0.92); ctx.stroke();
+  ctx.fillStyle='#c9ced4'; ctx.fillRect(x+dir*s*0.24, y-s*0.94, s*0.09, s*0.03);
 }
 function drawTree(x,y,s){
-  s = Math.min(s, H*0.42);
-  ctx.save();
-  ctx.fillStyle='#6b4a2a';
-  ctx.fillRect(x-s*0.03, y-s*0.35, s*0.06, s*0.35);
-  ctx.fillStyle='#2f7d3e';
-  ctx.beginPath(); ctx.arc(x, y-s*0.45, s*0.22, 0,7); ctx.fill();
-  ctx.beginPath(); ctx.arc(x-s*0.14, y-s*0.34, s*0.16, 0,7); ctx.fill();
-  ctx.beginPath(); ctx.arc(x+s*0.14, y-s*0.34, s*0.16, 0,7); ctx.fill();
-  ctx.restore();
+  s=Math.min(s,H*0.5);
+  ctx.fillStyle='#5b432a'; ctx.fillRect(x-s*0.025,y-s*0.32,s*0.05,s*0.32);
+  ctx.fillStyle='#3f7a44'; ctx.beginPath(); ctx.arc(x,y-s*0.42,s*0.2,0,7); ctx.fill();
+  ctx.beginPath(); ctx.arc(x-s*0.13,y-s*0.31,s*0.15,0,7); ctx.fill();
+  ctx.beginPath(); ctx.arc(x+s*0.13,y-s*0.31,s*0.15,0,7); ctx.fill();
 }
-function drawGantry(sp, scale, destX, destY){
-  var unit = scale * cameraDepth;
-  var spanW = scale * roadWidth * (W/2) * 1.05;
-  if(spanW < 40) return;
-  var h = Math.min(unit*2600, H*0.5);
-  var barY = destY - h;
-  var barH = Math.max(10, unit*900);
-  // posts
-  ctx.fillStyle='#7d8590';
-  ctx.fillRect(destX-spanW/2-6, barY, 6, h);
-  ctx.fillRect(destX+spanW/2, barY, 6, h);
-  // green sign panel
-  ctx.fillStyle='#166534';
-  ctx.fillRect(destX-spanW/2, barY, spanW, barH);
+function drawGantry(seg, s){
+  var p=seg.p1.screen, sc=p.scale, unit=sc*cameraDepth;
+  var span=sc*roadWidth*(W/2)*1.16; if(span<40) return;
+  var hh=Math.min(unit*2500,H*0.5), barY=p.y-hh, barH=Math.max(10,unit*820);
+  ctx.fillStyle='#7d8590'; ctx.fillRect(p.x-span/2-6,barY,6,hh); ctx.fillRect(p.x+span/2,barY,6,hh);
+  ctx.fillStyle='#15642f'; ctx.fillRect(p.x-span/2,barY,span,barH);
   ctx.strokeStyle='rgba(255,255,255,.85)'; ctx.lineWidth=Math.max(1,barH*0.05);
-  ctx.strokeRect(destX-spanW/2+barH*0.12, barY+barH*0.12, spanW-barH*0.24, barH-barH*0.24);
-  // text
-  if(barH > 16){
-    ctx.fillStyle='#fff';
-    ctx.font = '700 '+Math.floor(barH*0.42)+'px system-ui, "PingFang SC", sans-serif';
+  ctx.strokeRect(p.x-span/2+barH*0.12,barY+barH*0.12,span-barH*0.24,barH-barH*0.24);
+  if(barH>16){
+    ctx.fillStyle='#fff'; ctx.font='700 '+Math.floor(barH*0.4)+'px system-ui,"PingFang SC",sans-serif';
     ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(sp.text, destX, barY+barH*0.5);
-    // little arrow
-    ctx.fillText('▲', destX + spanW*0.32, barY+barH*0.5);
+    ctx.fillText(s.text,p.x,barY+barH*0.5); ctx.fillText('▲',p.x+span*0.34,barY+barH*0.5);
+    ctx.textAlign='start'; ctx.textBaseline='alphabetic';
   }
-  ctx.textAlign='start'; ctx.textBaseline='alphabetic';
 }
 
-// ---- draw a traffic / player car (procedural) -------------
-function drawCar(type, x, y, w, h){
-  var body = type.c, roof = type.roof;
+/* realistic-ish car (viewed from rear) */
+function drawCar(t,x,yB,w,h,braking){
   ctx.save();
   // shadow
-  ctx.fillStyle='rgba(0,0,0,.28)';
-  ctx.beginPath(); ctx.ellipse(x, y+h*0.02, w*0.55, h*0.14, 0,0,7); ctx.fill();
-  // body
-  ctx.fillStyle=body;
-  roundRect(x-w/2, y-h, w, h, Math.min(w,h)*0.18); ctx.fill();
-  // roof / cabin
-  ctx.fillStyle=roof;
-  roundRect(x-w*0.34, y-h*0.86, w*0.68, h*0.5, Math.min(w,h)*0.14); ctx.fill();
+  ctx.fillStyle='rgba(0,0,0,.30)'; ctx.beginPath(); ctx.ellipse(x,yB+h*0.02,w*0.56,h*0.14,0,0,7); ctx.fill();
+  // body with vertical shading
+  var bg=ctx.createLinearGradient(0,yB-h,0,yB);
+  bg.addColorStop(0,shade(t.body,1.14)); bg.addColorStop(0.5,t.body); bg.addColorStop(1,shade(t.body,0.72));
+  ctx.fillStyle=bg; rr(x-w/2,yB-h,w,h,Math.min(w,h)*0.16); ctx.fill();
+  // greenhouse / cabin
+  var rh=t.tall?h*0.56:h*0.5;
+  ctx.fillStyle=shade(t.roof,1.0); rr(x-w*0.4,yB-h*0.98,w*0.8,rh,Math.min(w,h)*0.12); ctx.fill();
   // rear window
-  ctx.fillStyle='rgba(20,26,38,.85)';
-  roundRect(x-w*0.28, y-h*0.80, w*0.56, h*0.28, 3); ctx.fill();
+  ctx.fillStyle='rgba(150,175,200,.55)'; rr(x-w*0.3,yB-h*0.9,w*0.6,rh*0.5,3); ctx.fill();
+  // pillars/edges of glass
+  ctx.fillStyle='rgba(20,26,36,.5)'; ctx.fillRect(x-w*0.3,yB-h*0.9,w*0.03,rh*0.5); ctx.fillRect(x+w*0.27,yB-h*0.9,w*0.03,rh*0.5);
+  // bumper
+  ctx.fillStyle=shade(t.body,0.6); ctx.fillRect(x-w*0.46,yB-h*0.2,w*0.92,h*0.1);
   // tail lights
-  ctx.fillStyle='#ff4141';
-  ctx.fillRect(x-w*0.42, y-h*0.34, w*0.14, h*0.14);
-  ctx.fillRect(x+w*0.28, y-h*0.34, w*0.14, h*0.14);
-  // plate (Chinese blue plate)
-  ctx.fillStyle='#1e57c8';
-  ctx.fillRect(x-w*0.14, y-h*0.16, w*0.28, h*0.12);
+  ctx.fillStyle=braking?'#ff2a2a':'#c0392b';
+  ctx.fillRect(x-w*0.44,yB-h*0.34,w*0.16,h*0.12); ctx.fillRect(x+w*0.28,yB-h*0.34,w*0.16,h*0.12);
+  if(braking){ ctx.globalAlpha=0.5; ctx.fillStyle='#ff5a5a'; ctx.fillRect(x-w*0.46,yB-h*0.36,w*0.2,h*0.16); ctx.fillRect(x+w*0.26,yB-h*0.36,w*0.2,h*0.16); ctx.globalAlpha=1; }
+  // plate (Chinese blue)
+  ctx.fillStyle='#1e57c8'; ctx.fillRect(x-w*0.12,yB-h*0.16,w*0.24,h*0.1);
+  // wheels hint
+  ctx.fillStyle='#111'; ctx.fillRect(x-w*0.52,yB-h*0.16,w*0.06,h*0.14); ctx.fillRect(x+w*0.46,yB-h*0.16,w*0.06,h*0.14);
   ctx.restore();
 }
-function roundRect(x,y,w,h,r){
-  r = Math.min(r, w/2, h/2);
-  ctx.beginPath();
-  ctx.moveTo(x+r,y);
-  ctx.arcTo(x+w,y,x+w,y+h,r);
-  ctx.arcTo(x+w,y+h,x,y+h,r);
-  ctx.arcTo(x,y+h,x,y,r);
-  ctx.arcTo(x,y,x+w,y,r);
-  ctx.closePath();
+function shade(hex,f){
+  var c=hex.replace('#',''); if(c.length!==6) return hex;
+  var r=Math.min(255,Math.round(parseInt(c.substr(0,2),16)*f));
+  var g=Math.min(255,Math.round(parseInt(c.substr(2,2),16)*f));
+  var b=Math.min(255,Math.round(parseInt(c.substr(4,2),16)*f));
+  return 'rgb('+r+','+g+','+b+')';
 }
 
-// ---- main render ------------------------------------------
-function render(){
-  var baseSegment = findSegment(position);
-  var basePercent = percentRemaining(position, segmentLength);
-  var playerSegment = findSegment(position + playerZ);
-  var playerPercent = percentRemaining(position+playerZ, segmentLength);
-  var playerY = interpolate(playerSegment.p1.world.y, playerSegment.p2.world.y, playerPercent);
-
-  var shakeX = shake>0 ? (Math.random()-0.5)*shake*2 : 0;
-  var shakeY = shake>0 ? (Math.random()-0.5)*shake : 0;
-  ctx.save();
-  ctx.translate(shakeX, shakeY);
-
-  // background
-  drawBackground(baseSegment);
-
-  var maxy = H;
-  var x = 0;
-  var dx = -(baseSegment.curve * basePercent);
-  var n, segment, sprite;
-  var camX = playerX * roadWidth;
-  var camY = cameraHeight + playerY;
-  var camZ = position - (position >= 0 ? 0 : trackLength);
-
-  var drewSprites = [];  // defer sprites so they draw over the road, far -> near
-
-  for(n=0;n<drawDistance;n++){
-    segment = segments[(baseSegment.index + n) % segments.length];
-    var looped = segment.index < baseSegment.index;
-    var camZoff = camZ - (looped ? trackLength : 0);
-
-    project(segment.p1, camX - x,        camY, camZoff, cameraDepth, W, H, roadWidth);
-    project(segment.p2, camX - x - dx,   camY, camZoff, cameraDepth, W, H, roadWidth);
-
-    x  += dx;
-    dx += segment.curve;
-
-    if(segment.p1.camera.z <= cameraDepth || // behind camera
-       segment.p2.screen.y >= segment.p1.screen.y ||
-       segment.p2.screen.y >= maxy) {
-      continue;
-    }
-
-    drawSegment(segment, n);
-    maxy = segment.p2.screen.y;
-
-    // stash sprites for later (draw back-to-front already since we iterate near->far,
-    // but sprites must overlay road; collect and render in reverse)
-    if(segment.sprites.length){
-      for(var si=0; si<segment.sprites.length; si++){
-        drewSprites.push({seg:segment, sp:segment.sprites[si]});
-      }
-    }
+/* subtle speed lines at high velocity */
+function drawSpeedLines(){
+  var f=speed/kmhTop; if(f<0.55) return;
+  ctx.save(); ctx.globalAlpha=(f-0.55)*0.5; ctx.strokeStyle='rgba(255,255,255,.6)'; ctx.lineWidth=2;
+  var cx=W/2, cy=H*0.5;
+  for(var i=0;i<7;i++){
+    var a=(i/7)*Math.PI*2 + performance.now()/900;
+    var r0=H*0.32, r1=H*0.5;
+    ctx.beginPath(); ctx.moveTo(cx+Math.cos(a)*r0,cy+Math.sin(a)*r0*0.7); ctx.lineTo(cx+Math.cos(a)*r1,cy+Math.sin(a)*r1*0.7); ctx.stroke();
   }
+  ctx.restore();
+}
 
-  // draw sprites far -> near
-  for(var s2=drewSprites.length-1;s2>=0;s2--){
-    var item = drewSprites[s2];
-    var seg = item.seg, sp = item.sp;
-    var sc = seg.p1.screen.scale;
-    var spx = seg.p1.screen.x + sc * sp.offset * roadWidth * (W/2);
-    drawSprite(sp, sc, spx, seg.p1.screen.y);
-  }
+/* ---- first-person cockpit overlay ---- */
+function drawCockpit(){
+  var carCol='#171a1f';
+  // A-pillars framing the windshield
+  ctx.fillStyle='rgba(14,16,20,.92)';
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(W*0.10,0); ctx.lineTo(0,H*0.55); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(W,0); ctx.lineTo(W*0.90,0); ctx.lineTo(W,H*0.55); ctx.closePath(); ctx.fill();
+  // rear-view mirror
+  ctx.fillStyle='#0c0e12'; rr(W*0.42,0,W*0.16,H*0.055,4); ctx.fill();
+  ctx.fillStyle='rgba(150,175,200,.35)'; rr(W*0.425,H*0.006,W*0.15,H*0.04,3); ctx.fill();
 
-  // draw traffic cars far -> near
-  // gather visible cars with their projected data
-  var visible = [];
-  for(var ci=0;ci<cars.length;ci++){
-    var c = cars[ci];
-    var d = c.z - position;
-    if(d < -trackLength/2) d += trackLength;
-    if(d >  trackLength/2) d -= trackLength;
-    if(d < 0 || d > drawDistance*segmentLength) continue;
-    visible.push({c:c, d:d});
-  }
-  visible.sort(function(a,b){ return b.d - a.d; });
-  for(var vi=0; vi<visible.length; vi++){
-    var vc = visible[vi].c, vd = visible[vi].d;
-    var carSeg = findSegment(vc.z);
-    var perc = percentRemaining(vc.z, segmentLength);
-    var carY = interpolate(carSeg.p1.world.y, carSeg.p2.world.y, perc);
-    // project the car at its true forward distance (vd already handles track wrap)
-    var world = { x: vc.offset*roadWidth, y:carY, z: position + vd };
-    var pp = { world:world, camera:{}, screen:{} };
-    project(pp, camX, camY, position, cameraDepth, W, H, roadWidth);
-    if(pp.screen.scale <= 0) continue;
-    var cw = pp.screen.scale * roadWidth * (W/2) * 0.30 * vc.type.w;
-    var ch = cw * (vc.type.long ? 1.15 : 0.86);
-    if(cw < 2) continue;
-    if(pp.screen.y > H+ch) continue;
-    // fade with distance (fog)
-    var fogAmt = 1 - Math.pow(vd/(drawDistance*segmentLength), 1.6);
-    ctx.globalAlpha = Math.max(0.15, Math.min(1,fogAmt));
-    drawCar(vc.type, pp.screen.x, pp.screen.y, cw, ch);
-    ctx.globalAlpha = 1;
-  }
+  // dashboard
+  var dashTop=H*0.80;
+  var dg=ctx.createLinearGradient(0,dashTop,0,H);
+  dg.addColorStop(0,'#22262c'); dg.addColorStop(1,'#0e1014');
+  ctx.fillStyle=dg;
+  ctx.beginPath(); ctx.moveTo(0,H); ctx.lineTo(0,dashTop+H*0.03);
+  ctx.quadraticCurveTo(W*0.5,dashTop-H*0.02, W,dashTop+H*0.03); ctx.lineTo(W,H); ctx.closePath(); ctx.fill();
+  // dash top stitch line
+  ctx.strokeStyle='rgba(255,255,255,.06)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(0,dashTop+H*0.03); ctx.quadraticCurveTo(W*0.5,dashTop-H*0.02, W,dashTop+H*0.03); ctx.stroke();
 
-  // player car
-  drawPlayer();
+  // side (door) mirrors — anchored low by the A-pillar base
+  drawMirror(W*0.055, H*0.60, W*0.072, carCol, 1);
+  drawMirror(W*0.945-W*0.072, H*0.60, W*0.072, carCol, -1);
 
+  // steering wheel
+  var cx=W*0.5, cy=H*1.02, R=Math.min(W,H)*0.30;
+  ctx.save(); ctx.translate(cx,cy); ctx.rotate(wheelAngle*0.9);
+  // rim
+  ctx.lineWidth=R*0.14; ctx.strokeStyle='#101216';
+  ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.stroke();
+  ctx.lineWidth=R*0.05; ctx.strokeStyle='#2b2f36';
+  ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.stroke();
+  // spokes
+  ctx.strokeStyle='#191c22'; ctx.lineWidth=R*0.14;
+  ctx.beginPath(); ctx.moveTo(-R*0.9,R*0.05); ctx.lineTo(R*0.9,R*0.05); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,R*0.92); ctx.stroke();
+  // hub
+  ctx.fillStyle='#15181d'; ctx.beginPath(); ctx.arc(0,0,R*0.24,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#e23b3b'; ctx.font='800 '+Math.floor(R*0.16)+'px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('无',0,0); ctx.textAlign='start'; ctx.textBaseline='alphabetic';
   ctx.restore();
 
-  // vignette
-  var vg = ctx.createRadialGradient(W/2,H/2,H*0.3, W/2,H/2,H*0.75);
-  vg.addColorStop(0,'rgba(0,0,0,0)');
-  vg.addColorStop(1,'rgba(0,0,0,.28)');
+  if(scrapeT>0){ // spark flash on barrier scrape
+    ctx.save(); ctx.globalAlpha=Math.min(1,scrapeT*3);
+    ctx.fillStyle='rgba(255,200,80,.5)';
+    var mx=playerX>0?W*0.9:W*0.1;
+    ctx.beginPath(); ctx.arc(mx,H*0.72,18,0,7); ctx.fill(); ctx.restore();
+  }
+}
+function drawMirror(x,y,w,col,dir){
+  var h=w*0.62;
+  // mount arm toward the pillar/door
+  ctx.strokeStyle=col; ctx.lineWidth=Math.max(2,w*0.10);
+  ctx.beginPath(); ctx.moveTo(x+(dir<0?w:0), y+h*0.5); ctx.lineTo(x+(dir<0?w+w*0.35:-w*0.35), y+h*0.72); ctx.stroke();
+  // housing
+  ctx.fillStyle=col; rr(x,y,w,h,5); ctx.fill();
+  // reflective glass: faint sky-to-road gradient
+  var g=ctx.createLinearGradient(0,y,0,y+h);
+  g.addColorStop(0,'rgba(150,180,205,.55)'); g.addColorStop(0.55,'rgba(120,150,175,.45)'); g.addColorStop(1,'rgba(60,64,70,.55)');
+  ctx.fillStyle=g; rr(x+w*0.12,y+h*0.14,w*0.76,h*0.62,3); ctx.fill();
+}
+function drawVignette(){
+  var vg=ctx.createRadialGradient(W/2,H/2,H*0.3,W/2,H/2,H*0.8);
+  vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,.30)');
   ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
 }
 
-function drawSegment(segment, n){
-  var p1 = segment.p1.screen, p2 = segment.p2.screen;
-  var col = segment.color;
-  var r1 = rumbleW(p1.w), r2 = rumbleW(p2.w);
-  var l1 = laneW(p1.w),   l2 = laneW(p2.w);
+/* traffic brake-light flicker */
+setInterval(function(){ for(var i=0;i<cars.length;i++){ cars[i].__brake = Math.random()<0.06 && cars[i].brake; } },700);
 
-  // grass (full width band)
-  ctx.fillStyle = col.grass;
-  ctx.fillRect(0, p2.y, W, p1.y - p2.y);
-
-  // rumble strips (red/white China guardrail)
-  polygon(p1.x-p1.w-r1, p1.y, p1.x-p1.w, p1.y, p2.x-p2.w, p2.y, p2.x-p2.w-r2, p2.y, col.rumble);
-  polygon(p1.x+p1.w+r1, p1.y, p1.x+p1.w, p1.y, p2.x+p2.w, p2.y, p2.x+p2.w+r2, p2.y, col.rumble);
-
-  // road
-  polygon(p1.x-p1.w, p1.y, p1.x+p1.w, p1.y, p2.x+p2.w, p2.y, p2.x-p2.w, p2.y, col.road);
-
-  // lane markers
-  if(col.lane){
-    var lw1 = p1.w*2/lanes, lw2 = p2.w*2/lanes;
-    var lx1 = p1.x - p1.w + lw1;
-    var lx2 = p2.x - p2.w + lw2;
-    for(var l=1;l<lanes;l++){
-      polygon(lx1-l1/2, p1.y, lx1+l1/2, p1.y, lx2+l2/2, p2.y, lx2-l2/2, p2.y, col.lane);
-      lx1 += lw1; lx2 += lw2;
-    }
-  }
+/* ---- HUD ---- */
+var kmhEl=document.getElementById('kmh'),gearEl=document.getElementById('gear'),tachEl=document.getElementById('tachfill'),
+    rpmnumEl=document.getElementById('rpmnum'),shiftEl=document.getElementById('shiftlight'),distEl=document.getElementById('dist'),
+    passEl=document.getElementById('passes'),cityEl=document.getElementById('city');
+function updateHUD(atLimiter){
+  kmhEl.textContent=Math.round(speed); gearEl.textContent=(gear+1);
+  var rf=(rpm-IDLE_RPM)/(RPM_MAX-IDLE_RPM);
+  tachEl.style.width=Math.max(0,Math.min(100,rf*100))+'%';
+  rpmnumEl.textContent=(rpm/1000).toFixed(1);
+  if(rpm>REDLINE*0.94) shiftEl.classList.add('on'); else shiftEl.classList.remove('on');
+  distEl.innerHTML=Math.floor(distanceKm)+'<small> km</small>';
+  passEl.textContent=passes;
+  cityEl.textContent=CITY_SIGNS[Math.floor(distanceKm/8)%CITY_SIGNS.length];
+  if(atLimiter&&gear<GEAR_TOP.length-1&&hintT<=0) flashHint('▲ UPSHIFT (K)');
 }
-function rumbleW(projW){ return projW / Math.max(6, 2*lanes); }
-function laneW(projW){ return projW / Math.max(32, 8*lanes); }
+var flashEl=document.getElementById('flash'),toastEl=document.getElementById('toast'),toastT=0;
+function flashCrash(){ flashEl.style.transition='none'; flashEl.style.opacity='0.45'; requestAnimationFrame(function(){ flashEl.style.transition='opacity .4s'; flashEl.style.opacity='0'; }); }
+function showToast(t){ toastEl.textContent=t; toastEl.style.opacity='1'; toastT=0.9; }
 
-// player sprite
-function drawPlayer(){
-  var bounce = (speed>0 ? (Math.random()-0.5)*1.2*(speed/kmhTop) : 0);
-  var cx = W/2;
-  var cy = H - Math.max(70, H*0.13) + bounce;
-  var baseW = Math.min(W,H) * 0.16;
-  // lean into steering
-  var lean = 0;
-  if(keys.left) lean -= 1; if(keys.right) lean += 1; lean += touchSteer;
-  var w = baseW, h = baseW*0.92;
-  ctx.save();
-  ctx.translate(cx + lean*6, cy);
-  // shadow
-  ctx.fillStyle='rgba(0,0,0,.35)';
-  ctx.beginPath(); ctx.ellipse(0, h*0.5, w*0.6, h*0.16,0,0,7); ctx.fill();
-  // body — an R8-ish wedge in China red
-  ctx.fillStyle = '#d62828';
-  roundRect(-w/2, -h*0.5, w, h*0.9, w*0.10); ctx.fill();
-  // rear wing
-  ctx.fillStyle='#111418';
-  ctx.fillRect(-w*0.5, -h*0.5, w, h*0.10);
-  ctx.fillRect(-w*0.44, -h*0.56, w*0.06, h*0.12);
-  ctx.fillRect(w*0.38, -h*0.56, w*0.06, h*0.12);
-  // cabin glass
-  ctx.fillStyle='rgba(18,24,36,.9)';
-  roundRect(-w*0.34, -h*0.30, w*0.68, h*0.34, w*0.06); ctx.fill();
-  // side blades
-  ctx.fillStyle='#9a1c1c';
-  ctx.fillRect(-w*0.5, -h*0.1, w*0.08, h*0.4);
-  ctx.fillRect(w*0.42, -h*0.1, w*0.08, h*0.4);
-  // tail lights glow
-  ctx.fillStyle='#ff5252';
-  ctx.fillRect(-w*0.46, -h*0.05, w*0.16, h*0.09);
-  ctx.fillRect(w*0.30, -h*0.05, w*0.16, h*0.09);
-  // brake glow
-  if(keys.down){ ctx.globalAlpha=0.7; ctx.fillStyle='#ff1a1a';
-    ctx.fillRect(-w*0.46,-h*0.06,w*0.16,h*0.11); ctx.fillRect(w*0.30,-h*0.06,w*0.16,h*0.11); ctx.globalAlpha=1; }
-  ctx.restore();
-}
-
-// ---- HUD update -------------------------------------------
-var kmhEl=document.getElementById('kmh'), gearEl=document.getElementById('gear'),
-    tachEl=document.getElementById('tachfill'), rpmnumEl=document.getElementById('rpmnum'),
-    shiftEl=document.getElementById('shiftlight'), distEl=document.getElementById('dist'),
-    passEl=document.getElementById('passes'), cityEl=document.getElementById('city');
-function updateHUD(throttle, atLimiter){
-  kmhEl.textContent = Math.round(speed);
-  gearEl.textContent = (gear+1);
-  var rpmFrac = (rpm - IDLE_RPM)/(RPM_MAX - IDLE_RPM);
-  tachEl.style.width = Math.max(0,Math.min(100, rpmFrac*100)) + '%';
-  rpmnumEl.textContent = (rpm/1000).toFixed(1);
-  if(rpm > REDLINE*0.94){ shiftEl.classList.add('on'); } else { shiftEl.classList.remove('on'); }
-  distEl.innerHTML = Math.floor(distanceKm) + '<small> km</small>';
-  passEl.textContent = passes;
-  // next-city cycles with distance
-  var idx = Math.floor(distanceKm/8) % CITY_SIGNS.length;
-  cityEl.textContent = CITY_SIGNS[idx];
-  // auto shift-up nudge
-  if(atLimiter && gear < GEAR_TOP.length-1 && hintT<=0){ flashHint('↑ UPSHIFT (K)'); }
-}
-
-// ---- crash fx ---------------------------------------------
-var flashEl=document.getElementById('flash'), toastEl=document.getElementById('toast');
-function flashCrash(){
-  flashEl.style.transition='none'; flashEl.style.opacity='0.5';
-  requestAnimationFrame(function(){ flashEl.style.transition='opacity .4s'; flashEl.style.opacity='0'; });
-}
-var toastT=0;
-function showToast(txt){ toastEl.textContent=txt; toastEl.style.opacity='1'; toastT=0.9; }
-
-// ---- loop -------------------------------------------------
-var last = performance.now();
+/* ---- loop ---- */
+var last=performance.now();
 function frame(now){
-  var dt = (now - last)/1000; last = now;
-  if(dt > 0.05) dt = 0.05; // clamp
-  if(running && !paused && !gameOver){
-    update(dt);
-    detectPasses(dt);
-  }
+  var dt=(now-last)/1000; last=now; if(dt>0.05)dt=0.05;
+  if(running&&!paused&&!gameOver) update(dt);
   if(toastT>0){ toastT-=dt; if(toastT<=0) toastEl.style.opacity='0'; }
   render();
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
 
-// ---- start / pause ----------------------------------------
+/* ---- start / pause ---- */
 var overlay=document.getElementById('overlay'), startBtn=document.getElementById('startBtn');
 function startGame(){
   buildTrack();
-  position=0; speed=0; playerX=0; gear=0; rpm=IDLE_RPM;
-  distanceKm=0; passes=0; invuln=0; shake=0; gameOver=false; paused=false;
-  running=true;
-  overlay.classList.add('hidden');
-  last = performance.now();
-  flashHint('GO! 出发');
+  position=0;speed=0;playerX=0;gear=0;rpm=IDLE_RPM;distanceKm=0;passes=0;invuln=0;shake=0;wheelAngle=0;
+  gameOver=false;paused=false;running=true;
+  overlay.classList.add('hidden'); last=performance.now(); flashHint('GO! 出发');
 }
 startBtn.addEventListener('click', startGame);
-
 function togglePause(){
-  paused = !paused;
+  paused=!paused;
   if(paused){
-    overlay.querySelector('.card').innerHTML =
-      '<h1><b>PAUSED</b> <span class="cn">暂停</span></h1>'+
-      '<p style="color:#cdd8ec;margin:8px 0 18px">Distance <b>'+Math.floor(distanceKm)+' km</b> · Overtakes <b>'+passes+'</b></p>'+
-      '<button class="btn" id="resumeBtn">继续 · RESUME</button>';
-    overlay.classList.remove('hidden');
-    document.getElementById('resumeBtn').addEventListener('click', togglePause);
-  } else {
-    overlay.classList.add('hidden');
-    last = performance.now();
-  }
+    overlay.querySelector('.card').innerHTML='<h1><b>PAUSED</b> <span class="cn">暂停</span></h1><p style="color:#cdd8ec;margin:8px 0 18px">Distance <b>'+Math.floor(distanceKm)+' km</b> · Overtakes <b>'+passes+'</b></p><button class="btn" id="resumeBtn">继续 · RESUME</button>';
+    overlay.classList.remove('hidden'); document.getElementById('resumeBtn').addEventListener('click',togglePause);
+  } else { overlay.classList.add('hidden'); last=performance.now(); }
 }
+setInterval(function(){ if(running&&distanceKm>best){ best=distanceKm; try{localStorage.setItem('nohesi_best_cn',String(best));}catch(e){} document.getElementById('best').innerHTML=Math.floor(best)+'<small> km</small>'; } },1000);
 
-// persist best distance periodically
-setInterval(function(){
-  if(running && distanceKm > best){
-    best = distanceKm;
-    try{ localStorage.setItem('nohesi_best_cn', String(best)); }catch(e){}
-    document.getElementById('best').innerHTML = Math.floor(best)+'<small> km</small>';
-  }
-}, 1000);
-
-// build a track immediately so the menu has a live backdrop
-buildTrack();
-// slow idle drift on the menu
-running=false;
-
+buildTrack(); running=false;
 })();
 </script>
 </body>
