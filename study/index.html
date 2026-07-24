@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>O-Level Study Deck | Physics · Chemistry · History</title>
+<meta name="description" content="A study app for Singapore O-Level Pure Physics and Pure Chemistry definitions (2026 syllabus) and Elective History (Express) chapters and key events." />
+<meta name="theme-color" content="#0B1120" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B1120;
+  --bg-alt:#0D1424;
+  --card:#111827;
+  --card-hover:#141d30;
+  --border:rgba(148,163,184,0.14);
+  --border-strong:rgba(148,163,184,0.26);
+  --blue:#2563EB;
+  --blue-bright:#3B82F6;
+  --blue-soft:rgba(37,99,235,0.12);
+  --green:#22C55E;
+  --green-soft:rgba(34,197,94,0.12);
+  --amber:#F59E0B;
+  --white:#F8FAFC;
+  --slate-100:#E2E8F0;
+  --slate-300:#CBD5E1;
+  --slate-400:#94A3B8;
+  --slate-500:#64748B;
+  --font:ui-serif,Georgia,Cambria,'Times New Roman',Times,serif;
+  --font-display:'Newsreader',ui-serif,Georgia,Cambria,'Times New Roman',Times,serif;
+  --container:1080px;
+  --radius:14px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg); color:var(--slate-300);
+  font-family:var(--font); font-size:16px; line-height:1.65;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+img{max-width:100%; display:block;}
+a{color:inherit; text-decoration:none;}
+button{font-family:inherit; cursor:pointer; background:none; border:none; color:inherit;}
+ul{list-style:none;}
+input,textarea{font-family:inherit;}
+h1,h2,h3,h4{color:var(--white); font-weight:600; line-height:1.2; letter-spacing:-0.005em; font-family:var(--font-display);}
+.container{max-width:var(--container); margin:0 auto; padding:0 20px;}
+@media(min-width:768px){.container{padding:0 32px;}}
+
+/* Header */
+header{
+  position:sticky; top:0; z-index:50; background:rgba(11,17,32,0.86);
+  backdrop-filter:blur(12px); border-bottom:1px solid var(--border);
+}
+.head-inner{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 0;}
+.brand{display:flex; align-items:center; gap:12px;}
+.brand-mark{
+  width:38px; height:38px; border-radius:10px; background:var(--blue-soft);
+  border:1px solid var(--border-strong); display:grid; place-items:center;
+  color:var(--blue-bright); font-family:var(--font-display); font-weight:700; font-size:18px;
+}
+.brand h1{font-size:1.02rem; letter-spacing:-0.01em;}
+.brand span{display:block; font-size:12px; color:var(--slate-500); font-family:var(--font); font-weight:400;}
+.home-link{font-size:13px; color:var(--slate-400); border:1px solid var(--border); padding:8px 14px; border-radius:9px; transition:.25s var(--ease);}
+.home-link:hover{color:var(--white); border-color:var(--border-strong);}
+
+/* Subject tabs */
+.tabs{display:flex; gap:8px; overflow-x:auto; padding:12px 0; border-bottom:1px solid var(--border); -ms-overflow-style:none; scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{
+  display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
+  font-size:14px; font-weight:500; padding:10px 18px; border-radius:10px;
+  color:var(--slate-400); border:1px solid transparent; transition:.25s var(--ease);
+}
+.tab:hover{color:var(--white); background:var(--card);}
+.tab.active{color:var(--white); background:var(--blue-soft); border-color:var(--border-strong);}
+.tab .dot{width:8px; height:8px; border-radius:50%;}
+.tab-phys .dot{background:#38BDF8;}
+.tab-chem .dot{background:#34D399;}
+.tab-hist .dot{background:#F59E0B;}
+
+/* Hero intro per subject */
+.subject-hero{padding:40px 0 8px;}
+.eyebrow{display:inline-block; font-size:12px; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; color:var(--blue-bright); margin-bottom:12px;}
+.subject-hero h2{font-size:clamp(1.7rem,4vw,2.4rem);}
+.subject-hero p{margin-top:12px; max-width:640px; color:var(--slate-400);}
+
+/* Controls bar */
+.controls{
+  display:flex; flex-wrap:wrap; gap:12px; align-items:center;
+  margin:28px 0 8px; padding:14px; background:var(--card);
+  border:1px solid var(--border); border-radius:12px;
+}
+.search{flex:1; min-width:180px; position:relative;}
+.search input{
+  width:100%; background:var(--bg); border:1px solid var(--border);
+  color:var(--white); padding:11px 14px 11px 38px; border-radius:10px; font-size:14px;
+}
+.search input::placeholder{color:var(--slate-500);}
+.search svg{position:absolute; left:12px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--slate-500);}
+.seg{display:inline-flex; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:3px;}
+.seg button{font-size:13px; font-weight:500; padding:8px 14px; border-radius:8px; color:var(--slate-400); transition:.2s var(--ease);}
+.seg button.on{background:var(--blue); color:#fff;}
+.stat{font-size:13px; color:var(--slate-400); white-space:nowrap;}
+.stat b{color:var(--white); font-weight:600;}
+
+/* Topic pills */
+.topic-nav{display:flex; flex-wrap:wrap; gap:8px; margin:20px 0 6px;}
+.topic-pill{
+  font-size:13px; padding:7px 14px; border-radius:20px; border:1px solid var(--border);
+  color:var(--slate-400); transition:.2s var(--ease);
+}
+.topic-pill:hover{color:var(--white); border-color:var(--border-strong);}
+.topic-pill.active{background:var(--blue-soft); color:var(--blue-bright); border-color:var(--border-strong);}
+
+/* Definition cards grid */
+.topic-block{margin-top:36px;}
+.topic-block h3{font-size:1.35rem; margin-bottom:4px;}
+.topic-block .topic-sub{font-size:13px; color:var(--slate-500); margin-bottom:20px;}
+.card-grid{display:grid; grid-template-columns:1fr; gap:14px;}
+@media(min-width:640px){.card-grid{grid-template-columns:1fr 1fr;}}
+
+.flash{
+  position:relative; background:var(--card); border:1px solid var(--border);
+  border-radius:12px; padding:20px; min-height:132px; cursor:pointer;
+  transition:border-color .25s var(--ease), transform .25s var(--ease), background .25s var(--ease);
+}
+.flash:hover{border-color:var(--border-strong); transform:translateY(-2px);}
+.flash.known{border-color:rgba(34,197,94,0.4); background:rgba(34,197,94,0.04);}
+.flash .term{font-family:var(--font-display); color:var(--white); font-size:1.12rem; font-weight:600; padding-right:34px;}
+.flash .prompt{margin-top:10px; font-size:13px; color:var(--slate-500); font-style:italic;}
+.flash .def{margin-top:12px; color:var(--slate-300); font-size:15px; line-height:1.6;}
+.flash .def.hidden{display:none;}
+.flash .extra{margin-top:10px; font-size:13px; color:var(--slate-400); border-top:1px solid var(--border); padding-top:10px;}
+.flash .extra.hidden{display:none;}
+.flash .mark{
+  position:absolute; top:14px; right:14px; width:26px; height:26px; border-radius:50%;
+  border:1px solid var(--border-strong); display:grid; place-items:center;
+  color:var(--slate-500); transition:.2s var(--ease); font-size:14px;
+}
+.flash .mark:hover{color:var(--white); border-color:var(--slate-400);}
+.flash.known .mark{background:var(--green); color:#04140a; border-color:var(--green);}
+
+/* Quiz mode reveal button */
+.reveal-hint{margin-top:14px; font-size:12px; color:var(--blue-bright); letter-spacing:.03em;}
+
+/* History */
+.hist-intro{display:grid; gap:14px; grid-template-columns:1fr; margin-top:24px;}
+@media(min-width:720px){.hist-intro{grid-template-columns:1fr 1fr 1fr;}}
+.mini-card{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px;}
+.mini-card h4{font-size:1rem; margin-bottom:6px;}
+.mini-card p{font-size:13px; color:var(--slate-400);}
+
+.chapter{background:var(--card); border:1px solid var(--border); border-radius:14px; margin-top:16px; overflow:hidden;}
+.chapter-head{display:flex; align-items:flex-start; gap:16px; padding:22px; cursor:pointer; transition:background .2s var(--ease);}
+.chapter-head:hover{background:var(--card-hover);}
+.chapter-num{
+  flex-shrink:0; width:44px; height:44px; border-radius:11px; background:var(--blue-soft);
+  border:1px solid var(--border-strong); display:grid; place-items:center;
+  color:var(--blue-bright); font-family:var(--font-display); font-weight:700; font-size:19px;
+}
+.chapter-head .ch-title{flex:1;}
+.chapter-head h3{font-size:1.22rem;}
+.chapter-head .ch-q{font-size:13px; color:var(--slate-500); margin-top:4px; font-style:italic;}
+.chapter-head .chev{flex-shrink:0; color:var(--slate-500); transition:transform .3s var(--ease); margin-top:8px;}
+.chapter.open .chev{transform:rotate(180deg);}
+.chapter-body{display:none; padding:0 22px 26px; border-top:1px solid var(--border);}
+.chapter.open .chapter-body{display:block;}
+
+.ch-section{margin-top:24px;}
+.ch-section h4{font-size:1.02rem; color:var(--blue-bright); margin-bottom:10px; letter-spacing:.01em;}
+.ch-section p{margin-bottom:12px; color:var(--slate-300);}
+.ch-section ul.bullets{margin:0 0 12px; padding-left:2px;}
+.ch-section ul.bullets li{position:relative; padding-left:20px; margin-bottom:8px; color:var(--slate-300);}
+.ch-section ul.bullets li:before{content:"—"; position:absolute; left:0; color:var(--blue-bright);}
+.ch-section li b{color:var(--white); font-weight:600;}
+
+/* Timeline */
+.timeline{margin-top:12px; border-left:2px solid var(--border-strong); padding-left:22px;}
+.tl-item{position:relative; padding-bottom:20px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item:before{content:""; position:absolute; left:-29px; top:4px; width:12px; height:12px; border-radius:50%; background:var(--blue); border:2px solid var(--bg);}
+.tl-date{font-family:var(--font-display); color:var(--white); font-weight:600; font-size:15px;}
+.tl-text{font-size:14px; color:var(--slate-400); margin-top:2px;}
+
+.keyterms{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
+.keyterm{font-size:12.5px; padding:6px 12px; border-radius:8px; background:var(--blue-soft); color:var(--slate-100); border:1px solid var(--border);}
+
+/* Empty state */
+.empty{text-align:center; padding:60px 20px; color:var(--slate-500);}
+
+/* Footer note */
+.foot{border-top:1px solid var(--border); margin-top:70px; padding:30px 0 50px; color:var(--slate-500); font-size:13px;}
+.foot p{margin-bottom:8px;}
+.note{background:var(--blue-soft); border:1px solid var(--border-strong); border-radius:12px; padding:16px 18px; margin-top:26px; font-size:13.5px; color:var(--slate-300);}
+.note b{color:var(--white);}
+
+.hidden{display:none !important;}
+.reset-btn{font-size:12px; color:var(--slate-500); text-decoration:underline; text-underline-offset:3px;}
+.reset-btn:hover{color:var(--slate-300);}
+</style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <div class="head-inner">
+      <div class="brand">
+        <div class="brand-mark">O</div>
+        <div>
+          <h1>O-Level Study Deck</h1>
+          <span>Pure Physics · Pure Chemistry · Elective History</span>
+        </div>
+      </div>
+      <a class="home-link" href="../index.html">← Portfolio</a>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button class="tab tab-phys active" data-subject="physics"><span class="dot"></span>Physics</button>
+      <button class="tab tab-chem" data-subject="chemistry"><span class="dot"></span>Chemistry</button>
+      <button class="tab tab-hist" data-subject="history"><span class="dot"></span>History</button>
+    </nav>
+  </div>
+</header>
+
+<main class="container" id="app"></main>
+
+<script>
+/* ============================================================
+   DATA — Singapore O-Level (2026). Definitions written in the
+   phrasing examiners look for. Verify against the official SEAB
+   syllabus & your school notes before your exam.
+   ============================================================ */
+
+const PHYSICS = {
+  intro: "Every mark-earning definition from the O-Level Pure Physics (6091) syllabus. Flip a card to reveal the answer, or switch to Quiz mode to test yourself first.",
+  topics: [
+    { name:"Measurement & Kinematics", cards:[
+      { t:"Scalar quantity", d:"A physical quantity that has magnitude only.", x:"e.g. distance, speed, mass, time, energy." },
+      { t:"Vector quantity", d:"A physical quantity that has both magnitude and direction.", x:"e.g. displacement, velocity, acceleration, force." },
+      { t:"Speed", d:"The distance travelled per unit time." },
+      { t:"Velocity", d:"The rate of change of displacement, or displacement per unit time." },
+      { t:"Acceleration", d:"The rate of change of velocity." },
+      { t:"Free fall", d:"The motion of an object falling under the force of gravity only, with no air resistance.", x:"Acceleration of free fall g ≈ 9.8 m/s² (use 10 m/s² unless told otherwise)." },
+    ]},
+    { name:"Dynamics & Forces", cards:[
+      { t:"Force", d:"A push or pull that can change the size, shape, or motion of an object.", x:"SI unit: newton (N)." },
+      { t:"Newton's First Law", d:"An object will continue in its state of rest or uniform motion in a straight line unless acted upon by a resultant force." },
+      { t:"Newton's Second Law", d:"When a resultant force acts on an object, the object accelerates in the direction of the force; the resultant force equals the rate of change of momentum (F = ma for constant mass)." },
+      { t:"Newton's Third Law", d:"When object A exerts a force on object B, object B exerts an equal and opposite force on object A." },
+      { t:"Friction", d:"A force that opposes the relative motion (or tendency of motion) between two surfaces in contact." },
+      { t:"Resultant force", d:"The single force that has the same effect as all the forces acting on an object combined." },
+      { t:"Inertia", d:"The reluctance of an object to change its state of rest or motion, due to its mass." },
+    ]},
+    { name:"Mass, Weight & Density", cards:[
+      { t:"Mass", d:"A measure of the amount of substance in a body; it is also a measure of its inertia.", x:"SI unit: kilogram (kg). Constant everywhere." },
+      { t:"Weight", d:"The gravitational force acting on an object.", x:"W = mg. SI unit: newton (N)." },
+      { t:"Gravitational field strength (g)", d:"The gravitational force acting per unit mass.", x:"g ≈ 10 N/kg on Earth. Equal to acceleration of free fall." },
+      { t:"Density", d:"The mass per unit volume of a substance.", x:"ρ = m/V. SI unit: kg/m³." },
+    ]},
+    { name:"Moments & Equilibrium", cards:[
+      { t:"Moment of a force", d:"The product of the force and the perpendicular distance from the pivot to the line of action of the force.", x:"Moment = F × d. SI unit: newton metre (N m)." },
+      { t:"Principle of moments", d:"When a body is in equilibrium, the sum of clockwise moments about a pivot equals the sum of anticlockwise moments about the same pivot." },
+      { t:"Centre of gravity", d:"The point through which the whole weight of an object appears to act." },
+      { t:"Stability", d:"A measure of a body's ability to return to its original position after being tilted slightly." },
+    ]},
+    { name:"Pressure", cards:[
+      { t:"Pressure", d:"The force acting per unit area, applied perpendicular to the surface.", x:"p = F/A. SI unit: pascal (Pa) = N/m²." },
+      { t:"Pressure in a liquid", d:"The pressure due to a column of liquid, which increases with depth.", x:"p = hρg (h = depth, ρ = density, g = gravitational field strength)." },
+    ]},
+    { name:"Energy, Work & Power", cards:[
+      { t:"Work done", d:"The product of the force and the distance moved in the direction of the force.", x:"W = F × d. SI unit: joule (J)." },
+      { t:"Energy", d:"The capacity to do work.", x:"SI unit: joule (J)." },
+      { t:"Kinetic energy", d:"The energy possessed by a body due to its motion.", x:"E_k = ½mv²." },
+      { t:"Gravitational potential energy", d:"The energy possessed by a body due to its height above a reference level.", x:"E_p = mgh." },
+      { t:"Principle of conservation of energy", d:"Energy cannot be created or destroyed; it can only be converted from one form to another, and the total energy in an isolated system remains constant." },
+      { t:"Power", d:"The rate of doing work, or the rate of energy transfer.", x:"P = W/t = E/t. SI unit: watt (W)." },
+      { t:"Efficiency", d:"The ratio of useful energy output to total energy input, expressed as a percentage.", x:"Efficiency = (useful output / total input) × 100%." },
+    ]},
+    { name:"Thermal Physics", cards:[
+      { t:"Temperature", d:"A measure of the degree of hotness of a body.", x:"SI unit: kelvin (K)." },
+      { t:"Internal energy", d:"The sum of the kinetic and potential energies of the molecules of a substance." },
+      { t:"Heat capacity", d:"The amount of thermal energy required to raise the temperature of a body by 1 K (or 1 °C).", x:"SI unit: J/K." },
+      { t:"Specific heat capacity", d:"The amount of thermal energy required to raise the temperature of a unit mass (1 kg) of a substance by 1 K.", x:"E = mcΔθ. SI unit: J/(kg·K)." },
+      { t:"Latent heat", d:"The thermal energy absorbed or released by a substance during a change of state, without any change in temperature." },
+      { t:"Specific latent heat of fusion", d:"The amount of thermal energy required to change a unit mass of a substance from solid to liquid without a change in temperature." },
+      { t:"Specific latent heat of vaporisation", d:"The amount of thermal energy required to change a unit mass of a substance from liquid to gas without a change in temperature." },
+      { t:"Conduction", d:"The transfer of thermal energy through a medium without any flow of the medium, by molecular vibration and free electron movement." },
+      { t:"Convection", d:"The transfer of thermal energy through a fluid by means of convection currents caused by density differences." },
+      { t:"Radiation", d:"The transfer of thermal energy in the form of electromagnetic waves (infrared), without needing a medium." },
+      { t:"Boiling", d:"The change of state from liquid to gas that occurs throughout the liquid at a fixed temperature (the boiling point)." },
+      { t:"Evaporation", d:"The change of state from liquid to gas that occurs only at the surface of a liquid, at any temperature." },
+    ]},
+    { name:"Waves", cards:[
+      { t:"Wave", d:"A disturbance that transfers energy from one point to another without transferring the medium itself." },
+      { t:"Transverse wave", d:"A wave in which the particles of the medium vibrate perpendicular to the direction of energy transfer.", x:"e.g. light, water waves." },
+      { t:"Longitudinal wave", d:"A wave in which the particles of the medium vibrate parallel to the direction of energy transfer.", x:"e.g. sound waves." },
+      { t:"Amplitude", d:"The maximum displacement of a particle from its rest (equilibrium) position." },
+      { t:"Wavelength", d:"The distance between two successive points in phase (e.g. two crests).", x:"Symbol λ. SI unit: metre." },
+      { t:"Period", d:"The time taken for one complete oscillation (or for one complete wave to pass a point)." },
+      { t:"Frequency", d:"The number of complete waves produced (or passing a point) per unit time.", x:"f = 1/T. SI unit: hertz (Hz)." },
+      { t:"Wave speed", d:"The distance moved by a wavefront per unit time.", x:"v = fλ." },
+    ]},
+    { name:"Light & EM Spectrum", cards:[
+      { t:"Laws of reflection", d:"(1) The angle of incidence equals the angle of reflection. (2) The incident ray, reflected ray, and the normal all lie in the same plane." },
+      { t:"Refraction", d:"The bending of light as it passes from one medium to another, due to a change in its speed." },
+      { t:"Refractive index", d:"The ratio of the speed of light in vacuum to the speed of light in the medium; equal to sin i / sin r.", x:"n = sin i / sin r." },
+      { t:"Critical angle", d:"The angle of incidence in the optically denser medium for which the angle of refraction in the less dense medium is exactly 90°." },
+      { t:"Total internal reflection", d:"The complete reflection of a light ray inside an optically denser medium, occurring when the angle of incidence exceeds the critical angle." },
+      { t:"Principal focus (converging lens)", d:"The point on the principal axis where rays parallel to the axis converge after passing through the lens." },
+      { t:"Focal length", d:"The distance between the optical centre of the lens and its principal focus." },
+      { t:"Electromagnetic spectrum (order)", d:"Radio → Microwave → Infrared → Visible light → Ultraviolet → X-rays → Gamma rays (increasing frequency, decreasing wavelength).", x:"All travel at the speed of light (3×10⁸ m/s) in a vacuum." },
+    ]},
+    { name:"Electricity", cards:[
+      { t:"Electric current", d:"The rate of flow of electric charge.", x:"I = Q/t. SI unit: ampere (A)." },
+      { t:"Electromotive force (e.m.f.)", d:"The work done by a source in driving a unit charge around a complete circuit.", x:"SI unit: volt (V)." },
+      { t:"Potential difference (p.d.)", d:"The work done to drive a unit charge through a component (between two points).", x:"V = W/Q. SI unit: volt (V)." },
+      { t:"Resistance", d:"The ratio of the potential difference across a component to the current flowing through it.", x:"R = V/I. SI unit: ohm (Ω)." },
+      { t:"Ohm's Law", d:"The current through a metallic conductor is directly proportional to the potential difference across it, provided the temperature and other physical conditions remain constant." },
+      { t:"Electrical power", d:"The rate at which electrical energy is transferred (converted).", x:"P = VI = I²R = V²/R." },
+    ]},
+    { name:"Magnetism & Electromagnetism", cards:[
+      { t:"Magnetic field", d:"A region in which a magnetic material or a moving charge experiences a magnetic force." },
+      { t:"Electromagnetic induction", d:"The production of an e.m.f. across a conductor when it experiences a change in the magnetic flux linking it." },
+      { t:"Faraday's Law", d:"The magnitude of the induced e.m.f. is directly proportional to the rate of change of magnetic flux linkage." },
+      { t:"Lenz's Law", d:"The direction of the induced current is such that it always opposes the change producing it." },
+      { t:"Fleming's left-hand rule", d:"Used to find the direction of force on a current-carrying conductor in a magnetic field: thumb = force/motion, first finger = field, second finger = current." },
+    ]},
+    { name:"Radioactivity", cards:[
+      { t:"Radioactive decay", d:"The spontaneous and random emission of radiation from an unstable atomic nucleus." },
+      { t:"Half-life", d:"The time taken for half the number of undecayed nuclei in a radioactive sample to decay (or for the activity to fall to half its value)." },
+      { t:"Isotopes", d:"Atoms of the same element that have the same number of protons (proton number) but a different number of neutrons (different nucleon number)." },
+      { t:"Proton (atomic) number", d:"The number of protons in the nucleus of an atom." },
+      { t:"Nucleon (mass) number", d:"The total number of protons and neutrons in the nucleus of an atom." },
+      { t:"Background radiation", d:"The low-level ionising radiation that is always present in the environment from natural and artificial sources." },
+    ]},
+  ]
+};
+
+const CHEMISTRY = {
+  intro: "The definitions the O-Level Pure Chemistry (6092) syllabus expects you to state precisely. Flip to reveal, or Quiz yourself first.",
+  topics: [
+    { name:"Matter & Particles", cards:[
+      { t:"Element", d:"A pure substance that cannot be broken down into anything simpler by chemical methods.", x:"Made of only one type of atom." },
+      { t:"Compound", d:"A pure substance made of two or more different elements chemically combined together in a fixed ratio." },
+      { t:"Mixture", d:"Two or more substances (elements or compounds) that are physically combined and not chemically bonded.", x:"Components keep their own properties and can be separated physically." },
+      { t:"Atom", d:"The smallest particle of an element that can take part in a chemical reaction." },
+      { t:"Molecule", d:"A group of two or more atoms chemically bonded together." },
+      { t:"Ion", d:"A charged particle formed when an atom (or group of atoms) gains or loses electrons." },
+      { t:"Diffusion", d:"The net movement of particles from a region of higher concentration to a region of lower concentration, due to their random motion." },
+    ]},
+    { name:"Separation Techniques", cards:[
+      { t:"Filtration", d:"A method to separate an insoluble solid from a liquid using filter paper." },
+      { t:"Crystallisation", d:"A method to obtain pure crystals of a solute from a saturated solution by evaporating some solvent and cooling." },
+      { t:"Simple distillation", d:"A method to obtain a pure solvent (e.g. water) from a solution by evaporating and then condensing the vapour." },
+      { t:"Fractional distillation", d:"A method to separate a mixture of miscible liquids with different boiling points using a fractionating column." },
+      { t:"Chromatography", d:"A method to separate and identify the components of a mixture based on their different solubilities in a solvent." },
+      { t:"Criteria of purity", d:"A pure substance has a sharp, fixed melting point and boiling point; impurities lower the melting point and raise the boiling point." },
+    ]},
+    { name:"Atomic Structure", cards:[
+      { t:"Proton (atomic) number", d:"The number of protons in the nucleus of an atom.", x:"Defines the element." },
+      { t:"Nucleon (mass) number", d:"The total number of protons and neutrons in the nucleus of an atom." },
+      { t:"Isotopes", d:"Atoms of the same element with the same proton number but different numbers of neutrons (different nucleon numbers)." },
+      { t:"Relative atomic mass (Aᵣ)", d:"The average mass of the atoms of an element on a scale where an atom of carbon-12 has a mass of exactly 12 units." },
+      { t:"Relative molecular mass (Mᵣ)", d:"The sum of the relative atomic masses of all the atoms shown in the molecular formula of a substance." },
+    ]},
+    { name:"Bonding & Structure", cards:[
+      { t:"Ionic bond", d:"The strong electrostatic force of attraction between oppositely charged ions.", x:"Forms between a metal and a non-metal by transfer of electrons." },
+      { t:"Covalent bond", d:"A shared pair of electrons between two atoms.", x:"Forms between non-metal atoms." },
+      { t:"Metallic bond", d:"The strong electrostatic force of attraction between the positive metal ions and the 'sea' of delocalised (mobile) electrons." },
+      { t:"Giant ionic structure", d:"A regular lattice of many oppositely charged ions held by strong ionic bonds.", x:"High melting point; conducts electricity only when molten or in aqueous solution." },
+      { t:"Simple molecular structure", d:"Small molecules held together by weak intermolecular forces.", x:"Low melting/boiling points; does not conduct electricity." },
+      { t:"Giant covalent (macromolecular) structure", d:"A large lattice of atoms joined by strong covalent bonds.", x:"e.g. diamond, graphite, silicon dioxide. Very high melting point." },
+    ]},
+    { name:"The Mole & Stoichiometry", cards:[
+      { t:"Mole", d:"The amount of substance that contains the same number of particles as there are atoms in 12 g of carbon-12.", x:"One mole contains 6.02 × 10²³ particles (the Avogadro constant)." },
+      { t:"Molar mass", d:"The mass of one mole of a substance, numerically equal to its relative molecular/atomic mass in grams.", x:"Units: g/mol." },
+      { t:"Avogadro constant", d:"The number of particles in one mole of a substance, equal to 6.02 × 10²³.", x:"n = number of particles / 6.02×10²³." },
+      { t:"Concentration", d:"The amount of solute dissolved in a unit volume of solution.", x:"Units: mol/dm³ or g/dm³." },
+      { t:"Empirical formula", d:"The formula showing the simplest whole-number ratio of the atoms of each element in a compound." },
+      { t:"Molecular formula", d:"The formula showing the actual number of atoms of each element in one molecule of the compound." },
+      { t:"Limiting reactant", d:"The reactant that is completely used up first in a reaction, and which therefore determines the amount of product formed." },
+    ]},
+    { name:"Acids, Bases & Salts", cards:[
+      { t:"Acid", d:"A substance that produces hydrogen ions (H⁺) when dissolved in water.", x:"pH < 7." },
+      { t:"Base", d:"A substance that neutralises an acid to form a salt and water only; usually a metal oxide or hydroxide." },
+      { t:"Alkali", d:"A soluble base that produces hydroxide ions (OH⁻) when dissolved in water.", x:"pH > 7." },
+      { t:"Salt", d:"A compound formed when the hydrogen ion of an acid is replaced by a metal ion or an ammonium ion." },
+      { t:"Neutralisation", d:"The reaction between an acid and a base to form a salt and water only.", x:"H⁺ + OH⁻ → H₂O." },
+      { t:"Strong acid", d:"An acid that is completely (fully) ionised in water." },
+      { t:"Weak acid", d:"An acid that is only partially ionised in water." },
+      { t:"Oxide (types)", d:"Basic (metal, reacts with acid), Acidic (non-metal, reacts with alkali), Amphoteric (reacts with both acid and alkali), Neutral (neither)." },
+    ]},
+    { name:"Redox & Electrolysis", cards:[
+      { t:"Oxidation", d:"The gain of oxygen, loss of hydrogen, or loss of electrons by a substance (an increase in oxidation state).", x:"OIL — Oxidation Is Loss of electrons." },
+      { t:"Reduction", d:"The loss of oxygen, gain of hydrogen, or gain of electrons by a substance (a decrease in oxidation state).", x:"RIG — Reduction Is Gain of electrons." },
+      { t:"Redox reaction", d:"A reaction in which oxidation and reduction occur at the same time." },
+      { t:"Oxidising agent", d:"A substance that oxidises another substance and is itself reduced (it gains electrons)." },
+      { t:"Reducing agent", d:"A substance that reduces another substance and is itself oxidised (it loses electrons)." },
+      { t:"Electrolysis", d:"The decomposition of a molten or aqueous ionic compound by the passage of an electric current through it." },
+      { t:"Electrolyte", d:"An ionic compound that conducts electricity when molten or in aqueous solution and is decomposed in the process." },
+      { t:"Cathode / Anode", d:"Cathode = the negative electrode (attracts cations, reduction occurs). Anode = the positive electrode (attracts anions, oxidation occurs)." },
+    ]},
+    { name:"Energy & Rates", cards:[
+      { t:"Exothermic reaction", d:"A reaction that releases thermal energy to the surroundings, causing a temperature rise.", x:"ΔH is negative." },
+      { t:"Endothermic reaction", d:"A reaction that absorbs thermal energy from the surroundings, causing a temperature fall.", x:"ΔH is positive." },
+      { t:"Activation energy", d:"The minimum amount of energy that colliding particles must have in order to react." },
+      { t:"Rate of reaction", d:"The change in the amount of a reactant or product per unit time." },
+      { t:"Catalyst", d:"A substance that increases the rate of a chemical reaction but remains chemically unchanged at the end of the reaction.", x:"It provides an alternative pathway with a lower activation energy." },
+    ]},
+    { name:"Periodic Table & Metals", cards:[
+      { t:"Group (Periodic Table)", d:"A vertical column of elements that have the same number of valence electrons and similar chemical properties." },
+      { t:"Period", d:"A horizontal row of elements arranged in order of increasing proton number." },
+      { t:"Noble gases (Group 0/18)", d:"Unreactive gases with a full outer shell of electrons (stable electronic configuration)." },
+      { t:"Alloy", d:"A mixture of a metal with one or more other elements (usually metals).", x:"Alloys are usually harder and stronger than the pure metal." },
+      { t:"Reactivity series", d:"A list of metals arranged in order of their decreasing reactivity.", x:"K, Na, Ca, Mg, Al, (C), Zn, Fe, (H), Cu, Ag, Au." },
+      { t:"Rusting", d:"The corrosion of iron to form hydrated iron(III) oxide, which requires both oxygen and water." },
+    ]},
+    { name:"Air, Ammonia & Sulfur", cards:[
+      { t:"Haber process", d:"The industrial manufacture of ammonia by reacting nitrogen and hydrogen.", x:"N₂ + 3H₂ ⇌ 2NH₃; ~450 °C, ~250 atm, iron catalyst." },
+      { t:"Contact process", d:"The industrial manufacture of sulfuric acid, whose key step converts sulfur dioxide to sulfur trioxide.", x:"2SO₂ + O₂ ⇌ 2SO₃; ~450 °C, ~2 atm, vanadium(V) oxide catalyst." },
+      { t:"Greenhouse effect", d:"The trapping of infrared radiation by greenhouse gases (e.g. CO₂, methane) in the atmosphere, warming the Earth." },
+      { t:"Acid rain", d:"Rain made acidic by dissolved oxides of sulfur and nitrogen (from burning fossil fuels)." },
+    ]},
+    { name:"Organic Chemistry", cards:[
+      { t:"Hydrocarbon", d:"A compound that contains only the elements carbon and hydrogen." },
+      { t:"Homologous series", d:"A family of organic compounds with the same general formula and similar chemical properties, where each member differs from the next by –CH₂–." },
+      { t:"Saturated compound", d:"An organic compound in which all carbon–carbon bonds are single bonds.", x:"e.g. alkanes." },
+      { t:"Unsaturated compound", d:"An organic compound that contains at least one carbon–carbon double (or triple) bond.", x:"e.g. alkenes; decolourises aqueous bromine." },
+      { t:"Isomers", d:"Compounds with the same molecular formula but different structural formulae (arrangement of atoms)." },
+      { t:"Addition polymerisation", d:"The joining together of many small unsaturated monomers to form one long chain (polymer), with no other product.", x:"e.g. ethene → poly(ethene)." },
+      { t:"Condensation polymerisation", d:"The joining of many monomers to form a polymer with the elimination of a small molecule (e.g. water) each time.", x:"e.g. nylon, Terylene." },
+      { t:"Alcohol / Carboxylic acid", d:"Alcohols contain the –OH functional group (e.g. ethanol); carboxylic acids contain the –COOH group (e.g. ethanoic acid)." },
+      { t:"Esterification", d:"The reaction between a carboxylic acid and an alcohol (with a concentrated acid catalyst) to form an ester and water." },
+    ]},
+  ]
+};
+
+const HISTORY = {
+  intro: "A full teaching walkthrough of the Elective History (Express) syllabus — 'Shaping the Modern World'. Each chapter covers the content you need, key terms, and a timeline of the events you must know. Tap a chapter to open it.",
+  cards: [
+    { h:"How to use this", p:"Read the chapter narrative, memorise the key terms, then rehearse the timeline. For SBQ, focus on inference & reliability; for SEQ, learn to argue causes and rank their importance." },
+    { h:"The big question", p:"How was the modern world shaped by the two World Wars and the Cold War? Every chapter feeds into that story of conflict, ideology, and superpower rivalry." },
+    { h:"Exam skills", p:"Source-Based Case Study (SBQ) tests comprehension, inference, comparison, reliability, and usefulness. Structured-Essay (SEQ) tests explanation and judgement — always reach a supported conclusion." },
+  ],
+  chapters: [
+    {
+      n:1, title:"The Impact of World War One", q:"Why was the peace of 1919 so fragile?",
+      sections:[
+        { h:"Overview", type:"text", body:[
+          "World War One (1914–1918) killed around 9 million soldiers and shattered the old European order. Four empires collapsed — German, Austro-Hungarian, Russian, and Ottoman — and the USA emerged as a major power. The peace settlement that followed, above all the Treaty of Versailles, tried to rebuild stability but instead planted the grievances that led to a second war.",
+          "The key issue is fairness and consequence: was the peace just, and did it make the world more or less stable?"
+        ]},
+        { h:"The Treaty of Versailles (1919)", type:"bullets", body:[
+          "<b>War Guilt (Article 231):</b> Germany forced to accept full blame for causing the war — deeply resented.",
+          "<b>Reparations:</b> Germany had to pay £6.6 billion for war damage, crippling its economy.",
+          "<b>Territorial losses:</b> Alsace-Lorraine returned to France; the Saar and Rhineland demilitarised; Germany lost all overseas colonies; the Polish Corridor split Germany in two.",
+          "<b>Military limits:</b> Army capped at 100,000; no air force, submarines or tanks; navy severely limited.",
+          "Germans called it a <b>Diktat</b> (a dictated peace) — they were not allowed to negotiate."
+        ]},
+        { h:"The League of Nations", type:"bullets", body:[
+          "Set up in 1920 (from Wilson's Fourteen Points) to keep peace through <b>collective security</b> and settle disputes by discussion.",
+          "Weaknesses: the <b>USA never joined</b>; Germany and the USSR were initially excluded; it had <b>no army</b> of its own; decisions needed unanimous agreement.",
+          "It had some 1920s successes but failed the major tests of the 1930s (Manchuria 1931, Abyssinia 1935)."
+        ]},
+        { h:"Why it mattered", type:"text", body:[
+          "The Treaty left Germany humiliated, resentful and economically weakened — conditions that extremist leaders like Hitler would later exploit. The League proved too weak to enforce peace, so aggression in the 1930s went unchecked."
+        ]},
+        { h:"Key terms", type:"terms", body:["Diktat","Reparations","War Guilt Clause","Collective security","Self-determination","Fourteen Points","Demilitarisation"] },
+        { h:"Timeline", type:"timeline", body:[
+          { d:"1914", t:"Outbreak of World War One after the assassination of Archduke Franz Ferdinand." },
+          { d:"1917", t:"USA enters the war; Russia leaves after the Bolshevik Revolution." },
+          { d:"11 Nov 1918", t:"Armistice — fighting on the Western Front ends." },
+          { d:"1919", t:"Treaty of Versailles signed at the Paris Peace Conference." },
+          { d:"1920", t:"League of Nations formed; US Senate refuses to join." },
+        ]},
+      ]
+    },
+    {
+      n:2, title:"The Rise of Authoritarian Regimes", q:"How did dictators seize and keep power?",
+      sections:[
+        { h:"Overview", type:"text", body:[
+          "In the 1920s–30s, economic hardship and political instability allowed authoritarian leaders to rise. You study how dictators came to power and how they consolidated control, focusing on Stalin's USSR and Hitler's Germany.",
+        ]},
+        { h:"Stalin's rise & control (USSR)", type:"bullets", body:[
+          "After Lenin died (1924), Stalin outmanoeuvred rivals like Trotsky to become leader by 1928.",
+          "<b>Control methods:</b> the secret police (NKVD), the Great Purges/Show Trials (1936–38), a cult of personality, censorship and propaganda, and the Gulag labour camps.",
+          "<b>Economic policies:</b> Five-Year Plans (rapid industrialisation) and Collectivisation of farming (which caused famine, e.g. in Ukraine)."
+        ]},
+        { h:"Hitler's rise (Germany)", type:"bullets", body:[
+          "<b>Long-term:</b> resentment of the Treaty of Versailles and the weakness of the Weimar Republic.",
+          "<b>Economic:</b> the Great Depression (from 1929) caused mass unemployment; desperate voters turned to extremes.",
+          "<b>Nazi appeal:</b> Hitler's powerful oratory, propaganda (Goebbels), the SA, and simple promises of jobs, bread and national pride.",
+          "<b>Legal route:</b> appointed Chancellor in January 1933, then seized total power."
+        ]},
+        { h:"How Hitler consolidated power", type:"bullets", body:[
+          "<b>Reichstag Fire (Feb 1933):</b> used to arrest communists and pass emergency decrees.",
+          "<b>Enabling Act (Mar 1933):</b> let Hitler make laws without the Reichstag — the legal basis of dictatorship.",
+          "<b>Night of the Long Knives (1934):</b> purge of SA rivals.",
+          "<b>Führer:</b> on Hindenburg's death (1934) Hitler merged Chancellor and President.",
+          "Control through the Gestapo, SS, propaganda, and youth movements (Hitler Youth)."
+        ]},
+        { h:"Key terms", type:"terms", body:["Totalitarianism","Propaganda","Cult of personality","Purge","Enabling Act","Weimar Republic","Great Depression","Five-Year Plan","Collectivisation"] },
+        { h:"Timeline", type:"timeline", body:[
+          { d:"1924", t:"Lenin dies; power struggle begins in the USSR." },
+          { d:"1928", t:"Stalin in control; first Five-Year Plan begins." },
+          { d:"1929", t:"Wall Street Crash triggers the Great Depression." },
+          { d:"Jan 1933", t:"Hitler appointed Chancellor of Germany." },
+          { d:"Mar 1933", t:"Enabling Act gives Hitler dictatorial powers." },
+          { d:"1934", t:"Night of the Long Knives; Hitler becomes Führer." },
+          { d:"1936–38", t:"Stalin's Great Purges and Show Trials." },
+        ]},
+      ]
+    },
+    {
+      n:3, title:"The Outbreak of World War Two in Europe", q:"Why did war break out again in 1939?",
+      sections:[
+        { h:"Overview", type:"text", body:[
+          "This chapter explains the causes of WWII in Europe: Hitler's aggressive foreign policy, the failure of the League, and the policy of appeasement. The goal is to weigh these causes and judge which mattered most."
+        ]},
+        { h:"Hitler's foreign policy aims", type:"bullets", body:[
+          "<b>Overturn the Treaty of Versailles</b> (undo the 'Diktat').",
+          "<b>Lebensraum</b> — 'living space' for Germans in Eastern Europe.",
+          "<b>Union of all German-speaking peoples</b> (e.g. Austria, the Sudetenland).",
+          "Rearmament and expansion, step by step, testing how far he could go."
+        ]},
+        { h:"Steps to war", type:"bullets", body:[
+          "<b>1935:</b> Germany rearms openly and reintroduces conscription.",
+          "<b>1936:</b> Troops sent into the demilitarised Rhineland — no response from Britain/France.",
+          "<b>1938:</b> Anschluss — union with Austria.",
+          "<b>1938:</b> Munich Agreement — Britain/France let Hitler take the Sudetenland (appeasement).",
+          "<b>Mar 1939:</b> Hitler seizes the rest of Czechoslovakia — appeasement is shown to have failed.",
+          "<b>Aug 1939:</b> Nazi–Soviet Pact frees Hitler to attack Poland.",
+          "<b>1 Sep 1939:</b> Germany invades Poland → Britain and France declare war."
+        ]},
+        { h:"Appeasement — why?", type:"bullets", body:[
+          "Memory of WWI's horrors and a strong desire to avoid another war.",
+          "Britain was militarily unprepared and focused on economic recovery.",
+          "A belief that the Treaty of Versailles had been too harsh (some German demands seemed fair).",
+          "Fear of communism — a strong Germany was seen as a buffer against the USSR."
+        ]},
+        { h:"Key terms", type:"terms", body:["Appeasement","Lebensraum","Anschluss","Sudetenland","Munich Agreement","Nazi–Soviet Pact","Rearmament","Rhineland"] },
+        { h:"Timeline", type:"timeline", body:[
+          { d:"1935", t:"Germany announces rearmament and conscription." },
+          { d:"Mar 1936", t:"Remilitarisation of the Rhineland." },
+          { d:"Mar 1938", t:"Anschluss with Austria." },
+          { d:"Sep 1938", t:"Munich Agreement hands Hitler the Sudetenland." },
+          { d:"Mar 1939", t:"Germany occupies the rest of Czechoslovakia." },
+          { d:"Aug 1939", t:"Nazi–Soviet (Non-Aggression) Pact signed." },
+          { d:"1 Sep 1939", t:"Germany invades Poland." },
+          { d:"3 Sep 1939", t:"Britain and France declare war on Germany." },
+        ]},
+      ]
+    },
+    {
+      n:4, title:"World War Two in the Asia-Pacific", q:"Why did Japan go to war, and why was it defeated?",
+      sections:[
+        { h:"Overview", type:"text", body:[
+          "The war in Asia grew from Japanese expansionism. This chapter covers why Japan attacked, how the war reached Southeast Asia (including Singapore), and the reasons for Japan's eventual defeat."
+        ]},
+        { h:"Why Japan expanded", type:"bullets", body:[
+          "<b>Economic needs:</b> few natural resources; the Great Depression hit Japan hard, so it sought raw materials and markets.",
+          "<b>Militarism & nationalism:</b> the army gained control of government and pushed an aggressive empire-building policy.",
+          "<b>Ambition:</b> to build the 'Greater East Asia Co-Prosperity Sphere' under Japanese domination.",
+          "<b>Trigger:</b> the US oil embargo (1941) pushed Japan to strike."
+        ]},
+        { h:"Key events", type:"bullets", body:[
+          "<b>1931:</b> Japan invades Manchuria; the League fails to stop it.",
+          "<b>1937:</b> Full-scale war with China.",
+          "<b>Dec 1941:</b> Japan attacks Pearl Harbor, bringing the USA into the war.",
+          "<b>Feb 1942:</b> Fall of Singapore — Britain's 'impregnable fortress' surrenders; the largest British surrender in history.",
+          "Occupation of Southeast Asia followed, with harsh rule (e.g. the Sook Ching in Singapore)."
+        ]},
+        { h:"Why Japan was defeated", type:"bullets", body:[
+          "<b>US industrial power:</b> America out-produced Japan in ships, planes and weapons.",
+          "<b>Island-hopping:</b> US forces captured strategic islands, cutting Japan's supply lines.",
+          "<b>Turning point — Midway (1942):</b> Japan lost four aircraft carriers, ending its naval dominance.",
+          "<b>Atomic bombs:</b> Hiroshima (6 Aug) and Nagasaki (9 Aug) 1945 forced surrender.",
+          "<b>USSR</b> declared war on Japan in August 1945, adding pressure."
+        ]},
+        { h:"Key terms", type:"terms", body:["Militarism","Pearl Harbor","Co-Prosperity Sphere","Island-hopping","Battle of Midway","Fall of Singapore","Atomic bomb","Oil embargo"] },
+        { h:"Timeline", type:"timeline", body:[
+          { d:"1931", t:"Japan invades Manchuria." },
+          { d:"1937", t:"Japan launches full invasion of China." },
+          { d:"7 Dec 1941", t:"Attack on Pearl Harbor; USA enters the war." },
+          { d:"15 Feb 1942", t:"Fall of Singapore to Japan." },
+          { d:"Jun 1942", t:"Battle of Midway — turning point in the Pacific." },
+          { d:"Aug 1945", t:"Atomic bombs on Hiroshima & Nagasaki; Japan surrenders." },
+        ]},
+      ]
+    },
+    {
+      n:5, title:"The Origins & Development of the Cold War", q:"Why did wartime allies become enemies?",
+      sections:[
+        { h:"Overview", type:"text", body:[
+          "After WWII, the USA and USSR — allies against Hitler — became bitter rivals in the Cold War: a state of tension and hostility without direct large-scale fighting between them. This chapter explains why it began and how it developed into a divided world."
+        ]},
+        { h:"Reasons for the Cold War", type:"bullets", body:[
+          "<b>Ideological differences:</b> capitalist democracy (USA) vs communist one-party rule (USSR).",
+          "<b>Mutual suspicion:</b> a legacy of distrust from before and during the war.",
+          "<b>Disagreements at wartime conferences:</b> Yalta and Potsdam (1945) exposed clashes over the future of Europe, especially Poland.",
+          "<b>Soviet expansion:</b> the USSR installed communist governments across Eastern Europe (an 'Iron Curtain', Churchill 1946).",
+          "<b>US response:</b> the Truman Doctrine (1947, containment) and the Marshall Plan (economic aid to resist communism)."
+        ]},
+        { h:"How it developed", type:"bullets", body:[
+          "<b>Berlin Blockade & Airlift (1948–49):</b> Stalin blockaded West Berlin; the West flew in supplies. Germany split into West (FRG) and East (GDR).",
+          "<b>Alliances:</b> NATO (1949, Western) vs the Warsaw Pact (1955, Soviet).",
+          "<b>Arms race:</b> both sides built nuclear weapons, creating 'Mutually Assured Destruction'.",
+          "<b>Berlin Wall (1961):</b> built to stop East Germans fleeing to the West — a symbol of the divided world.",
+          "<b>Cuban Missile Crisis (1962):</b> the world's closest brush with nuclear war."
+        ]},
+        { h:"Key terms", type:"terms", body:["Cold War","Iron Curtain","Containment","Truman Doctrine","Marshall Plan","Berlin Blockade","NATO","Warsaw Pact","Arms race","Cuban Missile Crisis"] },
+        { h:"Timeline", type:"timeline", body:[
+          { d:"1945", t:"Yalta & Potsdam Conferences reveal Allied disagreements." },
+          { d:"1946", t:"Churchill's 'Iron Curtain' speech." },
+          { d:"1947", t:"Truman Doctrine and Marshall Plan announced." },
+          { d:"1948–49", t:"Berlin Blockade and Airlift; Germany divided." },
+          { d:"1949", t:"NATO founded; USSR tests its first atomic bomb." },
+          { d:"1955", t:"Warsaw Pact formed." },
+          { d:"1961", t:"Berlin Wall built." },
+          { d:"1962", t:"Cuban Missile Crisis." },
+        ]},
+      ]
+    },
+    {
+      n:6, title:"The End of the Cold War", q:"How and why did the Cold War end?",
+      sections:[
+        { h:"Overview", type:"text", body:[
+          "By the 1980s, the Soviet system was in deep economic trouble. Reforms, popular movements, and superpower diplomacy led to the collapse of communism in Eastern Europe and the break-up of the USSR itself — ending the Cold War."
+        ]},
+        { h:"Reasons the Cold War ended", type:"bullets", body:[
+          "<b>Soviet economic weakness:</b> the command economy could not match Western living standards or the cost of the arms race.",
+          "<b>Gorbachev's reforms:</b> Glasnost (openness) and Perestroika (restructuring) loosened control and exposed problems.",
+          "<b>He ended Soviet interference</b> in Eastern Europe, allowing countries to reform.",
+          "<b>Popular movements:</b> e.g. Solidarity in Poland demanded change.",
+          "<b>Improved US–Soviet relations:</b> arms-reduction talks between Gorbachev and Reagan reduced tension."
+        ]},
+        { h:"Collapse of communism", type:"bullets", body:[
+          "<b>1989:</b> revolutions swept Eastern Europe; the Berlin Wall fell in November — the iconic end of the divide.",
+          "<b>1990:</b> Germany reunified.",
+          "<b>1991:</b> the USSR was dissolved into independent states; the Cold War was over."
+        ]},
+        { h:"Key terms", type:"terms", body:["Glasnost","Perestroika","Gorbachev","Solidarity","Fall of the Berlin Wall","Reunification","Dissolution of the USSR"] },
+        { h:"Timeline", type:"timeline", body:[
+          { d:"1985", t:"Gorbachev becomes Soviet leader; begins reforms." },
+          { d:"1987", t:"US–Soviet arms-reduction treaty (INF) signed." },
+          { d:"1989", t:"Revolutions across Eastern Europe; Berlin Wall falls." },
+          { d:"1990", t:"Germany reunified." },
+          { d:"1991", t:"The Soviet Union is dissolved — the Cold War ends." },
+        ]},
+      ]
+    },
+  ]
+};
+
+/* ============================================================
+   APP LOGIC
+   ============================================================ */
+const DATA = { physics:PHYSICS, chemistry:CHEMISTRY, history:HISTORY };
+const app = document.getElementById('app');
+let state = {
+  subject:'physics',
+  mode:'flashcard',   // 'flashcard' | 'quiz'
+  topic:'all',
+  query:'',
+};
+
+/* localStorage: known cards */
+function knownKey(sub){ return 'osd-known-'+sub; }
+function getKnown(sub){ try{ return JSON.parse(localStorage.getItem(knownKey(sub))||'[]'); }catch(e){ return []; } }
+function setKnown(sub, arr){ localStorage.setItem(knownKey(sub), JSON.stringify(arr)); }
+function isKnown(sub, id){ return getKnown(sub).includes(id); }
+function toggleKnown(sub, id){
+  const arr = getKnown(sub); const i = arr.indexOf(id);
+  if(i>=0) arr.splice(i,1); else arr.push(id);
+  setKnown(sub, arr); return arr.includes(id);
+}
+
+document.getElementById('tabs').addEventListener('click', e=>{
+  const btn = e.target.closest('.tab'); if(!btn) return;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  state.subject = btn.dataset.subject;
+  state.topic = 'all'; state.query='';
+  render();
+});
+
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function matches(card, q){
+  if(!q) return true;
+  q = q.toLowerCase();
+  return (card.t + ' ' + card.d + ' ' + (card.x||'')).toLowerCase().includes(q);
+}
+
+function render(){
+  if(state.subject==='history'){ renderHistory(); return; }
+  renderDeck(DATA[state.subject]);
+  window.scrollTo({top:0, behavior:'instant'});
+}
+
+/* ---- Physics / Chemistry deck ---- */
+function renderDeck(subj){
+  const sub = state.subject;
+  const allCards = subj.topics.flatMap((t,ti)=>t.cards.map((c,ci)=>({...c, id:sub+'-'+ti+'-'+ci, topic:t.name})));
+  const total = allCards.length;
+  const knownCount = getKnown(sub).filter(id=>allCards.some(c=>c.id===id)).length;
+
+  let html = `
+  <section class="subject-hero">
+    <span class="eyebrow">${sub==='physics'?'Pure Physics · 6091':'Pure Chemistry · 6092'}</span>
+    <h2>${sub==='physics'?'Physics Definitions':'Chemistry Definitions'}</h2>
+    <p>${esc(subj.intro)}</p>
+  </section>
+
+  <div class="controls">
+    <label class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="search" type="text" placeholder="Search definitions…" value="${esc(state.query)}"/>
+    </label>
+    <div class="seg" id="modeSeg">
+      <button class="${state.mode==='flashcard'?'on':''}" data-mode="flashcard">Flashcards</button>
+      <button class="${state.mode==='quiz'?'on':''}" data-mode="quiz">Quiz mode</button>
+    </div>
+    <span class="stat"><b>${knownCount}</b> / ${total} learnt · <a href="#" class="reset-btn" id="resetKnown">reset</a></span>
+  </div>
+
+  <div class="topic-nav" id="topicNav">
+    <button class="topic-pill ${state.topic==='all'?'active':''}" data-topic="all">All topics</button>
+    ${subj.topics.map(t=>`<button class="topic-pill ${state.topic===t.name?'active':''}" data-topic="${esc(t.name)}">${esc(t.name)}</button>`).join('')}
+  </div>
+  <div id="deck"></div>`;
+
+  app.innerHTML = html + footerHTML();
+  wireDeck(subj, allCards);
+  drawCards(subj, allCards);
+}
+
+function drawCards(subj, allCards){
+  const sub = state.subject;
+  const deck = document.getElementById('deck');
+  const topics = state.topic==='all' ? subj.topics : subj.topics.filter(t=>t.name===state.topic);
+  let out = '';
+  let shown = 0;
+  topics.forEach(t=>{
+    const cards = t.cards
+      .map((c,ci)=>({...c, id:sub+'-'+subj.topics.indexOf(t)+'-'+ci}))
+      .filter(c=>matches(c, state.query));
+    if(!cards.length) return;
+    shown += cards.length;
+    out += `<div class="topic-block"><h3>${esc(t.name)}</h3><div class="topic-sub">${cards.length} definition${cards.length>1?'s':''}</div><div class="card-grid">`;
+    cards.forEach(c=>{
+      const known = isKnown(sub, c.id);
+      const quiz = state.mode==='quiz';
+      out += `
+      <div class="flash ${known?'known':''}" data-id="${c.id}">
+        <button class="mark" data-mark="${c.id}" title="Mark as learnt">✓</button>
+        <div class="term">${esc(c.t)}</div>
+        ${quiz ? `<div class="prompt">Define this — then tap to check.</div>` : ``}
+        <div class="def ${quiz?'hidden':''}">${esc(c.d)}</div>
+        ${c.x ? `<div class="extra ${quiz?'hidden':''}">${esc(c.x)}</div>` : ``}
+        ${quiz ? `<div class="reveal-hint">Tap to reveal ▾</div>` : ``}
+      </div>`;
+    });
+    out += `</div></div>`;
+  });
+  deck.innerHTML = shown ? out : `<div class="empty">No definitions match "${esc(state.query)}".</div>`;
+
+  // card interactions
+  deck.querySelectorAll('.flash').forEach(card=>{
+    card.addEventListener('click', e=>{
+      if(e.target.closest('.mark')) return;
+      const def = card.querySelector('.def');
+      const extra = card.querySelector('.extra');
+      const hint = card.querySelector('.reveal-hint');
+      if(def){ def.classList.toggle('hidden'); }
+      if(extra){ extra.classList.toggle('hidden'); }
+      if(hint){ hint.style.display = def && def.classList.contains('hidden') ? 'block':'none'; }
+    });
+  });
+  deck.querySelectorAll('.mark').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      e.stopPropagation();
+      const id = btn.dataset.mark;
+      toggleKnown(state.subject, id);
+      renderDeck(DATA[state.subject]); // refresh counts
+    });
+  });
+}
+
+function wireDeck(subj, allCards){
+  const search = document.getElementById('search');
+  search.addEventListener('input', ()=>{ state.query = search.value; drawCards(subj, allCards); });
+  document.getElementById('modeSeg').addEventListener('click', e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    state.mode = b.dataset.mode;
+    document.querySelectorAll('#modeSeg button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    drawCards(subj, allCards);
+  });
+  document.getElementById('topicNav').addEventListener('click', e=>{
+    const b = e.target.closest('.topic-pill'); if(!b) return;
+    state.topic = b.dataset.topic;
+    document.querySelectorAll('.topic-pill').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    drawCards(subj, allCards);
+  });
+  const reset = document.getElementById('resetKnown');
+  reset.addEventListener('click', e=>{
+    e.preventDefault();
+    if(confirm('Reset your learnt progress for this subject?')){
+      setKnown(state.subject, []);
+      renderDeck(DATA[state.subject]);
+    }
+  });
+}
+
+/* ---- History ---- */
+function renderHistory(){
+  const H = HISTORY;
+  let html = `
+  <section class="subject-hero">
+    <span class="eyebrow">Elective History · Express · Shaping the Modern World</span>
+    <h2>Elective History — Full Course</h2>
+    <p>${esc(H.intro)}</p>
+  </section>
+  <div class="hist-intro">
+    ${H.cards.map(c=>`<div class="mini-card"><h4>${esc(c.h)}</h4><p>${esc(c.p)}</p></div>`).join('')}
+  </div>
+  <div id="chapters" style="margin-top:32px;">`;
+
+  H.chapters.forEach((ch, i)=>{
+    html += `
+    <div class="chapter ${i===0?'open':''}" data-ch="${i}">
+      <div class="chapter-head">
+        <div class="chapter-num">${ch.n}</div>
+        <div class="ch-title">
+          <h3>${esc(ch.title)}</h3>
+          <div class="ch-q">${esc(ch.q)}</div>
+        </div>
+        <svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="chapter-body">${ch.sections.map(renderSection).join('')}</div>
+    </div>`;
+  });
+  html += `</div>`;
+  app.innerHTML = html + footerHTML();
+
+  document.querySelectorAll('.chapter-head').forEach(head=>{
+    head.addEventListener('click', ()=> head.parentElement.classList.toggle('open'));
+  });
+  window.scrollTo({top:0, behavior:'instant'});
+}
+
+function renderSection(s){
+  if(s.type==='text'){
+    return `<div class="ch-section"><h4>${esc(s.h)}</h4>${s.body.map(p=>`<p>${p}</p>`).join('')}</div>`;
+  }
+  if(s.type==='bullets'){
+    return `<div class="ch-section"><h4>${esc(s.h)}</h4><ul class="bullets">${s.body.map(li=>`<li>${li}</li>`).join('')}</ul></div>`;
+  }
+  if(s.type==='terms'){
+    return `<div class="ch-section"><h4>${esc(s.h)}</h4><div class="keyterms">${s.body.map(t=>`<span class="keyterm">${esc(t)}</span>`).join('')}</div></div>`;
+  }
+  if(s.type==='timeline'){
+    return `<div class="ch-section"><h4>${esc(s.h)}</h4><div class="timeline">${s.body.map(e=>`<div class="tl-item"><div class="tl-date">${esc(e.d)}</div><div class="tl-text">${esc(e.t)}</div></div>`).join('')}</div></div>`;
+  }
+  return '';
+}
+
+function footerHTML(){
+  return `
+  <div class="foot">
+    <div class="note">
+      <b>Study smart:</b> These notes follow the Singapore O-Level 2026 syllabuses (Pure Physics 6091, Pure Chemistry 6092, Elective History — Express). Definitions are written the way examiners award marks, but always cross-check with your own school notes and the official SEAB syllabus before your exam.
+    </div>
+    <p style="margin-top:22px;">Built as a personal revision tool · Physics · Chemistry · History</p>
+    <p>Your "learnt" progress is saved in this browser only.</p>
+  </div>`;
+}
+
+render();
+</script>
+</body>
+</html>
