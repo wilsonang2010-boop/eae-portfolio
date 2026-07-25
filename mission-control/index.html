@@ -394,6 +394,81 @@ audio{width:100%;margin-top:8px;height:38px}
 #sheet-back{position:fixed;inset:0;z-index:105;background:rgba(4,7,14,.55);display:none}
 #sheet-back.open{display:block}
 .sheet-menu .grab{width:38px;height:4px;border-radius:99px;background:var(--line-2);margin:0 auto 12px}
+
+/* ---------- flashcards ---------- */
+.fcfilters{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;-webkit-overflow-scrolling:touch}
+.fcfilters::-webkit-scrollbar{display:none}
+.fcchip{
+  flex:none;padding:8px 14px;border-radius:99px;border:1px solid var(--line-2);
+  background:var(--card);color:var(--muted);font-size:.76rem;font-weight:700;letter-spacing:.04em;
+  white-space:nowrap;transition:background .15s,color .15s,border-color .15s;
+}
+.fcchip.active{background:var(--red);border-color:var(--red);color:#fff}
+.fcchip .cnt{opacity:.7;font-weight:600;margin-left:2px}
+.fc-controls{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.fc-controls .btn{flex:1;min-width:120px}
+.fc-controls .btn svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
+.flashcard{
+  background:linear-gradient(160deg,var(--card-2) 0%,var(--card) 100%);
+  border:1px solid var(--line-2);border-radius:16px;padding:20px 18px;
+  min-height:230px;display:flex;flex-direction:column;
+  transition:transform .16s ease,opacity .16s ease;
+  transform-style:preserve-3d;
+}
+.flashcard.flip{transform:rotateX(90deg);opacity:.15}
+@media(prefers-reduced-motion:reduce){.flashcard,.flashcard.flip{transition:none;transform:none;opacity:1}}
+.fc-cardtop{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.fc-star{margin-left:auto;width:34px;height:34px;flex:none;border-radius:8px;border:1px solid var(--line-2);
+  display:flex;align-items:center;justify-content:center;color:var(--faint);background:var(--card)}
+.fc-star svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linejoin:round}
+.fc-star.on{color:var(--amber);border-color:rgba(240,180,41,.5);background:var(--amber-soft)}
+.fc-star.on svg{fill:var(--amber)}
+.fc-front-q{font-size:1.15rem;font-weight:700;line-height:1.4;letter-spacing:-.01em}
+.fc-front-q.small{font-size:.9rem;font-weight:600;color:var(--muted);margin-bottom:12px}
+.fc-back{background:var(--bg-2);border:1px solid var(--line);border-radius:11px;padding:14px;
+  font-size:.9rem;line-height:1.65;color:#c8d0e0;white-space:pre-line;margin-bottom:10px}
+.fc-trigger{background:var(--red-soft);border:1px dashed rgba(228,0,43,.4);border-radius:10px;
+  padding:11px 13px;margin-bottom:10px}
+.fc-trigger .lab{font-size:.62rem;letter-spacing:.16em;font-weight:800;color:#ff6b8a;display:block;margin-bottom:4px}
+.fc-trigger .val{font-size:.9rem;font-weight:700;white-space:pre-line;line-height:1.5}
+.fc-why{background:var(--cyan-soft);border:1px solid rgba(89,194,232,.3);border-radius:10px;padding:11px 13px;margin-bottom:10px}
+.fc-why .lab{font-size:.62rem;letter-spacing:.14em;font-weight:800;color:var(--cyan);display:block;margin-bottom:4px}
+.fc-why .val{font-size:.87rem;line-height:1.55}
+.fc-personal{font-size:.68rem;letter-spacing:.1em;font-weight:800;color:var(--amber);
+  background:var(--amber-soft);display:inline-block;padding:4px 9px;border-radius:6px;margin-bottom:10px}
+.fc-spacer{flex:1;min-height:8px}
+.fc-rate{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.fc-rate button{min-height:46px;border-radius:10px;font-weight:800;font-size:.82rem;letter-spacing:.03em;border:1px solid var(--line-2);background:var(--card)}
+.fc-rate .again{color:var(--amber);border-color:rgba(240,180,41,.4)}
+.fc-rate .again:active{background:var(--amber-soft)}
+.fc-rate .got{color:var(--cyan);border-color:rgba(89,194,232,.4)}
+.fc-rate .got:active{background:var(--cyan-soft)}
+.fc-rate .mastered{color:var(--green);border-color:rgba(62,207,142,.45)}
+.fc-rate .mastered:active{background:var(--green-soft)}
+.fc-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+.fc-nav .pos{font-size:.78rem;color:var(--faint);font-weight:700;font-variant-numeric:tabular-nums}
+.fc-mn{display:flex;gap:8px;margin:12px 0}
+.fc-mn input{flex:1}
+.fc-empty{text-align:center;color:var(--muted);padding:40px 16px;font-size:.9rem}
+.memmap pre{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:.78rem;line-height:1.55;color:#b7c2d8;overflow-x:auto;
+  background:var(--bg-2);border:1px solid var(--line);border-radius:11px;padding:14px;
+}
+.memmap .fit{text-align:center;font-weight:800;letter-spacing:.06em;line-height:2;font-size:.82rem;margin-top:14px;color:var(--text)}
+.memmap .fit .op{color:var(--faint);font-weight:600}
+.memmap .fit .eq{color:var(--red)}
+
+/* flashcard overlay (rapid recall / 60-sec) */
+#fcoverlay{position:fixed;inset:0;z-index:100;background:var(--bg);display:none;flex-direction:column;
+  padding:calc(14px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom));overflow-y:auto}
+#fcoverlay.open{display:flex;animation:fadein .25s ease}
+.fco-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.fco-timer{font-size:2.4rem;font-weight:800;font-variant-numeric:tabular-nums;text-align:center;letter-spacing:-.02em;padding:6px 0}
+.fco-timer.low{color:var(--red)}
+.fco-q{font-size:1.3rem;font-weight:700;line-height:1.4;margin:10px 0}
+@media(min-width:700px){.fco-q{font-size:1.6rem}}
 </style>
 </head>
 <body>
@@ -404,6 +479,7 @@ audio{width:100%;margin-top:8px;height:38px}
 </div>
 
 <div id="mockoverlay"></div>
+<div id="fcoverlay"></div>
 <div id="sheet-back"></div>
 <div class="sheet-menu" id="sheet"></div>
 <div id="modal-back"><div id="modal"></div></div>
@@ -826,6 +902,7 @@ const DEFAULT_STATE = () => ({
   mocks: [],             // [{ts, mode, results:[{q, scores:{}, well, improve, skipped}]}]
   reflections: {},       // date -> {improved, struggle, offguard, tomorrow}
   activity: {},          // date -> true (for streak)
+  fc: { cards: {}, filter: "all" }, // flashcards: cards[id] -> {reviewed, correct, mastered, difficult, last}
   settings: { hideModels: false }
 });
 
@@ -835,6 +912,8 @@ function loadState() {
     const raw = localStorage.getItem(LS_KEY);
     S = raw ? Object.assign(DEFAULT_STATE(), JSON.parse(raw)) : DEFAULT_STATE();
     S.settings = Object.assign({ hideModels: false }, S.settings);
+    S.fc = Object.assign({ cards: {}, filter: "all" }, S.fc);
+    if (!S.fc.cards) S.fc.cards = {};
   } catch (e) { S = DEFAULT_STATE(); }
 }
 let saveT = null;
@@ -978,7 +1057,11 @@ const ICONS = {
   tick: '<svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>',
   lock: '<svg viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
   medal: '<svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="m8.5 14-2 7 5.5-3 5.5 3-2-7"/></svg>',
-  plane: '<svg viewBox="0 0 24 24"><path d="M10.5 13.5 3 11l1.5-1.5L11 10l4.5-4.5a1.8 1.8 0 0 1 2.5 2.5L13.5 12.5l.5 6.5L12.5 20.5l-2-7z"/></svg>'
+  plane: '<svg viewBox="0 0 24 24"><path d="M10.5 13.5 3 11l1.5-1.5L11 10l4.5-4.5a1.8 1.8 0 0 1 2.5 2.5L13.5 12.5l.5 6.5L12.5 20.5l-2-7z"/></svg>',
+  flashcards: '<svg viewBox="0 0 24 24"><rect x="3" y="7" width="14" height="12" rx="2"/><path d="M7.5 4h11a2 2 0 0 1 2 2v9" opacity=".6"/><path d="M6.5 12h7M6.5 15h4"/></svg>',
+  star: '<svg viewBox="0 0 24 24"><path d="m12 3 2.6 5.6 6 .7-4.4 4.1 1.2 6L12 17.8 6.6 19.4l1.2-6L3.4 9.3l6-.7z"/></svg>',
+  bolt: '<svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12z"/></svg>',
+  shuffle: '<svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>'
 };
 
 /* checkbox binding: any element .check[data-key] toggles S.checks[key] */
@@ -1026,6 +1109,7 @@ const VIEWS = [
   { id: "dashboard", label: "Dashboard", short: "Home", icon: "home" },
   { id: "plan", label: "7-Day Plan", short: "Plan", icon: "plan" },
   { id: "questions", label: "Question Bank", short: "Questions", icon: "qbank" },
+  { id: "flashcards", label: "Flashcards", short: "Cards", icon: "flashcards" },
   { id: "stories", label: "Golden Stories", short: "Stories", icon: "stories" },
   { id: "mock", label: "Mock Interview", short: "Mock", icon: "mock" },
   { id: "factsheet", label: "Fact Sheet", short: "Facts", icon: "fact" },
@@ -1035,7 +1119,7 @@ const VIEWS = [
   { id: "settings", label: "Settings", short: "Settings", icon: "settings" }
 ];
 const BOTTOM_IDS = ["dashboard", "plan", "questions", "mock"];
-const SHEET_IDS = ["stories", "factsheet", "group", "interviewday", "notes", "settings"];
+const SHEET_IDS = ["flashcards", "stories", "factsheet", "group", "interviewday", "notes", "settings"];
 
 function currentView() {
   const h = location.hash.replace(/^#\/?/, "") || "dashboard";
@@ -1082,6 +1166,7 @@ function render() {
   const v = currentView();
   const fn = {
     dashboard: viewDashboard, plan: viewPlan, questions: viewQuestions,
+    flashcards: viewFlashcards,
     stories: viewStories, mock: viewMockHome, factsheet: viewFactSheet,
     group: viewGroup, interviewday: viewInterviewDay, notes: viewNotes, settings: viewSettings
   }[v];
@@ -1154,6 +1239,7 @@ function viewDashboard() {
   </div>
 
   ${missionCard}
+  ${flashcardsTodayCard()}
   ${frameworkCardHtml(false)}
 
   <div class="card">
@@ -1973,12 +2059,672 @@ function stopRecCleanup() {
   MK.rec = null; MK.chunks = [];
 }
 
+/* ================= FLASHCARDS ================= */
+
+const FC_CATS = [
+  { id: "overview",   name: "DASE Overview" },
+  { id: "cemish",     name: "Understanding CEMISH" },
+  { id: "aacdir",     name: "Understanding AACDIR" },
+  { id: "avionics",   name: "Avionics" },
+  { id: "foundations",name: "Engineering Foundations" },
+  { id: "practical",  name: "Practical Learning" },
+  { id: "aerohub",    name: "SP AeroHub" },
+  { id: "vsaero",     name: "DASE vs Aeronautical" },
+  { id: "careers",    name: "Careers" },
+  { id: "pilot",      name: "Why DASE if Pilot" },
+  { id: "genuine",    name: "Proving Genuine Interest" },
+  { id: "ge",         name: "GE Aerospace" },
+  { id: "traps",      name: "Interview Traps", tier: "red" }
+];
+const FC_CATNAME = {};
+FC_CATS.forEach(c => FC_CATNAME[c.id] = c.name);
+
+const FLASHCARDS = [
+  // ---- DASE Overview ----
+  { id: "fc1", cat: "overview",
+    front: "What are the TWO broad areas I should remember when explaining what DASE teaches?",
+    back: "1. Aerospace Electronics / Avionics\n2. ICT in Emerging Technologies — Aerospace\n\nThe course combines aircraft electronic / avionics knowledge with modern technologies used increasingly across aerospace.",
+    trigger: "DASE = ✈️ AVIONICS  +  💻 EMERGING TECHNOLOGY" },
+  { id: "fc2", cat: "overview",
+    front: "What mnemonic helps me remember the six Aerospace Electronics / Avionics areas shown by SP?",
+    back: "CEMISH\n\nC — Communication & Navigation\nE — Electrical Systems\nM — Maintenance Practices\nI — Instrument Systems\nS — Servo & Electronics\nH — Human Factors & Quality Systems\n\nThe purpose is to remember the areas and understand broadly what they mean — not to explain every topic in deep technical detail.",
+    trigger: "C  E  M  I  S  H" },
+  { id: "fc3", cat: "overview",
+    front: "What does CEMISH stand for?",
+    back: "C — Communication & Navigation\nE — Electrical Systems\nM — Maintenance Practices\nI — Instrument Systems\nS — Servo & Electronics\nH — Human Factors & Quality Systems",
+    trigger: "C  E  M  I  S  H",
+    input: { mask: "C _ M _ S _", answer: "CEMISH" } },
+  { id: "fc4", cat: "overview",
+    front: "What mnemonic helps me remember the six ICT in Emerging Technologies areas?",
+    back: "AACDIR\n\nSentence: “AI Aircraft Can Detect Incoming Risks”\n\nAI → Artificial Intelligence\nAircraft → Automation\nCan → Cybersecurity\nDetect → Data Analytics\nIncoming → Internet of Things\nRisks → Robotics\n\nInitials: A A C D I R",
+    trigger: "“AI Aircraft Can Detect Incoming Risks”" },
+  { id: "fc5", cat: "overview",
+    front: "What does AACDIR stand for?",
+    back: "A — Artificial Intelligence\nA — Automation\nC — Cybersecurity\nD — Data Analytics\nI — Internet of Things (IoT)\nR — Robotics",
+    trigger: "“AI Aircraft Can Detect Incoming Risks.”",
+    input: { mask: "A _ C _ I _", answer: "AACDIR" } },
+
+  // ---- Understanding CEMISH ----
+  { id: "fc6", cat: "cemish",
+    front: "What is Communication & Navigation in aerospace?",
+    back: "Communication systems let pilots and aircraft communicate with air traffic control, ground personnel and other relevant parties.\n\nNavigation systems help determine where the aircraft is, where it needs to go, and support safe navigation along its route.",
+    trigger: "COMMUNICATION = TALK\nNAVIGATION = WHERE AM I / WHERE AM I GOING?" },
+  { id: "fc7", cat: "cemish",
+    front: "What are Aircraft Electrical Systems?",
+    back: "They deal with how electrical power is generated, distributed, controlled and used throughout an aircraft, providing power to many systems and equipment aboard.",
+    trigger: "GENERATE → DISTRIBUTE → USE POWER" },
+  { id: "fc8", cat: "cemish",
+    front: "What are Maintenance Practices?",
+    back: "Inspecting, testing, troubleshooting, maintaining and repairing aircraft systems safely and according to proper procedures.",
+    trigger: "INSPECT → TEST → TROUBLESHOOT → MAINTAIN" },
+  { id: "fc9", cat: "cemish",
+    front: "What are Instrument Systems?",
+    back: "They provide pilots and aircraft systems with important information about the aircraft and its flight.\n\nExamples: speed, altitude, direction, aircraft attitude, system conditions.",
+    trigger: "INSTRUMENTS = INFORMATION" },
+  { id: "fc10", cat: "cemish",
+    front: "What are Servo & Electronics systems?",
+    back: "Servos and electronic control systems help convert electrical commands or signals into controlled actions. They're used where precise movement or control is required.\n\n(Keep it simple — I'm applying to LEARN DASE, not claiming I already have the diploma.)",
+    trigger: "SIGNAL → CONTROLLED ACTION" },
+  { id: "fc11", cat: "cemish",
+    front: "What are Human Factors & Quality Systems?",
+    back: "Human Factors: understanding how human abilities, limitations, communication, decision-making, fatigue and errors can affect aviation safety.\n\nQuality Systems: the processes, standards, checks and procedures used to ensure aviation work is done safely, consistently and correctly.\n\nImportant: these are taught ALONGSIDE the technical curriculum — they are not avionics themselves.",
+    trigger: "HUMANS → SAFETY\nQUALITY → STANDARDS" },
+
+  // ---- Understanding AACDIR ----
+  { id: "fc12", cat: "aacdir",
+    front: "What is Artificial Intelligence in an aerospace context?",
+    back: "AI can be used to analyse information, assist decision-making, identify patterns, improve efficiency and support increasingly intelligent aerospace systems.\n\n(I don't need to pretend to be an AI expert.)",
+    why: "I'm interested in how emerging technologies are increasingly being integrated into aerospace." },
+  { id: "fc13", cat: "aacdir",
+    front: "What is Automation?",
+    back: "Using technology and control systems to perform or assist processes automatically, reducing the need for constant manual control. Aerospace increasingly uses automation in aircraft systems, operations, manufacturing and maintenance.",
+    trigger: "AUTOMATION = SYSTEM PERFORMS TASKS AUTOMATICALLY" },
+  { id: "fc14", cat: "aacdir",
+    front: "Why is Cybersecurity relevant to aerospace?",
+    back: "Modern aircraft and aviation systems increasingly rely on connected digital and electronic systems. Cybersecurity helps protect systems, networks and information from unauthorised access, disruption or digital threats.",
+    trigger: "MORE CONNECTED = MORE NEED FOR PROTECTION" },
+  { id: "fc15", cat: "aacdir",
+    front: "What is Data Analytics?",
+    back: "Examining collected data to identify patterns, understand performance, detect problems and support better decisions. In aerospace, large amounts of operational and system data can be analysed to improve performance, reliability, maintenance and safety.",
+    trigger: "DATA → PATTERNS → BETTER DECISIONS" },
+  { id: "fc16", cat: "aacdir",
+    front: "What is the Internet of Things (IoT)?",
+    back: "Connected devices and sensors that collect, communicate and exchange data. In aerospace and engineering, connected sensors and equipment can provide useful information about systems and their condition.",
+    trigger: "CONNECTED DEVICES + SENSORS + DATA" },
+  { id: "fc17", cat: "aacdir",
+    front: "What is Robotics?",
+    back: "Machines that can perform physical tasks automatically, semi-autonomously or under human control. Applications include engineering, manufacturing, inspection, maintenance and unmanned systems.",
+    trigger: "MACHINES PERFORM PHYSICAL TASKS" },
+
+  // ---- Avionics ----
+  { id: "fc18", cat: "avionics",
+    front: "What is avionics?",
+    back: "Avionics broadly refers to the ELECTRONIC systems used aboard aircraft.\n\nExamples: communication systems, navigation systems, flight instruments / displays, electronic monitoring systems, electronic control-related systems.\n\nDon't just say “all electrical systems on an aircraft” — electrical power systems and avionics are related but not the same thing.",
+    trigger: "AVIONICS = AVIATION + ELECTRONICS" },
+  { id: "fc19", cat: "avionics",
+    front: "Give three examples of avionics systems.",
+    back: "1. Communication systems\n2. Navigation systems\n3. Flight instruments / displays\n\n(Other acceptable examples: electronic monitoring and control-related systems.)" },
+  { id: "fc20", cat: "avionics", personal: true,
+    front: "What interests ME about avionics?",
+    back: "KEY POINTS — say it in my own words:\n\n“I'm fascinated by how many different electronic systems work together to allow an aircraft to operate, communicate, navigate and give pilots the information they need.”\n\nI want to understand HOW THE SYSTEMS WORK INDIVIDUALLY and HOW THEY WORK TOGETHER AS ONE AIRCRAFT SYSTEM.",
+    trigger: "Personal trigger — don't memorise the exact wording." },
+
+  // ---- Engineering Foundations ----
+  { id: "fc21", cat: "foundations",
+    front: "Why does DASE teach electrical and electronic engineering fundamentals first?",
+    back: "Because advanced aircraft electronics and avionics are built on basic electrical and electronic engineering principles. Students need foundations — voltage, current, circuits, components, signals, power, basic electronics — before understanding more complex aircraft systems.",
+    trigger: "FOUNDATIONS ↓ BASIC ELECTRICAL / ELECTRONICS ↓ AVIONICS" },
+  { id: "fc22", cat: "foundations",
+    front: "Why are engineering fundamentals important before learning advanced avionics?",
+    back: "Without understanding how basic electrical and electronic systems work, it would be difficult to understand, troubleshoot or maintain more complex aircraft electronic systems.",
+    trigger: "BUILD THE FOUNDATION FIRST → THEN APPLY IT TO AIRCRAFT" },
+
+  // ---- Practical Learning ----
+  { id: "fc23", cat: "practical", personal: true,
+    front: "Why does hands-on learning appeal to me?",
+    back: "KEY POINTS:\n• I learn better when I apply theory practically.\n• Practical work forces me to think critically.\n• I solve real problems instead of only memorising.\n• Failure and testing deepen my understanding.\n\nEvidence — SAFMC: I helped design, build and test a glider. I learnt more through TESTING → FAILURE → ANALYSIS → IMPROVEMENT than from memorising design principles." },
+  { id: "fc24", cat: "practical",
+    front: "What experience proves that I benefit from practical learning?",
+    back: "SAFMC. I worked on designing, building and testing a glider. We hit issues involving stability, weight distribution and structural problems. Testing, failing, troubleshooting and improving gave me a deeper understanding and appreciation of engineering.",
+    trigger: "SAFMC = LEARNING THROUGH ITERATION" },
+
+  // ---- SP AeroHub ----
+  { id: "fc25", cat: "aerohub",
+    front: "What THREE things stood out to me when I visited SP AeroHub?",
+    back: "1. AIRCRAFT / ENVIRONMENT — the variety of aircraft made aviation feel real; I could imagine my future in front of me.\n2. PRACTICAL EQUIPMENT / SIMULATOR — the complexity made me curious rather than intimidated; I wanted to understand what all the instruments did.\n3. PEOPLE / SENIORS — welcoming and passionate; their enthusiasm made me want to be part of that environment.",
+    trigger: "AIRCRAFT → EQUIPMENT → PEOPLE" },
+  { id: "fc26", cat: "aerohub", personal: true,
+    front: "What is my strongest personal point about visiting AeroHub?",
+    back: "“I could imagine my future right in front of me.”\n\nBeing surrounded by aircraft, aerospace equipment and passionate students let me genuinely picture myself studying and developing there — the facilities didn't simply look impressive.",
+    trigger: "Use this naturally — not as a memorised slogan." },
+  { id: "fc27", cat: "aerohub",
+    front: "What did the flight simulator reveal about my personality?",
+    back: "When I saw how complex the cockpit and instruments looked, I felt curious rather than discouraged. Not “that looks too complicated,” but “I want to understand what all of this does.”",
+    trigger: "CURIOSITY + WILLINGNESS TO LEARN + INTEREST IN COMPLEX SYSTEMS" },
+
+  // ---- DASE vs Aeronautical ----
+  { id: "fc28", cat: "vsaero",
+    front: "What is the broad difference between Aerospace Electronics and Aeronautical Engineering?",
+    back: "DASE / Aerospace Electronics — more focused on: avionics, electronics, electrical systems, communication & navigation, instrumentation, emerging technologies.\n\nAeronautical Engineering — more focused on: aircraft structures, mechanical systems, propulsion, the physical / mechanical aspects of aircraft.\n\nDon't say “DASE is the better course.” Say “DASE is the better fit for MY interests and goals.”" },
+  { id: "fc29", cat: "vsaero", personal: true,
+    front: "Why did I choose DASE instead of Aeronautical Engineering?",
+    back: "KEY POINTS:\nI'm technologically inclined — I enjoy electronics, ICT, drones, avionics and emerging technology, and especially how electronic aircraft systems work together.\n\nMy pilot aspiration is relevant, but it is NOT the only reason.\n\nCore: DASE fits both my technical interests and my future goals better.",
+    trigger: "TECHNOLOGICALLY INCLINED" },
+
+  // ---- Careers ----
+  { id: "fc30", cat: "careers",
+    front: "What broad career pathways can DASE lead to?",
+    back: "Avionics; aircraft maintenance; electrical engineering; electronics engineering; aerospace engineering / technical roles; unmanned aircraft systems; aerospace and defence; further studies in relevant engineering fields.\n\nImportant: answer the actual career question first — don't turn every career question into “I want to become a pilot.”" },
+  { id: "fc31", cat: "careers",
+    front: "How should I frame my pilot aspiration WITHOUT making engineering sound like Plan B?",
+    back: "Not: DASE → hopefully become pilot → if I fail, become engineer.\n\nInstead: DASE → strong aerospace / avionics foundation → multiple valuable futures.\n\n• Possible future: RSAF / aviation / pilot pathway\n• Possible future: aerospace / avionics / engineering pathway\n\nBoth are futures I genuinely value." },
+
+  // ---- Why DASE if Pilot ----
+  { id: "fc32", cat: "pilot",
+    front: "If my goal is to become an RSAF pilot, why am I studying Aerospace Electronics?",
+    back: "• My interest in aviation goes beyond flying.\n• I genuinely enjoy electronics and technology.\n• I want to understand the systems aircraft depend on.\n• Avionics, communication, navigation, instruments and electrical systems interest me.\n• DASE gives me a strong technical aerospace foundation.\n• My engineering interest is genuine even if my career direction changes.\n• DASE is NOT merely a backup plan.",
+    trigger: "PILOT ASPIRATION + GENUINE TECHNICAL INTEREST = DASE FITS BOTH" },
+  { id: "fc33", cat: "pilot",
+    front: "What should I NEVER imply when discussing my pilot aspiration?",
+    back: "Never imply: “Engineering is just my backup if I fail to become a pilot.”\n\nInstead communicate: “I have multiple aerospace career paths that genuinely interest me, and DASE gives me technical knowledge and skills that are valuable across those paths.”" },
+
+  // ---- Proving Genuine Interest ----
+  { id: "fc34", cat: "genuine",
+    front: "What is my strongest evidence that my interest in electronics is genuine?",
+    back: "The GE Aerospace Electrical Engineering Job Simulation. I voluntarily explored aircraft electrical systems, electrical system planning / design concepts, power distribution, troubleshooting and navigation-related technical problems.\n\nThe important point: nobody forced me to explore this — I chose to, because I was genuinely interested." },
+  { id: "fc35", cat: "genuine",
+    front: "If an interviewer asks: “How do we know you're not just pretending to like electronics to get into DASE?”",
+    back: "Don't become defensive — use EVIDENCE.\n\nCore reasoning: “My past actions demonstrate my interest.”\n\nEvidence: GE Aerospace + SAFMC + Flight Mechanics + interest in drones / ICT + AeroHub visit + independent DASE research.\n\nUnderstand the argument (don't memorise word-for-word): MY ACTIONS CAME BEFORE THE INTERVIEW.",
+    trigger: "“I was already exploring aerospace electronics before I even applied for DASE.”" },
+
+  // ---- GE Aerospace ----
+  { id: "fc36", cat: "ge",
+    front: "What did I gain from the GE Aerospace Electrical Engineering Job Simulation?",
+    back: "Exposure to technical problem-solving involving aircraft electrical / electronic systems: electrical system concepts, power distribution, circuit protection, troubleshooting and navigation-related faults.\n\nWhat mattered most: I enjoyed the COMPLEXITY — understanding the system → identifying the problem → working toward a solution. It strengthened my interest in Aerospace Electronics.",
+    trigger: "UNDERSTAND SYSTEM → IDENTIFY PROBLEM → SOLVE" },
+
+  // ---- Interview Traps ----
+  { id: "fc37", cat: "traps",
+    front: "TRAP: “DASE is the better course than Aeronautical Engineering.”\nWhat should I say instead?",
+    back: "“DASE is the better FIT for my interests and goals.”\n\nNever unnecessarily insult or dismiss another course." },
+  { id: "fc38", cat: "traps",
+    front: "TRAP: “Temasek Polytechnic's facilities are demoralising compared with SP.”\nWhat should I do?",
+    back: "Do NOT criticise another polytechnic. Focus positively on why SP impressed ME: AeroHub, the variety of aircraft, practical equipment, the simulator, the seniors, the learning environment.\n\nSP should stand on its own merits." },
+  { id: "fc39", cat: "traps",
+    front: "TRAP: “If becoming a pilot doesn't work out, I'll become an engineer.”\nWhat is wrong with this?",
+    back: "It makes engineering sound like a consolation prize.\n\nInstead, present both the aviation / pilot pathway and the engineering pathway as careers I genuinely value." },
+  { id: "fc40", cat: "traps",
+    front: "TRAP: “Avionics means all the electrical systems in an aircraft.”\nWhat is the better definition?",
+    back: "Avionics broadly refers to the ELECTRONIC systems used aboard aircraft: communication, navigation, flight instruments / displays, monitoring, electronic control-related systems.\n\nElectrical power systems and avionics are related but not identical." },
+  { id: "fc41", cat: "traps",
+    front: "TRAP: Why should I avoid constantly saying “You know…”, “Right…”, “Um…”?",
+    back: "Too many filler words can make an otherwise strong answer sound less confident.\n\nInstead: PAUSE. A short silence sounds more deliberate and confident than filling every gap.",
+    trigger: "PAUSE > FILLER" }
+];
+
+const FC_FILTERS = [
+  { id: "all",      label: "All" },
+  { id: "new",      label: "Not Learned" },
+  { id: "learning", label: "Learning" },
+  { id: "mastered", label: "Mastered" },
+  { id: "difficult",label: "Difficult" }
+];
+
+const RAPID_PROMPTS = [
+  { q: "What does CEMISH stand for?", input: { mask: "C _ M _ S _", answer: "CEMISH" },
+    a: "Communication & Navigation · Electrical Systems · Maintenance Practices · Instrument Systems · Servo & Electronics · Human Factors & Quality Systems" },
+  { q: "What does AACDIR stand for?", input: { mask: "A _ C _ I _", answer: "AACDIR" },
+    a: "Artificial Intelligence · Automation · Cybersecurity · Data Analytics · Internet of Things · Robotics" },
+  { q: "Define avionics.", a: "The ELECTRONIC systems used aboard aircraft (not simply all electrical systems)." },
+  { q: "Give 3 examples of avionics.", a: "Communication systems · Navigation systems · Flight instruments / displays." },
+  { q: "What interests you about avionics?", a: "How many electronic systems work together to let an aircraft operate, communicate, navigate and inform the pilot." },
+  { q: "Why electrical / electronic foundations first?", a: "Advanced avionics is built on basic electrical/electronic principles — foundations before complex aircraft systems." },
+  { q: "Why does hands-on learning suit you?", a: "I learn by applying theory, solving real problems, and learning from testing and failure." },
+  { q: "What proves you learn well practically?", a: "SAFMC — design/build/test a glider; learning through iteration." },
+  { q: "What 3 things stood out at AeroHub?", a: "Aircraft/environment · Equipment/simulator · People/seniors." },
+  { q: "DASE vs Aeronautical Engineering?", a: "DASE = electronics/avionics/systems; Aeronautical = structures/mechanical/propulsion. DASE is the better FIT for me." },
+  { q: "Why DASE specifically?", a: "I'm technologically inclined — electronics, ICT, drones, avionics, and how aircraft systems work together." },
+  { q: "Name 4 career pathways from DASE.", a: "Avionics · aircraft maintenance · electrical/electronics engineering · unmanned aircraft systems (also aerospace & defence, further study)." },
+  { q: "Why DASE if you want to become a pilot?", a: "My interest goes beyond flying; DASE is a genuine technical foundation, not a backup. Pilot + technical interest = DASE fits both." },
+  { q: "What proves your electronics interest is genuine?", a: "GE Aerospace simulation — I chose to explore it. My actions came before the interview." },
+  { q: "What did you learn from GE Aerospace?", a: "Aircraft electrical systems, power distribution, circuit protection, troubleshooting — I enjoyed the complexity." },
+  { q: "What's wrong with making engineering sound like Plan B?", a: "It makes engineering a consolation prize — present both pilot and engineering as futures I genuinely value." }
+];
+
+/* ---------- flashcard state / progress ---------- */
+function fcState(id) {
+  if (!S.fc.cards[id]) S.fc.cards[id] = { reviewed: 0, correct: 0, mastered: false, difficult: false, last: null };
+  return S.fc.cards[id];
+}
+function fcStatus(id) {
+  const s = fcState(id);
+  return s.mastered ? "mastered" : (s.reviewed > 0 ? "learning" : "new");
+}
+function fcMatchesFilter(id, filter) {
+  if (filter === "all") return true;
+  if (filter === "difficult") return fcState(id).difficult;
+  return fcStatus(id) === filter;
+}
+function fcCounts() {
+  let mastered = 0, learning = 0, neu = 0, difficult = 0;
+  FLASHCARDS.forEach(c => {
+    const st = fcStatus(c.id);
+    if (st === "mastered") mastered++; else if (st === "learning") learning++; else neu++;
+    if (fcState(c.id).difficult) difficult++;
+  });
+  return { total: FLASHCARDS.length, mastered, learning, neu, difficult };
+}
+function fcFilterCount(filter) {
+  return FLASHCARDS.filter(c => fcMatchesFilter(c.id, filter)).length;
+}
+
+/* ---------- deck session ---------- */
+let FC = { order: [], idx: 0, revealed: false };
+function fcBuildOrder(keepId) {
+  const filter = S.fc.filter || "all";
+  FC.order = FLASHCARDS.filter(c => fcMatchesFilter(c.id, filter)).map(c => c.id);
+  if (keepId) {
+    const i = FC.order.indexOf(keepId);
+    FC.idx = i >= 0 ? i : 0;
+  }
+  if (FC.idx >= FC.order.length) FC.idx = Math.max(0, FC.order.length - 1);
+}
+function fcAfterRender() {
+  fcBuildOrder();
+  if (FC.idx >= FC.order.length) FC.idx = 0;
+  FC.revealed = false;
+  fcRenderDeck();
+}
+
+/* ---------- flashcards view ---------- */
+function viewFlashcards() {
+  const c = fcCounts();
+  return `
+  <div class="pagehead"><h2>Flashcards</h2><p>Course Knowledge — Active Recall</p></div>
+
+  <div class="grid2" style="margin-bottom:14px">
+    <div class="stat"><div class="v" id="fc-stat-mastered">${c.mastered} / ${c.total}</div><div class="k">Mastered</div></div>
+    <div class="stat"><div class="v" id="fc-stat-learning">${c.learning}</div><div class="k">Learning</div></div>
+    <div class="stat"><div class="v" id="fc-stat-new">${c.neu}</div><div class="k">Not Learned</div></div>
+    <div class="stat"><div class="v" id="fc-stat-diff">${c.difficult}</div><div class="k">Difficult</div></div>
+  </div>
+
+  <div class="fc-controls">
+    <button class="btn" onclick="fcShuffle()">${ICONS.shuffle}Shuffle</button>
+    <button class="btn" onclick="fcStartRapid()">${ICONS.bolt}Rapid Recall</button>
+    <button class="btn primary" onclick="fcStartSystemsCheck()">60-Second Systems Check</button>
+  </div>
+
+  <div class="fcfilters" id="fc-filters">
+    ${FC_FILTERS.map(f => `<button class="fcchip ${(S.fc.filter||"all") === f.id ? "active" : ""}" onclick="fcSetFilter('${f.id}')">${f.label}<span class="cnt"> ${fcFilterCount(f.id)}</span></button>`).join("")}
+  </div>
+
+  <div id="fc-deck"></div>
+
+  <details class="acc memmap" style="margin-top:16px">
+    <summary>Memory Map ${ICONS.chev}</summary>
+    <div class="acc-body">
+      <pre>DASE
+│
+├── AEROSPACE ELECTRONICS
+│   └── CEMISH
+│       ├── Communication & Navigation
+│       ├── Electrical Systems
+│       ├── Maintenance Practices
+│       ├── Instrument Systems
+│       ├── Servo & Electronics
+│       └── Human Factors & Quality Systems
+│
+└── ICT / EMERGING TECHNOLOGIES
+    └── AACDIR
+        ├── Artificial Intelligence
+        ├── Automation
+        ├── Cybersecurity
+        ├── Data Analytics
+        ├── Internet of Things
+        └── Robotics</pre>
+      <div class="fit">MY FIT WITH DASE<br>
+        TECHNOLOGY <span class="op">+</span> ELECTRONICS <span class="op">+</span> AVIONICS<br>
+        <span class="op">+</span> HANDS-ON LEARNING <span class="op">+</span> AVIATION<br>
+        <span class="eq">= WHY DASE FITS ME</span>
+      </div>
+    </div>
+  </details>
+
+  <div class="motto">“Knowing the flashcard is not enough. You must be able to explain it naturally.”</div>`;
+}
+
+function fcCardById(id) { return FLASHCARDS.find(c => c.id === id); }
+
+function fcRenderDeck() {
+  const deck = document.getElementById("fc-deck");
+  if (!deck) return;
+  if (!FC.order.length) {
+    deck.innerHTML = `<div class="flashcard"><div class="fc-empty">No cards in this filter yet.<br><br><button class="btn small" onclick="fcSetFilter('all')">Show all cards</button></div></div>`;
+    return;
+  }
+  const id = FC.order[FC.idx];
+  const card = fcCardById(id);
+  const st = fcState(id);
+  const status = fcStatus(id);
+  const statusPill = status === "mastered" ? '<span class="pill green">MASTERED</span>'
+    : status === "learning" ? '<span class="pill orange">LEARNING</span>'
+    : '<span class="pill grey">NOT LEARNED</span>';
+  const catTier = (FC_CATS.find(x => x.id === card.cat) || {}).tier;
+  const catPill = `<span class="pill ${catTier === "red" ? "red" : "cyan"}">${esc(FC_CATNAME[card.cat])}</span>`;
+  const starOn = st.difficult ? "on" : "";
+
+  const top = `<div class="fc-cardtop">
+    ${catPill}${statusPill}
+    <button class="fc-star ${starOn}" onclick="fcToggleDifficult('${id}')" title="Mark as difficult" aria-label="Mark as difficult">${ICONS.star}</button>
+  </div>`;
+
+  const nav = `<div class="fc-nav">
+    <button class="btn small ghost" onclick="fcPrev()">‹ Prev</button>
+    <span class="pos">${FC.idx + 1} / ${FC.order.length}</span>
+    <button class="btn small ghost" onclick="fcNext()">Next ›</button>
+  </div>`;
+
+  if (!FC.revealed) {
+    const inputHtml = card.input ? `
+      <div class="fc-mn">
+        <input class="field" id="fc-mn-input" placeholder="${esc(card.input.mask)}" autocapitalize="characters" autocomplete="off">
+        <button class="btn small" onclick="fcCheckMnemonic('${id}')">Check</button>
+      </div>` : "";
+    deck.innerHTML = `<div class="flashcard" id="fc-card">
+      ${top}
+      <div class="fc-front-q">${esc(card.front)}</div>
+      ${inputHtml}
+      <div class="fc-spacer"></div>
+      <button class="btn primary full" onclick="fcReveal()">Reveal Answer</button>
+      ${nav}
+    </div>`;
+  } else {
+    deck.innerHTML = `<div class="flashcard" id="fc-card">
+      ${top}
+      <div class="fc-front-q small">${esc(card.front)}</div>
+      ${card.personal ? '<div class="fc-personal">KEY POINTS — SAY IT YOUR OWN WAY</div>' : ""}
+      <div class="fc-back">${esc(card.back)}</div>
+      ${card.trigger ? `<div class="fc-trigger"><span class="lab">MEMORY TRIGGER</span><span class="val">${esc(card.trigger)}</span></div>` : ""}
+      ${card.why ? `<div class="fc-why"><span class="lab">WHY THIS MATTERS IN THE INTERVIEW</span><span class="val">${esc(card.why)}</span></div>` : ""}
+      <div class="fc-spacer"></div>
+      <div class="hint" style="text-align:center;margin-bottom:8px">How well did you recall it — honestly?</div>
+      <div class="fc-rate">
+        <button class="again" onclick="fcRate('again')">AGAIN</button>
+        <button class="got" onclick="fcRate('got')">GOT IT</button>
+        <button class="mastered" onclick="fcRate('mastered')">MASTERED</button>
+      </div>
+      ${nav}
+    </div>`;
+  }
+}
+
+function fcSetFilter(f) {
+  S.fc.filter = f; save();
+  FC.idx = 0; FC.revealed = false;
+  fcBuildOrder();
+  // update chips + counts without full nav reset
+  const wrap = document.getElementById("fc-filters");
+  if (wrap) wrap.innerHTML = FC_FILTERS.map(x => `<button class="fcchip ${f === x.id ? "active" : ""}" onclick="fcSetFilter('${x.id}')">${x.label}<span class="cnt"> ${fcFilterCount(x.id)}</span></button>`).join("");
+  fcRenderDeck();
+}
+function fcShuffle() {
+  if (!FC.order.length) return;
+  for (let i = FC.order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[FC.order[i], FC.order[j]] = [FC.order[j], FC.order[i]]; }
+  FC.idx = 0; FC.revealed = false;
+  fcRenderDeck();
+  toast("Cards shuffled");
+}
+function fcPrev() {
+  if (!FC.order.length) return;
+  FC.idx = (FC.idx - 1 + FC.order.length) % FC.order.length;
+  FC.revealed = false; fcRenderDeck();
+}
+function fcNext() {
+  if (!FC.order.length) return;
+  FC.idx = (FC.idx + 1) % FC.order.length;
+  FC.revealed = false; fcRenderDeck();
+}
+function fcReveal() {
+  const el = document.getElementById("fc-card");
+  const reduce = window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+  if (el && !reduce) {
+    el.classList.add("flip");
+    setTimeout(() => {
+      FC.revealed = true; fcRenderDeck();
+      const e2 = document.getElementById("fc-card");
+      if (e2) { e2.classList.add("flip"); requestAnimationFrame(() => requestAnimationFrame(() => e2.classList.remove("flip"))); }
+    }, 150);
+  } else {
+    FC.revealed = true; fcRenderDeck();
+  }
+}
+function fcCheckMnemonic(id) {
+  const inp = document.getElementById("fc-mn-input");
+  if (!inp) return;
+  const card = fcCardById(id);
+  const val = (inp.value || "").trim().toUpperCase().replace(/[^A-Z]/g, "");
+  if (val === card.input.answer) toast("Correct ✓  " + card.input.answer);
+  else toast("Not quite — reveal to check");
+}
+function fcRate(kind) {
+  if (!FC.order.length) return;
+  const id = FC.order[FC.idx];
+  const st = fcState(id);
+  st.reviewed++;
+  st.last = Date.now();
+  if (kind === "again") { st.mastered = false; }
+  else if (kind === "got") { st.correct++; }
+  else if (kind === "mastered") { st.correct++; st.mastered = true; }
+  logActivity(); save();
+  renderNav();
+  fcUpdateStats();
+  // if filtering by a subset, a rated card may leave the set
+  const filter = S.fc.filter || "all";
+  if (filter !== "all" && !fcMatchesFilter(id, filter)) {
+    const wasIdx = FC.idx;
+    fcBuildOrder();
+    if (FC.idx > FC.order.length - 1 || FC.order.length === 0) FC.idx = 0;
+    else FC.idx = Math.min(wasIdx, FC.order.length - 1);
+  } else {
+    FC.idx = (FC.idx + 1) % FC.order.length;
+  }
+  FC.revealed = false;
+  fcRenderDeck();
+  // refresh filter chip counts
+  const wrap = document.getElementById("fc-filters");
+  if (wrap) wrap.innerHTML = FC_FILTERS.map(x => `<button class="fcchip ${filter === x.id ? "active" : ""}" onclick="fcSetFilter('${x.id}')">${x.label}<span class="cnt"> ${fcFilterCount(x.id)}</span></button>`).join("");
+  if (kind === "mastered") toast("Card mastered ✓");
+}
+function fcToggleDifficult(id) {
+  const st = fcState(id);
+  st.difficult = !st.difficult;
+  save(); fcUpdateStats();
+  const star = document.querySelector(".fc-star");
+  if (star) star.classList.toggle("on", st.difficult);
+  toast(st.difficult ? "Marked as difficult" : "Unmarked difficult");
+  const wrap = document.getElementById("fc-filters");
+  if (wrap) wrap.innerHTML = FC_FILTERS.map(x => `<button class="fcchip ${(S.fc.filter||"all") === x.id ? "active" : ""}" onclick="fcSetFilter('${x.id}')">${x.label}<span class="cnt"> ${fcFilterCount(x.id)}</span></button>`).join("");
+}
+function fcUpdateStats() {
+  const c = fcCounts();
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set("fc-stat-mastered", `${c.mastered} / ${c.total}`);
+  set("fc-stat-learning", c.learning);
+  set("fc-stat-new", c.neu);
+  set("fc-stat-diff", c.difficult);
+}
+
+/* ---------- Rapid Recall overlay ---------- */
+let RR = null;
+function fcStartRapid() {
+  let ids = FLASHCARDS.filter(c => fcMatchesFilter(c.id, S.fc.filter || "all")).map(c => c.id);
+  if (!ids.length) ids = FLASHCARDS.map(c => c.id);
+  for (let i = ids.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[ids[i], ids[j]] = [ids[j], ids[i]]; }
+  RR = { ids, idx: 0, revealed: false };
+  document.getElementById("fcoverlay").classList.add("open");
+  fcRenderRapid();
+}
+function fcRenderRapid() {
+  const o = document.getElementById("fcoverlay");
+  if (!RR) return;
+  if (RR.idx >= RR.ids.length) {
+    o.innerHTML = `<div class="fco-top"><span class="pill green">DONE</span><button class="btn small ghost" onclick="fcExitOverlay()">Close</button></div>
+      <div style="max-width:560px;margin:12vh auto 0;text-align:center">
+        <h2 style="font-weight:800">Rapid Recall complete</h2>
+        <p class="hint" style="margin-top:8px">You went through ${RR.ids.length} cards. Now pick 3 and explain them out loud, in your own words.</p>
+        <button class="btn primary" style="margin-top:20px" onclick="fcExitOverlay()">Back to Flashcards</button>
+      </div>`;
+    return;
+  }
+  const card = fcCardById(RR.ids[RR.idx]);
+  const top = `<div class="fco-top">
+    <span class="pill ${(FC_CATS.find(x=>x.id===card.cat)||{}).tier==="red"?"red":"cyan"}">${esc(FC_CATNAME[card.cat])}</span>
+    <span class="hint" style="font-weight:700">${RR.idx + 1} / ${RR.ids.length}</span>
+    <button class="btn small ghost" onclick="fcExitOverlay()">Exit</button>
+  </div>`;
+  if (!RR.revealed) {
+    o.innerHTML = top + `<div style="max-width:640px;margin:2vh auto 0;width:100%">
+      <div class="fco-q">${esc(card.front)}</div>
+      <div class="hint">Answer it out loud first — then reveal.</div>
+      <button class="btn primary full" style="margin-top:20px" onclick="fcRapidReveal()">Reveal Answer</button>
+    </div>`;
+  } else {
+    o.innerHTML = top + `<div style="max-width:640px;margin:2vh auto 0;width:100%">
+      <div class="fc-front-q small">${esc(card.front)}</div>
+      ${card.personal ? '<div class="fc-personal">KEY POINTS — SAY IT YOUR OWN WAY</div>' : ""}
+      <div class="fc-back">${esc(card.back)}</div>
+      ${card.trigger ? `<div class="fc-trigger"><span class="lab">MEMORY TRIGGER</span><span class="val">${esc(card.trigger)}</span></div>` : ""}
+      ${card.why ? `<div class="fc-why"><span class="lab">WHY THIS MATTERS</span><span class="val">${esc(card.why)}</span></div>` : ""}
+      <div class="fc-rate" style="margin-top:14px">
+        <button class="again" onclick="fcRapidRate('again')">AGAIN</button>
+        <button class="got" onclick="fcRapidRate('got')">GOT IT</button>
+        <button class="mastered" onclick="fcRapidRate('mastered')">MASTERED</button>
+      </div>
+    </div>`;
+  }
+}
+function fcRapidReveal() { RR.revealed = true; fcRenderRapid(); }
+function fcRapidRate(kind) {
+  const id = RR.ids[RR.idx];
+  const st = fcState(id);
+  st.reviewed++; st.last = Date.now();
+  if (kind === "again") st.mastered = false;
+  else if (kind === "got") st.correct++;
+  else if (kind === "mastered") { st.correct++; st.mastered = true; }
+  logActivity(); save();
+  RR.idx++; RR.revealed = false;
+  fcRenderRapid();
+}
+
+/* ---------- 60-Second Systems Check ---------- */
+let SC = null;
+function fcStartSystemsCheck() {
+  const prompts = RAPID_PROMPTS.slice();
+  for (let i = prompts.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[prompts[i], prompts[j]] = [prompts[j], prompts[i]]; }
+  SC = { prompts, idx: 0, revealed: false, covered: 0, t: 60, timer: null, done: false };
+  document.getElementById("fcoverlay").classList.add("open");
+  fcRenderSystemsCheck();
+  SC.timer = setInterval(() => {
+    if (!SC) return;
+    SC.t--;
+    const el = document.getElementById("sc-timer");
+    if (el) { el.textContent = "0:" + String(Math.max(SC.t, 0)).padStart(2, "0"); el.classList.toggle("low", SC.t <= 10); }
+    if (SC.t <= 0) fcSystemsCheckEnd();
+  }, 1000);
+}
+function fcRenderSystemsCheck() {
+  const o = document.getElementById("fcoverlay");
+  if (!SC) return;
+  if (SC.done) {
+    o.innerHTML = `<div class="fco-top"><span class="pill green">TIME</span><button class="btn small ghost" onclick="fcExitOverlay()">Close</button></div>
+      <div style="max-width:560px;margin:10vh auto 0;text-align:center">
+        <h2 style="font-weight:800">60-Second Systems Check</h2>
+        <div class="stat" style="margin:18px auto;max-width:220px"><div class="v">${SC.covered}</div><div class="k">Prompts Covered</div></div>
+        <p class="hint">Speed is good — but make sure you can also explain each one naturally, not just recite it.</p>
+        <button class="btn primary" style="margin-top:20px" onclick="fcExitOverlay()">Back to Flashcards</button>
+      </div>`;
+    return;
+  }
+  const p = SC.prompts[SC.idx % SC.prompts.length];
+  const top = `<div class="fco-top">
+    <span class="pill red">60-SEC CHECK</span>
+    <span class="hint" style="font-weight:700">Covered ${SC.covered}</span>
+    <button class="btn small ghost" onclick="fcSystemsCheckEnd()">End</button>
+  </div>`;
+  const inputHtml = p.input ? `<div class="fc-mn"><input class="field" id="sc-mn" placeholder="${esc(p.input.mask)}" autocapitalize="characters" autocomplete="off"><button class="btn small" onclick="fcSystemsCheckMn()">Check</button></div>` : "";
+  if (!SC.revealed) {
+    o.innerHTML = top + `<div class="fco-timer" id="sc-timer">0:${String(Math.max(SC.t,0)).padStart(2,"0")}</div>
+      <div style="max-width:640px;margin:0 auto;width:100%">
+        <div class="fco-q">${esc(p.q)}</div>
+        ${inputHtml}
+        <button class="btn primary full" style="margin-top:16px" onclick="fcSystemsCheckReveal()">Reveal</button>
+      </div>`;
+  } else {
+    o.innerHTML = top + `<div class="fco-timer" id="sc-timer">0:${String(Math.max(SC.t,0)).padStart(2,"0")}</div>
+      <div style="max-width:640px;margin:0 auto;width:100%">
+        <div class="fc-front-q small">${esc(p.q)}</div>
+        <div class="fc-back">${esc(p.a)}</div>
+        <button class="btn primary full" style="margin-top:14px" onclick="fcSystemsCheckNext()">Next →</button>
+      </div>`;
+  }
+}
+function fcSystemsCheckMn() {
+  const inp = document.getElementById("sc-mn");
+  const p = SC.prompts[SC.idx % SC.prompts.length];
+  if (!inp || !p.input) return;
+  const val = (inp.value || "").trim().toUpperCase().replace(/[^A-Z]/g, "");
+  toast(val === p.input.answer ? "Correct ✓ " + p.input.answer : "Not quite — reveal to check");
+}
+function fcSystemsCheckReveal() { SC.revealed = true; fcRenderSystemsCheck(); }
+function fcSystemsCheckNext() {
+  SC.covered++; SC.idx++; SC.revealed = false;
+  fcRenderSystemsCheck();
+}
+function fcSystemsCheckEnd() {
+  if (SC && SC.timer) { clearInterval(SC.timer); SC.timer = null; }
+  if (SC) { SC.done = true; fcRenderSystemsCheck(); }
+  logActivity();
+}
+function fcExitOverlay() {
+  if (SC && SC.timer) { clearInterval(SC.timer); SC.timer = null; }
+  RR = null; SC = null;
+  document.getElementById("fcoverlay").classList.remove("open");
+  if (currentView() === "flashcards") { fcAfterRender(); renderNav(); }
+  else render();
+}
+
+/* ---------- dashboard: Flashcards Today card ---------- */
+function flashcardsTodayCard() {
+  const c = fcCounts();
+  const pct = Math.round(c.mastered / c.total * 100);
+  return `<div class="card">
+    <h3>Flashcards Today</h3>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <span style="font-size:1.05rem;font-weight:700">Course Knowledge — Active Recall</span>
+    </div>
+    <p class="hint" style="margin-bottom:10px">Target: <b style="color:var(--text)">10–15 minutes a day</b>. Don't let flashcards eat your whole prep time.</p>
+    <div class="progressbar green"><div style="width:${pct}%"></div></div>
+    <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:.76rem;color:var(--faint)">
+      <span>${c.mastered}/${c.total} mastered</span>
+      <span>${c.difficult} marked difficult</span>
+    </div>
+    <div style="font-size:.82rem;color:var(--muted);margin-top:12px;line-height:1.7">
+      <b style="color:var(--cyan)">Round 1</b> — review difficult / not-learned cards<br>
+      <b style="color:var(--cyan)">Round 2</b> — Rapid Recall<br>
+      <b style="color:var(--cyan)">Round 3</b> — pick 3 cards and explain them out loud
+    </div>
+    <button class="btn primary full" style="margin-top:14px" onclick="nav('flashcards')">Open Flashcards</button>
+  </div>`;
+}
+
 /* ================= AFTER-RENDER / INIT ================= */
 
 function afterRender(v) {
   if (v === "dashboard") startCountdown();
   else clearInterval(cdTimer);
   if (v === "settings") refreshInstallUI();
+  if (v === "flashcards") fcAfterRender();
 }
 
 /* ---------- PWA: service worker + install ---------- */
