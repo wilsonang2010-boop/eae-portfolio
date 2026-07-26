@@ -199,6 +199,36 @@ header{
 .f-expr{font-family:'Courier New',ui-monospace,monospace; font-size:14.5px; color:var(--white); letter-spacing:.01em;}
 .f-desc{font-size:13px; color:var(--slate-400); margin-top:5px; line-height:1.5;}
 
+/* ── Worked examples (Easy / Medium / O-Level tiers) ─────────── */
+.example-set{display:flex; flex-direction:column; gap:14px; margin-top:6px;}
+.example-card{background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:19px 21px;}
+.example-level{display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:4px 10px; border-radius:6px; margin-bottom:12px;}
+.lvl-easy{background:rgba(52,211,153,.15); color:#6EE7B7;}
+.lvl-medium{background:rgba(245,158,11,.15); color:#FCD34D;}
+.lvl-olevel{background:rgba(251,113,133,.15); color:#FDA4AF;}
+.example-q{color:var(--white); font-size:15px; line-height:1.65; font-weight:500; font-family:var(--font-display);}
+.step-list{counter-reset:step; margin-top:15px;}
+.step-list li{counter-increment:step; position:relative; padding-left:36px; margin-bottom:11px; color:var(--slate-300); font-size:14px; line-height:1.6;}
+.step-list li:last-child{margin-bottom:0;}
+.step-list li:before{content:counter(step); position:absolute; left:0; top:-1px; width:24px; height:24px; border-radius:50%; background:var(--blue-soft); color:var(--blue-bright); font-size:11.5px; font-weight:700; display:grid; place-items:center;}
+.example-ans{margin-top:15px; padding:11px 15px; border-radius:8px; background:rgba(34,197,94,.08); border:1px solid rgba(34,197,94,.3); color:var(--white); font-size:14px; font-weight:600; line-height:1.55;}
+.example-ans b{color:#6EE7B7;}
+
+/* ── Diagrams (SVG, generated at render time) ────────────────── */
+.diagram-wrap{margin:16px 0; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:16px; text-align:center; overflow-x:auto;}
+.diagram-wrap svg{max-width:100%; height:auto; width:340px;}
+.diagram-cap{margin-top:10px; font-size:12.5px; color:var(--slate-500);}
+.example-card .diagram-wrap{margin:14px 0 4px;}
+
+/* ── Matrix multiplication visual ─────────────────────────────── */
+.mvz{display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; margin:18px 0; font-family:'Courier New',ui-monospace,monospace;}
+.mvz-mat{display:grid; border-left:2px solid var(--slate-500); border-right:2px solid var(--slate-500); padding:10px 14px; gap:8px 20px;}
+.mvz-cell{font-size:16px; color:var(--slate-100); text-align:center; min-width:28px;}
+.mvz-cell.hi-row{background:rgba(59,130,246,.2); color:#93C5FD; border-radius:4px; font-weight:700;}
+.mvz-cell.hi-col{background:rgba(245,158,11,.2); color:#FCD34D; border-radius:4px; font-weight:700;}
+.mvz-op{font-size:22px; color:var(--slate-500); font-weight:300;}
+.mvz-cap{text-align:center; color:var(--slate-400); font-size:13px; margin-top:-6px;}
+
 /* Empty state */
 .empty{text-align:center; padding:60px 20px; color:var(--slate-500);}
 
@@ -798,6 +828,48 @@ const EMATH = {
           "In a three-set diagram, always fill the <b>centre region first</b>, then work outwards.",
           "Listing the elements when the question asks for <b>n( )</b> — the number of them.",
         ]},
+        { h:"Full explanation — how a Venn diagram actually works", type:"text", body:[
+          "A Venn diagram is just a picture of overlaps. The rectangle is <b>ξ</b>, the universal set — everything you are allowed to talk about. Every circle inside it is a set, and where circles overlap is where an item belongs to <i>more than one</i> set at once.",
+          "For a two-set diagram, there are always exactly <b>four regions</b>: only in A, only in B, in both (A∩B), and in neither (outside both circles, but still inside ξ). Every single item in ξ belongs to exactly one of these four regions — never two, never zero.",
+          "The method that never fails, for numbers: <b>start at the overlap and work outwards.</b> If you're told n(A)=18 and n(A∩B)=8, then the 'only A' region is 18−8=10, <i>not</i> 18 — because those 8 are already counted inside A. This is the single most common Venn-diagram mistake at O-level.",
+          "For a <b>three-set</b> diagram there are eight regions. Always fill in the very centre (all three) first, then the three 'exactly two' regions (subtract the centre from each pairwise total), then the three 'exactly one' regions (subtract everything already placed from each set's total), and finally whatever is left outside all three circles.",
+        ]},
+        { h:"Anatomy of a two-set Venn diagram", type:"diagram", body:{ type:"venn2", labelA:"A", labelB:"B", onlyA:"only A", both:"A ∩ B", onlyB:"only B", outside:"neither", caption:"Every item in ξ sits in exactly one of these four regions." } },
+        { h:"Worked examples", type:"examples", body:[
+          { level:"Easy",
+            q:"In a class of 30 students, 18 study French (F) and 15 study Spanish (S). 8 students study both. How many students study neither language?",
+            diagram:{ type:"venn2", labelA:"F", labelB:"S", onlyA:10, both:8, onlyB:7, outside:5, caption:"Only F = 18−8 = 10. Only S = 15−8 = 7. Outside both = 30−25 = 5." },
+            steps:[
+              "The overlap is given directly: n(F∩S) = 8.",
+              "n(F∪S) = n(F) + n(S) − n(F∩S) = 18 + 15 − 8 = 25.",
+              "Neither = total − n(F∪S) = 30 − 25 = 5.",
+            ],
+            ans:"5 students study neither language." },
+          { level:"Medium",
+            q:"ξ = {1, 2, 3, …, 12}. A = {multiples of 3}, B = {multiples of 4}. List sets A and B, then find A∩B, A∪B, and n((A∪B)′).",
+            steps:[
+              "List the multiples of 3 up to 12: A = {3, 6, 9, 12}.",
+              "List the multiples of 4 up to 12: B = {4, 8, 12}.",
+              "A∩B = the elements in both lists = {12}.",
+              "A∪B = combine both lists, writing 12 only once = {3, 4, 6, 8, 9, 12}, so n(A∪B) = 6.",
+              "(A∪B)′ = everything in ξ that is <i>not</i> in A∪B = {1, 2, 5, 7, 10, 11}, so n((A∪B)′) = 6.",
+            ],
+            ans:"A∩B = {12}; A∪B = {3, 4, 6, 8, 9, 12}; n((A∪B)′) = 6." },
+          { level:"O-Level standard",
+            q:"In a survey of 60 students: 28 play football (F), 24 play basketball (B), 20 play tennis (T). 10 play football and basketball, 8 play basketball and tennis, 9 play football and tennis, and 5 play all three sports. Find (a) the number who play only football, (b) the number who play none of the three sports.",
+            diagram:{ type:"venn3", labelA:"F", labelB:"B", labelC:"T", onlyA:14, onlyB:11, onlyC:8, ab:5, ac:4, bc:3, abc:5, outside:10, caption:"Filled centre-first: all three (5) → pairwise-only → single-only → outside." },
+            steps:[
+              "Start at the very centre: all three sports = 5 (given directly).",
+              "F∩B <i>only</i> (not tennis) = n(F∩B) − all three = 10 − 5 = 5.",
+              "B∩T only = n(B∩T) − all three = 8 − 5 = 3.",
+              "F∩T only = n(F∩T) − all three = 9 − 5 = 4.",
+              "Only football = n(F) − (F∩B only) − (F∩T only) − all three = 28 − 5 − 4 − 5 = 14.",
+              "For completeness: only basketball = 24−5−3−5 = 11, only tennis = 20−4−3−5 = 8.",
+              "Total inside the three circles = 14+11+8+5+3+4+5 = 50.",
+              "None of the three = 60 − 50 = 10.",
+            ],
+            ans:"(a) 14 students play only football. (b) 10 students play none of the three sports." },
+        ]},
       ]},
     { n:2, title:"Probability", q:"Single events, combined events, and tree diagrams.",
       sections:[
@@ -821,6 +893,37 @@ const EMATH = {
           "Adding when you should multiply. Along a branch = AND = multiply.",
           "Leaving the answer as a decimal when the question asks for a fraction.",
         ]},
+        { h:"Worked examples", type:"examples", body:[
+          { level:"Easy",
+            q:"A bag contains 5 red, 3 blue and 2 green marbles. One marble is drawn at random. Find the probability that it is (a) blue, (b) not green.",
+            steps:[
+              "Total marbles = 5 + 3 + 2 = 10.",
+              "P(blue) = number of blue ÷ total = 3/10.",
+              "P(green) = 2/10 = 1/5, so P(not green) = 1 − 1/5 = 4/5.",
+            ],
+            ans:"(a) P(blue) = 3/10. (b) P(not green) = 4/5." },
+          { level:"Medium",
+            q:"A bag contains 4 red and 6 blue balls. A ball is drawn, its colour noted, and replaced. A second ball is then drawn. Find the probability that (a) both are red, (b) the two balls are different colours.",
+            steps:[
+              "P(red) = 4/10 = 2/5, P(blue) = 6/10 = 3/5. Replacement means these stay the same for the second draw.",
+              "Both red — multiply along the branch: 2/5 × 2/5 = 4/25.",
+              "'Different colours' can happen two ways: Red-then-Blue OR Blue-then-Red — add these two branches.",
+              "P(R then B) = 2/5 × 3/5 = 6/25. P(B then R) = 3/5 × 2/5 = 6/25.",
+              "P(different) = 6/25 + 6/25 = 12/25.",
+            ],
+            ans:"(a) 4/25. (b) 12/25." },
+          { level:"O-Level standard",
+            q:"A box contains 5 red pens and 3 blue pens. Two pens are drawn at random, one after another, without replacement. Find the probability that (a) both pens are the same colour, (b) at least one pen is red.",
+            steps:[
+              "Total pens = 5+3 = 8. Without replacement: the second draw has one fewer pen, and the count of whichever colour was drawn first also drops by one.",
+              "P(both red) = 5/8 × 4/7 = 20/56 = 5/14.",
+              "P(both blue) = 3/8 × 2/7 = 6/56 = 3/28.",
+              "Same colour = P(RR) + P(BB). Common denominator 28: 5/14 = 10/28, so same colour = 10/28 + 3/28 = 13/28.",
+              "'At least one red' is fastest via the complement — the <i>only</i> way to get no red at all is BB.",
+              "P(at least one red) = 1 − P(BB) = 1 − 3/28 = 25/28.",
+            ],
+            ans:"(a) 13/28. (b) 25/28." },
+        ]},
       ]},
     { n:3, title:"Statistics and Data Analysis", q:"Averages, spread, and comparing two data sets.",
       sections:[
@@ -842,6 +945,47 @@ const EMATH = {
           "A <b>smaller</b> standard deviation means <b>more consistent</b>, not better — say which in context.",
           "Reading a cumulative frequency graph off the wrong axis, or using n instead of ½n.",
           "Using class boundaries instead of <b>mid-values</b> when calculating the mean.",
+        ]},
+        { h:"Full explanation — the box-and-whisker plot", type:"text", body:[
+          "A box-and-whisker plot is a picture of exactly <b>five numbers</b>, read from left to right: the <b>minimum</b>, the <b>lower quartile (Q₁)</b>, the <b>median (Q₂)</b>, the <b>upper quartile (Q₃)</b>, and the <b>maximum</b>. Nothing else goes into it.",
+          "The <b>box</b> spans from Q₁ to Q₃ — this is the <b>middle 50%</b> of the data, and its width is the interquartile range (IQR = Q₃ − Q₁). A wide box means the middle half of the data is spread out; a narrow box means it's bunched together.",
+          "The <b>line inside the box</b> is the median — it splits the data into the bottom half and top half. If that line sits off-centre in the box (closer to one edge), the data is skewed in that direction.",
+          "The <b>whiskers</b> reach out from the box to the minimum and maximum — these show the full range but say nothing about how the data is distributed in between, which is exactly why the box (not the whiskers) is what you focus on for 'spread'.",
+          "<b>From a raw ordered list</b> (small n): the median is the middle value; Q₁ is the median of the lower half (values below the overall median); Q₃ is the median of the upper half. If n is odd, the usual O-level convention excludes the middle value itself from both halves.",
+          "<b>From a cumulative frequency curve</b> (large, grouped n): read across from the <sup>n</sup>⁄₄ mark on the vertical axis to find Q₁, from <sup>n</sup>⁄₂ to find the median, and from <sup>3n</sup>⁄₄ to find Q₃ — then read straight down to the horizontal axis.",
+          "<b>Comparing two box plots</b> always needs two separate comments: compare the <b>medians</b> (which data set typically scores/measures higher), and compare the <b>spread</b> — either the IQR or the full range (which data set is more consistent). A box plot comparison answer that only mentions one of these will lose marks.",
+        ]},
+        { h:"Reading a box-and-whisker plot", type:"diagram", body:{ type:"boxplot", min:12, q1:28, med:41, q3:55, max:70, axisMin:0, axisMax:75, caption:"The box (Q₁ to Q₃) holds the middle 50% of the data; the median line splits it in two; the whiskers reach out to the extremes." } },
+        { h:"Worked examples", type:"examples", body:[
+          { level:"Easy",
+            q:"The following data (n=9) is already in order: 2, 5, 5, 7, 8, 9, 12, 14, 20. Find the five-number summary and sketch the box-and-whisker plot.",
+            diagram:{ type:"boxplot", min:2, q1:5, med:8, q3:13, max:20, axisMin:0, axisMax:22, caption:"Box from Q₁=5 to Q₃=13, median line at 8." },
+            steps:[
+              "Data is already ordered, n=9, so the median is the middle (5th) value = 8.",
+              "Lower half (the 4 values before the median): 2, 5, 5, 7 → Q1 = average of the 2 middle values = (5+5)/2 = 5.",
+              "Upper half (the 4 values after the median): 9, 12, 14, 20 → Q3 = average of the 2 middle values = (12+14)/2 = 13.",
+              "Minimum = 2, maximum = 20.",
+            ],
+            ans:"Five-number summary: min=2, Q1=5, median=8, Q3=13, max=20." },
+          { level:"Medium",
+            q:"The examination scores of two classes are summarised as: Class X — min=42, Q1=58, median=68, Q3=80, max=96. Class Y — min=50, Q1=60, median=68, Q3=72, max=88. Compare the performance and consistency of the two classes.",
+            steps:[
+              "Both classes share the same median, 68 — so 'typical' performance is similar in both classes.",
+              "IQR for X = Q3 − Q1 = 80 − 58 = 22. IQR for Y = 72 − 60 = 12.",
+              "Range for X = 96 − 42 = 54. Range for Y = 88 − 50 = 38.",
+              "Both the IQR and range are smaller for Y, so Class Y's scores are more consistent (less spread out) than Class X's.",
+            ],
+            ans:"Same median (68), so similar average performance — but Class Y is more consistent (smaller IQR of 12 vs 22, and smaller range of 38 vs 54)." },
+          { level:"O-Level standard",
+            q:"The mass (kg) of 40 students is grouped as: 40–<50 kg (6 students), 50–<60 kg (12 students), 60–<70 kg (14 students), 70–<80 kg (8 students). Calculate the mean and standard deviation of the masses, giving each to 3 significant figures.",
+            steps:[
+              "Find the mid-value x of each class: 45, 55, 65, 75.",
+              "Multiply each mid-value by its frequency (fx): 6×45=270, 12×55=660, 14×65=910, 8×75=600. Σfx = 270+660+910+600 = 2440.",
+              "Mean = Σfx ÷ Σf = 2440 ÷ 40 = 61 kg.",
+              "Multiply each mid-value <i>squared</i> by its frequency (fx²): 6×45²=12150, 12×55²=36300, 14×65²=59150, 8×75²=45000. Σfx² = 152600.",
+              "σ = √(Σfx²/Σf − x̄²) = √(152600/40 − 61²) = √(3815 − 3721) = √94.",
+            ],
+            ans:"Mean = 61 kg, standard deviation ≈ 9.70 kg (3 s.f.)." },
         ]},
       ]},
     { n:4, title:"Vectors in Two Dimensions", q:"Column vectors, position vectors, and collinearity.",
@@ -865,6 +1009,39 @@ const EMATH = {
           "Claiming collinearity from parallel vectors alone — they must also <b>share a point</b>.",
           "Dropping the arrow or underline notation, which examiners can penalise.",
         ]},
+        { h:"Worked examples", type:"examples", body:[
+          { level:"Easy",
+            q:"Points A and B have position vectors OA→ = (2,1) and OB→ = (6,4). Find (a) AB→, (b) |AB→|.",
+            diagram:{ type:"vectors", gridMin:-1, gridMax:7,
+              arrows:[ {x1:0,y1:0,x2:2,y2:1,label:'a',color:'#3B82F6'}, {x1:0,y1:0,x2:6,y2:4,label:'b',color:'#34D399'}, {x1:2,y1:1,x2:6,y2:4,label:'AB',color:'#FCD34D'} ],
+              points:[ {x:0,y:0,label:'O'}, {x:2,y:1,label:'A'}, {x:6,y:4,label:'B'} ],
+              caption:"AB→ (amber) = OB→ (green) − OA→ (blue) — it visibly runs from A to B." },
+            steps:[
+              "AB→ = OB→ − OA→ (destination minus start).",
+              "= (6,4) − (2,1) = (6−2, 4−1) = (4,3).",
+              "|AB→| = √(4² + 3²) = √(16+9) = √25 = 5.",
+            ],
+            ans:"AB→ = (4,3), |AB→| = 5 units." },
+          { level:"Medium",
+            q:"Given a = (3,−2) and b = (−9,k) are parallel, find the value of k.",
+            steps:[
+              "If a and b are parallel, then b = m·a for some scalar m.",
+              "Compare the x-components: −9 = 3m, so m = −3.",
+              "Compare the y-components: k = (−2)(m) = (−2)(−3) = 6.",
+              "Check: −3 × (3,−2) = (−9,6), which matches b. ✓",
+            ],
+            ans:"k = 6." },
+          { level:"O-Level standard",
+            q:"In triangle OAB, OA→ = a and OB→ = b. P is the midpoint of OA. Q is the point on AB such that AQ:QB = 1:2. (a) Find OQ→ in terms of a and b. (b) Find PQ→ in terms of a and b.",
+            steps:[
+              "Q divides AB in the ratio AQ:QB = 1:2, so Q is one-third of the way from A to B, and AB→ = OB→ − OA→ = b − a.",
+              "OQ→ = OA→ + AQ→ = a + (1/3)(b − a) = a + b/3 − a/3 = (2/3)a + (1/3)b.",
+              "OQ→ = (2a + b)/3.",
+              "P is the midpoint of OA, so OP→ = (1/2)a.",
+              "PQ→ = OQ→ − OP→ = (2a+b)/3 − a/2. Using a common denominator of 6: = (4a+2b)/6 − 3a/6 = (a+2b)/6.",
+            ],
+            ans:"OQ→ = (2a+b)/3;  PQ→ = (a+2b)/6." },
+        ]},
       ]},
     { n:5, title:"Congruence and Similarity", q:"Scale factors for length, area and volume.",
       sections:[
@@ -884,6 +1061,36 @@ const EMATH = {
           "Taking the scale factor upside down. Decide which figure is larger before you divide.",
           "Pairing non-corresponding sides because the diagram is rotated or reflected.",
           "Quoting 'AAA' for congruence — equal angles only prove <b>similarity</b>.",
+        ]},
+        { h:"Worked examples", type:"examples", body:[
+          { level:"Easy",
+            q:"Two similar triangles have corresponding sides in the ratio 2:5. If the area of the smaller triangle is 12 cm², find the area of the larger triangle.",
+            steps:[
+              "Length ratio (small : large) = 2:5, so the scale factor from small to large is k = 5/2.",
+              "Area ratio = k² = (5/2)² = 25/4.",
+              "Larger area = 12 × 25/4 = 75 cm².",
+            ],
+            ans:"75 cm²." },
+          { level:"Medium",
+            q:"Two similar solids have volumes 64 cm³ and 216 cm³. If the surface area of the smaller solid is 40 cm², find the surface area of the larger solid.",
+            steps:[
+              "Volume ratio (large : small) = 216:64 = 27:8 (divide both by 8).",
+              "Since the volume ratio equals k³, k³ = 27/8, so k = ∛(27/8) = 3/2.",
+              "Area ratio = k² = (3/2)² = 9/4.",
+              "Larger surface area = 40 × 9/4 = 90 cm².",
+            ],
+            ans:"90 cm²." },
+          { level:"O-Level standard",
+            q:"In the diagram, triangle ABC has D on AB and E on AC such that DE is parallel to BC. AD = 4 cm, DB = 6 cm, and DE = 8 cm. (a) Explain why triangle ADE is similar to triangle ABC. (b) Find the length of BC. (c) Given that the area of triangle ADE is 24 cm², find the area of trapezium DBCE.",
+            steps:[
+              "(a) Since DE ∥ BC, ∠ADE = ∠ABC and ∠AED = ∠ACB (corresponding angles), and ∠A is shared by both triangles — so by AA, triangle ADE is similar to triangle ABC.",
+              "(b) AB = AD + DB = 4 + 6 = 10 cm. Length scale factor ADE:ABC = AD:AB = 4:10 = 2:5.",
+              "BC corresponds to DE, so BC = DE × (5/2) = 8 × 5/2 = 20 cm.",
+              "(c) Area ratio = (length ratio)² = (2/5)² = 4/25.",
+              "Area of ABC = area of ADE × (25/4) = 24 × 25/4 = 150 cm².",
+              "Area of trapezium DBCE = area of ABC − area of ADE = 150 − 24 = 126 cm².",
+            ],
+            ans:"(b) BC = 20 cm. (c) Area of DBCE = 126 cm²." },
         ]},
       ]},
     { n:6, title:"Mensuration — Arcs, Sectors and Solids", q:"Surface area and volume of the standard solids.",
@@ -908,6 +1115,39 @@ const EMATH = {
           "Mixing units — convert everything to the same unit <b>before</b> calculating.",
           "Rounding π too early. Use the calculator's π and round only at the end.",
         ]},
+        { h:"r, h and l on a cone", type:"diagram", body:{ type:"cone", rLabel:"r", hLabel:"h", lLabel:"l", caption:"h is the vertical height (dashed, to the centre of the base); l is the slant height (along the surface). l² = r² + h²." } },
+        { h:"Worked examples", type:"examples", body:[
+          { level:"Easy",
+            q:"Find the volume of a cylinder with radius 7 cm and height 10 cm, giving your answer to 3 significant figures.",
+            steps:[
+              "V = πr²h.",
+              "= π × 7² × 10 = π × 49 × 10 = 490π.",
+              "= 1539.38… cm³.",
+            ],
+            ans:"1540 cm³ (3 s.f.)." },
+          { level:"Medium",
+            q:"A cone has base radius 6 cm and vertical height 8 cm. Find (a) the slant height, (b) the curved surface area, giving your answer to 3 significant figures.",
+            diagram:{ type:"cone", rLabel:"r = 6 cm", hLabel:"h = 8 cm", lLabel:"l = ?", caption:"Find l first from r and h before using πrl." },
+            steps:[
+              "l² = r² + h² = 6² + 8² = 36 + 64 = 100.",
+              "l = √100 = 10 cm.",
+              "Curved surface area = πrl = π × 6 × 10 = 60π.",
+              "= 188.49… cm².",
+            ],
+            ans:"(a) l = 10 cm. (b) Curved surface area ≈ 188 cm² (3 s.f.)." },
+          { level:"O-Level standard",
+            q:"A solid consists of a cone of base radius 6 cm and height 8 cm mounted on a hemisphere of the same radius, joined base to base. Find (a) the total volume, (b) the total surface area of the solid, each to 3 significant figures.",
+            steps:[
+              "Volume of cone = (1/3)πr²h = (1/3) × π × 36 × 8 = 96π.",
+              "Volume of hemisphere = (2/3)πr³ = (2/3) × π × 216 = 144π.",
+              "Total volume = 96π + 144π = 240π = 754 cm³ (3 s.f.).",
+              "The flat circular faces are joined together (hidden inside), so the outer surface is just the cone's curved surface plus the hemisphere's curved surface.",
+              "Slant height of the cone: l² = 6²+8² = 100, l = 10 cm (as in the previous example).",
+              "Curved surface of cone = πrl = π × 6 × 10 = 60π. Curved surface of hemisphere = 2πr² = 2π × 36 = 72π.",
+              "Total surface area = 60π + 72π = 132π = 415 cm² (3 s.f.).",
+            ],
+            ans:"(a) 754 cm³. (b) 415 cm²." },
+        ]},
       ]},
     { n:7, title:"Trigonometry — Applications", q:"Sine rule, cosine rule, bearings and 3D problems.",
       sections:[
@@ -929,6 +1169,38 @@ const EMATH = {
           "Using the area formula with an angle that is <b>not</b> between the two sides.",
           "Leaving the calculator in radian mode — check it shows DEG.",
         ]},
+        { h:"Reading a bearing", type:"diagram", body:{ type:"bearing", angle:70, label:"B", origin:"A", caption:"A bearing of 070° from A: measured clockwise from North, always written with three figures." } },
+        { h:"Worked examples", type:"examples", body:[
+          { level:"Easy",
+            q:"In triangle ABC, angle A = 40°, angle B = 65°, and side a (opposite A) = 8 cm. Find side b (opposite B), to 3 significant figures.",
+            steps:[
+              "Use the sine rule: a/sinA = b/sinB.",
+              "b = a × sinB ÷ sinA = 8 × sin65° ÷ sin40°.",
+              "= 8 × 0.9063 ÷ 0.6428 = 11.28…",
+            ],
+            ans:"b = 11.3 cm (3 s.f.)." },
+          { level:"Medium",
+            q:"In triangle PQR, PQ = 7 cm, QR = 9 cm, PR = 13 cm. Find angle Q (between PQ and QR), to 1 decimal place.",
+            steps:[
+              "Angle Q is opposite side PR = 13 cm; the two sides enclosing it are PQ = 7 and QR = 9.",
+              "Cosine rule: cos Q = (PQ² + QR² − PR²) ÷ (2 × PQ × QR).",
+              "= (7² + 9² − 13²) ÷ (2×7×9) = (49+81−169) ÷ 126 = −39 ÷ 126 = −0.3095.",
+              "Q = cos⁻¹(−0.3095) = 108.0° (1 d.p.).",
+            ],
+            ans:"Angle Q ≈ 108.0°." },
+          { level:"O-Level standard",
+            q:"A ship sails from port A to port B, a distance of 15 km, on a bearing of 070°. It then sails from B to port C, a distance of 22 km, on a bearing of 160°. (a) Show that angle ABC = 90°. (b) Find the distance AC. (c) Find the bearing of A from C.",
+            diagram:{ type:"bearing", angle:160, label:"C", origin:"B", caption:"At B, the ship turns onto a bearing of 160° for the second leg." },
+            steps:[
+              "(a) The reverse of leg A→B (bearing 070°) is B→A, on bearing 070°+180°=250°. Leg B→C is on bearing 160°. Angle ABC = 250° − 160° = 90°.",
+              "(b) Since angle B = 90°, use Pythagoras: AC² = AB² + BC² = 15² + 22² = 225+484 = 709, so AC = √709 = 26.6 km (3 s.f.).",
+              "(c) In right-angled triangle ABC, tan(∠ACB) = AB ÷ BC = 15/22 (opposite over adjacent to the right angle at B).",
+              "∠ACB = tan⁻¹(15/22) = 34.3° (1 d.p.).",
+              "The bearing of B from C is the reverse of the B→C leg: 160°+180° = 340°.",
+              "A lies on the west (anticlockwise) side of CB as seen from C, so the bearing of A from C = 340° − 34.3° = 305.7° ≈ 306° (nearest degree).",
+            ],
+            ans:"(a) ∠ABC = 90°. (b) AC = 26.6 km. (c) Bearing of A from C ≈ 306°." },
+        ]},
       ]},
     { n:8, title:"Coordinate Geometry and Graphs", q:"Straight lines, curves, and graphical solutions.",
       sections:[
@@ -948,6 +1220,36 @@ const EMATH = {
           "Drawing a chord instead of a <b>tangent</b> when finding the gradient of a curve.",
           "Using too small a triangle for the gradient — make it span most of the tangent.",
           "Not plotting points accurately, or joining a smooth curve with straight segments.",
+        ]},
+        { h:"Worked examples", type:"examples", body:[
+          { level:"Easy",
+            q:"Points A(2,3) and B(8,11). Find (a) the gradient of AB, (b) the midpoint of AB, (c) the length AB.",
+            steps:[
+              "Gradient = (y₂−y₁)/(x₂−x₁) = (11−3)/(8−2) = 8/6 = 4/3.",
+              "Midpoint = ((2+8)/2, (3+11)/2) = (5,7).",
+              "Distance = √((8−2)² + (11−3)²) = √(36+64) = √100 = 10.",
+            ],
+            ans:"Gradient = 4/3; midpoint = (5,7); length = 10 units." },
+          { level:"Medium",
+            q:"Find the equation of the line passing through P(1,4) and Q(5,−4). Hence find the coordinates of the point where the line crosses the x-axis.",
+            steps:[
+              "Gradient m = (−4−4)/(5−1) = −8/4 = −2.",
+              "Using point P(1,4): y − 4 = −2(x−1).",
+              "y = −2x + 2 + 4 = −2x + 6.",
+              "On the x-axis, y = 0: 0 = −2x+6 → x = 3.",
+            ],
+            ans:"Equation: y = −2x + 6. It crosses the x-axis at (3, 0)." },
+          { level:"O-Level standard",
+            q:"The graph of y = x³ − 4x has already been plotted. By drawing a suitable straight line on the same axes, explain how to solve the equation x³ − 6x + 3 = 0, stating the equation of the line to draw.",
+            steps:[
+              "The curve already drawn is y = x³ − 4x, so the target equation must be rearranged until one side is exactly x³ − 4x.",
+              "Start: x³ − 6x + 3 = 0.",
+              "Split −6x into −4x and −2x: x³ − 4x − 2x + 3 = 0.",
+              "Move everything except x³−4x to the other side: x³ − 4x = 2x − 3.",
+              "The line to draw is y = 2x − 3 (gradient 2, y-intercept −3).",
+              "The x-coordinates where this line crosses the plotted curve are the solutions (roots) of the original equation.",
+            ],
+            ans:"Draw the line y = 2x − 3; its intersections with y = x³ − 4x give the solutions to x³ − 6x + 3 = 0." },
         ]},
       ]},
     { n:9, title:"Graphs in Practical Situations", q:"Distance–time and speed–time graphs.",
@@ -969,6 +1271,140 @@ const EMATH = {
           "Taking the gradient of a speed–time graph when the question wants <b>distance</b> (the area).",
           "Forgetting to convert between km/h and m/s. Multiply by 1000 ÷ 3600 to go from km/h to m/s.",
           "Omitting units in the final answer.",
+        ]},
+        { h:"Worked examples", type:"examples", body:[
+          { level:"Easy",
+            q:"A car travels at a constant speed and covers 150 km in 2.5 hours. Find its speed in km/h, then convert this to m/s (3 s.f.).",
+            steps:[
+              "Speed = distance ÷ time = 150 ÷ 2.5 = 60 km/h.",
+              "Convert km/h to m/s: multiply by 1000 ÷ 3600.",
+              "60 × 1000 ÷ 3600 = 60000/3600 = 16.7 m/s (3 s.f.).",
+            ],
+            ans:"60 km/h = 16.7 m/s." },
+          { level:"Medium",
+            q:"A particle accelerates uniformly from rest to 12 m/s in 6 s, travels at a constant 12 m/s for the next 10 s, then decelerates uniformly to rest in 4 s. Find (a) the total distance travelled, (b) the average speed for the whole journey.",
+            steps:[
+              "Split the speed–time graph into three regions and find the area (= distance) of each.",
+              "Acceleration phase (triangle): ½ × 6 × 12 = 36 m.",
+              "Constant speed phase (rectangle): 12 × 10 = 120 m.",
+              "Deceleration phase (triangle): ½ × 4 × 12 = 24 m.",
+              "Total distance = 36 + 120 + 24 = 180 m. Total time = 6+10+4 = 20 s.",
+              "Average speed = total distance ÷ total time = 180 ÷ 20 = 9 m/s.",
+            ],
+            ans:"(a) 180 m. (b) 9 m/s." },
+          { level:"O-Level standard",
+            q:"A particle starts at 5 m/s and accelerates uniformly to 17 m/s in 8 seconds. It then travels at this constant speed for T seconds, before decelerating uniformly to rest in 6 seconds. Given that the total distance travelled is 258 m, find (a) the acceleration during the first 8 seconds, (b) the value of T, (c) the total time for the journey.",
+            steps:[
+              "Acceleration = change in speed ÷ time = (17−5) ÷ 8 = 12/8 = 1.5 m/s².",
+              "Distance in phase 1 (trapezium, 5→17 over 8 s) = average speed × time = ((5+17)/2) × 8 = 11×8 = 88 m.",
+              "Distance in phase 3 (17→0 over 6 s) = ((17+0)/2) × 6 = 8.5×6 = 51 m.",
+              "Distance in phase 2 (constant 17 m/s for T seconds) = 17T.",
+              "Total distance: 88 + 17T + 51 = 258 → 17T = 258−139 = 119 → T = 7 s.",
+              "Total time = 8 + T + 6 = 8+7+6 = 21 s.",
+            ],
+            ans:"(a) 1.5 m/s². (b) T = 7 s. (c) Total time = 21 s." },
+        ]},
+      ]},
+    { n:10, title:"Matrices", q:"Order, addition, multiplication, and how to 'divide' by a matrix.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "Throughout this chapter, a matrix is written as its rows in brackets: <b>[[2,3],[1,2]]</b> means the matrix with top row (2,3) and bottom row (1,2).",
+          "The <b>order</b> of a matrix is (number of rows) × (number of columns) — a 2×3 matrix has 2 rows and 3 columns. Order is always rows first, then columns.",
+          "Two matrices are <b>equal</b> only if they have the same order <i>and</i> every corresponding entry is equal.",
+          "<b>Addition and subtraction</b> only work between matrices of the <i>same order</i> — add or subtract corresponding entries.",
+          "<b>Scalar multiplication</b> multiplies <i>every</i> entry by that scalar.",
+          "<b>Matrix multiplication</b> only works when the number of columns of the first matrix equals the number of rows of the second. The result has (rows of first) × (columns of second).",
+          "Matrix multiplication is <b>not commutative</b>: AB ≠ BA in general — order matters, unlike ordinary numbers.",
+          "You cannot 'divide' by a matrix. Instead, to undo a matrix you <b>multiply by its inverse</b> — exactly like how dividing by 5 is the same as multiplying by 1/5.",
+        ]},
+        { h:"Adding, subtracting and scaling — the easy part", type:"bullets", body:[
+          "Line the two matrices up and combine entry-by-entry, in the same position.",
+          "If the orders don't match, addition and subtraction are simply <b>not defined</b> — don't force it.",
+          "For kA (a scalar k times a matrix A), multiply every single entry of A by k, including entries that are already negative.",
+        ]},
+        { h:"How to multiply two matrices — step by step", type:"html", body:`
+          <p>Multiplying matrices is not \"multiply matching positions\" — it's <b>row of the first, dotted with column of the second</b>. For A = [[2,3],[1,−4]] and B = [[5,0],[−2,6]], here's how the top-left entry of AB is built:</p>
+          <div class="mvz">
+            <div class="mvz-mat" style="grid-template-columns:repeat(2,1fr);">
+              <div class="mvz-cell hi-row">2</div><div class="mvz-cell hi-row">3</div>
+              <div class="mvz-cell">1</div><div class="mvz-cell">−4</div>
+            </div>
+            <div class="mvz-op">×</div>
+            <div class="mvz-mat" style="grid-template-columns:repeat(2,1fr);">
+              <div class="mvz-cell hi-col">5</div><div class="mvz-cell">0</div>
+              <div class="mvz-cell hi-col">−2</div><div class="mvz-cell">6</div>
+            </div>
+            <div class="mvz-op">=</div>
+            <div class="mvz-mat" style="grid-template-columns:repeat(2,1fr);">
+              <div class="mvz-cell" style="color:#FCD34D;font-weight:700;">4</div><div class="mvz-cell">?</div>
+              <div class="mvz-cell">?</div><div class="mvz-cell">?</div>
+            </div>
+          </div>
+          <p class="mvz-cap">Row 1 of A (blue) pairs with column 1 of B (amber): 2×5 + 3×(−2) = 10 − 6 = <b style="color:#FCD34D;">4</b>. Every other entry of the answer is built the same way — its own row from A, dotted with its own column from B.</p>`
+        },
+        { h:"The full multiplication, entry by entry", type:"formulas", body:[
+          { f:"(row 1, col 1):  2×5 + 3×(−2) = 10 − 6 = 4", d:"Row 1 of A with column 1 of B." },
+          { f:"(row 1, col 2):  2×0 + 3×6 = 0 + 18 = 18", d:"Row 1 of A with column 2 of B." },
+          { f:"(row 2, col 1):  1×5 + (−4)×(−2) = 5 + 8 = 13", d:"Row 2 of A with column 1 of B." },
+          { f:"(row 2, col 2):  1×0 + (−4)×6 = 0 − 24 = −24", d:"Row 2 of A with column 2 of B." },
+        ]},
+        { h:"Matrices don't 'divide' — full explanation", type:"text", body:[
+          "There is no such thing as A ÷ B for matrices. What you do instead is find the <b>inverse</b> of B (written B⁻¹) and <b>multiply</b> by it — the matrix equivalent of how 6 ÷ 2 gives the same answer as 6 × ½, because ½ is the 'inverse' of 2.",
+          "Only <b>square</b> matrices (same number of rows and columns) can have an inverse, and even then, not always.",
+          "For a 2×2 matrix A = [[a,b],[c,d]], first find the <b>determinant</b>: det A = ad − bc, a single number. If det A = 0, A is called <b>singular</b> and has <i>no</i> inverse — dividing by it is simply not possible, exactly like dividing by zero.",
+          "If det A ≠ 0, the inverse is A⁻¹ = (1/det A) × [[d,−b],[−c,a]] — swap the two entries on the leading diagonal (a and d), negate the other two (b and c), then multiply everything by 1/det A.",
+        ]},
+        { h:"Determinant and inverse of a 2×2 matrix", type:"formulas", body:[
+          { f:"det A = ad − bc,  for A = [[a,b],[c,d]]", d:"A single number. If det A = 0, A is singular — no inverse exists." },
+          { f:"A⁻¹ = (1/det A) × [[d,−b],[−c,a]]", d:"Swap a and d, negate b and c, then scale every entry by 1/det A." },
+          { f:"A A⁻¹ = A⁻¹ A = I = [[1,0],[0,1]]", d:"Multiplying a matrix by its inverse, in either order, gives the identity matrix — worth checking your inverse this way." },
+        ]},
+        { h:"Using the inverse to solve simultaneous equations", type:"text", body:[
+          "A pair of simultaneous equations ax+by=e and cx+dy=f can be written as one matrix equation: [[a,b],[c,d]] [[x],[y]] = [[e],[f]], i.e. <b>MX = B</b>.",
+          "Multiplying both sides on the left by M⁻¹ gives <b>X = M⁻¹B</b> — this hands you x and y directly, with no elimination or substitution needed.",
+        ]},
+        { h:"Formula", type:"formulas", body:[
+          { f:"MX = B   ⟹   X = M⁻¹B", d:"Pre-multiply both sides by M⁻¹ — always multiply on the same side you'd need to cancel M from." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Trying to add or multiply matrices of <b>incompatible order</b> — always check the orders line up before doing any arithmetic.",
+          "Multiplying 'straight across' (row×row or position-by-position) instead of <b>row of the first, column of the second</b>.",
+          "Assuming AB = BA. In general it doesn't — and sometimes only one of AB or BA is even defined.",
+          "Forgetting to <b>swap</b> a and d (not just negate b and c) when writing out the inverse.",
+          "Forgetting the <b>1/det A</b> scaling factor in front of the inverse matrix — it multiplies every entry, not just one.",
+          "Not checking det A ≠ 0 before claiming an inverse exists.",
+        ]},
+        { h:"Worked examples", type:"examples", body:[
+          { level:"Easy",
+            q:"Given A = [[2,−1],[3,4]] and B = [[5,0],[−2,1]], find (a) A+B, (b) A−B, (c) 3A.",
+            steps:[
+              "Both matrices are 2×2, so addition and subtraction are defined.",
+              "A+B: add corresponding entries → [[2+5, −1+0], [3+(−2), 4+1]] = [[7,−1],[1,5]].",
+              "A−B: subtract corresponding entries → [[2−5, −1−0], [3−(−2), 4−1]] = [[−3,−1],[5,3]].",
+              "3A: multiply every entry of A by 3 → [[3×2,3×(−1)],[3×3,3×4]] = [[6,−3],[9,12]].",
+            ],
+            ans:"A+B = [[7,−1],[1,5]];  A−B = [[−3,−1],[5,3]];  3A = [[6,−3],[9,12]]." },
+          { level:"Medium",
+            q:"A shop sells pens and rulers. On Monday it sells 8 pens and 5 rulers; on Tuesday it sells 6 pens and 9 rulers. A pen costs $2 and a ruler costs $3. Write the sales as a 2×2 matrix S (rows = days, columns = pens/rulers) and the prices as a column matrix P, then evaluate SP and explain what the result represents.",
+            steps:[
+              "S = [[8,5],[6,9]] (Monday: 8 pens, 5 rulers; Tuesday: 6 pens, 9 rulers). P = [[2],[3]] (pen price, ruler price).",
+              "S is 2×2 and P is 2×1 — the columns of S (2) match the rows of P (2), so SP is defined and will be 2×1.",
+              "Row 1 (Monday) with the column of P: 8×2 + 5×3 = 16+15 = 31.",
+              "Row 2 (Tuesday) with the column of P: 6×2 + 9×3 = 12+27 = 39.",
+            ],
+            ans:"SP = [[31],[39]] — Monday's total takings were $31, Tuesday's were $39." },
+          { level:"O-Level standard",
+            q:"(a) Find the inverse of the matrix M = [[2,3],[1,2]]. (b) Hence solve the simultaneous equations 2x+3y=8 and x+2y=5.",
+            steps:[
+              "det M = (2×2) − (3×1) = 4 − 3 = 1.",
+              "Since det M ≠ 0, M has an inverse. Swap the leading diagonal (2 and 2 — no visible change here since they're equal), negate the other diagonal (3→−3, 1→−1), then divide by det M = 1.",
+              "M⁻¹ = (1/1) × [[2,−3],[−1,2]] = [[2,−3],[−1,2]].",
+              "Write the equations as MX = B: [[2,3],[1,2]] [[x],[y]] = [[8],[5]].",
+              "Multiply both sides by M⁻¹ on the left: X = M⁻¹B.",
+              "X = [[2,−3],[−1,2]] × [[8],[5]] = [[2×8 + (−3)×5], [(−1)×8 + 2×5]] = [[16−15],[−8+10]] = [[1],[2]].",
+              "So x=1 and y=2. Check: 2(1)+3(2)=8 ✓ and 1+2(2)=5 ✓.",
+            ],
+            ans:"M⁻¹ = [[2,−3],[−1,2]];  x = 1, y = 2." },
         ]},
       ]},
   ]
@@ -1866,6 +2302,157 @@ function renderSyllabus(S, key){
   window.scrollTo({top:0, behavior:'instant'});
 }
 
+/* ============================================================
+   DIAGRAMS — small SVG builders, called at render time
+   ============================================================ */
+let SVGUID = 0;
+
+function svgVenn2(p){
+  const W=380,H=250;
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Venn diagram of ${esc(p.labelA)} and ${esc(p.labelB)}">
+    <rect x="8" y="8" width="${W-16}" height="${H-16}" rx="10" fill="none" stroke="#334155" stroke-width="1.5"/>
+    <text x="22" y="30" font-size="13" fill="#64748B" font-family="ui-serif,Georgia,serif">ξ</text>
+    <circle cx="148" cy="132" r="86" fill="#3B82F6" fill-opacity="0.16" stroke="#3B82F6" stroke-width="2"/>
+    <circle cx="248" cy="132" r="86" fill="#34D399" fill-opacity="0.16" stroke="#34D399" stroke-width="2"/>
+    <text x="112" y="45" font-size="15" font-weight="700" fill="#93C5FD" text-anchor="middle">${esc(p.labelA)}</text>
+    <text x="286" y="45" font-size="15" font-weight="700" fill="#6EE7B7" text-anchor="middle">${esc(p.labelB)}</text>
+    <text x="108" y="138" font-size="19" font-weight="700" fill="#F8FAFC" text-anchor="middle">${esc(String(p.onlyA))}</text>
+    <text x="198" y="138" font-size="19" font-weight="700" fill="#F8FAFC" text-anchor="middle">${esc(String(p.both))}</text>
+    <text x="288" y="138" font-size="19" font-weight="700" fill="#F8FAFC" text-anchor="middle">${esc(String(p.onlyB))}</text>
+    <text x="${W-34}" y="${H-18}" font-size="15" font-weight="700" fill="#F8FAFC" text-anchor="middle">${esc(String(p.outside))}</text>
+  </svg>`;
+}
+
+function svgVenn3(p){
+  const W=380,H=300;
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three-set Venn diagram">
+    <rect x="8" y="8" width="${W-16}" height="${H-16}" rx="10" fill="none" stroke="#334155" stroke-width="1.5"/>
+    <text x="22" y="30" font-size="13" fill="#64748B" font-family="ui-serif,Georgia,serif">ξ</text>
+    <circle cx="150" cy="118" r="84" fill="#3B82F6" fill-opacity="0.14" stroke="#3B82F6" stroke-width="2"/>
+    <circle cx="230" cy="118" r="84" fill="#34D399" fill-opacity="0.14" stroke="#34D399" stroke-width="2"/>
+    <circle cx="190" cy="190" r="84" fill="#F59E0B" fill-opacity="0.14" stroke="#F59E0B" stroke-width="2"/>
+    <text x="95" y="48" font-size="14" font-weight="700" fill="#93C5FD" text-anchor="middle">${esc(p.labelA)}</text>
+    <text x="285" y="48" font-size="14" font-weight="700" fill="#6EE7B7" text-anchor="middle">${esc(p.labelB)}</text>
+    <text x="190" y="268" font-size="14" font-weight="700" fill="#FCD34D" text-anchor="middle">${esc(p.labelC)}</text>
+    <text x="112" y="95" font-size="16" font-weight="700" fill="#F8FAFC" text-anchor="middle">${esc(String(p.onlyA))}</text>
+    <text x="268" y="95" font-size="16" font-weight="700" fill="#F8FAFC" text-anchor="middle">${esc(String(p.onlyB))}</text>
+    <text x="190" y="240" font-size="16" font-weight="700" fill="#F8FAFC" text-anchor="middle">${esc(String(p.onlyC))}</text>
+    <text x="190" y="80" font-size="15" font-weight="700" fill="#F8FAFC" text-anchor="middle">${esc(String(p.ab))}</text>
+    <text x="138" y="172" font-size="15" font-weight="700" fill="#F8FAFC" text-anchor="middle">${esc(String(p.ac))}</text>
+    <text x="242" y="172" font-size="15" font-weight="700" fill="#F8FAFC" text-anchor="middle">${esc(String(p.bc))}</text>
+    <text x="190" y="148" font-size="15" font-weight="700" fill="#F8FAFC" text-anchor="middle">${esc(String(p.abc))}</text>
+    <text x="${W-32}" y="${H-16}" font-size="14" font-weight="700" fill="#F8FAFC" text-anchor="middle">${esc(String(p.outside))}</text>
+  </svg>`;
+}
+
+function svgBoxplot(p){
+  const W=440,H=150, x0=44,x1=410;
+  const scale=(x1-x0)/(p.axisMax-p.axisMin);
+  const X=v=> x0+(v-p.axisMin)*scale;
+  const ticks=[]; const step=(p.axisMax-p.axisMin)/5;
+  for(let i=0;i<=5;i++){ const v=p.axisMin+step*i; ticks.push(`<line x1="${X(v)}" y1="108" x2="${X(v)}" y2="113" stroke="#475569" stroke-width="1"/><text x="${X(v)}" y="126" font-size="10.5" fill="#64748B" text-anchor="middle">${Math.round(v*10)/10}</text>`); }
+  const dashed=[p.min,p.q1,p.med,p.q3,p.max].map(v=>`<line x1="${X(v)}" y1="55" x2="${X(v)}" y2="108" stroke="#334155" stroke-width="1" stroke-dasharray="2 3"/>`).join('');
+  const lbl=[[p.min,'min'],[p.q1,'Q1'],[p.med,'med'],[p.q3,'Q3'],[p.max,'max']];
+  const labels = lbl.map(([v,n],i)=>{
+    const anchor = i===0?'start':(i===4?'end':'middle');
+    return `<text x="${X(v)}" y="140" font-size="10.5" fill="#94A3B8" text-anchor="${anchor}">${n}=${v}</text>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Box and whisker plot">
+    <line x1="${X(p.axisMin)}" y1="110" x2="${X(p.axisMax)}" y2="110" stroke="#334155" stroke-width="1.5"/>
+    ${ticks.join('')}
+    ${dashed}
+    <line x1="${X(p.min)}" y1="75" x2="${X(p.q1)}" y2="75" stroke="#94A3B8" stroke-width="2"/>
+    <line x1="${X(p.q3)}" y1="75" x2="${X(p.max)}" y2="75" stroke="#94A3B8" stroke-width="2"/>
+    <line x1="${X(p.min)}" y1="60" x2="${X(p.min)}" y2="90" stroke="#94A3B8" stroke-width="2"/>
+    <line x1="${X(p.max)}" y1="60" x2="${X(p.max)}" y2="90" stroke="#94A3B8" stroke-width="2"/>
+    <rect x="${X(p.q1)}" y="55" width="${Math.max(2,X(p.q3)-X(p.q1))}" height="40" fill="#3B82F6" fill-opacity="0.2" stroke="#3B82F6" stroke-width="2"/>
+    <line x1="${X(p.med)}" y1="55" x2="${X(p.med)}" y2="95" stroke="#F59E0B" stroke-width="2.5"/>
+    ${labels}
+  </svg>`;
+}
+
+function svgVectorGrid(p){
+  SVGUID++;
+  const uid='vg'+SVGUID;
+  const size=300, pad=26;
+  const range=p.gridMax-p.gridMin;
+  const scale=(size-2*pad)/range;
+  const X=x=> pad+(x-p.gridMin)*scale;
+  const Y=y=> size-pad-(y-p.gridMin)*scale;
+  let grid='';
+  for(let i=Math.ceil(p.gridMin); i<=Math.floor(p.gridMax); i++){
+    grid += `<line x1="${X(i)}" y1="${pad}" x2="${X(i)}" y2="${size-pad}" stroke="#1E293B" stroke-width="1"/>`;
+    grid += `<line x1="${pad}" y1="${Y(i)}" x2="${size-pad}" y2="${Y(i)}" stroke="#1E293B" stroke-width="1"/>`;
+  }
+  let axes='';
+  if(p.gridMin<=0 && p.gridMax>=0){
+    axes += `<line x1="${X(0)}" y1="${pad}" x2="${X(0)}" y2="${size-pad}" stroke="#475569" stroke-width="1.5"/>`;
+    axes += `<line x1="${pad}" y1="${Y(0)}" x2="${size-pad}" y2="${Y(0)}" stroke="#475569" stroke-width="1.5"/>`;
+  }
+  const colors=[...new Set((p.arrows||[]).map(a=>a.color||'#3B82F6'))];
+  const defs='<defs>'+colors.map((c,i)=>`<marker id="${uid}-a${i}" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="${c}"/></marker>`).join('')+'</defs>';
+  const arrows=(p.arrows||[]).map(a=>{
+    const c=a.color||'#3B82F6', idx=colors.indexOf(c);
+    const midX=(X(a.x1)+X(a.x2))/2, midY=(Y(a.y1)+Y(a.y2))/2;
+    return `<line x1="${X(a.x1)}" y1="${Y(a.y1)}" x2="${X(a.x2)}" y2="${Y(a.y2)}" stroke="${c}" stroke-width="2.5" marker-end="url(#${uid}-a${idx})"/>
+      <text x="${midX+8}" y="${midY-6}" font-size="13" font-weight="700" fill="${c}">${esc(a.label||'')}</text>`;
+  }).join('');
+  const points=(p.points||[]).map(pt=>`<circle cx="${X(pt.x)}" cy="${Y(pt.y)}" r="3.5" fill="#F8FAFC"/><text x="${X(pt.x)+7}" y="${Y(pt.y)-8}" font-size="12" fill="#CBD5E1">${esc(pt.label||'')}</text>`).join('');
+  return `<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vector diagram">
+    ${defs}<rect x="0" y="0" width="${size}" height="${size}" fill="#0B1120"/>${grid}${axes}${arrows}${points}
+  </svg>`;
+}
+
+function svgCone(p){
+  const cx=130, baseY=170, apexY=28, leftX=42, rightX=218;
+  return `<svg viewBox="0 0 260 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cone diagram">
+    <ellipse cx="${cx}" cy="${baseY}" rx="88" ry="17" fill="none" stroke="#3B82F6" stroke-width="2"/>
+    <path d="M${leftX},${baseY} L${cx},${apexY} L${rightX},${baseY}" fill="none" stroke="#3B82F6" stroke-width="2"/>
+    <line x1="${cx}" y1="${baseY}" x2="${cx}" y2="${apexY}" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <line x1="${cx}" y1="${baseY}" x2="${rightX}" y2="${baseY}" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <line x1="${cx}" y1="${apexY}" x2="${rightX}" y2="${baseY}" stroke="#93C5FD" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <text x="${cx-16}" y="${(baseY+apexY)/2}" font-size="13" fill="#94A3B8" text-anchor="middle">${esc(p.hLabel||'h')}</text>
+    <text x="${(cx+rightX)/2}" y="${baseY+18}" font-size="13" fill="#FCD34D" text-anchor="middle">${esc(p.rLabel||'r')}</text>
+    <text x="${(cx+rightX)/2+18}" y="${(apexY+baseY)/2-4}" font-size="13" fill="#93C5FD" text-anchor="middle">${esc(p.lLabel||'l')}</text>
+  </svg>`;
+}
+
+function svgBearing(p){
+  const W=260,H=260, cx=130, cy=145, len=90;
+  const rad=p.angle*Math.PI/180;
+  const px=cx+len*Math.sin(rad), py=cy-len*Math.cos(rad);
+  const arcR=34;
+  const nx=cx, ny=cy-arcR;
+  const bx=cx+arcR*Math.sin(rad), by=cy-arcR*Math.cos(rad);
+  const largeArc=p.angle>180?1:0;
+  const labelAnchor = px >= cx ? 'start' : 'end';
+  const labelDx = px >= cx ? 10 : -10;
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bearing diagram">
+    <line x1="${cx}" y1="${cy}" x2="${cx}" y2="20" stroke="#475569" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <text x="${cx-5}" y="14" font-size="13" fill="#94A3B8">N</text>
+    <line x1="${cx}" y1="${cy}" x2="${px}" y2="${py}" stroke="#3B82F6" stroke-width="2.5"/>
+    <path d="M ${nx} ${ny} A ${arcR} ${arcR} 0 ${largeArc} 1 ${bx} ${by}" fill="none" stroke="#F59E0B" stroke-width="2"/>
+    <circle cx="${cx}" cy="${cy}" r="4" fill="#F8FAFC"/>
+    <circle cx="${px}" cy="${py}" r="4" fill="#F8FAFC"/>
+    <text x="${cx-16}" y="${cy+18}" font-size="13" fill="#F8FAFC">${esc(p.origin||'O')}</text>
+    <text x="${px+labelDx}" y="${py-8}" font-size="13" fill="#F8FAFC" text-anchor="${labelAnchor}">${esc(p.label||'P')}</text>
+    <text x="${cx+(p.angle<=180?16:-38)}" y="${cy-42}" font-size="12" fill="#FCD34D">${p.angle}°</text>
+  </svg>`;
+}
+
+function renderDiagram(d){
+  if(!d) return '';
+  let svg='';
+  if(d.type==='venn2') svg=svgVenn2(d);
+  else if(d.type==='venn3') svg=svgVenn3(d);
+  else if(d.type==='boxplot') svg=svgBoxplot(d);
+  else if(d.type==='vectors') svg=svgVectorGrid(d);
+  else if(d.type==='cone') svg=svgCone(d);
+  else if(d.type==='bearing') svg=svgBearing(d);
+  if(!svg) return '';
+  return `<div class="diagram-wrap">${svg}${d.caption?`<div class="diagram-cap">${esc(d.caption)}</div>`:''}</div>`;
+}
+
 function renderSection(s){
   if(s.type==='text'){
     return `<div class="ch-section"><h4>${esc(s.h)}</h4>${s.body.map(p=>`<p>${p}</p>`).join('')}</div>`;
@@ -1883,6 +2470,23 @@ function renderSection(s){
   }
   if(s.type==='timeline'){
     return `<div class="ch-section"><h4>${esc(s.h)}</h4><div class="timeline">${s.body.map(e=>`<div class="tl-item"><div class="tl-date">${esc(e.d)}</div><div class="tl-text">${esc(e.t)}</div></div>`).join('')}</div></div>`;
+  }
+  if(s.type==='diagram'){
+    return `<div class="ch-section"><h4>${esc(s.h)}</h4>${renderDiagram(s.body)}</div>`;
+  }
+  if(s.type==='html'){
+    return `<div class="ch-section"><h4>${esc(s.h)}</h4>${s.body}</div>`;
+  }
+  if(s.type==='examples'){
+    const lvlClass = { 'Easy':'lvl-easy', 'Medium':'lvl-medium', 'O-Level standard':'lvl-olevel' };
+    return `<div class="ch-section"><h4>${esc(s.h)}</h4><div class="example-set">${s.body.map(ex=>`
+      <div class="example-card">
+        <span class="example-level ${lvlClass[ex.level]||'lvl-easy'}">${esc(ex.level)}</span>
+        <div class="example-q">${ex.q}</div>
+        ${ex.diagram ? renderDiagram(ex.diagram) : ''}
+        <ol class="step-list">${ex.steps.map(st=>`<li>${st}</li>`).join('')}</ol>
+        <div class="example-ans"><b>Answer:</b> ${ex.ans}</div>
+      </div>`).join('')}</div></div>`;
   }
   return '';
 }
