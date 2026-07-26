@@ -80,6 +80,8 @@ header{
 .tab .dot{width:8px; height:8px; border-radius:50%;}
 .tab-plan .dot{background:#3B82F6;}
 .tab-log .dot{background:#FB7185;}
+.tab-emath .dot{background:#818CF8;}
+.tab-amath .dot{background:#6366F1;}
 .tab-phys .dot{background:#38BDF8;}
 .tab-chem .dot{background:#34D399;}
 .tab-hist .dot{background:#A78BFA;}
@@ -190,6 +192,12 @@ header{
 
 .keyterms{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
 .keyterm{font-size:12.5px; padding:6px 12px; border-radius:8px; background:var(--blue-soft); color:var(--slate-100); border:1px solid var(--border);}
+
+/* Formula blocks — E-Math / A-Math */
+.formula-list{display:flex; flex-direction:column; gap:10px; margin-top:4px;}
+.formula-row{background:var(--bg); border:1px solid var(--border); border-left:3px solid var(--blue); border-radius:8px; padding:12px 15px;}
+.f-expr{font-family:'Courier New',ui-monospace,monospace; font-size:14.5px; color:var(--white); letter-spacing:.01em;}
+.f-desc{font-size:13px; color:var(--slate-400); margin-top:5px; line-height:1.5;}
 
 /* Empty state */
 .empty{text-align:center; padding:60px 20px; color:var(--slate-500);}
@@ -312,7 +320,7 @@ header{
         <div class="brand-mark">O</div>
         <div>
           <h1>O-Level HQ · 2026</h1>
-          <span>Study planner · Error log · Definitions</span>
+          <span>Plan · Log · E-Math · A-Math · Physics · Chem · History</span>
         </div>
       </div>
       <a class="home-link" href="../index.html">← Portfolio</a>
@@ -320,6 +328,8 @@ header{
     <nav class="tabs" id="tabs">
       <button class="tab tab-plan active" data-subject="plan"><span class="dot"></span>Plan</button>
       <button class="tab tab-log" data-subject="log"><span class="dot"></span>Error Log</button>
+      <button class="tab tab-emath" data-subject="emath"><span class="dot"></span>E-Math</button>
+      <button class="tab tab-amath" data-subject="amath"><span class="dot"></span>A-Math</button>
       <button class="tab tab-phys" data-subject="physics"><span class="dot"></span>Physics</button>
       <button class="tab tab-chem" data-subject="chemistry"><span class="dot"></span>Chemistry</button>
       <button class="tab tab-hist" data-subject="history"><span class="dot"></span>History</button>
@@ -757,6 +767,449 @@ const HISTORY = {
   ]
 };
 
+const EMATH = {
+  eyebrow:"E-Mathematics · 4052 · Secondary 4",
+  title:"E-Math — Sec 4 Chapters",
+  intro:"Every Sec 4 chapter with the formulas you must recall, the method examiners expect, and the traps that quietly cost marks. Tap a chapter to open it.",
+  cards:[
+    { h:"How to use this", p:"Read the method, memorise the formula block, then do past-paper questions on that chapter. Log every mistake in the Error Log tab." },
+    { h:"Paper structure", p:"Papers 1 and 2 are both 2 h 15 min, calculator allowed. Marks are awarded for method — always show working, even when the answer is wrong." },
+    { h:"Where marks leak", p:"Give answers to 3 significant figures unless told otherwise, and angles to 1 decimal place. Keep full accuracy in the calculator until the very last step." },
+  ],
+  chapters:[
+    { n:1, title:"Sets and Venn Diagrams", q:"Can you read, shade and count regions correctly?",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "<b>ξ</b> is the universal set — everything under discussion. <b>∅</b> or { } is the empty set.",
+          "<b>∈</b> means 'is an element of'; <b>∉</b> means 'is not an element of'.",
+          "<b>A ⊆ B</b> — A is a subset of B. <b>A ⊂ B</b> — proper subset (A is not the whole of B).",
+          "<b>A′</b> is the complement: everything in ξ that is <i>not</i> in A.",
+          "<b>A ∪ B</b> (union) — in A, or B, or both. <b>A ∩ B</b> (intersection) — in both.",
+          "For shading questions, shade each set lightly in turn, then read off only the region asked for.",
+        ]},
+        { h:"Formulas", type:"formulas", body:[
+          { f:"n(A ∪ B) = n(A) + n(B) − n(A ∩ B)", d:"Add both sets, then subtract the overlap you counted twice." },
+          { f:"n(A′) = n(ξ) − n(A)", d:"The complement is everything else in the universal set." },
+          { f:"Number of subsets = 2ⁿ", d:"For a set with n elements — includes ∅ and the set itself." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Forgetting that <b>A′</b> includes the region <i>outside both circles</i>.",
+          "Mixing up ∪ and ∩ — union is the bigger region, intersection the smaller.",
+          "In a three-set diagram, always fill the <b>centre region first</b>, then work outwards.",
+          "Listing the elements when the question asks for <b>n( )</b> — the number of them.",
+        ]},
+      ]},
+    { n:2, title:"Probability", q:"Single events, combined events, and tree diagrams.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "Probability is always between <b>0 and 1</b>. Never write a probability greater than 1 — it is an instant sign of an error.",
+          "<b>Mutually exclusive</b> events cannot happen together → add the probabilities.",
+          "<b>Independent</b> events do not affect each other → multiply the probabilities.",
+          "On a <b>tree diagram</b>: multiply <i>along</i> branches, add <i>between</i> branches.",
+          "<b>With replacement</b> — the denominator stays the same. <b>Without replacement</b> — the denominator drops by 1 each draw.",
+          "Use a <b>possibility diagram</b> (grid) for two dice or two spinners.",
+        ]},
+        { h:"Formulas", type:"formulas", body:[
+          { f:"P(E) = number of favourable outcomes ÷ total number of outcomes", d:"Only valid when all outcomes are equally likely." },
+          { f:"P(not E) = 1 − P(E)", d:"The complement — often far faster than counting directly." },
+          { f:"P(A or B) = P(A) + P(B)", d:"Mutually exclusive events only." },
+          { f:"P(A and B) = P(A) × P(B)", d:"Independent events only." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Forgetting to reduce the denominator on the second draw <b>without replacement</b>.",
+          "Missing the phrase <b>'at least one'</b> — almost always fastest as 1 − P(none).",
+          "Adding when you should multiply. Along a branch = AND = multiply.",
+          "Leaving the answer as a decimal when the question asks for a fraction.",
+        ]},
+      ]},
+    { n:3, title:"Statistics and Data Analysis", q:"Averages, spread, and comparing two data sets.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "<b>Mean</b> — the arithmetic average. <b>Median</b> — the middle value when ordered. <b>Mode</b> — the most frequent value.",
+          "From a <b>cumulative frequency curve</b>: median at the ½n mark, lower quartile at ¼n, upper quartile at ¾n.",
+          "<b>Interquartile range = Q₃ − Q₁</b>. It measures spread and ignores extreme values.",
+          "A <b>box-and-whisker plot</b> shows minimum, Q₁, median, Q₃, maximum.",
+          "<b>Standard deviation</b> measures how spread out the data is around the mean.",
+          "When <b>comparing two sets</b> you must comment on <i>both</i> an average and a measure of spread.",
+        ]},
+        { h:"Formulas", type:"formulas", body:[
+          { f:"Mean  x̄ = Σfx ÷ Σf", d:"From a frequency table — use the mid-value for grouped data." },
+          { f:"Standard deviation  σ = √( Σfx² ÷ Σf − x̄² )", d:"Square the mid-values for grouped data." },
+          { f:"Interquartile range = Q₃ − Q₁", d:"The spread of the middle 50% of the data." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Comparing only the mean. <b>You need both</b>: mean for average performance, standard deviation for consistency.",
+          "A <b>smaller</b> standard deviation means <b>more consistent</b>, not better — say which in context.",
+          "Reading a cumulative frequency graph off the wrong axis, or using n instead of ½n.",
+          "Using class boundaries instead of <b>mid-values</b> when calculating the mean.",
+        ]},
+      ]},
+    { n:4, title:"Vectors in Two Dimensions", q:"Column vectors, position vectors, and collinearity.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "A vector has <b>magnitude and direction</b>. Reversing the direction flips the sign: <b>BA→ = −AB→</b>.",
+          "<b>Position vector</b> of A is OA→, measured from the origin.",
+          "<b>AB→ = OB→ − OA→</b> — 'destination minus start'. This is the single most used result in the chapter.",
+          "Two vectors are <b>parallel</b> if one is a scalar multiple of the other: <b>b = k a</b>.",
+          "Points are <b>collinear</b> if two vectors between them are parallel <i>and</i> share a common point.",
+          "For area questions, the ratio of triangle areas equals the ratio of their bases when the height is shared.",
+        ]},
+        { h:"Formulas", type:"formulas", body:[
+          { f:"AB→ = OB→ − OA→", d:"Destination minus start point." },
+          { f:"|a| = √(x² + y²)", d:"Magnitude of the column vector (x, y)." },
+          { f:"a is parallel to b  ⟺  a = k b", d:"k is a scalar; if k is negative they point opposite ways." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Getting <b>AB→ = OA→ − OB→</b> the wrong way round — it is always destination minus start.",
+          "Writing the magnitude as a vector, or forgetting the square root.",
+          "Claiming collinearity from parallel vectors alone — they must also <b>share a point</b>.",
+          "Dropping the arrow or underline notation, which examiners can penalise.",
+        ]},
+      ]},
+    { n:5, title:"Congruence and Similarity", q:"Scale factors for length, area and volume.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "<b>Congruent</b> — identical shape and size. Tests: <b>SSS, SAS, ASA, AAS, RHS</b>.",
+          "<b>Similar</b> — same shape, different size. Tests: <b>AA</b>, three sides in the same ratio, or two sides in ratio with the included angle equal.",
+          "If the length scale factor is <b>k</b>, then area scales by <b>k²</b> and volume by <b>k³</b>. This is the heart of the chapter.",
+          "Always match <b>corresponding</b> sides — write the similarity statement in the correct vertex order first.",
+        ]},
+        { h:"Formulas", type:"formulas", body:[
+          { f:"Length ratio = k", d:"The linear scale factor between the two figures." },
+          { f:"Area ratio = k²", d:"Also works for surface area." },
+          { f:"Volume ratio = k³", d:"Also works for mass or capacity of similar solids." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Using k for area or volume instead of <b>k²</b> and <b>k³</b> — the most common error in this topic.",
+          "Taking the scale factor upside down. Decide which figure is larger before you divide.",
+          "Pairing non-corresponding sides because the diagram is rotated or reflected.",
+          "Quoting 'AAA' for congruence — equal angles only prove <b>similarity</b>.",
+        ]},
+      ]},
+    { n:6, title:"Mensuration — Arcs, Sectors and Solids", q:"Surface area and volume of the standard solids.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "For a <b>cone</b>, distinguish the <b>slant height l</b> from the <b>vertical height h</b>: l² = r² + h².",
+          "Read whether the solid is <b>open or closed</b> — that decides if the base circle is included.",
+          "A <b>hemisphere</b> has curved area 2πr²; add πr² if the flat face is included.",
+          "For composite solids, break the shape into standard parts and add or subtract.",
+          "In radians: <b>s = rθ</b> and <b>A = ½r²θ</b>, with θ in radians, not degrees.",
+        ]},
+        { h:"Formulas", type:"formulas", body:[
+          { f:"Arc length = (θ/360) × 2πr        Sector area = (θ/360) × πr²", d:"θ in degrees." },
+          { f:"Sphere:  V = ⁴⁄₃πr³        Surface area = 4πr²", d:"Both given in the formula sheet, but know them cold." },
+          { f:"Cone:  V = ⅓πr²h        Curved surface = πrl", d:"l is the slant height, not the vertical height." },
+          { f:"Pyramid:  V = ⅓ × base area × height", d:"Any pyramid, whatever the base shape." },
+          { f:"Cylinder:  V = πr²h        Curved surface = 2πrh", d:"Add 2πr² for a closed cylinder." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Substituting the <b>vertical height into πrl</b> instead of the slant height.",
+          "Including or omitting a base face when the question says open or closed.",
+          "Mixing units — convert everything to the same unit <b>before</b> calculating.",
+          "Rounding π too early. Use the calculator's π and round only at the end.",
+        ]},
+      ]},
+    { n:7, title:"Trigonometry — Applications", q:"Sine rule, cosine rule, bearings and 3D problems.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "Use the <b>sine rule</b> when you have a matching side–angle pair. Use the <b>cosine rule</b> for three sides, or two sides and the included angle.",
+          "<b>Bearings</b> are measured clockwise from North and always written with <b>three figures</b> — 045°, not 45°.",
+          "<b>Angle of elevation</b> is measured up from the horizontal; <b>depression</b> is measured down from it.",
+          "For <b>3D problems</b>, identify and redraw the single right-angled triangle you need as a flat 2D sketch.",
+          "The <b>ambiguous case</b>: when finding an angle with the sine rule, the obtuse angle 180° − θ may also be valid.",
+        ]},
+        { h:"Formulas", type:"formulas", body:[
+          { f:"a ÷ sin A = b ÷ sin B = c ÷ sin C", d:"Sine rule — needs a matching side and opposite angle." },
+          { f:"a² = b² + c² − 2bc cos A", d:"Cosine rule — for SSS or SAS." },
+          { f:"Area of triangle = ½ ab sin C", d:"C is the angle between sides a and b." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Writing a bearing without padding it to <b>three figures</b>.",
+          "Missing the <b>obtuse solution</b> in the ambiguous case of the sine rule.",
+          "Using the area formula with an angle that is <b>not</b> between the two sides.",
+          "Leaving the calculator in radian mode — check it shows DEG.",
+        ]},
+      ]},
+    { n:8, title:"Coordinate Geometry and Graphs", q:"Straight lines, curves, and graphical solutions.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "<b>y = mx + c</b>: m is the gradient, c the y-intercept. <b>Parallel lines have equal gradients.</b>",
+          "Recognise the shapes: quadratic (parabola), cubic, reciprocal y = a/x (hyperbola), and exponential y = kaˣ.",
+          "To <b>solve an equation graphically</b>, rearrange it so one side matches the drawn curve; the other side becomes a straight line to draw. The x-coordinates of the intersections are the solutions.",
+          "The <b>gradient of a curve at a point</b> is found by drawing a tangent there and using rise ÷ run.",
+        ]},
+        { h:"Formulas", type:"formulas", body:[
+          { f:"Gradient  m = (y₂ − y₁) ÷ (x₂ − x₁)", d:"Rise over run — keep the order consistent." },
+          { f:"Midpoint = ( (x₁+x₂)/2 , (y₁+y₂)/2 )", d:"The average of the coordinates." },
+          { f:"Distance = √( (x₂−x₁)² + (y₂−y₁)² )", d:"Pythagoras applied to the coordinate grid." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Misreading the <b>scale</b> on the axes — check how much one small square is worth.",
+          "Drawing a chord instead of a <b>tangent</b> when finding the gradient of a curve.",
+          "Using too small a triangle for the gradient — make it span most of the tangent.",
+          "Not plotting points accurately, or joining a smooth curve with straight segments.",
+        ]},
+      ]},
+    { n:9, title:"Graphs in Practical Situations", q:"Distance–time and speed–time graphs.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "On a <b>distance–time</b> graph, the <b>gradient is the speed</b>. A horizontal line means stationary.",
+          "On a <b>speed–time</b> graph, the <b>gradient is the acceleration</b> and the <b>area under the graph is the distance</b>.",
+          "A negative gradient on a speed–time graph is <b>deceleration</b>.",
+          "Find the area by splitting the shape into triangles, rectangles and trapeziums.",
+        ]},
+        { h:"Formulas", type:"formulas", body:[
+          { f:"Speed = distance ÷ time", d:"The gradient of a distance–time graph." },
+          { f:"Acceleration = change in speed ÷ time", d:"The gradient of a speed–time graph." },
+          { f:"Distance = area under a speed–time graph", d:"Split into triangles and trapeziums." },
+          { f:"Area of trapezium = ½(a + b) × h", d:"a and b are the parallel sides." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Confusing the two graph types — always read the <b>y-axis label</b> first.",
+          "Taking the gradient of a speed–time graph when the question wants <b>distance</b> (the area).",
+          "Forgetting to convert between km/h and m/s. Multiply by 1000 ÷ 3600 to go from km/h to m/s.",
+          "Omitting units in the final answer.",
+        ]},
+      ]},
+  ]
+};
+
+const AMATH = {
+  eyebrow:"Additional Mathematics · 4049 · Secondary 4",
+  title:"A-Math — Sec 4 Chapters",
+  intro:"The Secondary 4 chapters, built around calculus and trigonometry. Each chapter lists the rules to memorise, the method, and the errors that lose marks. Tap a chapter to open it.",
+  cards:[
+    { h:"How to use this", p:"A-Math rewards fluency, not reading. Learn the rule, then do questions until the method is automatic. Log every slip in the Error Log tab." },
+    { h:"Paper structure", p:"Papers 1 and 2 are both 2 h 15 min. Method marks are substantial — write every line of working, even the obvious ones." },
+    { h:"Where marks leak", p:"Forgotten '+ c' in indefinite integrals, dropped chain-rule factors, and lost solutions when solving trig equations over a range." },
+  ],
+  chapters:[
+    { n:1, title:"Differentiation — Techniques", q:"Product, quotient and chain rules; trig, exponential and log derivatives.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "The <b>chain rule</b> is the one you use most: differentiate the outside, then multiply by the derivative of the inside.",
+          "Use the <b>product rule</b> for a product of two functions, the <b>quotient rule</b> for one divided by another.",
+          "Before differentiating, <b>simplify</b>: rewrite roots as fractional powers and 1/xⁿ as x⁻ⁿ.",
+          "A quotient can often be rewritten as a product to avoid the messier quotient rule.",
+        ]},
+        { h:"Rules to memorise", type:"formulas", body:[
+          { f:"d/dx (xⁿ) = n xⁿ⁻¹", d:"The power rule — works for negative and fractional n." },
+          { f:"Product:  d/dx (uv) = u′v + uv′", d:"Differentiate each in turn, keep the other unchanged." },
+          { f:"Quotient:  d/dx (u/v) = (u′v − uv′) ÷ v²", d:"Order matters — the u′v term comes first." },
+          { f:"Chain:  dy/dx = dy/du × du/dx", d:"Outside derivative × inside derivative." },
+          { f:"d/dx (sin x) = cos x        d/dx (cos x) = −sin x", d:"Note the minus sign on cosine." },
+          { f:"d/dx (tan x) = sec² x", d:"For tan(ax+b), multiply by a." },
+          { f:"d/dx (eˣ) = eˣ        d/dx (ln x) = 1 ÷ x", d:"For e^f(x) multiply by f′(x); for ln f(x) the result is f′(x) ÷ f(x)." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Forgetting the <b>chain rule factor</b> inside a trig, log or exponential function — e.g. d/dx sin(3x) = 3cos(3x), not cos(3x).",
+          "Getting the quotient rule numerator <b>the wrong way round</b>. It is u′v − uv′.",
+          "Dropping the minus sign when differentiating cos x.",
+          "Differentiating a product term by term as if it were a sum.",
+        ]},
+      ]},
+    { n:2, title:"Applications of Differentiation", q:"Tangents, normals, stationary points and rates of change.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "<b>dy/dx</b> is the gradient of the tangent at a point. The <b>normal</b> is perpendicular to it.",
+          "<b>Stationary points</b> occur where dy/dx = 0. Classify with the second derivative: d²y/dx² &lt; 0 → maximum; &gt; 0 → minimum.",
+          "<b>Increasing</b> function: dy/dx &gt; 0. <b>Decreasing</b>: dy/dx &lt; 0.",
+          "For <b>maximum/minimum problems</b>: write the quantity in terms of one variable, differentiate, set to zero, then <b>justify</b> that it is a max or min.",
+          "For <b>connected rates of change</b>, chain the derivatives together and substitute the value at the very end.",
+        ]},
+        { h:"Formulas", type:"formulas", body:[
+          { f:"Gradient of normal = −1 ÷ (gradient of tangent)", d:"Perpendicular gradients multiply to −1." },
+          { f:"Tangent:  y − y₁ = m(x − x₁)", d:"Use the point on the curve and the gradient at that point." },
+          { f:"Stationary point:  dy/dx = 0", d:"Then test with d²y/dx² to classify it." },
+          { f:"dy/dt = dy/dx × dx/dt", d:"Connected rates of change — cancel like fractions to check." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Not <b>justifying</b> maximum or minimum. A mark is reserved for the second-derivative test or a sign table.",
+          "Substituting the x-value into dy/dx instead of into <b>y</b> to get the coordinate.",
+          "Using the tangent gradient for the normal without taking the negative reciprocal.",
+          "In rates-of-change problems, substituting the numerical value <b>too early</b>.",
+        ]},
+      ]},
+    { n:3, title:"Integration", q:"The reverse of differentiation — and the '+ c' everyone forgets.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "Integration reverses differentiation. Always add <b>+ c</b> to an indefinite integral.",
+          "For a <b>linear</b> inside function (ax + b), integrate as normal then <b>divide by a</b>.",
+          "Definite integrals need <b>no + c</b> — substitute the upper limit minus the lower limit.",
+          "You cannot integrate a product by integrating each factor. Expand or simplify first.",
+        ]},
+        { h:"Rules to memorise", type:"formulas", body:[
+          { f:"∫ xⁿ dx = xⁿ⁺¹ ÷ (n+1) + c", d:"Valid for all n except n = −1." },
+          { f:"∫ (ax+b)ⁿ dx = (ax+b)ⁿ⁺¹ ÷ [a(n+1)] + c", d:"Note the extra division by a." },
+          { f:"∫ sin(ax+b) dx = −cos(ax+b) ÷ a + c", d:"The minus sign appears here, not on cosine." },
+          { f:"∫ cos(ax+b) dx = sin(ax+b) ÷ a + c", d:"No minus sign." },
+          { f:"∫ e^(ax+b) dx = e^(ax+b) ÷ a + c", d:"Divide by the coefficient of x." },
+          { f:"∫ 1 ÷ (ax+b) dx = ln|ax+b| ÷ a + c", d:"This is the n = −1 case. Keep the modulus." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Omitting <b>+ c</b> — a guaranteed lost mark on indefinite integrals.",
+          "Forgetting to <b>divide by a</b> when the bracket is (ax + b).",
+          "Losing the minus sign on ∫ sin — it is the opposite of differentiation.",
+          "Applying the power rule to 1/x. That case gives a logarithm, not a power.",
+        ]},
+      ]},
+    { n:4, title:"Applications of Integration", q:"Area under curves, between curves, and kinematics.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "Area between a curve and the <b>x-axis</b> is ∫y dx; between a curve and the <b>y-axis</b> it is ∫x dy.",
+          "Regions <b>below the x-axis</b> give a negative integral. Split at the roots and take the modulus of each part.",
+          "Area <b>between two curves</b> = ∫(upper − lower) dx over the intersection limits.",
+          "<b>Kinematics:</b> differentiate to go s → v → a, and integrate to go a → v → s.",
+          "Use the initial conditions given in the question to find the constant of integration.",
+        ]},
+        { h:"Formulas", type:"formulas", body:[
+          { f:"Area = ∫ y dx  between x = a and x = b", d:"Vertical strips, measured from the x-axis." },
+          { f:"Area between curves = ∫ (y_upper − y_lower) dx", d:"Find the intersections first — they are your limits." },
+          { f:"v = ds/dt        a = dv/dt", d:"Differentiate to move from displacement to velocity to acceleration." },
+          { f:"s = ∫ v dt        v = ∫ a dt", d:"Integrate to go back the other way; use initial conditions for c." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Adding a negative area to a positive one instead of <b>splitting at the roots</b>.",
+          "Using the wrong pair of limits, or forgetting to solve for the intersection points.",
+          "In kinematics, confusing <b>distance travelled</b> with <b>displacement</b> when the object changes direction.",
+          "Forgetting the constant of integration when initial conditions are given.",
+        ]},
+      ]},
+    { n:5, title:"Trigonometric Functions and Identities", q:"Identities, double angles, R-formula and equations.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "Quadrant signs (<b>ASTC</b>): All positive in Q1, Sine in Q2, Tangent in Q3, Cosine in Q4.",
+          "To solve a trig equation, find the <b>basic angle</b> from the positive value, then place it in the correct quadrants across the whole given range.",
+          "The <b>R-formula</b> converts a cos θ + b sin θ into a single trig function, which makes maximum and minimum values immediate.",
+          "Maximum of R cos(θ − α) is <b>R</b>; minimum is <b>−R</b>.",
+          "For graphs y = a sin(bx) + c: amplitude is |a|, period is 360° ÷ b, and c shifts it vertically.",
+        ]},
+        { h:"Identities to memorise", type:"formulas", body:[
+          { f:"sin²A + cos²A = 1", d:"Rearranges to sin²A = 1 − cos²A." },
+          { f:"1 + tan²A = sec²A        1 + cot²A = cosec²A", d:"Both follow from dividing the first identity." },
+          { f:"sin(A ± B) = sin A cos B ± cos A sin B", d:"Signs match on the right." },
+          { f:"cos(A ± B) = cos A cos B ∓ sin A sin B", d:"Signs are opposite on the right — a common slip." },
+          { f:"sin 2A = 2 sin A cos A", d:"Double angle." },
+          { f:"cos 2A = cos²A − sin²A = 2cos²A − 1 = 1 − 2sin²A", d:"Pick whichever of the three forms suits the question." },
+          { f:"a cos θ + b sin θ = R cos(θ − α),  R = √(a² + b²),  tan α = b ÷ a", d:"R-formula, with α acute." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "<b>Losing solutions</b> — always list every angle in the stated range, not just the first one.",
+          "Getting the sign wrong in cos(A + B): it becomes <b>minus</b> sin A sin B.",
+          "Working in the wrong mode. Check DEG or RAD matches the question.",
+          "Dividing an equation through by cos θ or sin θ, which silently discards valid solutions.",
+        ]},
+      ]},
+    { n:6, title:"Logarithmic and Exponential Functions", q:"Laws of logarithms and solving exponential equations.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "A logarithm is an index in disguise: <b>y = aˣ  ⟺  x = log_a y</b>.",
+          "You can only take a logarithm of a <b>positive</b> number — always check your solutions and reject any that make a log negative or zero.",
+          "<b>ln</b> means log to base e. The graph of y = eˣ never touches the x-axis.",
+          "To solve aˣ = b, take logs of both sides and bring the power down.",
+          "Some equations become quadratic after a substitution such as u = 2ˣ.",
+        ]},
+        { h:"Laws to memorise", type:"formulas", body:[
+          { f:"log(xy) = log x + log y", d:"Multiplication becomes addition." },
+          { f:"log(x ÷ y) = log x − log y", d:"Division becomes subtraction." },
+          { f:"log xⁿ = n log x", d:"The law that lets you solve exponential equations." },
+          { f:"log_a a = 1        log_a 1 = 0", d:"Two values worth recognising instantly." },
+          { f:"Change of base:  log_a b = log_c b ÷ log_c a", d:"Use it to get everything into the same base." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Writing log(x + y) as log x + log y. <b>There is no law for the log of a sum.</b>",
+          "Failing to <b>reject invalid solutions</b> that would require the log of a negative number or zero.",
+          "Mixing bases in one equation without converting first.",
+          "Cancelling logs across a fraction — log x ÷ log y is not log(x ÷ y).",
+        ]},
+      ]},
+    { n:7, title:"Coordinate Geometry — Circles", q:"Equation of a circle, centre, radius and tangents.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "Convert the general form to standard form by <b>completing the square</b> in both x and y.",
+          "The <b>tangent is perpendicular to the radius</b> at the point of contact — this solves most tangent questions.",
+          "To test whether a point lies inside, on, or outside a circle, compare its distance from the centre with the radius.",
+          "A line meets a circle in two, one (tangent), or no points — substitute and use the discriminant.",
+        ]},
+        { h:"Formulas", type:"formulas", body:[
+          { f:"(x − a)² + (y − b)² = r²", d:"Centre (a, b), radius r." },
+          { f:"x² + y² + 2gx + 2fy + c = 0", d:"General form." },
+          { f:"Centre = (−g, −f)        r = √(g² + f² − c)", d:"Watch the signs — the centre is the negative of g and f." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Sign errors on the centre. In (x − a)², the centre coordinate is <b>+a</b>.",
+          "Forgetting to <b>halve</b> the coefficient before squaring when completing the square.",
+          "Taking r² as the radius instead of taking the square root.",
+          "Using the radius gradient directly for the tangent instead of the negative reciprocal.",
+        ]},
+      ]},
+    { n:8, title:"Linear Law", q:"Turning a non-linear relationship into a straight line.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "The aim is to rewrite the relationship in the form <b>Y = mX + C</b>, where X and Y are expressions you can plot.",
+          "Take <b>logarithms</b> when the unknown constant sits in a power.",
+          "Once plotted, the <b>gradient and vertical intercept</b> of the line give you the unknown constants.",
+          "Identify clearly what your X and Y actually are before plotting — that is where most marks are won or lost.",
+        ]},
+        { h:"Standard conversions", type:"formulas", body:[
+          { f:"y = a xⁿ   →   lg y = n lg x + lg a", d:"Plot lg y against lg x: gradient n, intercept lg a." },
+          { f:"y = a bˣ   →   lg y = (lg b) x + lg a", d:"Plot lg y against x: gradient lg b, intercept lg a." },
+          { f:"y = a x + b x²   →   y ÷ x = b x + a", d:"Plot y/x against x: gradient b, intercept a." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Reading the constant straight off the intercept when the intercept is actually <b>lg a</b> — you must undo the log.",
+          "Plotting the wrong variables, or mislabelling the axes.",
+          "Using only two data points for the gradient instead of the line of best fit.",
+          "Rounding logarithm values too early, which visibly bends the line.",
+        ]},
+      ]},
+    { n:9, title:"Binomial Theorem", q:"Expanding (a + b)ⁿ and picking out a single term.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "The expansion of (a + b)ⁿ has <b>n + 1 terms</b>, with powers of a decreasing and b increasing.",
+          "To find a specific term, use the <b>general term</b> rather than expanding everything.",
+          "The <b>(r + 1)th term</b> corresponds to index r — so the 4th term has r = 3. This off-by-one catches people out.",
+          "For a 'term independent of x' (the constant term), set the total power of x to <b>zero</b> and solve for r.",
+        ]},
+        { h:"Formulas", type:"formulas", body:[
+          { f:"(a + b)ⁿ = Σ  ⁿCr · aⁿ⁻ʳ · bʳ", d:"Summed from r = 0 to n." },
+          { f:"General term  T_(r+1) = ⁿCr · aⁿ⁻ʳ · bʳ", d:"Use this to target one term without expanding." },
+          { f:"ⁿCr = n! ÷ [ r!(n − r)! ]", d:"The binomial coefficient — on your calculator as nCr." },
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Confusing the <b>term number</b> with r. The 5th term uses r = 4.",
+          "Forgetting to raise the whole bracket to the power, including any coefficient — (2x)³ is 8x³, not 2x³.",
+          "Dropping a negative sign when the expansion is (a − b)ⁿ.",
+          "Only finding r and stopping, without computing the coefficient the question asked for.",
+        ]},
+      ]},
+    { n:10, title:"Proofs in Plane Geometry", q:"Circle properties and writing a proof that earns full marks.",
+      sections:[
+        { h:"What you must know", type:"bullets", body:[
+          "Every statement in a proof needs a <b>reason</b>. Marks are given for the reasons, not just the conclusion.",
+          "<b>Angle in a semicircle</b> is 90°.",
+          "<b>Angles in the same segment</b> are equal.",
+          "<b>Angle at the centre</b> is twice the angle at the circumference on the same arc.",
+          "<b>Opposite angles of a cyclic quadrilateral</b> sum to 180°.",
+          "<b>The tangent is perpendicular to the radius</b> at the point of contact.",
+          "<b>Alternate segment theorem:</b> the angle between a tangent and a chord equals the angle in the alternate segment.",
+        ]},
+        { h:"How to structure a proof", type:"bullets", body:[
+          "State what you are proving, then work in short numbered steps.",
+          "Write each step as: <i>statement</i> — <i>reason</i>. For example: ∠ABC = 90° (angle in a semicircle).",
+          "If proving triangles congruent or similar, name the test used (SSS, SAS, AA, …).",
+          "Finish with a clear concluding line that matches the statement you were asked to prove.",
+        ]},
+        { h:"Traps that cost marks", type:"bullets", body:[
+          "Giving the right answer with <b>no reasons</b> — this loses most of the marks available.",
+          "Assuming what you are trying to prove, then working backwards to it.",
+          "Quoting the wrong circle theorem, or a theorem that does not apply to that configuration.",
+          "Relying on how the diagram looks rather than on stated properties.",
+        ]},
+      ]},
+  ]
+};
+
 /* ============================================================
    PLANNER — schedule, phases, streak, error log
    ============================================================ */
@@ -952,7 +1405,8 @@ function saveLog(a){ localStorage.setItem('osp-log', JSON.stringify(a)); }
 /* ============================================================
    APP LOGIC
    ============================================================ */
-const DATA = { physics:PHYSICS, chemistry:CHEMISTRY, history:HISTORY };
+const DATA = { physics:PHYSICS, chemistry:CHEMISTRY, history:HISTORY, emath:EMATH, amath:AMATH };
+const SYLLABUS_SUBJECTS = ['history','emath','amath'];
 const app = document.getElementById('app');
 let state = {
   subject:'plan',
@@ -995,7 +1449,7 @@ function render(){
   if(cdTimer){ clearInterval(cdTimer); cdTimer = null; }
   if(state.subject==='plan'){ renderPlan(); return; }
   if(state.subject==='log'){ renderLog(); return; }
-  if(state.subject==='history'){ renderHistory(); return; }
+  if(SYLLABUS_SUBJECTS.includes(state.subject)){ renderSyllabus(DATA[state.subject], state.subject); return; }
   renderDeck(DATA[state.subject]);
   window.scrollTo({top:0, behavior:'instant'});
 }
@@ -1377,20 +1831,19 @@ function wireDeck(subj, allCards){
 }
 
 /* ---- History ---- */
-function renderHistory(){
-  const H = HISTORY;
+function renderSyllabus(S, key){
   let html = `
   <section class="subject-hero">
-    <span class="eyebrow">Elective History · Express · Shaping the Modern World</span>
-    <h2>Elective History — Full Course</h2>
-    <p>${esc(H.intro)}</p>
+    <span class="eyebrow">${esc(S.eyebrow)}</span>
+    <h2>${esc(S.title)}</h2>
+    <p>${esc(S.intro)}</p>
   </section>
   <div class="hist-intro">
-    ${H.cards.map(c=>`<div class="mini-card"><h4>${esc(c.h)}</h4><p>${esc(c.p)}</p></div>`).join('')}
+    ${S.cards.map(c=>`<div class="mini-card"><h4>${esc(c.h)}</h4><p>${esc(c.p)}</p></div>`).join('')}
   </div>
   <div id="chapters" style="margin-top:32px;">`;
 
-  H.chapters.forEach((ch, i)=>{
+  S.chapters.forEach((ch, i)=>{
     html += `
     <div class="chapter ${i===0?'open':''}" data-ch="${i}">
       <div class="chapter-head">
@@ -1419,6 +1872,11 @@ function renderSection(s){
   }
   if(s.type==='bullets'){
     return `<div class="ch-section"><h4>${esc(s.h)}</h4><ul class="bullets">${s.body.map(li=>`<li>${li}</li>`).join('')}</ul></div>`;
+  }
+  if(s.type==='formulas'){
+    return `<div class="ch-section"><h4>${esc(s.h)}</h4><div class="formula-list">${s.body.map(f=>
+      `<div class="formula-row"><div class="f-expr">${f.f}</div><div class="f-desc">${esc(f.d)}</div></div>`
+    ).join('')}</div></div>`;
   }
   if(s.type==='terms'){
     return `<div class="ch-section"><h4>${esc(s.h)}</h4><div class="keyterms">${s.body.map(t=>`<span class="keyterm">${esc(t)}</span>`).join('')}</div></div>`;
