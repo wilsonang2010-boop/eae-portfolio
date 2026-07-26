@@ -222,6 +222,7 @@ header{
 /* ── Planner: stat tiles + meter ───────────────────────────── */
 .stat-row{display:grid; grid-template-columns:1fr; gap:12px; margin-top:14px;}
 @media(min-width:620px){.stat-row{grid-template-columns:1fr 1fr;}}
+@media(min-width:940px){.stat-row{grid-template-columns:repeat(3,1fr);}}
 .tile{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px;}
 .t-label{font-size:11px; letter-spacing:.13em; text-transform:uppercase; color:var(--slate-500); font-weight:700;}
 .t-value{font-family:var(--font-display); font-size:1.85rem; font-weight:700; color:var(--white); margin-top:7px; line-height:1; font-variant-numeric:tabular-nums;}
@@ -263,6 +264,7 @@ header{
 .sj-chem{background:rgba(52,211,153,.15); color:#6EE7B7;}
 .sj-eng{background:rgba(167,139,250,.18); color:#C4B5FD;}
 .sj-paper{background:rgba(251,113,133,.15); color:#FDA4AF;}
+.sj-hw{background:rgba(245,158,11,.15); color:#FCD34D;}
 .sess-mins{font-size:12px; color:var(--slate-500); font-variant-numeric:tabular-nums;}
 .sess-topic{margin-top:5px; color:var(--slate-100); font-size:14.5px; line-height:1.5;}
 .sess.done .sess-topic{color:var(--slate-500); text-decoration:line-through;}
@@ -859,26 +861,34 @@ function mathBlockFor(weekIdx, gi){
   return { subject: em?'E-Math':'A-Math', cls:'sj-math', topic: PAPER_CYCLE[gi % PAPER_CYCLE.length], note:(em?'E-Math':'A-Math')+' week — alternating' };
 }
 
-/* All sessions for a given date. */
+/* All sessions for a given date. Homework is on every day, including the rest day. */
+function hwMins(){ const v = localStorage.getItem('osp-hw'); return v===null ? 45 : +v; }
+
 function sessionsFor(date){
   const wk = weekIndexOf(mondayOf(date));
   const dow = date.getDay();
-  if(dow === restDay()) return { rest:true, sessions:[] };
-  const order = gymOrder();
-  const gi = order.indexOf(dow);
+  const rest = (dow === restDay());
   const out = [];
-  const m = mathBlockFor(wk, gi);
-  out.push({ key:'math', subject:'Post-gym · '+m.subject, cls:m.cls, topic:m.topic, note:m.note, mins:45 });
-  if(gi===1) out.push({ key:'phys', subject:'Physics', cls:'sj-phys', topic:'Physics revision — definitions, then practice questions', note:'Use the Physics tab to drill definitions first', mins:45 });
-  if(gi===2) out.push({ key:'chem', subject:'Chemistry', cls:'sj-chem', topic:'Chemistry revision — definitions, then practice questions', note:'Use the Chemistry tab to drill definitions first', mins:45 });
-  if(gi===3) out.push({ key:'eng',  subject:'English',   cls:'sj-eng',  topic:'English — comprehension, summary or situational writing', note:'Rotate skills each week; add listening practice from Sep', mins:45 });
-  if(gi===5){
-    const paper = wk<=3 ? 'Extended algebra practice — past-paper section'
-                : wk<=6 ? 'Extended trigonometry practice — past-paper section'
-                : 'Full timed paper — ' + ((wk%2===1)?'E-Math':'A-Math') + ' Paper 1';
-    out.push({ key:'paper', subject:'Timed paper', cls:'sj-paper', topic:paper, note:'135 min — exactly one full O-Level paper', mins:135 });
+  if(!rest){
+    const order = gymOrder();
+    const gi = order.indexOf(dow);
+    const m = mathBlockFor(wk, gi);
+    out.push({ key:'math', subject:'Post-gym · '+m.subject, cls:m.cls, topic:m.topic, note:m.note, mins:45 });
+    if(gi===1) out.push({ key:'phys', subject:'Physics', cls:'sj-phys', topic:'Physics revision — definitions, then practice questions', note:'Use the Physics tab to drill definitions first', mins:45 });
+    if(gi===2) out.push({ key:'chem', subject:'Chemistry', cls:'sj-chem', topic:'Chemistry revision — definitions, then practice questions', note:'Use the Chemistry tab to drill definitions first', mins:45 });
+    if(gi===3) out.push({ key:'eng',  subject:'English',   cls:'sj-eng',  topic:'English — comprehension, summary or situational writing', note:'Rotate skills each week; add listening practice from Sep', mins:45 });
+    if(gi===5){
+      const paper = wk<=3 ? 'Extended algebra practice — past-paper section'
+                  : wk<=6 ? 'Extended trigonometry practice — past-paper section'
+                  : 'Full timed paper — ' + ((wk%2===1)?'E-Math':'A-Math') + ' Paper 1';
+      out.push({ key:'paper', subject:'Timed paper', cls:'sj-paper', topic:paper, note:'135 min — exactly one full O-Level paper', mins:135 });
+    }
   }
-  return { rest:false, sessions:out };
+  out.push({ key:'hw', subject:'Homework', cls:'sj-hw', hw:true, mins:hwMins(),
+             topic:'School homework & corrections',
+             note: rest ? 'Deadlines don’t take a rest day — do this, then stop.'
+                        : 'Work due first, then corrections from marked work' });
+  return { rest, sessions:out };
 }
 
 function sessId(date, key){ return ymd(date)+'|'+key; }
@@ -918,15 +928,17 @@ function mathStreak(){
 /* Weekly completed hours vs the 9-hour target. */
 function weekStats(monday){
   const done = doneSet();
-  let total=0, doneMins=0, doneCount=0, count=0;
+  let total=0, doneMins=0, doneCount=0, count=0, hwDone=0, hwTotal=0, hwMinsDone=0;
   for(let i=0;i<7;i++){
     const d = addDays(monday,i);
     sessionsFor(d).sessions.forEach(s=>{
+      const isOn = done.has(sessId(d,s.key));
+      if(s.hw){ hwTotal++; if(isOn){ hwDone++; hwMinsDone += s.mins; } return; }  // tracked apart from the revision target
       total += s.mins; count++;
-      if(done.has(sessId(d,s.key))){ doneMins += s.mins; doneCount++; }
+      if(isOn){ doneMins += s.mins; doneCount++; }
     });
   }
-  return { total, doneMins, doneCount, count };
+  return { total, doneMins, doneCount, count, hwDone, hwTotal, hwMinsDone };
 }
 
 /* ---- Error log ---- */
@@ -1009,9 +1021,9 @@ function renderPlan(){
     const info = sessionsFor(d);
     let rows = '';
     if(info.rest){
-      rows = `<div class="sess-rest">Rest day — no study, or light review only.</div>`;
-    } else {
-      rows = info.sessions.map(s=>{
+      rows = `<div class="sess-rest">Rest day — no revision, or light review only.</div>`;
+    }
+    rows += info.sessions.map(s=>{
         const id = sessId(d, s.key);
         const done = isDone(id);
         return `<div class="sess ${done?'done':''}">
@@ -1026,7 +1038,6 @@ function renderPlan(){
           </div>
         </div>`;
       }).join('');
-    }
     days += `<div class="day ${isToday?'is-today':''}">
       <div class="day-head">
         <span class="day-dow">${DOW[d.getDay()]}</span>
@@ -1047,7 +1058,7 @@ function renderPlan(){
   <section class="subject-hero">
     <span class="eyebrow">2026 GCE O-Level · Singapore</span>
     <h2>Study Plan</h2>
-    <p>E-Math · A-Math · Physics · Chemistry · English — built around 6 gym days a week, a mandatory post-gym math block, and a ${WEEK_TARGET_HRS}-hour weekly target.</p>
+    <p>E-Math · A-Math · Physics · Chemistry · English — built around 6 gym days a week, a mandatory post-gym math block, a daily homework block, and a ${WEEK_TARGET_HRS}-hour weekly revision target.</p>
   </section>
 
   <div class="phase-banner">
@@ -1073,6 +1084,12 @@ function renderPlan(){
       <div class="t-label">Post-gym math streak</div>
       <div class="t-value">${streak} <span style="font-size:1rem;color:var(--slate-500);">day${streak===1?'':'s'}</span></div>
       <div class="t-sub">${streak===0?'Tick today’s math block to start a streak.':'Consecutive post-gym math blocks completed.'}</div>
+    </div>
+    <div class="tile">
+      <div class="t-label">Homework this week</div>
+      <div class="t-value">${st.hwDone} <span style="font-size:1rem;color:var(--slate-500);">/ ${st.hwTotal} days</span></div>
+      <div class="meter"><div class="meter-fill ${st.hwDone>=st.hwTotal?'hit':''}" style="width:${st.hwTotal?(st.hwDone/st.hwTotal)*100:0}%"></div></div>
+      <div class="t-sub">Tracked apart from the ${WEEK_TARGET_HRS}-hour revision target.</div>
     </div>
   </div>
 
@@ -1103,6 +1120,13 @@ function renderPlan(){
       ${DOW.map((n,i)=>`<option value="${i}" ${i===restDay()?'selected':''}>${n}</option>`).join('')}
     </select>
     <div style="margin-top:8px; color:var(--slate-400);">The other six days are gym days, each with a post-gym math block.</div>
+    <div style="margin-top:14px;">
+      <b>Homework block:</b> every day, currently ${hwMins()} min.
+      <select id="hw-sel" style="margin-left:8px; background:var(--bg); border:1px solid var(--border); color:var(--white); padding:6px 10px; border-radius:8px; font-size:13px;">
+        ${[30,45,60,90,120].map(m=>`<option value="${m}" ${m===hwMins()?'selected':''}>${m} min</option>`).join('')}
+      </select>
+      <div style="margin-top:8px; color:var(--slate-400);">Homework is counted separately, so it never inflates your ${WEEK_TARGET_HRS}-hour revision total.</div>
+    </div>
   </div>
   ` + footerHTML();
 
@@ -1128,6 +1152,8 @@ function renderPlan(){
   if(tdy)  tdy.addEventListener('click', ()=>{ state.weekOffset=0; renderPlan(); });
   const rs = document.getElementById('rest-sel');
   if(rs) rs.addEventListener('change', ()=>{ localStorage.setItem('osp-rest', rs.value); renderPlan(); });
+  const hs = document.getElementById('hw-sel');
+  if(hs) hs.addEventListener('change', ()=>{ localStorage.setItem('osp-hw', hs.value); renderPlan(); });
 }
 
 /* ---- Error log view ---- */
