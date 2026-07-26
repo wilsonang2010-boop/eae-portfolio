@@ -26,8 +26,11 @@ _"Rest Day 💪 Recovery is part of progress."_
 - **Workout tracking** — muscle-group sections, warm-up + working sets, a big tap
   checkbox on every set, per-set weight (kg/lbs), reps, and an optional note. Completed
   sets turn green; a progress bar at the top tracks completion %.
-- **Rest timer** — auto-starts a 2:30 countdown after every *working* set (skipped for
-  plyometrics). Pause / Restart / Skip, ±15s, and a beep + vibration when it finishes.
+- **Rest timer** — auto-starts a 2:30 countdown after a set. Pause / Restart / Skip, ±15s,
+  and a beep + vibration when it finishes. The stopwatch button in the top bar starts a
+  rest any time. The countdown runs off wall-clock time, so it stays accurate if the phone
+  locks or you switch apps. Working sets always trigger it; plyometrics (on by default) and
+  warm-ups (off by default) are toggleable in Settings.
 - **Summary** — sets completed, duration, completion %, and a calorie estimate.
 - **History** — every workout is saved. Month calendar with completed days, a recent
   list, and tap-to-view/edit past sessions.
@@ -35,8 +38,9 @@ _"Rest Day 💪 Recovery is part of progress."_
   rate, and personal records (heaviest working set per exercise).
 - **Smart weights** — when you start a workout, the previous week's weights for each
   exercise are pre-filled.
-- **Settings** — rest-timer length, units (kg/lbs), accent colour, AMOLED black, timer
-  sound, vibration, daily reminders, bodyweight (for calories), and JSON export/import.
+- **Settings** — rest-timer length, which set types auto-rest, units (kg/lbs), accent
+  colour, AMOLED black, timer sound, vibration, daily reminders, bodyweight (for
+  calories), and JSON export/import.
 
 ## Offline & data
 

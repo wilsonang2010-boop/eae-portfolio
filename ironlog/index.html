@@ -71,6 +71,14 @@ input{font-family:inherit}
 .brand h1{font-size:20px;font-weight:800;letter-spacing:-.02em;margin:0}
 .brand .sub{margin-left:auto;text-align:right;font-size:12px;color:var(--muted);line-height:1.25}
 .brand .sub b{color:var(--text);font-weight:600;display:block;font-size:13px}
+.rest-launch{
+  width:38px;height:38px;border-radius:12px;flex:0 0 auto;margin-left:12px;
+  background:var(--panel-2);border:1px solid var(--border);display:grid;place-items:center;
+  transition:transform .12s,border-color .2s;
+}
+.rest-launch svg{width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:2}
+.rest-launch:active{transform:scale(.92)}
+.rest-launch:active svg{stroke:var(--accent)}
 
 /* ---------- Views ---------- */
 .view{padding:6px 16px 20px;animation:fade .28s ease}
@@ -203,8 +211,10 @@ input{font-family:inherit}
 }
 
 /* ---------- Rest timer sheet ---------- */
+/* z-index sits above the modal overlay (80) so the timer is still visible
+   while a past workout is open for editing. */
 .rest-timer{
-  position:fixed;left:0;right:0;bottom:0;z-index:60;
+  position:fixed;left:0;right:0;bottom:0;z-index:85;
   transform:translateY(120%);transition:transform .38s cubic-bezier(.22,1,.36,1);
   pointer-events:none;
 }
@@ -363,6 +373,9 @@ input{font-family:inherit}
       </span>
       <h1>IronLog</h1>
       <div class="sub"><b id="topDay">—</b><span id="topDate">—</span></div>
+      <button class="rest-launch" id="manualTimer" aria-label="Start rest timer" title="Start rest timer">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.2 2.2M9.5 2.5h5" stroke-linecap="round"/></svg>
+      </button>
     </div>
   </header>
 
@@ -476,6 +489,8 @@ const ACCENTS = {
 const DEFAULT_SETTINGS = {
   restSec: 150, units: "kg", accent: "green", amoled: false,
   reminders: false, sound: true, vibrate: true, bodyKg: 70,
+  // Which kinds of set auto-start the rest timer. Working sets always do.
+  restAfterPlyo: true, restAfterWarmup: false,
 };
 
 /* ---------- Storage ---------- */
@@ -691,7 +706,7 @@ function exerciseCard(ex, w, editable){
       card.classList.toggle("complete", ex.sets.every(s=>s.done));
       updateProgress(w);
       saveCurrentOrHistory(w);
-      if (set.done && set.kind==="working" && !ex.plyo) startRest(ex.name);
+      if (set.done && shouldRest(ex, set)) startRest(ex.name);
     });
     const wInput = setEl.querySelector(".w");
     wInput.addEventListener("change", ()=>{ set.weightKg = fromDisplay(wInput.value); saveCurrentOrHistory(w); });
@@ -765,31 +780,45 @@ function showSummary(w){
 /* ============================================================
    REST TIMER
    ============================================================ */
-const timer = { total:0, remaining:0, running:false, iv:null, exercise:"" };
+/* The countdown is driven off wall-clock time (endAt), not by counting
+   interval ticks — mobile browsers throttle or freeze timers when the screen
+   locks or the app is backgrounded, which would otherwise stall the count. */
+const timer = { total:0, remaining:0, endAt:0, running:false, iv:null, exercise:"", finished:false };
 const RT_CIRC = 2 * Math.PI * 34; // 213.6
+
+// Working sets always rest; warm-ups and plyometrics follow their settings.
+function shouldRest(ex, set){
+  if (set.kind === "warmup") return !!settings.restAfterWarmup;
+  if (ex.plyo) return !!settings.restAfterPlyo;
+  return true;
+}
 
 function startRest(exerciseName){
   timer.total = settings.restSec;
   timer.remaining = settings.restSec;
+  timer.endAt = Date.now() + timer.total*1000;
   timer.exercise = exerciseName || "";
   timer.running = true;
+  timer.finished = false;
   $("#rtSub").textContent = exerciseName ? `After ${exerciseName}` : "Recovering…";
   $("#restTimer").classList.add("show");
   $("#rtPause").textContent = "Pause";
   tickRender();
-  clearInterval(timer.iv);
-  timer.iv = setInterval(tick, 1000);
+  startLoop();
 }
+function startLoop(){
+  clearInterval(timer.iv);
+  // 250ms so the display re-syncs quickly after the tab wakes back up.
+  timer.iv = setInterval(tick, 250);
+}
+function stopLoop(){ clearInterval(timer.iv); timer.iv = null; }
 function tick(){
   if (!timer.running) return;
-  timer.remaining--;
-  if (timer.remaining <= 0){
-    timer.remaining = 0;
-    tickRender();
-    finishRest();
-    return;
-  }
+  const rem = Math.max(0, Math.round((timer.endAt - Date.now())/1000));
+  if (rem === timer.remaining) return;
+  timer.remaining = rem;
   tickRender();
+  if (rem <= 0) finishRest();
 }
 function tickRender(){
   const m = Math.floor(timer.remaining/60), s = timer.remaining%60;
@@ -798,30 +827,58 @@ function tickRender(){
   $("#rtArc").style.strokeDashoffset = (RT_CIRC * (1 - frac)).toFixed(1);
 }
 function finishRest(){
-  clearInterval(timer.iv);
+  stopLoop();
   timer.running = false;
+  timer.finished = true;
+  timer.remaining = 0;
+  tickRender();
   beep();
   if (settings.vibrate && navigator.vibrate) navigator.vibrate([120,80,120,80,200]);
   $("#rtSub").textContent = "Rest complete 💥";
-  setTimeout(hideRest, 1200);
+  setTimeout(()=>{ if (timer.finished) hideRest(); }, 1500);
 }
-function hideRest(){ $("#restTimer").classList.remove("show"); clearInterval(timer.iv); timer.running=false; }
+function hideRest(){ $("#restTimer").classList.remove("show"); stopLoop(); timer.running=false; }
 function pauseRest(){
   if (timer.remaining<=0) return;
-  timer.running = !timer.running;
+  if (timer.running){
+    timer.remaining = Math.max(0, Math.round((timer.endAt - Date.now())/1000));
+    timer.running = false;
+    stopLoop();
+  } else {
+    timer.endAt = Date.now() + timer.remaining*1000;
+    timer.running = true;
+    startLoop();
+  }
   $("#rtPause").textContent = timer.running ? "Pause" : "Resume";
+  tickRender();
 }
-function restartRest(){ timer.remaining = timer.total; timer.running = true; $("#rtPause").textContent="Pause"; tickRender(); if(!timer.iv){timer.iv=setInterval(tick,1000);} }
+function restartRest(){
+  timer.remaining = timer.total;
+  timer.endAt = Date.now() + timer.total*1000;
+  timer.running = true;
+  timer.finished = false;
+  $("#rtPause").textContent = "Pause";
+  $("#rtSub").textContent = timer.exercise ? `After ${timer.exercise}` : "Recovering…";
+  tickRender();
+  startLoop();
+}
 function adjustRest(delta){
   timer.remaining = Math.max(5, timer.remaining + delta);
   timer.total = Math.max(timer.total, timer.remaining);
+  timer.finished = false;
+  if (timer.running) timer.endAt = Date.now() + timer.remaining*1000;
+  else $("#rtPause").textContent = "Resume";
   tickRender();
 }
+// Re-sync the moment the app comes back to the foreground.
+document.addEventListener("visibilitychange", ()=>{ if (!document.hidden && timer.running) tick(); });
 $("#rtPause").onclick = pauseRest;
 $("#rtSkip").onclick = hideRest;
 $("#rtRestart").onclick = restartRest;
 $("#rtPlus").onclick = ()=>adjustRest(15);
 $("#rtMinus").onclick = ()=>adjustRest(-15);
+// Start a rest any time, regardless of which set you just finished.
+$("#manualTimer").onclick = ()=> startRest("");
 
 /* Beep via WebAudio (no asset needed). */
 let audioCtx = null;
@@ -1054,6 +1111,14 @@ function renderSettings(){
         </div>
       </div>
       <div class="set-row">
+        <div><div class="lab">Rest after plyometrics</div><div class="desc">Leg-day jumps (Box Jump, Pogo Jump…)</div></div>
+        <div class="ctl"><button class="switch${settings.restAfterPlyo?" on":""}" id="plyoSw" role="switch" aria-checked="${!!settings.restAfterPlyo}"></button></div>
+      </div>
+      <div class="set-row">
+        <div><div class="lab">Rest after warm-up sets</div><div class="desc">Off by default — warm-ups flow straight on</div></div>
+        <div class="ctl"><button class="switch${settings.restAfterWarmup?" on":""}" id="warmSw" role="switch" aria-checked="${!!settings.restAfterWarmup}"></button></div>
+      </div>
+      <div class="set-row">
         <div><div class="lab">Units</div><div class="desc">Weight display</div></div>
         <div class="ctl seg" id="unitSeg">
           <button data-u="kg" class="${settings.units==="kg"?"on":""}">kg</button>
@@ -1110,6 +1175,9 @@ function renderSettings(){
   // Rest stepper (15s steps, 30s..600s)
   $("#restDown").onclick = ()=>{ settings.restSec=Math.max(30, settings.restSec-15); saveSettings(); renderSettings(); };
   $("#restUp").onclick   = ()=>{ settings.restSec=Math.min(600, settings.restSec+15); saveSettings(); renderSettings(); };
+  // Which sets auto-start a rest
+  $("#plyoSw").onclick = ()=>{ settings.restAfterPlyo=!settings.restAfterPlyo; saveSettings(); renderSettings(); };
+  $("#warmSw").onclick = ()=>{ settings.restAfterWarmup=!settings.restAfterWarmup; saveSettings(); renderSettings(); };
   // Units
   $("#unitSeg").querySelectorAll("button").forEach(b=> b.onclick=()=>{ settings.units=b.dataset.u; saveSettings(); renderSettings(); if(activeTab==="today")renderToday(); });
   // Bodyweight (steps in display unit)
