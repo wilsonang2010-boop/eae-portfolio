@@ -78,9 +78,11 @@ header{
 .tab:hover{color:var(--white); background:var(--card);}
 .tab.active{color:var(--white); background:var(--blue-soft); border-color:var(--border-strong);}
 .tab .dot{width:8px; height:8px; border-radius:50%;}
+.tab-plan .dot{background:#3B82F6;}
+.tab-log .dot{background:#FB7185;}
 .tab-phys .dot{background:#38BDF8;}
 .tab-chem .dot{background:#34D399;}
-.tab-hist .dot{background:#F59E0B;}
+.tab-hist .dot{background:#A78BFA;}
 
 /* Hero intro per subject */
 .subject-hero{padding:40px 0 8px;}
@@ -198,6 +200,103 @@ header{
 .note{background:var(--blue-soft); border:1px solid var(--border-strong); border-radius:12px; padding:16px 18px; margin-top:26px; font-size:13.5px; color:var(--slate-300);}
 .note b{color:var(--white);}
 
+/* ── Planner: phase banner ─────────────────────────────────── */
+.phase-banner{
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  margin-top:26px; padding:15px 18px; border-radius:12px;
+  background:var(--blue-soft); border:1px solid var(--border-strong);
+}
+.ph-label{font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--blue-bright); font-weight:700;}
+.ph-name{font-family:var(--font-display); color:var(--white); font-size:1.06rem; font-weight:600;}
+.ph-note{font-size:13px; color:var(--slate-400);}
+
+/* ── Planner: countdown hero ───────────────────────────────── */
+.countdown{margin-top:14px; padding:26px 20px; border-radius:14px; background:var(--card); border:1px solid var(--border); text-align:center;}
+.cd-label{font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--slate-500); font-weight:700;}
+.cd-row{display:flex; justify-content:center; gap:10px; margin-top:16px; flex-wrap:wrap;}
+.cd-unit{min-width:76px; padding:12px 10px; border-radius:11px; background:var(--bg); border:1px solid var(--border);}
+.cd-num{font-family:var(--font-display); font-size:2rem; font-weight:700; color:var(--white); line-height:1; font-variant-numeric:tabular-nums;}
+.cd-cap{font-size:10.5px; letter-spacing:.11em; text-transform:uppercase; color:var(--slate-500); margin-top:7px;}
+.cd-sub{margin-top:16px; font-size:13px; color:var(--slate-400);}
+
+/* ── Planner: stat tiles + meter ───────────────────────────── */
+.stat-row{display:grid; grid-template-columns:1fr; gap:12px; margin-top:14px;}
+@media(min-width:620px){.stat-row{grid-template-columns:1fr 1fr;}}
+.tile{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px;}
+.t-label{font-size:11px; letter-spacing:.13em; text-transform:uppercase; color:var(--slate-500); font-weight:700;}
+.t-value{font-family:var(--font-display); font-size:1.85rem; font-weight:700; color:var(--white); margin-top:7px; line-height:1; font-variant-numeric:tabular-nums;}
+.t-sub{font-size:13px; color:var(--slate-400); margin-top:7px;}
+.meter{margin-top:13px; height:8px; border-radius:4px; background:var(--bg); overflow:hidden;}
+.meter-fill{height:100%; border-radius:4px; background:var(--blue-bright); transition:width .45s var(--ease);}
+.meter-fill.hit{background:var(--green);}
+
+/* ── Planner: week navigation ──────────────────────────────── */
+.week-nav{display:flex; align-items:center; gap:12px; margin-top:32px; flex-wrap:wrap;}
+.wk-title{font-family:var(--font-display); color:var(--white); font-size:1.1rem; font-weight:600;}
+.wk-sub{font-size:12.5px; color:var(--slate-500); margin-top:2px;}
+.nav-btn{width:38px; height:38px; flex-shrink:0; border-radius:10px; border:1px solid var(--border); color:var(--slate-300); display:grid; place-items:center; transition:.2s var(--ease);}
+.nav-btn:hover:not(:disabled){border-color:var(--slate-400); color:var(--white);}
+.nav-btn:disabled{opacity:.3; cursor:not-allowed;}
+.today-btn{font-size:12.5px; padding:9px 14px; border-radius:9px; border:1px solid var(--border); color:var(--slate-300); margin-left:auto;}
+.today-btn:hover{color:var(--white); border-color:var(--border-strong);}
+
+/* ── Planner: day + session rows ───────────────────────────── */
+.day{background:var(--card); border:1px solid var(--border); border-radius:12px; margin-top:12px; overflow:hidden;}
+.day.is-today{border-color:var(--blue);}
+.day-head{display:flex; align-items:center; gap:10px; padding:13px 18px; border-bottom:1px solid var(--border); flex-wrap:wrap;}
+.day-dow{font-family:var(--font-display); color:var(--white); font-weight:600; font-size:1rem;}
+.day-date{font-size:12.5px; color:var(--slate-500);}
+.day-badge{margin-left:auto; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; padding:4px 9px; border-radius:6px; font-weight:700;}
+.badge-today{background:var(--blue); color:#fff;}
+.badge-rest{background:rgba(148,163,184,.15); color:var(--slate-300);}
+.sess{display:flex; align-items:flex-start; gap:13px; padding:14px 18px; border-bottom:1px solid var(--border);}
+.sess:last-child{border-bottom:none;}
+.sess-rest{padding:16px 18px; color:var(--slate-500); font-size:14px; font-style:italic;}
+.cbx{flex-shrink:0; width:24px; height:24px; border-radius:7px; margin-top:1px; border:1.5px solid var(--border-strong); display:grid; place-items:center; color:transparent; font-size:13px; transition:.2s var(--ease);}
+.cbx:hover{border-color:var(--slate-400);}
+.sess.done .cbx{background:var(--green); border-color:var(--green); color:#04140a;}
+.sess-body{flex:1; min-width:0;}
+.sess-top{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.sess-subj{font-size:10.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; padding:3px 8px; border-radius:5px;}
+.sj-math{background:rgba(59,130,246,.18); color:#93C5FD;}
+.sj-phys{background:rgba(56,189,248,.15); color:#7DD3FC;}
+.sj-chem{background:rgba(52,211,153,.15); color:#6EE7B7;}
+.sj-eng{background:rgba(167,139,250,.18); color:#C4B5FD;}
+.sj-paper{background:rgba(251,113,133,.15); color:#FDA4AF;}
+.sess-mins{font-size:12px; color:var(--slate-500); font-variant-numeric:tabular-nums;}
+.sess-topic{margin-top:5px; color:var(--slate-100); font-size:14.5px; line-height:1.5;}
+.sess.done .sess-topic{color:var(--slate-500); text-decoration:line-through;}
+.sess-note{font-size:12.5px; color:var(--slate-500); margin-top:3px;}
+
+/* ── Error log ─────────────────────────────────────────────── */
+.log-form{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px; margin-top:22px;}
+.fld{margin-bottom:13px;}
+.fld label{display:block; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--slate-500); font-weight:700; margin-bottom:6px;}
+.fld input,.fld select,.fld textarea{width:100%; background:var(--bg); border:1px solid var(--border); color:var(--white); padding:10px 12px; border-radius:9px; font-size:14px;}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:2px solid var(--blue); outline-offset:1px;}
+.fld textarea{resize:vertical; min-height:62px; line-height:1.55;}
+.fld-row{display:grid; grid-template-columns:1fr; gap:0 13px;}
+@media(min-width:620px){.fld-row{grid-template-columns:1fr 1fr;}}
+.btn-solid{background:var(--blue); color:#fff; font-size:14px; font-weight:600; padding:11px 20px; border-radius:10px;}
+.btn-solid:hover{background:var(--blue-bright);}
+.filter-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:26px;}
+.entry{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px 18px; margin-top:12px;}
+.entry.is-due{border-color:rgba(251,113,133,.45);}
+.entry-top{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:9px;}
+.chip{display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:4px 9px; border-radius:6px; border:1px solid transparent;}
+.chip-due{background:rgba(251,113,133,.16); color:#FDA4AF; border-color:rgba(251,113,133,.4);}
+.chip-sched{background:rgba(148,163,184,.12); color:var(--slate-400); border-color:var(--border);}
+.entry-topic{font-family:var(--font-display); color:var(--white); font-weight:600; font-size:1.04rem;}
+.entry-field{margin-top:10px;}
+.ef-label{font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--slate-500); font-weight:700;}
+.entry-field p{font-size:14px; color:var(--slate-300); margin-top:3px; line-height:1.55;}
+.entry-actions{margin-top:13px; display:flex; gap:9px; flex-wrap:wrap;}
+.mini-btn{font-size:12px; padding:7px 12px; border-radius:8px; border:1px solid var(--border); color:var(--slate-300); transition:.2s var(--ease);}
+.mini-btn:hover{border-color:var(--slate-400); color:var(--white);}
+.mini-btn.danger:hover{border-color:rgba(251,113,133,.6); color:#FDA4AF;}
+.tl-item.passed .tl-date,.tl-item.passed .tl-text{opacity:.45;}
+.tl-item.target:before{background:var(--green);}
+
 .hidden{display:none !important;}
 .reset-btn{font-size:12px; color:var(--slate-500); text-decoration:underline; text-underline-offset:3px;}
 .reset-btn:hover{color:var(--slate-300);}
@@ -210,14 +309,16 @@ header{
       <div class="brand">
         <div class="brand-mark">O</div>
         <div>
-          <h1>O-Level Study Deck</h1>
-          <span>Pure Physics · Pure Chemistry · Elective History</span>
+          <h1>O-Level HQ · 2026</h1>
+          <span>Study planner · Error log · Definitions</span>
         </div>
       </div>
       <a class="home-link" href="../index.html">← Portfolio</a>
     </div>
     <nav class="tabs" id="tabs">
-      <button class="tab tab-phys active" data-subject="physics"><span class="dot"></span>Physics</button>
+      <button class="tab tab-plan active" data-subject="plan"><span class="dot"></span>Plan</button>
+      <button class="tab tab-log" data-subject="log"><span class="dot"></span>Error Log</button>
+      <button class="tab tab-phys" data-subject="physics"><span class="dot"></span>Physics</button>
       <button class="tab tab-chem" data-subject="chemistry"><span class="dot"></span>Chemistry</button>
       <button class="tab tab-hist" data-subject="history"><span class="dot"></span>History</button>
     </nav>
@@ -655,16 +756,201 @@ const HISTORY = {
 };
 
 /* ============================================================
+   PLANNER — schedule, phases, streak, error log
+   ============================================================ */
+const MATH_EXAM = new Date(2026,9,21,8,30,0);   // 21 Oct 2026 — countdown target
+const PLAN_END  = new Date(2026,10,10);          // 10 Nov 2026 — last written paper
+const WEEK_TARGET_HRS = 9;
+
+const KEY_DATES = [
+  { d:new Date(2026,8,1),   label:"English Listening Comprehension", when:"Early Sep – Oct" },
+  { d:new Date(2026,8,30),  label:"Science practical exams",         when:"30 Sep – 13 Oct · Physics & Chemistry" },
+  { d:new Date(2026,9,19),  label:"Written papers begin",            when:"19 Oct" },
+  { d:new Date(2026,9,19),  label:"English Language",                when:"19 Oct" },
+  { d:new Date(2026,9,21),  label:"Mathematics — E-Math / A-Math",   when:"21 Oct", target:true },
+  { d:new Date(2026,10,10), label:"Written papers end",              when:"10 Nov" },
+];
+
+/* Math topic sequence. 6 post-gym blocks per week. */
+const ALGEBRA = [
+  "Indices — laws, fractional & negative powers",
+  "Surds — simplifying & rationalising denominators",
+  "Quadratic equations — factorising & the formula",
+  "Discriminant — nature of roots",
+  "Simultaneous equations — linear × quadratic",
+  "Algebraic fractions — simplify, add, subtract",
+  "Completing the square — vertex form, max & min",
+  "Quadratic inequalities — sign diagrams",
+  "Polynomials — remainder theorem",
+  "Factor theorem — solving cubics",
+  "Partial fractions — proper & improper",
+  "Mixed algebra drill — 20 questions, timed",
+  "Exponential equations — same base & substitution",
+  "Logarithms — laws & equations",
+  "Modulus equations & graphs",
+  "Word problems — forming equations",
+  "Timed algebra set — full exam section",
+  "Algebra error review — redo everything logged",
+];
+const TRIG = [
+  "Sine rule — including the ambiguous case",
+  "Cosine rule — finding sides & angles",
+  "Area of triangle (½ab sin C) & bearings",
+  "Arc length & sector area (radians)",
+  "Mensuration — cone, sphere, pyramid",
+  "Mixed mensuration — volume & surface area",
+  "3D trigonometry — planes & angles",
+  "Angles of elevation & depression",
+  "Trig ratios — special angles & the unit circle",
+  "A-Math identities — Pythagorean & quotient",
+  "Proving trigonometric identities",
+  "Mixed trig drill — timed",
+  "Trig equations — solutions in a given range",
+  "Trig equations — multiple & compound angles",
+  "Double angle formulae",
+  "R-formula — a cos θ + b sin θ",
+  "R-formula — maximum, minimum & applications",
+  "Trig graphs — amplitude, period, transformations",
+];
+const PAPER_CYCLE = [
+  "Paper 1 — Section A, timed",
+  "Algebra spiral — weak-topic maintenance",
+  "Paper 1 — longer structured questions",
+  "Trigonometry spiral — weak-topic maintenance",
+  "Marking & full written corrections",
+  "Speed drill — first 10 questions in 30 min",
+];
+
+function ymd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function parseYmd(s){ const p=s.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+function midnight(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function addDays(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
+function mondayOf(d){ const x=midnight(d); x.setDate(x.getDate()-((x.getDay()+6)%7)); return x; }
+const DOW = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function fmtShort(d){ return d.getDate()+' '+MON[d.getMonth()]; }
+
+/* Plan anchor — set once on first visit so week numbers stay stable. */
+function planStart(){
+  let s = localStorage.getItem('osp-start');
+  if(!s){
+    const t = midnight(new Date());
+    const dow = (t.getDay()+6)%7;                 // Mon=0 … Sun=6
+    const m = mondayOf(t);
+    s = ymd(dow >= 4 ? addDays(m,7) : m);         // Fri/Sat/Sun → begin next Monday
+    localStorage.setItem('osp-start', s);
+  }
+  return parseYmd(s);
+}
+function restDay(){ const v = localStorage.getItem('osp-rest'); return v===null ? 0 : +v; }  // 0 = Sunday
+function gymOrder(){ // weekday numbers Mon→Sun, minus the rest day
+  return [1,2,3,4,5,6,0].filter(d=>d!==restDay());
+}
+function weekIndexOf(monday){ return Math.round((monday - planStart())/(7*864e5)) + 1; }
+
+function mathBlockFor(weekIdx, gi){
+  if(weekIdx <= 3){
+    return { subject:'A-Math', cls:'sj-math', topic: ALGEBRA[((weekIdx-1)*6+gi) % ALGEBRA.length], note:'Algebra at A-Math depth — your weak area' };
+  }
+  if(weekIdx <= 6){
+    return { subject:'A-Math', cls:'sj-math', topic: TRIG[((weekIdx-4)*6+gi) % TRIG.length], note:'Trigonometry & mensuration — your weak area' };
+  }
+  const em = (weekIdx % 2 === 1);
+  return { subject: em?'E-Math':'A-Math', cls:'sj-math', topic: PAPER_CYCLE[gi % PAPER_CYCLE.length], note:(em?'E-Math':'A-Math')+' week — alternating' };
+}
+
+/* All sessions for a given date. */
+function sessionsFor(date){
+  const wk = weekIndexOf(mondayOf(date));
+  const dow = date.getDay();
+  if(dow === restDay()) return { rest:true, sessions:[] };
+  const order = gymOrder();
+  const gi = order.indexOf(dow);
+  const out = [];
+  const m = mathBlockFor(wk, gi);
+  out.push({ key:'math', subject:'Post-gym · '+m.subject, cls:m.cls, topic:m.topic, note:m.note, mins:45 });
+  if(gi===1) out.push({ key:'phys', subject:'Physics', cls:'sj-phys', topic:'Physics revision — definitions, then practice questions', note:'Use the Physics tab to drill definitions first', mins:45 });
+  if(gi===2) out.push({ key:'chem', subject:'Chemistry', cls:'sj-chem', topic:'Chemistry revision — definitions, then practice questions', note:'Use the Chemistry tab to drill definitions first', mins:45 });
+  if(gi===3) out.push({ key:'eng',  subject:'English',   cls:'sj-eng',  topic:'English — comprehension, summary or situational writing', note:'Rotate skills each week; add listening practice from Sep', mins:45 });
+  if(gi===5){
+    const paper = wk<=3 ? 'Extended algebra practice — past-paper section'
+                : wk<=6 ? 'Extended trigonometry practice — past-paper section'
+                : 'Full timed paper — ' + ((wk%2===1)?'E-Math':'A-Math') + ' Paper 1';
+    out.push({ key:'paper', subject:'Timed paper', cls:'sj-paper', topic:paper, note:'135 min — exactly one full O-Level paper', mins:135 });
+  }
+  return { rest:false, sessions:out };
+}
+
+function sessId(date, key){ return ymd(date)+'|'+key; }
+function doneSet(){ try{ return new Set(JSON.parse(localStorage.getItem('osp-done')||'[]')); }catch(e){ return new Set(); } }
+function saveDone(s){ localStorage.setItem('osp-done', JSON.stringify([...s])); }
+function isDone(id){ return doneSet().has(id); }
+function toggleDone(id){ const s=doneSet(); s.has(id)?s.delete(id):s.add(id); saveDone(s); }
+
+/* Overall phase from the calendar month. */
+function currentPhase(){
+  const now = new Date();
+  if(now < new Date(2026,8,1))  return { name:'Topical revision', note:'Build the weak topics now — algebra, then trigonometry.' };
+  if(now < new Date(2026,9,1))  return { name:'Prelims / timed papers', note:'Shift to full papers under exam timing.' };
+  return { name:'Final review — no new material', note:'Only revisit what you already know. Redo logged errors.' };
+}
+
+/* Streak: consecutive post-gym math blocks completed. Today pending doesn't break it. */
+function mathStreak(){
+  const today = midnight(new Date());
+  const done = doneSet();
+  let d = new Date(planStart());
+  const days = [];
+  while(d <= today){
+    if(d.getDay() !== restDay()) days.push(new Date(d));
+    d = addDays(d,1);
+  }
+  let n = 0;
+  for(let i=days.length-1; i>=0; i--){
+    const id = sessId(days[i],'math');
+    if(done.has(id)){ n++; continue; }
+    if(ymd(days[i]) === ymd(today)) continue;  // today still open
+    break;
+  }
+  return n;
+}
+
+/* Weekly completed hours vs the 9-hour target. */
+function weekStats(monday){
+  const done = doneSet();
+  let total=0, doneMins=0, doneCount=0, count=0;
+  for(let i=0;i<7;i++){
+    const d = addDays(monday,i);
+    sessionsFor(d).sessions.forEach(s=>{
+      total += s.mins; count++;
+      if(done.has(sessId(d,s.key))){ doneMins += s.mins; doneCount++; }
+    });
+  }
+  return { total, doneMins, doneCount, count };
+}
+
+/* ---- Error log ---- */
+function subjClass(s){
+  return { 'E-Math':'sj-math','A-Math':'sj-math','Physics':'sj-phys',
+           'Chemistry':'sj-chem','English':'sj-eng','History':'sj-paper' }[s] || 'sj-math';
+}
+function getLog(){ try{ return JSON.parse(localStorage.getItem('osp-log')||'[]'); }catch(e){ return []; } }
+function saveLog(a){ localStorage.setItem('osp-log', JSON.stringify(a)); }
+
+/* ============================================================
    APP LOGIC
    ============================================================ */
 const DATA = { physics:PHYSICS, chemistry:CHEMISTRY, history:HISTORY };
 const app = document.getElementById('app');
 let state = {
-  subject:'physics',
+  subject:'plan',
   mode:'flashcard',   // 'flashcard' | 'quiz'
   topic:'all',
   query:'',
+  weekOffset:0,       // weeks from the current week
+  logFilter:'all',
 };
+let cdTimer = null;
 
 /* localStorage: known cards */
 function knownKey(sub){ return 'osd-known-'+sub; }
@@ -694,9 +980,258 @@ function matches(card, q){
 }
 
 function render(){
+  if(cdTimer){ clearInterval(cdTimer); cdTimer = null; }
+  if(state.subject==='plan'){ renderPlan(); return; }
+  if(state.subject==='log'){ renderLog(); return; }
   if(state.subject==='history'){ renderHistory(); return; }
   renderDeck(DATA[state.subject]);
   window.scrollTo({top:0, behavior:'instant'});
+}
+
+/* ---- Plan view ---- */
+function renderPlan(){
+  if(cdTimer){ clearInterval(cdTimer); cdTimer = null; }
+  const phase = currentPhase();
+  const today = midnight(new Date());
+  const base = mondayOf(today) < planStart() ? planStart() : mondayOf(today);
+  const monday = addDays(base, state.weekOffset*7);
+  const wkIdx = weekIndexOf(monday);
+  const st = weekStats(monday);
+  const hrs = st.doneMins/60;
+  const pct = Math.min(100, (hrs/WEEK_TARGET_HRS)*100);
+  const streak = mathStreak();
+  const lastMonday = mondayOf(PLAN_END);
+
+  let days = '';
+  for(let i=0;i<7;i++){
+    const d = addDays(monday,i);
+    const isToday = ymd(d)===ymd(today);
+    const info = sessionsFor(d);
+    let rows = '';
+    if(info.rest){
+      rows = `<div class="sess-rest">Rest day — no study, or light review only.</div>`;
+    } else {
+      rows = info.sessions.map(s=>{
+        const id = sessId(d, s.key);
+        const done = isDone(id);
+        return `<div class="sess ${done?'done':''}">
+          <button class="cbx" data-sess="${id}" role="checkbox" aria-checked="${done}" aria-label="Mark ${esc(s.subject)} session complete">✓</button>
+          <div class="sess-body">
+            <div class="sess-top">
+              <span class="sess-subj ${s.cls}">${esc(s.subject)}</span>
+              <span class="sess-mins">${s.mins} min</span>
+            </div>
+            <div class="sess-topic">${esc(s.topic)}</div>
+            <div class="sess-note">${esc(s.note)}</div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    days += `<div class="day ${isToday?'is-today':''}">
+      <div class="day-head">
+        <span class="day-dow">${DOW[d.getDay()]}</span>
+        <span class="day-date">${fmtShort(d)}</span>
+        ${isToday?'<span class="day-badge badge-today">Today</span>':(info.rest?'<span class="day-badge badge-rest">Rest</span>':'')}
+      </div>${rows}</div>`;
+  }
+
+  const keyRows = KEY_DATES.map(k=>{
+    const passed = k.d < today;
+    return `<div class="tl-item ${passed?'passed':''} ${k.target?'target':''}">
+      <div class="tl-date">${esc(k.when)}</div>
+      <div class="tl-text">${esc(k.label)}${k.target?' — countdown target':''}</div>
+    </div>`;
+  }).join('');
+
+  app.innerHTML = `
+  <section class="subject-hero">
+    <span class="eyebrow">2026 GCE O-Level · Singapore</span>
+    <h2>Study Plan</h2>
+    <p>E-Math · A-Math · Physics · Chemistry · English — built around 6 gym days a week, a mandatory post-gym math block, and a ${WEEK_TARGET_HRS}-hour weekly target.</p>
+  </section>
+
+  <div class="phase-banner">
+    <span class="ph-label">Phase</span>
+    <span class="ph-name">${esc(phase.name)}</span>
+    <span class="ph-note">${esc(phase.note)}</span>
+  </div>
+
+  <div class="countdown">
+    <div class="cd-label">Countdown to Mathematics · 21 Oct 2026</div>
+    <div class="cd-row" id="cd-row"></div>
+    <div class="cd-sub" id="cd-sub"></div>
+  </div>
+
+  <div class="stat-row">
+    <div class="tile">
+      <div class="t-label">This week · hours completed</div>
+      <div class="t-value">${hrs.toFixed(2).replace(/\.?0+$/,'')} <span style="font-size:1rem;color:var(--slate-500);">/ ${WEEK_TARGET_HRS} hr</span></div>
+      <div class="meter"><div class="meter-fill ${pct>=100?'hit':''}" style="width:${pct}%"></div></div>
+      <div class="t-sub">${st.doneCount} of ${st.count} sessions done · ${(st.total/60).toFixed(2).replace(/\.?0+$/,'')} hr scheduled</div>
+    </div>
+    <div class="tile">
+      <div class="t-label">Post-gym math streak</div>
+      <div class="t-value">${streak} <span style="font-size:1rem;color:var(--slate-500);">day${streak===1?'':'s'}</span></div>
+      <div class="t-sub">${streak===0?'Tick today’s math block to start a streak.':'Consecutive post-gym math blocks completed.'}</div>
+    </div>
+  </div>
+
+  <div class="week-nav">
+    <button class="nav-btn" id="wk-prev" aria-label="Previous week" ${monday<=mondayOf(planStart())?'disabled':''}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <div>
+      <div class="wk-title">Week ${wkIdx}</div>
+      <div class="wk-sub">${fmtShort(monday)} – ${fmtShort(addDays(monday,6))} · ${wkIdx<=3?'Algebra focus':wkIdx<=6?'Trigonometry focus':'Timed papers'}</div>
+    </div>
+    <button class="nav-btn" id="wk-next" aria-label="Next week" ${monday>=lastMonday?'disabled':''}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+    ${state.weekOffset!==0?'<button class="today-btn" id="wk-today">Jump to this week</button>':''}
+  </div>
+
+  ${days}
+
+  <div class="ch-section" style="margin-top:44px;">
+    <h4>Key exam dates</h4>
+    <div class="timeline">${keyRows}</div>
+  </div>
+
+  <div class="note" style="margin-top:30px;">
+    <b>Rest day:</b> currently ${DOW[restDay()]}.
+    <select id="rest-sel" style="margin-left:8px; background:var(--bg); border:1px solid var(--border); color:var(--white); padding:6px 10px; border-radius:8px; font-size:13px;">
+      ${DOW.map((n,i)=>`<option value="${i}" ${i===restDay()?'selected':''}>${n}</option>`).join('')}
+    </select>
+    <div style="margin-top:8px; color:var(--slate-400);">The other six days are gym days, each with a post-gym math block.</div>
+  </div>
+  ` + footerHTML();
+
+  // Countdown ticks live
+  function tick(){
+    const row = document.getElementById('cd-row'); if(!row) return;
+    let ms = MATH_EXAM - new Date();
+    const sub = document.getElementById('cd-sub');
+    if(ms <= 0){ row.innerHTML = '<div class="cd-unit"><div class="cd-num">0</div><div class="cd-cap">Go time</div></div>'; sub.textContent='Good luck.'; return; }
+    const dd = Math.floor(ms/864e5), hh = Math.floor(ms/36e5)%24, mm = Math.floor(ms/6e4)%60, ss = Math.floor(ms/1e3)%60;
+    row.innerHTML = [[dd,'Days'],[hh,'Hours'],[mm,'Min'],[ss,'Sec']]
+      .map(u=>`<div class="cd-unit"><div class="cd-num">${u[0]}</div><div class="cd-cap">${u[1]}</div></div>`).join('');
+    sub.textContent = Math.ceil(dd/7) + ' weeks of study left · ' + (dd*WEEK_TARGET_HRS/7).toFixed(0) + ' planned hours remaining';
+  }
+  tick(); cdTimer = setInterval(tick, 1000);
+
+  app.querySelectorAll('[data-sess]').forEach(b=>{
+    b.addEventListener('click', ()=>{ toggleDone(b.dataset.sess); renderPlan(); });
+  });
+  const prev=document.getElementById('wk-prev'), next=document.getElementById('wk-next'), tdy=document.getElementById('wk-today');
+  if(prev) prev.addEventListener('click', ()=>{ state.weekOffset--; renderPlan(); });
+  if(next) next.addEventListener('click', ()=>{ state.weekOffset++; renderPlan(); });
+  if(tdy)  tdy.addEventListener('click', ()=>{ state.weekOffset=0; renderPlan(); });
+  const rs = document.getElementById('rest-sel');
+  if(rs) rs.addEventListener('change', ()=>{ localStorage.setItem('osp-rest', rs.value); renderPlan(); });
+}
+
+/* ---- Error log view ---- */
+function renderLog(){
+  const today = midnight(new Date());
+  const entries = getLog().slice().sort((a,b)=> a.redo.localeCompare(b.redo));
+  const subjects = ['E-Math','A-Math','Physics','Chemistry','English','History'];
+  const filters = ['all', ...subjects];
+  const shown = entries.filter(e=> state.logFilter==='all' || e.subject===state.logFilter);
+  const dueCount = entries.filter(e=> parseYmd(e.redo) <= today && !e.redone).length;
+
+  const list = shown.length ? shown.map(e=>{
+    const due = parseYmd(e.redo) <= today && !e.redone;
+    return `<div class="entry ${due?'is-due':''}">
+      <div class="entry-top">
+        <span class="sess-subj ${subjClass(e.subject)}">${esc(e.subject)}</span>
+        <span class="entry-topic">${esc(e.topic)}</span>
+        ${e.redone
+          ? `<span class="chip chip-sched">✓ Re-attempted</span>`
+          : due
+            ? `<span class="chip chip-due">↻ Re-attempt due</span>`
+            : `<span class="chip chip-sched">↻ Re-attempt ${fmtShort(parseYmd(e.redo))}</span>`}
+      </div>
+      <div class="entry-field"><div class="ef-label">What went wrong</div><p>${esc(e.mistake)}</p></div>
+      <div class="entry-field"><div class="ef-label">Correct method</div><p>${esc(e.method)}</p></div>
+      <div class="entry-actions">
+        <button class="mini-btn" data-redone="${e.id}">${e.redone?'Mark not done':'Mark re-attempted'}</button>
+        <button class="mini-btn danger" data-del="${e.id}">Delete</button>
+      </div>
+      <div class="t-sub" style="margin-top:9px;font-size:12px;">Logged ${fmtShort(parseYmd(e.date))}</div>
+    </div>`;
+  }).join('') : `<div class="empty">No entries yet. Log a mistake above and it will schedule its own re-attempt.</div>`;
+
+  app.innerHTML = `
+  <section class="subject-hero">
+    <span class="eyebrow">Mistakes you only want to make once</span>
+    <h2>Error Log</h2>
+    <p>Log every mistake with the correct method. Each entry automatically schedules a re-attempt <b>4 days later</b>${dueCount?` — <b style="color:#FDA4AF">${dueCount} due now</b>`:''}.</p>
+  </section>
+
+  <form class="log-form" id="log-form">
+    <div class="fld-row">
+      <div class="fld">
+        <label for="f-subject">Subject</label>
+        <select id="f-subject">${subjects.map(s=>`<option>${s}</option>`).join('')}</select>
+      </div>
+      <div class="fld">
+        <label for="f-topic">Topic</label>
+        <input id="f-topic" type="text" placeholder="e.g. R-formula" required />
+      </div>
+    </div>
+    <div class="fld">
+      <label for="f-mistake">What went wrong</label>
+      <textarea id="f-mistake" placeholder="e.g. Used tan instead of the R-formula, lost the sign on b" required></textarea>
+    </div>
+    <div class="fld">
+      <label for="f-method">Correct method</label>
+      <textarea id="f-method" placeholder="e.g. R = √(a²+b²), tan α = b/a with α acute, then write as R cos(θ−α)" required></textarea>
+    </div>
+    <div class="fld">
+      <label for="f-date">Date</label>
+      <input id="f-date" type="date" value="${ymd(today)}" required />
+    </div>
+    <button class="btn-solid" type="submit">Add to log</button>
+  </form>
+
+  <div class="filter-row">
+    ${filters.map(f=>`<button class="topic-pill ${state.logFilter===f?'active':''}" data-filter="${f}">${f==='all'?'All subjects':f}</button>`).join('')}
+  </div>
+
+  <div style="margin-top:6px;">${list}</div>
+  ` + footerHTML();
+
+  document.getElementById('log-form').addEventListener('submit', ev=>{
+    ev.preventDefault();
+    const date = document.getElementById('f-date').value;
+    const arr = getLog();
+    arr.push({
+      id: 'e'+Date.now(),
+      subject: document.getElementById('f-subject').value,
+      topic:   document.getElementById('f-topic').value.trim(),
+      mistake: document.getElementById('f-mistake').value.trim(),
+      method:  document.getElementById('f-method').value.trim(),
+      date,
+      redo:    ymd(addDays(parseYmd(date), 4)),
+      redone:  false,
+    });
+    saveLog(arr); renderLog();
+  });
+  app.querySelectorAll('[data-filter]').forEach(b=>{
+    b.addEventListener('click', ()=>{ state.logFilter=b.dataset.filter; renderLog(); });
+  });
+  app.querySelectorAll('[data-redone]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const arr=getLog(); const e=arr.find(x=>x.id===b.dataset.redone);
+      if(e){ e.redone=!e.redone; saveLog(arr); renderLog(); }
+    });
+  });
+  app.querySelectorAll('[data-del]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      if(!confirm('Delete this entry?')) return;
+      saveLog(getLog().filter(x=>x.id!==b.dataset.del)); renderLog();
+    });
+  });
 }
 
 /* ---- Physics / Chemistry deck ---- */
@@ -872,10 +1407,11 @@ function footerHTML(){
   return `
   <div class="foot">
     <div class="note">
-      <b>Study smart:</b> These notes follow the Singapore O-Level 2026 syllabuses (Pure Physics 6091, Pure Chemistry 6092, Elective History — Express). Definitions are written the way examiners award marks, but always cross-check with your own school notes and the official SEAB syllabus before your exam.
+      <b>Check before you trust it:</b> Definitions follow the Singapore O-Level 2026 syllabuses (Pure Physics 6091, Pure Chemistry 6092, Elective History — Express) and are phrased the way examiners award marks — but cross-check them against your own school notes and the official SEAB syllabus.
+      <div style="margin-top:9px;">The exam dates here were taken from your brief, not from an official source. <b>Confirm every date against the official SEAB / MOE examination timetable</b> before planning around it.</div>
     </div>
-    <p style="margin-top:22px;">Built as a personal revision tool · Physics · Chemistry · History</p>
-    <p>Your "learnt" progress is saved in this browser only.</p>
+    <p style="margin-top:22px;">Personal study tool · Plan · Error log · Physics · Chemistry · History</p>
+    <p>Your schedule, error log and "learnt" progress are saved in this browser only — clearing site data will erase them.</p>
   </div>`;
 }
 
