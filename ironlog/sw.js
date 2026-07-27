@@ -1,7 +1,7 @@
 /* IronLog — offline service worker.
    The app is fully self-contained (single index.html + icons). We cache the
    shell and assets so the app works with no network. Bump CACHE on release. */
-const CACHE = "ironlog-v1";
+const CACHE = "ironlog-v3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -23,6 +23,18 @@ self.addEventListener("activate", e => {
     caches.keys()
       .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
+  );
+});
+
+// Tapping the "rest complete" notification focuses the app instead of
+// opening a second copy of it.
+self.addEventListener("notificationclick", e => {
+  e.notification.close();
+  e.waitUntil(
+    self.clients.matchAll({ type:"window", includeUncontrolled:true }).then(list => {
+      for (const c of list){ if ("focus" in c) return c.focus(); }
+      if (self.clients.openWindow) return self.clients.openWindow("./");
+    })
   );
 });
 

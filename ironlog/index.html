@@ -71,6 +71,14 @@ input{font-family:inherit}
 .brand h1{font-size:20px;font-weight:800;letter-spacing:-.02em;margin:0}
 .brand .sub{margin-left:auto;text-align:right;font-size:12px;color:var(--muted);line-height:1.25}
 .brand .sub b{color:var(--text);font-weight:600;display:block;font-size:13px}
+.rest-launch{
+  width:38px;height:38px;border-radius:12px;flex:0 0 auto;margin-left:12px;
+  background:var(--panel-2);border:1px solid var(--border);display:grid;place-items:center;
+  transition:transform .12s,border-color .2s;
+}
+.rest-launch svg{width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:2}
+.rest-launch:active{transform:scale(.92)}
+.rest-launch:active svg{stroke:var(--accent)}
 
 /* ---------- Views ---------- */
 .view{padding:6px 16px 20px;animation:fade .28s ease}
@@ -151,6 +159,50 @@ input{font-family:inherit}
 }
 .field.reps input{width:34px;text-align:center}
 .field .u{font-size:12px;color:var(--muted);margin-left:5px;font-weight:600}
+/* Weight/reps are buttons, not text inputs: they open the in-app keypad so
+   iOS never opens its keyboard (which is what triggers "Undo Typing" on shake). */
+.field .val{
+  min-width:52px;text-align:right;font-size:16px;font-weight:700;color:var(--text);
+  font-variant-numeric:tabular-nums;
+}
+.field.reps .val{min-width:34px;text-align:center}
+.field .val.empty{color:var(--muted-2)}
+.field:disabled{opacity:.6}
+.field.tapped{border-color:var(--accent)}
+
+/* ---------- Numeric keypad ---------- */
+.kp-overlay{
+  position:fixed;inset:0;z-index:96;background:rgba(4,5,8,.72);backdrop-filter:blur(6px);
+  display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .24s;
+}
+.kp-overlay.show{opacity:1;pointer-events:auto}
+.keypad{
+  width:100%;max-width:520px;background:var(--panel);border:1px solid var(--border);
+  border-radius:26px 26px 0 0;padding:18px 16px calc(16px + var(--safe-b));
+  transform:translateY(26px);transition:transform .3s cubic-bezier(.22,1,.36,1);
+}
+.kp-overlay.show .keypad{transform:none}
+.kp-head{display:flex;align-items:flex-end;gap:12px;margin-bottom:14px;padding:0 4px}
+.kp-label{font-size:12.5px;color:var(--muted);font-weight:600}
+.kp-value{font-size:34px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.1}
+.kp-value small{font-size:16px;color:var(--muted);font-weight:700;margin-left:3px}
+.kp-done{
+  margin-left:auto;background:var(--accent);color:#04120a;font-weight:800;font-size:15px;
+  padding:12px 22px;border-radius:13px;
+}
+.kp-quick{display:flex;gap:8px;margin-bottom:10px}
+.kp-quick button{
+  flex:1;padding:11px 0;border-radius:12px;background:var(--panel-2);border:1px solid var(--border);
+  font-size:14px;font-weight:700;color:var(--muted);
+}
+.kp-quick button:active{border-color:var(--accent);color:var(--text)}
+.kp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kp-grid button{
+  padding:16px 0;border-radius:14px;background:var(--panel-2);border:1px solid var(--border);
+  font-size:22px;font-weight:700;transition:transform .1s,background .15s;
+}
+.kp-grid button:active{transform:scale(.95);background:var(--panel-3)}
+.kp-grid button.wide{grid-column:span 1}
 .note-btn{
   font-size:12px;color:var(--muted);background:var(--panel-2);border:1px solid var(--border);
   border-radius:10px;height:40px;padding:0 10px;font-weight:600;white-space:nowrap;
@@ -203,17 +255,21 @@ input{font-family:inherit}
 }
 
 /* ---------- Rest timer sheet ---------- */
+/* z-index sits above the modal overlay (80) so the timer is still visible
+   while a past workout is open for editing. */
+/* Sits just above the bottom nav rather than over it, so tabs stay reachable
+   during a 2:30 rest. */
 .rest-timer{
-  position:fixed;left:0;right:0;bottom:0;z-index:60;
-  transform:translateY(120%);transition:transform .38s cubic-bezier(.22,1,.36,1);
+  position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + var(--safe-b));z-index:85;
+  transform:translateY(140%);transition:transform .38s cubic-bezier(.22,1,.36,1);
   pointer-events:none;
 }
 .rest-timer.show{transform:translateY(0);pointer-events:auto}
 .rest-timer-inner{
   max-width:520px;margin:0 auto;
-  background:var(--panel);border:1px solid var(--border);border-bottom:none;
-  border-radius:26px 26px 0 0;padding:18px 20px calc(20px + var(--safe-b));
-  box-shadow:0 -20px 50px -20px rgba(0,0,0,.8);
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:26px 26px 0 0;padding:18px 20px 18px;
+  box-shadow:0 -20px 50px -20px rgba(0,0,0,.85);
 }
 .rt-top{display:flex;align-items:center;gap:16px;margin-bottom:16px}
 .rt-ring{width:78px;height:78px;flex:0 0 auto;position:relative}
@@ -363,6 +419,9 @@ input{font-family:inherit}
       </span>
       <h1>IronLog</h1>
       <div class="sub"><b id="topDay">—</b><span id="topDate">—</span></div>
+      <button class="rest-launch" id="manualTimer" aria-label="Start rest timer" title="Start rest timer">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.2 2.2M9.5 2.5h5" stroke-linecap="round"/></svg>
+      </button>
     </div>
   </header>
 
@@ -423,6 +482,21 @@ input{font-family:inherit}
   </button>
 </nav>
 
+<!-- In-app numeric keypad (keeps the OS keyboard, and iOS shake-to-undo, out of the way) -->
+<div class="kp-overlay" id="kpOverlay">
+  <div class="keypad">
+    <div class="kp-head">
+      <div>
+        <div class="kp-label" id="kpLabel">—</div>
+        <div class="kp-value"><span id="kpValue">0</span><small id="kpUnit">kg</small></div>
+      </div>
+      <button class="kp-done" id="kpDone">Done</button>
+    </div>
+    <div class="kp-quick" id="kpQuick"></div>
+    <div class="kp-grid" id="kpGrid"></div>
+  </div>
+</div>
+
 <div class="overlay" id="overlay"><div class="sheet" id="sheet"></div></div>
 <div class="toast" id="toast"></div>
 
@@ -476,6 +550,8 @@ const ACCENTS = {
 const DEFAULT_SETTINGS = {
   restSec: 150, units: "kg", accent: "green", amoled: false,
   reminders: false, sound: true, vibrate: true, bodyKg: 70,
+  // Which kinds of set auto-start the rest timer. Working sets always do.
+  restAfterPlyo: true, restAfterWarmup: false,
 };
 
 /* ---------- Storage ---------- */
@@ -483,7 +559,7 @@ const LS = {
   get(k, d){ try { const v = localStorage.getItem(k); return v==null? d : JSON.parse(v); } catch(e){ return d; } },
   set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} },
 };
-const K_SET = "IL_SETTINGS", K_HIST = "IL_HISTORY", K_CUR = "IL_CURRENT";
+const K_SET = "IL_SETTINGS", K_HIST = "IL_HISTORY", K_CUR = "IL_CURRENT", K_TIMER = "IL_TIMER";
 
 let settings = Object.assign({}, DEFAULT_SETTINGS, LS.get(K_SET, {}));
 let history  = LS.get(K_HIST, {});   // { "YYYY-MM-DD": workout }
@@ -663,14 +739,14 @@ function exerciseCard(ex, w, editable){
         <div class="set-top">
           <span class="set-label${isWarm?" warm":""}">${label}</span>
           <div class="set-inputs">
-            <div class="field">
-              <input class="w" type="number" inputmode="decimal" step="0.5" placeholder="0"${editable?"":" disabled"} value="${set.weightKg!=null?toDisplay(set.weightKg):""}">
+            <button class="field wbtn"${editable?"":" disabled"} aria-label="Weight">
+              <span class="val${set.weightKg==null?" empty":""}">${set.weightKg!=null?toDisplay(set.weightKg):"0"}</span>
               <span class="u">${unitLabel()}</span>
-            </div>
-            <div class="field reps">
-              <input class="r" type="number" inputmode="numeric" step="1" placeholder="${ex.reps}"${editable?"":" disabled"} value="${set.reps!=null?set.reps:""}">
+            </button>
+            <button class="field reps rbtn"${editable?"":" disabled"} aria-label="Reps">
+              <span class="val${set.reps==null?" empty":""}">${set.reps!=null?set.reps:ex.reps}</span>
               <span class="u">rp</span>
-            </div>
+            </button>
             <button class="note-btn${set.note?" has":""}"${editable?"":" disabled"}>${set.note?"✎":"＋"}</button>
           </div>
         </div>
@@ -691,12 +767,41 @@ function exerciseCard(ex, w, editable){
       card.classList.toggle("complete", ex.sets.every(s=>s.done));
       updateProgress(w);
       saveCurrentOrHistory(w);
-      if (set.done && set.kind==="working" && !ex.plyo) startRest(ex.name);
+      if (set.done && shouldRest(ex, set)) startRest(ex.name);
     });
-    const wInput = setEl.querySelector(".w");
-    wInput.addEventListener("change", ()=>{ set.weightKg = fromDisplay(wInput.value); saveCurrentOrHistory(w); });
-    const rInput = setEl.querySelector(".r");
-    rInput.addEventListener("change", ()=>{ const v=parseInt(rInput.value,10); set.reps = isNaN(v)?null:v; saveCurrentOrHistory(w); });
+    const wBtn = setEl.querySelector(".wbtn"), wVal = wBtn.querySelector(".val");
+    wBtn.addEventListener("click", ()=>{
+      if(!editable) return;
+      openKeypad({
+        title: `${ex.name} · ${label}`,
+        unit: unitLabel(),
+        decimals: true,
+        value: set.weightKg!=null ? toDisplay(set.weightKg) : "",
+        onCommit(v){
+          set.weightKg = v==="" ? null : fromDisplay(v);
+          wVal.textContent = set.weightKg!=null ? toDisplay(set.weightKg) : "0";
+          wVal.classList.toggle("empty", set.weightKg==null);
+          saveCurrentOrHistory(w);
+        }
+      });
+    });
+    const rBtn = setEl.querySelector(".rbtn"), rVal = rBtn.querySelector(".val");
+    rBtn.addEventListener("click", ()=>{
+      if(!editable) return;
+      openKeypad({
+        title: `${ex.name} · ${label}`,
+        unit: "reps",
+        decimals: false,
+        value: set.reps!=null ? set.reps : "",
+        onCommit(v){
+          const n = parseInt(v,10);
+          set.reps = isNaN(n) ? null : n;
+          rVal.textContent = set.reps!=null ? set.reps : ex.reps;
+          rVal.classList.toggle("empty", set.reps==null);
+          saveCurrentOrHistory(w);
+        }
+      });
+    });
     const noteBtn = setEl.querySelector(".note-btn");
     noteBtn.addEventListener("click", ()=>{ if(!editable) return; noteRow.hidden=!noteRow.hidden; if(!noteRow.hidden) noteRow.querySelector("input").focus(); });
     const noteInput = noteRow.querySelector(".note");
@@ -763,33 +868,174 @@ function showSummary(w){
 }
 
 /* ============================================================
+   NUMERIC KEYPAD
+   Weight/reps entry never uses a real <input>, so iOS never opens its
+   keyboard and never builds a typing-undo stack — which is what makes
+   "Undo Typing" pop up when the phone is shaken mid-workout.
+   ============================================================ */
+let kp = null; // { buf, decimals, onCommit, fresh }
+
+function openKeypad(opts){
+  kp = { buf: String(opts.value==null?"":opts.value), decimals:!!opts.decimals, onCommit:opts.onCommit, fresh:true };
+  $("#kpLabel").textContent = opts.title || "";
+  $("#kpUnit").textContent = opts.unit || "";
+  const steps = opts.decimals ? [-5,-2.5,2.5,5] : [-2,-1,1,2];
+  $("#kpQuick").innerHTML = steps.map(s=>`<button data-adj="${s}">${s>0?"+":"−"}${Math.abs(s)}</button>`).join("");
+  const keys = ["1","2","3","4","5","6","7","8","9", opts.decimals?".":"C", "0", "⌫"];
+  $("#kpGrid").innerHTML = keys.map(k=>`<button data-k="${k}">${k}</button>`).join("");
+  $("#kpQuick").querySelectorAll("button").forEach(b=> b.onclick = ()=> kpAdjust(parseFloat(b.dataset.adj)));
+  $("#kpGrid").querySelectorAll("button").forEach(b=> b.onclick = ()=> kpKey(b.dataset.k));
+  kpRender();
+  $("#kpOverlay").classList.add("show");
+}
+function kpRender(){
+  const v = kp.buf === "" ? "0" : kp.buf;
+  $("#kpValue").textContent = v;
+}
+function kpKey(k){
+  if (!kp) return;
+  if (k === "⌫"){ kp.buf = kp.buf.slice(0,-1); }
+  else if (k === "C"){ kp.buf = ""; }
+  else if (k === "."){
+    if (kp.fresh){ kp.buf = "0"; kp.fresh = false; }
+    if (!kp.buf.includes(".")) kp.buf = (kp.buf===""?"0":kp.buf) + ".";
+  } else {
+    // First digit replaces the pre-filled value rather than appending to it.
+    if (kp.fresh){ kp.buf = ""; kp.fresh = false; }
+    if (kp.buf.replace(".","").length < 6) kp.buf += k;
+  }
+  kp.fresh = false;
+  kpRender();
+}
+function kpAdjust(delta){
+  if (!kp) return;
+  const cur = parseFloat(kp.buf || "0") || 0;
+  let next = cur + delta;
+  if (next < 0) next = 0;
+  if (!kp.decimals) next = Math.round(next);
+  kp.buf = String(+(Math.round(next*100)/100));
+  kp.fresh = false;
+  kpRender();
+}
+function closeKeypad(commit){
+  if (kp && commit && kp.onCommit){
+    const raw = kp.buf.replace(/\.$/,"");
+    kp.onCommit(raw === "" ? "" : String(+raw));
+  }
+  kp = null;
+  $("#kpOverlay").classList.remove("show");
+}
+$("#kpDone").onclick = ()=> closeKeypad(true);
+$("#kpOverlay").addEventListener("click", e=>{ if (e.target.id === "kpOverlay") closeKeypad(true); });
+
+/* ============================================================
    REST TIMER
    ============================================================ */
-const timer = { total:0, remaining:0, running:false, iv:null, exercise:"" };
+/* The countdown is driven off wall-clock time (endAt), not by counting
+   interval ticks — mobile browsers throttle or freeze timers when the screen
+   locks or the app is backgrounded, which would otherwise stall the count. */
+const timer = { total:0, remaining:0, endAt:0, running:false, iv:null, to:null, exercise:"", finished:false };
 const RT_CIRC = 2 * Math.PI * 34; // 213.6
+
+// Working sets always rest; warm-ups and plyometrics follow their settings.
+function shouldRest(ex, set){
+  if (set.kind === "warmup") return !!settings.restAfterWarmup;
+  if (ex.plyo) return !!settings.restAfterPlyo;
+  return true;
+}
 
 function startRest(exerciseName){
   timer.total = settings.restSec;
   timer.remaining = settings.restSec;
+  timer.endAt = Date.now() + timer.total*1000;
   timer.exercise = exerciseName || "";
   timer.running = true;
+  timer.finished = false;
   $("#rtSub").textContent = exerciseName ? `After ${exerciseName}` : "Recovering…";
   $("#restTimer").classList.add("show");
   $("#rtPause").textContent = "Pause";
   tickRender();
+  startLoop();
+  persistTimer();
+  acquireWake();
+}
+function startLoop(){
   clearInterval(timer.iv);
-  timer.iv = setInterval(tick, 1000);
+  // 250ms so the display re-syncs quickly after the tab wakes back up.
+  timer.iv = setInterval(tick, 250);
+  // A timeout aimed at the exact finish moment, in case the interval is
+  // throttled while the app sits in the background.
+  clearTimeout(timer.to);
+  if (timer.running) timer.to = setTimeout(tick, Math.max(0, timer.endAt - Date.now()) + 60);
+}
+function stopLoop(){ clearInterval(timer.iv); timer.iv = null; clearTimeout(timer.to); timer.to = null; }
+
+/* The countdown is stored so that closing the app — or the OS discarding the
+   page — doesn't lose it. On reopen we recompute from the saved end time. */
+function persistTimer(){
+  if (timer.running || (timer.remaining > 0 && !timer.finished)){
+    LS.set(K_TIMER, { total:timer.total, endAt:timer.endAt, remaining:timer.remaining,
+                      running:timer.running, exercise:timer.exercise });
+  } else {
+    try{ localStorage.removeItem(K_TIMER); }catch(e){}
+  }
+}
+function restoreTimer(){
+  const s = LS.get(K_TIMER, null);
+  if (!s) return;
+  timer.total = s.total || settings.restSec;
+  timer.exercise = s.exercise || "";
+  timer.finished = false;
+  $("#rtSub").textContent = timer.exercise ? `After ${timer.exercise}` : "Recovering…";
+  if (s.running){
+    const rem = Math.round((s.endAt - Date.now())/1000);
+    if (rem <= 0){ try{ localStorage.removeItem(K_TIMER); }catch(e){} return; } // elapsed while away
+    timer.endAt = s.endAt; timer.remaining = rem; timer.running = true;
+    $("#rtPause").textContent = "Pause";
+    $("#restTimer").classList.add("show");
+    tickRender(); startLoop(); acquireWake();
+  } else {
+    timer.remaining = s.remaining || 0;
+    if (timer.remaining <= 0) return;
+    timer.running = false;
+    $("#rtPause").textContent = "Resume";
+    $("#restTimer").classList.add("show");
+    tickRender();
+  }
+}
+
+/* Keep the screen on while resting so the phone doesn't sleep mid-countdown. */
+let wakeLock = null;
+async function acquireWake(){
+  try{
+    if ("wakeLock" in navigator && !wakeLock){
+      wakeLock = await navigator.wakeLock.request("screen");
+      wakeLock.addEventListener("release", ()=>{ wakeLock = null; });
+    }
+  }catch(e){}
+}
+function releaseWake(){ try{ if (wakeLock) wakeLock.release(); }catch(e){} wakeLock = null; }
+
+function notifyRestDone(){
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
+  const body = timer.exercise ? `Rest done after ${timer.exercise} — next set 💥` : "Rest complete — next set 💥";
+  try{
+    if (navigator.serviceWorker && navigator.serviceWorker.ready){
+      navigator.serviceWorker.ready
+        .then(reg => reg.showNotification("IronLog", { body, icon:"icon-192.png", badge:"icon-192.png", tag:"ironlog-rest", renotify:true, vibrate:[120,80,120] }))
+        .catch(()=>{ try{ new Notification("IronLog", { body, icon:"icon-192.png" }); }catch(e){} });
+    } else {
+      new Notification("IronLog", { body, icon:"icon-192.png" });
+    }
+  }catch(e){}
 }
 function tick(){
   if (!timer.running) return;
-  timer.remaining--;
-  if (timer.remaining <= 0){
-    timer.remaining = 0;
-    tickRender();
-    finishRest();
-    return;
-  }
+  const rem = Math.max(0, Math.round((timer.endAt - Date.now())/1000));
+  if (rem === timer.remaining) return;
+  timer.remaining = rem;
   tickRender();
+  if (rem <= 0) finishRest();
 }
 function tickRender(){
   const m = Math.floor(timer.remaining/60), s = timer.remaining%60;
@@ -798,30 +1044,77 @@ function tickRender(){
   $("#rtArc").style.strokeDashoffset = (RT_CIRC * (1 - frac)).toFixed(1);
 }
 function finishRest(){
-  clearInterval(timer.iv);
+  stopLoop();
   timer.running = false;
+  timer.finished = true;
+  timer.remaining = 0;
+  tickRender();
+  persistTimer();
   beep();
   if (settings.vibrate && navigator.vibrate) navigator.vibrate([120,80,120,80,200]);
+  if (document.hidden) notifyRestDone();
+  releaseWake();
   $("#rtSub").textContent = "Rest complete 💥";
-  setTimeout(hideRest, 1200);
+  setTimeout(()=>{ if (timer.finished) hideRest(); }, 1500);
 }
-function hideRest(){ $("#restTimer").classList.remove("show"); clearInterval(timer.iv); timer.running=false; }
+function hideRest(){
+  $("#restTimer").classList.remove("show");
+  stopLoop();
+  timer.running = false;
+  timer.remaining = 0;
+  persistTimer();
+  releaseWake();
+}
 function pauseRest(){
   if (timer.remaining<=0) return;
-  timer.running = !timer.running;
+  if (timer.running){
+    timer.remaining = Math.max(0, Math.round((timer.endAt - Date.now())/1000));
+    timer.running = false;
+    stopLoop();
+  } else {
+    timer.endAt = Date.now() + timer.remaining*1000;
+    timer.running = true;
+    startLoop();
+  }
   $("#rtPause").textContent = timer.running ? "Pause" : "Resume";
+  tickRender();
+  persistTimer();
+  if (timer.running) acquireWake(); else releaseWake();
 }
-function restartRest(){ timer.remaining = timer.total; timer.running = true; $("#rtPause").textContent="Pause"; tickRender(); if(!timer.iv){timer.iv=setInterval(tick,1000);} }
+function restartRest(){
+  timer.remaining = timer.total;
+  timer.endAt = Date.now() + timer.total*1000;
+  timer.running = true;
+  timer.finished = false;
+  $("#rtPause").textContent = "Pause";
+  $("#rtSub").textContent = timer.exercise ? `After ${timer.exercise}` : "Recovering…";
+  tickRender();
+  startLoop();
+  persistTimer();
+  acquireWake();
+}
 function adjustRest(delta){
   timer.remaining = Math.max(5, timer.remaining + delta);
   timer.total = Math.max(timer.total, timer.remaining);
+  timer.finished = false;
+  if (timer.running){ timer.endAt = Date.now() + timer.remaining*1000; startLoop(); }
+  else $("#rtPause").textContent = "Resume";
   tickRender();
+  persistTimer();
 }
+// Re-sync the moment the app comes back to the foreground.
+document.addEventListener("visibilitychange", ()=>{
+  if (document.hidden){ persistTimer(); return; }
+  if (timer.running){ tick(); startLoop(); acquireWake(); }
+});
+window.addEventListener("pagehide", persistTimer);
 $("#rtPause").onclick = pauseRest;
 $("#rtSkip").onclick = hideRest;
 $("#rtRestart").onclick = restartRest;
 $("#rtPlus").onclick = ()=>adjustRest(15);
 $("#rtMinus").onclick = ()=>adjustRest(-15);
+// Start a rest any time, regardless of which set you just finished.
+$("#manualTimer").onclick = ()=> startRest("");
 
 /* Beep via WebAudio (no asset needed). */
 let audioCtx = null;
@@ -1054,6 +1347,14 @@ function renderSettings(){
         </div>
       </div>
       <div class="set-row">
+        <div><div class="lab">Rest after plyometrics</div><div class="desc">Leg-day jumps (Box Jump, Pogo Jump…)</div></div>
+        <div class="ctl"><button class="switch${settings.restAfterPlyo?" on":""}" id="plyoSw" role="switch" aria-checked="${!!settings.restAfterPlyo}"></button></div>
+      </div>
+      <div class="set-row">
+        <div><div class="lab">Rest after warm-up sets</div><div class="desc">Off by default — warm-ups flow straight on</div></div>
+        <div class="ctl"><button class="switch${settings.restAfterWarmup?" on":""}" id="warmSw" role="switch" aria-checked="${!!settings.restAfterWarmup}"></button></div>
+      </div>
+      <div class="set-row">
         <div><div class="lab">Units</div><div class="desc">Weight display</div></div>
         <div class="ctl seg" id="unitSeg">
           <button data-u="kg" class="${settings.units==="kg"?"on":""}">kg</button>
@@ -1110,6 +1411,9 @@ function renderSettings(){
   // Rest stepper (15s steps, 30s..600s)
   $("#restDown").onclick = ()=>{ settings.restSec=Math.max(30, settings.restSec-15); saveSettings(); renderSettings(); };
   $("#restUp").onclick   = ()=>{ settings.restSec=Math.min(600, settings.restSec+15); saveSettings(); renderSettings(); };
+  // Which sets auto-start a rest
+  $("#plyoSw").onclick = ()=>{ settings.restAfterPlyo=!settings.restAfterPlyo; saveSettings(); renderSettings(); };
+  $("#warmSw").onclick = ()=>{ settings.restAfterWarmup=!settings.restAfterWarmup; saveSettings(); renderSettings(); };
   // Units
   $("#unitSeg").querySelectorAll("button").forEach(b=> b.onclick=()=>{ settings.units=b.dataset.u; saveSettings(); renderSettings(); if(activeTab==="today")renderToday(); });
   // Bodyweight (steps in display unit)
@@ -1130,7 +1434,7 @@ function renderSettings(){
     openSheet(`<h3 class="sh-title">Reset everything?</h3><p class="sh-sub">This permanently deletes your workout history and settings on this device.</p>
       <button class="btn" style="background:var(--danger);border-color:var(--danger);color:#fff;margin-bottom:10px" id="resetYes">Delete all data</button>
       <button class="btn ghost" id="resetNo">Cancel</button>`);
-    $("#resetYes").onclick = ()=>{ localStorage.removeItem(K_HIST); localStorage.removeItem(K_CUR); localStorage.removeItem(K_SET);
+    $("#resetYes").onclick = ()=>{ hideRest(); localStorage.removeItem(K_HIST); localStorage.removeItem(K_CUR); localStorage.removeItem(K_SET); localStorage.removeItem(K_TIMER);
       settings=Object.assign({},DEFAULT_SETTINGS); history={}; current=null; applyTheme(); closeSheet(); go("today"); toast("All data cleared"); };
     $("#resetNo").onclick = closeSheet;
   };
@@ -1244,6 +1548,7 @@ function boot(){
   // If a stored "current" is stale (different day), drop it so today rebuilds.
   if (current && current.date !== todayISO()) current = null;
   go("today");
+  restoreTimer();
   if (settings.reminders) scheduleReminder();
   if ("serviceWorker" in navigator){
     window.addEventListener("load", ()=> navigator.serviceWorker.register("sw.js").catch(()=>{}));
