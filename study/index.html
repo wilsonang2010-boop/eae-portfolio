@@ -220,6 +220,18 @@ header{
 .diagram-cap{margin-top:10px; font-size:12.5px; color:var(--slate-500);}
 .example-card .diagram-wrap{margin:14px 0 4px;}
 
+/* ── Per-topic extras: diagram + practice questions ──────────── */
+.topic-extras{margin-top:8px; padding-top:4px; border-top:1px solid var(--border);}
+.topic-extras .ch-section h4{font-size:.98rem;}
+.dg-table{text-align:left; padding:0;}
+.dtable{width:100%; border-collapse:collapse; font-size:13.5px;}
+.dtable th{text-align:left; padding:10px 13px; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--slate-500); border-bottom:1px solid var(--border-strong); white-space:nowrap;}
+.dtable td{padding:10px 13px; border-bottom:1px solid var(--border); color:var(--slate-300); vertical-align:top; line-height:1.5;}
+.dtable tr:last-child td{border-bottom:none;}
+.dtable .dt-key{color:var(--white); font-weight:600; white-space:nowrap;}
+.dtable td b{color:var(--white);}
+.dg-table .diagram-cap{padding:11px 13px 13px; text-align:left; margin-top:0; border-top:1px solid var(--border);}
+
 /* ── Matrix multiplication visual ─────────────────────────────── */
 .mvz{display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; margin:18px 0; font-family:'Courier New',ui-monospace,monospace;}
 .mvz-mat{display:grid; border-left:2px solid var(--slate-500); border-right:2px solid var(--slate-500); padding:10px 14px; gap:8px 20px;}
@@ -2034,7 +2046,6 @@ let state = {
   query:'',
   weekOffset:0,       // weeks from the current week
   logFilter:'all',
-  hideExcluded:false,
 };
 let cdTimer = null;
 
@@ -2397,6 +2408,22 @@ function auditHTML(sub, allCards){
   </div>`;
 }
 
+/* Diagram + practice questions appended under each topic's cards.
+   Hidden while searching, since the cards shown are then a filtered subset. */
+function topicExtrasHTML(sub, topicName){
+  if(state.query) return '';
+  const ex = (TOPIC_EXTRAS[sub]||{})[topicName];
+  if(!ex) return '';
+  let html = '';
+  if(ex.diagram){
+    html += `<div class="ch-section" style="margin-top:26px;"><h4>Diagram</h4>${renderDiagram(ex.diagram)}</div>`;
+  }
+  if(ex.practice && ex.practice.length){
+    html += renderSection({ h:'Practice questions', type:'examples', body:ex.practice });
+  }
+  return html ? `<div class="topic-extras">${html}</div>` : '';
+}
+
 function drawCards(subj, allCards){
   const sub = state.subject;
   const deck = document.getElementById('deck');
@@ -2406,31 +2433,24 @@ function drawCards(subj, allCards){
   topics.forEach(t=>{
     const cards = t.cards
       .map((c,ci)=>({...c, id:sub+'-'+subj.topics.indexOf(t)+'-'+ci}))
-      .filter(c=>matches(c, state.query))
-      .filter(c=> !(state.hideExcluded && c.flag==='excluded'));
+      .filter(c=>matches(c, state.query));
     if(!cards.length) return;
     shown += cards.length;
     out += `<div class="topic-block"><h3>${esc(t.name)}</h3><div class="topic-sub">${cards.length} definition${cards.length>1?'s':''}</div><div class="card-grid">`;
     cards.forEach(c=>{
       const known = isKnown(sub, c.id);
       const quiz = state.mode==='quiz';
-      const flagCls = c.flag==='excluded' ? 'struck' : (c.flag==='caveat' ? 'caveat' : '');
-      const badge = c.flag==='excluded'
-        ? `<div class="syl-flag flag-excluded">✕ Not tested in 2026</div>`
-        : (c.flag==='caveat' ? `<div class="syl-flag flag-caveat">! Check the wording</div>` : '');
       out += `
-      <div class="flash ${known?'known':''} ${flagCls}" data-id="${c.id}">
+      <div class="flash ${known?'known':''}" data-id="${c.id}">
         <button class="mark" data-mark="${c.id}" title="Mark as learnt">✓</button>
         <div class="term">${esc(c.t)}</div>
         ${quiz ? `<div class="prompt">Define this — then tap to check.</div>` : ``}
         <div class="def ${quiz?'hidden':''}">${esc(c.d)}</div>
         ${c.x ? `<div class="extra ${quiz?'hidden':''}">${c.x}</div>` : ``}
-        ${badge}
-        ${c.why ? `<div class="syl-why">${c.why}</div>` : ``}
         ${quiz ? `<div class="reveal-hint">Tap to reveal ▾</div>` : ``}
       </div>`;
     });
-    out += `</div></div>`;
+    out += `</div>${topicExtrasHTML(sub, t.name)}</div>`;
   });
   deck.innerHTML = shown ? out : `<div class="empty">No definitions match "${esc(state.query)}".</div>`;
 
@@ -2473,8 +2493,6 @@ function wireDeck(subj, allCards){
     b.classList.add('active');
     drawCards(subj, allCards);
   });
-  const he = document.getElementById('hideExcl');
-  if(he) he.addEventListener('click', ()=>{ state.hideExcluded = !state.hideExcluded; renderDeck(DATA[state.subject]); });
   const reset = document.getElementById('resetKnown');
   reset.addEventListener('click', e=>{
     e.preventDefault();
@@ -2520,6 +2538,1010 @@ function renderSyllabus(S, key){
   });
   window.scrollTo({top:0, behavior:'instant'});
 }
+
+/* ============================================================
+   SCIENCE DIAGRAM BUILDERS — inline SVG, no external assets
+   ============================================================ */
+const DG = { bg:'#0B1120', line:'#475569', grid:'#1E293B', ink:'#F8FAFC',
+             mute:'#94A3B8', blue:'#3B82F6', bl2:'#93C5FD', grn:'#34D399',
+             amb:'#F59E0B', am2:'#FCD34D', ros:'#FB7185', vio:'#A78BFA' };
+
+/* Generic labelled graph. series:[{pts:[[x,y]..],color,dash,label}] in data units. */
+function svgAxes(p){
+  const W=p.w||360, H=p.h||230, L=46, B=40, T=16, R=14;
+  const xmax=p.xmax||10, ymax=p.ymax||10;
+  const PX=x=> L + (x/xmax)*(W-L-R);
+  const PY=y=> (H-B) - (y/ymax)*(H-B-T);
+  let g='';
+  if(p.grid!==false){
+    for(let i=1;i<=4;i++){ const y=PY(ymax*i/4); g+=`<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="${DG.grid}" stroke-width="1"/>`; }
+  }
+  const shade=(p.shade||[]).map(s=>`<polygon points="${s.pts.map(q=>PX(q[0])+','+PY(q[1])).join(' ')}" fill="${s.color||DG.blue}" fill-opacity="0.18"/>`).join('');
+  const ser=(p.series||[]).map(s=>`<polyline points="${s.pts.map(q=>PX(q[0])+','+PY(q[1])).join(' ')}" fill="none" stroke="${s.color||DG.blue}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"${s.dash?` stroke-dasharray="${s.dash}"`:''}/>`).join('');
+  const notes=(p.notes||[]).map(n=>`<text x="${PX(n.x)}" y="${PY(n.y)}" font-size="11.5" fill="${n.color||DG.mute}" text-anchor="${n.anchor||'middle'}">${esc(n.text)}</text>`).join('');
+  const dots=(p.dots||[]).map(d=>`<circle cx="${PX(d.x)}" cy="${PY(d.y)}" r="4" fill="${d.color||DG.am2}"/>`).join('');
+  const xt=(p.xticks||[]).map(t=>`<text x="${PX(t.v)}" y="${H-B+16}" font-size="10.5" fill="${DG.mute}" text-anchor="middle">${esc(t.t)}</text>`).join('');
+  const yt=(p.yticks||[]).map(t=>`<text x="${L-7}" y="${PY(t.v)+4}" font-size="10.5" fill="${DG.mute}" text-anchor="end">${esc(t.t)}</text>`).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(p.alt||'graph')}">
+    ${g}${shade}
+    <line x1="${L}" y1="${T}" x2="${L}" y2="${H-B}" stroke="${DG.line}" stroke-width="1.6"/>
+    <line x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}" stroke="${DG.line}" stroke-width="1.6"/>
+    ${ser}${dots}${notes}${xt}${yt}
+    <text x="${(W+L)/2}" y="${H-6}" font-size="11.5" fill="${DG.mute}" text-anchor="middle">${esc(p.xlabel||'')}</text>
+    <text x="14" y="${(H-B+T)/2}" font-size="11.5" fill="${DG.mute}" text-anchor="middle" transform="rotate(-90 14 ${(H-B+T)/2})">${esc(p.ylabel||'')}</text>
+  </svg>`;
+}
+
+/* Three boxes of particles: solid, liquid, gas. */
+function svgParticles(){
+  const box=(x,title,mode)=>{
+    let c='';
+    if(mode==='solid'){ for(let r=0;r<4;r++) for(let k=0;k<4;k++) c+=`<circle cx="${x+16+k*18}" cy="${44+r*18}" r="7" fill="${DG.blue}" fill-opacity="0.85"/>`; }
+    if(mode==='liquid'){ const pos=[[18,48],[38,44],[58,50],[76,45],[22,68],[44,64],[64,70],[80,64],[20,88],[42,86],[62,90],[78,84]];
+      pos.forEach(q=>c+=`<circle cx="${x+q[0]}" cy="${q[1]}" r="7" fill="${DG.grn}" fill-opacity="0.85"/>`); }
+    if(mode==='gas'){ const pos=[[20,40],[62,34],[86,58],[30,72],[70,84],[46,56],[16,96],[88,96]];
+      pos.forEach(q=>c+=`<circle cx="${x+q[0]}" cy="${q[1]}" r="6.5" fill="${DG.ros}" fill-opacity="0.85"/>`); }
+    return `<rect x="${x+6}" y="28" width="96" height="84" rx="6" fill="none" stroke="${DG.line}" stroke-width="1.5"/>${c}
+      <text x="${x+54}" y="20" font-size="12.5" font-weight="700" fill="${DG.ink}" text-anchor="middle">${title}</text>`;
+  };
+  return `<svg viewBox="0 0 340 130" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Particle arrangement in solids, liquids and gases">
+    ${box(0,'Solid','solid')}${box(112,'Liquid','liquid')}${box(224,'Gas','gas')}</svg>`;
+}
+
+/* Transverse wave with labels, or longitudinal compressions/rarefactions. */
+function svgWaveLabelled(p){
+  if(p.mode==='longitudinal'){
+    let bars='';
+    const dens=[6,5,4,3,4,6,9,12,9,6,4,3,4,5,7,10,13,10,7,5];
+    let x=24;
+    dens.forEach(d=>{ for(let i=0;i<2;i++){ bars+=`<line x1="${x}" y1="40" x2="${x}" y2="96" stroke="${DG.bl2}" stroke-width="2"/>`; x+=d; } });
+    return `<svg viewBox="0 0 360 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Longitudinal sound wave">
+      ${bars}
+      <text x="96" y="30" font-size="11.5" fill="${DG.am2}" text-anchor="middle">compression</text>
+      <text x="60" y="118" font-size="11.5" fill="${DG.grn}" text-anchor="middle">rarefaction</text>
+      <line x1="96" y1="34" x2="96" y2="40" stroke="${DG.am2}" stroke-width="1.5"/>
+      <line x1="60" y1="112" x2="60" y2="96" stroke="${DG.grn}" stroke-width="1.5"/>
+      <text x="180" y="134" font-size="11" fill="${DG.mute}" text-anchor="middle">particles vibrate parallel to the direction of travel →</text></svg>`;
+  }
+  const A=34, mid=80, W=360;
+  let pts=[];
+  for(let x=30;x<=330;x+=2) pts.push(`${x},${mid - A*Math.sin((x-30)/300*4*Math.PI)}`);
+  return `<svg viewBox="0 0 ${W} 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Transverse wave showing amplitude and wavelength">
+    <line x1="20" y1="${mid}" x2="340" y2="${mid}" stroke="${DG.line}" stroke-width="1.2" stroke-dasharray="4 4"/>
+    <polyline points="${pts.join(' ')}" fill="none" stroke="${DG.blue}" stroke-width="2.5"/>
+    <line x1="217.5" y1="${mid}" x2="217.5" y2="${mid-A}" stroke="${DG.am2}" stroke-width="2"/>
+    <text x="225" y="${mid-A/2+4}" font-size="11.5" fill="${DG.am2}">amplitude</text>
+    <line x1="67.5" y1="26" x2="217.5" y2="26" stroke="${DG.grn}" stroke-width="2"/>
+    <line x1="67.5" y1="21" x2="67.5" y2="31" stroke="${DG.grn}" stroke-width="2"/>
+    <line x1="217.5" y1="21" x2="217.5" y2="31" stroke="${DG.grn}" stroke-width="2"/>
+    <text x="142.5" y="17" font-size="11.5" fill="${DG.grn}" text-anchor="middle">wavelength λ</text>
+    <text x="67.5" y="${mid-A-8}" font-size="11" fill="${DG.mute}" text-anchor="middle">crest</text>
+    <text x="142.5" y="${mid+A+17}" font-size="11" fill="${DG.mute}" text-anchor="middle">trough</text>
+    <text x="180" y="152" font-size="11" fill="${DG.mute}" text-anchor="middle">particles vibrate perpendicular to the direction of travel</text></svg>`;
+}
+
+/* Electromagnetic spectrum bar. */
+function svgSpectrum(){
+  const names=['Radio','Micro','IR','Vis','UV','X-ray','Gamma'];
+  const cols=['#64748B','#3B82F6','#EF4444','#34D399','#A78BFA','#F59E0B','#FB7185'];
+  const w=46;
+  const cells=names.map((n,i)=>`<rect x="${14+i*w}" y="40" width="${w-3}" height="42" rx="4" fill="${cols[i]}" fill-opacity="0.5" stroke="${cols[i]}" stroke-width="1.5"/>
+    <text x="${14+i*w+(w-3)/2}" y="66" font-size="10.5" font-weight="700" fill="${DG.ink}" text-anchor="middle">${n}</text>`).join('');
+  return `<svg viewBox="0 0 340 130" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Electromagnetic spectrum">
+    ${cells}
+    <text x="16" y="30" font-size="11" fill="${DG.mute}">long λ · low f</text>
+    <text x="326" y="30" font-size="11" fill="${DG.mute}" text-anchor="end">short λ · high f</text>
+    <line x1="14" y1="94" x2="326" y2="94" stroke="${DG.line}" stroke-width="1.4" marker-end="url(#spec-ar)"/>
+    <defs><marker id="spec-ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="${DG.line}"/></marker></defs>
+    <text x="170" y="112" font-size="11" fill="${DG.mute}" text-anchor="middle">increasing frequency · increasing energy</text>
+    <text x="170" y="126" font-size="10.5" fill="${DG.am2}" text-anchor="middle">all travel at 3 × 10⁸ m/s in a vacuum</text></svg>`;
+}
+
+/* Simple series or parallel circuit. */
+function svgCircuit(p){
+  const cell=(x,y)=>`<line x1="${x}" y1="${y-11}" x2="${x}" y2="${y+11}" stroke="${DG.ink}" stroke-width="2.5"/>
+    <line x1="${x+7}" y1="${y-6}" x2="${x+7}" y2="${y+6}" stroke="${DG.ink}" stroke-width="1.5"/>`;
+  const res=(x,y,lab)=>`<rect x="${x-17}" y="${y-9}" width="34" height="18" fill="${DG.bg}" stroke="${DG.bl2}" stroke-width="2"/>
+    <text x="${x}" y="${y-14}" font-size="11" fill="${DG.bl2}" text-anchor="middle">${lab}</text>`;
+  if(p.mode==='parallel'){
+    return `<svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Parallel circuit">
+      <path d="M40,40 H280 V140 H40 Z" fill="none" stroke="${DG.ink}" stroke-width="2"/>
+      ${cell(40,90)}
+      <line x1="120" y1="40" x2="120" y2="140" stroke="${DG.ink}" stroke-width="2"/>
+      <line x1="210" y1="40" x2="210" y2="140" stroke="${DG.ink}" stroke-width="2"/>
+      <rect x="103" y="81" width="34" height="18" fill="${DG.bg}" stroke="${DG.bl2}" stroke-width="2"/>
+      <rect x="193" y="81" width="34" height="18" fill="${DG.bg}" stroke="${DG.bl2}" stroke-width="2"/>
+      <text x="120" y="76" font-size="11" fill="${DG.bl2}" text-anchor="middle">R₁</text>
+      <text x="210" y="76" font-size="11" fill="${DG.bl2}" text-anchor="middle">R₂</text>
+      <text x="160" y="26" font-size="11" fill="${DG.am2}" text-anchor="middle">same p.d. across each branch</text>
+      <text x="160" y="162" font-size="11" fill="${DG.grn}" text-anchor="middle">branch currents add to the supply current</text></svg>`;
+  }
+  return `<svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Series circuit">
+    <path d="M40,45 H280 V125 H40 Z" fill="none" stroke="${DG.ink}" stroke-width="2"/>
+    ${cell(40,85)}
+    <rect x="103" y="36" width="34" height="18" fill="${DG.bg}" stroke="${DG.bl2}" stroke-width="2"/>
+    <rect x="183" y="36" width="34" height="18" fill="${DG.bg}" stroke="${DG.bl2}" stroke-width="2"/>
+    <text x="120" y="30" font-size="11" fill="${DG.bl2}" text-anchor="middle">R₁</text>
+    <text x="200" y="30" font-size="11" fill="${DG.bl2}" text-anchor="middle">R₂</text>
+    <circle cx="160" cy="125" r="11" fill="none" stroke="${DG.am2}" stroke-width="2"/>
+    <text x="160" y="129" font-size="11" fill="${DG.am2}" text-anchor="middle">A</text>
+    <text x="160" y="152" font-size="11" fill="${DG.grn}" text-anchor="middle">current is the same everywhere in a series loop</text></svg>`;
+}
+
+/* Field lines: bar magnet, solenoid, or point charges. */
+function svgFieldMagnet(p){
+  if(p.mode==='charges'){
+    const arc=(r)=>`<path d="M110,${100-r} Q160,${100-r*0.35} 210,${100-r}" fill="none" stroke="${DG.bl2}" stroke-width="1.6"/>
+                    <path d="M110,${100+r} Q160,${100+r*0.35} 210,${100+r}" fill="none" stroke="${DG.bl2}" stroke-width="1.6"/>`;
+    return `<svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Electric field between two opposite charges">
+      ${[18,38,58].map(arc).join('')}
+      <line x1="122" y1="100" x2="198" y2="100" stroke="${DG.bl2}" stroke-width="1.8" marker-end="url(#fc-ar)"/>
+      <defs><marker id="fc-ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="${DG.bl2}"/></marker></defs>
+      <circle cx="110" cy="100" r="16" fill="${DG.ros}" fill-opacity="0.35" stroke="${DG.ros}" stroke-width="2"/>
+      <circle cx="210" cy="100" r="16" fill="${DG.blue}" fill-opacity="0.35" stroke="${DG.blue}" stroke-width="2"/>
+      <text x="110" y="106" font-size="17" font-weight="700" fill="${DG.ink}" text-anchor="middle">+</text>
+      <text x="210" y="106" font-size="17" font-weight="700" fill="${DG.ink}" text-anchor="middle">−</text>
+      <text x="160" y="182" font-size="11" fill="${DG.mute}" text-anchor="middle">field lines run from positive to negative</text></svg>`;
+  }
+  const arcs=[24,46,68].map(r=>`<path d="M112,${100-r} Q160,${100-r*1.5} 208,${100-r}" fill="none" stroke="${DG.bl2}" stroke-width="1.6" marker-end="url(#fm-ar)"/>
+    <path d="M112,${100+r} Q160,${100+r*1.5} 208,${100+r}" fill="none" stroke="${DG.bl2}" stroke-width="1.6" marker-end="url(#fm-ar)"/>`).join('');
+  return `<svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Magnetic field around a bar magnet">
+    <defs><marker id="fm-ar" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="${DG.bl2}"/></marker></defs>
+    ${arcs}
+    <line x1="112" y1="100" x2="208" y2="100" stroke="${DG.bl2}" stroke-width="1.6" marker-end="url(#fm-ar)"/>
+    <rect x="110" y="84" width="100" height="32" fill="${DG.bg}" stroke="${DG.ink}" stroke-width="2"/>
+    <rect x="110" y="84" width="50" height="32" fill="${DG.ros}" fill-opacity="0.3"/>
+    <rect x="160" y="84" width="50" height="32" fill="${DG.blue}" fill-opacity="0.3"/>
+    <text x="135" y="106" font-size="14" font-weight="700" fill="${DG.ink}" text-anchor="middle">N</text>
+    <text x="185" y="106" font-size="14" font-weight="700" fill="${DG.ink}" text-anchor="middle">S</text>
+    <text x="160" y="184" font-size="11" fill="${DG.mute}" text-anchor="middle">lines leave N, enter S · never cross · closest = strongest</text></svg>`;
+}
+
+/* Light: refraction, total internal reflection, or a converging lens. */
+function svgRayDiagram(p){
+  if(p.mode==='tir'){
+    return `<svg viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Total internal reflection">
+      <rect x="10" y="100" width="320" height="86" fill="${DG.blue}" fill-opacity="0.12"/>
+      <line x1="10" y1="100" x2="330" y2="100" stroke="${DG.line}" stroke-width="1.8"/>
+      <line x1="170" y1="40" x2="170" y2="160" stroke="${DG.line}" stroke-width="1" stroke-dasharray="4 4"/>
+      <line x1="90" y1="160" x2="170" y2="100" stroke="${DG.am2}" stroke-width="2.5"/>
+      <line x1="170" y1="100" x2="250" y2="160" stroke="${DG.am2}" stroke-width="2.5" marker-end="url(#tir-a)"/>
+      <defs><marker id="tir-a" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="${DG.am2}"/></marker></defs>
+      <text x="150" y="92" font-size="11" fill="${DG.am2}" text-anchor="end">i &gt; c</text>
+      <text x="196" y="92" font-size="11" fill="${DG.am2}">r = i</text>
+      <text x="170" y="34" font-size="10.5" fill="${DG.mute}" text-anchor="middle">normal</text>
+      <text x="24" y="120" font-size="11" fill="${DG.bl2}">denser medium (e.g. glass)</text>
+      <text x="24" y="88" font-size="11" fill="${DG.mute}">less dense (air)</text>
+      <text x="170" y="196" font-size="11" fill="${DG.grn}" text-anchor="middle">no refracted ray escapes — all light reflects back inside</text></svg>`;
+  }
+  if(p.mode==='lens'){
+    return `<svg viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Converging lens ray diagram">
+      <line x1="14" y1="100" x2="346" y2="100" stroke="${DG.line}" stroke-width="1.2"/>
+      <ellipse cx="180" cy="100" rx="13" ry="58" fill="${DG.blue}" fill-opacity="0.18" stroke="${DG.blue}" stroke-width="2"/>
+      <line x1="80" y1="100" x2="80" y2="52" stroke="${DG.grn}" stroke-width="2.5" marker-end="url(#ln-a)"/>
+      <defs><marker id="ln-a" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="${DG.grn}"/></marker>
+      <marker id="ln-b" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="${DG.ros}"/></marker></defs>
+      <line x1="80" y1="52" x2="180" y2="52" stroke="${DG.am2}" stroke-width="1.8"/>
+      <line x1="180" y1="52" x2="300" y2="148" stroke="${DG.am2}" stroke-width="1.8"/>
+      <line x1="80" y1="52" x2="180" y2="100" stroke="${DG.bl2}" stroke-width="1.8"/>
+      <line x1="180" y1="100" x2="300" y2="148" stroke="${DG.bl2}" stroke-width="1.8"/>
+      <line x1="280" y1="100" x2="280" y2="138" stroke="${DG.ros}" stroke-width="2.5" marker-end="url(#ln-b)"/>
+      <circle cx="240" cy="100" r="3" fill="${DG.ink}"/><text x="240" y="116" font-size="10.5" fill="${DG.mute}" text-anchor="middle">F</text>
+      <circle cx="120" cy="100" r="3" fill="${DG.ink}"/><text x="120" y="116" font-size="10.5" fill="${DG.mute}" text-anchor="middle">F</text>
+      <text x="72" y="46" font-size="11" fill="${DG.grn}" text-anchor="end">object</text>
+      <text x="308" y="144" font-size="11" fill="${DG.ros}">image</text>
+      <text x="180" y="192" font-size="11" fill="${DG.mute}" text-anchor="middle">object beyond 2F → image is real, diminished and inverted</text></svg>`;
+  }
+  return `<svg viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Refraction of light">
+    <rect x="10" y="100" width="320" height="86" fill="${DG.blue}" fill-opacity="0.12"/>
+    <line x1="10" y1="100" x2="330" y2="100" stroke="${DG.line}" stroke-width="1.8"/>
+    <line x1="170" y1="34" x2="170" y2="166" stroke="${DG.line}" stroke-width="1" stroke-dasharray="4 4"/>
+    <line x1="86" y1="40" x2="170" y2="100" stroke="${DG.am2}" stroke-width="2.5"/>
+    <line x1="170" y1="100" x2="222" y2="164" stroke="${DG.am2}" stroke-width="2.5" marker-end="url(#rf-a)"/>
+    <defs><marker id="rf-a" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="${DG.am2}"/></marker></defs>
+    <text x="152" y="76" font-size="12" fill="${DG.am2}" text-anchor="end">i</text>
+    <text x="186" y="136" font-size="12" fill="${DG.am2}">r</text>
+    <text x="170" y="28" font-size="10.5" fill="${DG.mute}" text-anchor="middle">normal</text>
+    <text x="24" y="88" font-size="11" fill="${DG.mute}">air (less dense)</text>
+    <text x="24" y="120" font-size="11" fill="${DG.bl2}">glass (denser)</text>
+    <text x="170" y="196" font-size="11" fill="${DG.grn}" text-anchor="middle">entering a denser medium: slows down, bends TOWARDS the normal</text></svg>`;
+}
+
+/* Lab apparatus. */
+function svgApparatus(p){
+  if(p.mode==='electrolysis'){
+    return `<svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Electrolysis cell">
+      <path d="M50,60 V170 H270 V60" fill="${DG.blue}" fill-opacity="0.12" stroke="${DG.ink}" stroke-width="2"/>
+      <line x1="50" y1="80" x2="270" y2="80" stroke="${DG.bl2}" stroke-width="1.4" stroke-dasharray="5 4"/>
+      <rect x="104" y="52" width="13" height="100" fill="${DG.line}" stroke="${DG.ink}" stroke-width="1.5"/>
+      <rect x="204" y="52" width="13" height="100" fill="${DG.line}" stroke="${DG.ink}" stroke-width="1.5"/>
+      <path d="M110,52 V26 H210 V52" fill="none" stroke="${DG.ink}" stroke-width="2"/>
+      <line x1="150" y1="26" x2="150" y2="14" stroke="${DG.ink}" stroke-width="2"/>
+      <line x1="170" y1="26" x2="170" y2="14" stroke="${DG.ink}" stroke-width="2"/>
+      <line x1="143" y1="14" x2="157" y2="14" stroke="${DG.ink}" stroke-width="2.5"/>
+      <line x1="165" y1="18" x2="175" y2="18" stroke="${DG.ink}" stroke-width="1.5"/>
+      <text x="110" y="172" font-size="11.5" font-weight="700" fill="${DG.ros}" text-anchor="middle">cathode −</text>
+      <text x="211" y="172" font-size="11.5" font-weight="700" fill="${DG.blue}" text-anchor="middle">anode +</text>
+      <text x="110" y="188" font-size="10.5" fill="${DG.mute}" text-anchor="middle">cations gain e⁻</text>
+      <text x="211" y="188" font-size="10.5" fill="${DG.mute}" text-anchor="middle">anions lose e⁻</text>
+      <text x="160" y="112" font-size="11" fill="${DG.bl2}" text-anchor="middle">electrolyte</text></svg>`;
+  }
+  if(p.mode==='distillation'){
+    return `<svg viewBox="0 0 340 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Simple distillation apparatus">
+      <path d="M36,64 v56 a26,26 0 0 0 52,0 v-56" fill="${DG.blue}" fill-opacity="0.14" stroke="${DG.ink}" stroke-width="2"/>
+      <line x1="36" y1="64" x2="88" y2="64" stroke="${DG.ink}" stroke-width="2"/>
+      <line x1="62" y1="64" x2="62" y2="40" stroke="${DG.ink}" stroke-width="2"/>
+      <line x1="62" y1="40" x2="150" y2="40" stroke="${DG.ink}" stroke-width="2"/>
+      <rect x="150" y="30" width="110" height="22" rx="4" fill="${DG.grn}" fill-opacity="0.14" stroke="${DG.ink}" stroke-width="2"/>
+      <line x1="260" y1="41" x2="286" y2="41" stroke="${DG.ink}" stroke-width="2"/>
+      <line x1="286" y1="41" x2="286" y2="112" stroke="${DG.ink}" stroke-width="2"/>
+      <path d="M266,112 v40 h40 v-40" fill="${DG.grn}" fill-opacity="0.2" stroke="${DG.ink}" stroke-width="2"/>
+      <path d="M50,152 l6,-12 l6,12 l6,-12 l6,12" fill="none" stroke="${DG.ros}" stroke-width="2"/>
+      <text x="62" y="176" font-size="11" fill="${DG.mute}" text-anchor="middle">heat</text>
+      <text x="205" y="22" font-size="11" fill="${DG.mute}" text-anchor="middle">condenser</text>
+      <text x="286" y="176" font-size="11" fill="${DG.grn}" text-anchor="middle">pure distillate</text>
+      <text x="62" y="110" font-size="10.5" fill="${DG.bl2}" text-anchor="middle">solution</text></svg>`;
+  }
+  return `<svg viewBox="0 0 300 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Filtration apparatus">
+    <path d="M90,30 L210,30 L150,116 Z" fill="none" stroke="${DG.ink}" stroke-width="2"/>
+    <path d="M104,42 L196,42 L150,108 Z" fill="${DG.amb}" fill-opacity="0.18" stroke="${DG.am2}" stroke-width="1.5"/>
+    <line x1="150" y1="116" x2="150" y2="132" stroke="${DG.ink}" stroke-width="2"/>
+    <circle cx="150" cy="140" r="3" fill="${DG.grn}"/>
+    <path d="M112,148 v34 h76 v-34" fill="${DG.grn}" fill-opacity="0.16" stroke="${DG.ink}" stroke-width="2"/>
+    <text x="228" y="52" font-size="11" fill="${DG.am2}">filter paper</text>
+    <text x="228" y="70" font-size="11" fill="${DG.mute}">residue (solid)</text>
+    <text x="150" y="176" font-size="11" fill="${DG.grn}" text-anchor="middle">filtrate</text>
+    <text x="150" y="24" font-size="11" fill="${DG.mute}" text-anchor="middle">funnel</text></svg>`;
+}
+
+/* Free body diagram. */
+function svgFreeBody(p){
+  const F=(dx,dy,lab,col)=>`<line x1="160" y1="100" x2="${160+dx}" y2="${100+dy}" stroke="${col}" stroke-width="2.6" marker-end="url(#fb-${col.slice(1)})"/>
+    <text x="${160+dx*1.18}" y="${100+dy*1.18+4}" font-size="11.5" font-weight="600" fill="${col}" text-anchor="middle">${lab}</text>`;
+  const cols=[DG.grn,DG.ros,DG.am2,DG.bl2];
+  const defs='<defs>'+cols.map(c=>`<marker id="fb-${c.slice(1)}" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="${c}"/></marker>`).join('')+'</defs>';
+  return `<svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Free body diagram">
+    ${defs}
+    <rect x="134" y="80" width="52" height="40" rx="4" fill="${DG.blue}" fill-opacity="0.25" stroke="${DG.blue}" stroke-width="2"/>
+    ${F(0,-62,'normal force N',DG.grn)}
+    ${F(0,62,'weight W',DG.ros)}
+    ${F(78,0,'driving force F',DG.am2)}
+    ${F(-70,0,'friction f',DG.bl2)}
+    <text x="160" y="192" font-size="11" fill="${DG.mute}" text-anchor="middle">balanced → constant velocity · unbalanced → acceleration</text></svg>`;
+}
+
+/* Moments: a beam on a pivot. */
+function svgLever(){
+  return `<svg viewBox="0 0 340 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Principle of moments">
+    <rect x="40" y="76" width="260" height="10" rx="3" fill="${DG.line}"/>
+    <path d="M170,88 L152,126 L188,126 Z" fill="${DG.mute}"/>
+    <line x1="90" y1="86" x2="90" y2="140" stroke="${DG.ros}" stroke-width="2.5" marker-end="url(#lv-a)"/>
+    <line x1="250" y1="86" x2="250" y2="128" stroke="${DG.grn}" stroke-width="2.5" marker-end="url(#lv-b)"/>
+    <defs><marker id="lv-a" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="${DG.ros}"/></marker>
+    <marker id="lv-b" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="${DG.grn}"/></marker></defs>
+    <text x="90" y="156" font-size="11.5" fill="${DG.ros}" text-anchor="middle">F₁</text>
+    <text x="250" y="146" font-size="11.5" fill="${DG.grn}" text-anchor="middle">F₂</text>
+    <line x1="90" y1="60" x2="170" y2="60" stroke="${DG.am2}" stroke-width="1.6"/>
+    <line x1="170" y1="60" x2="250" y2="60" stroke="${DG.bl2}" stroke-width="1.6"/>
+    <text x="130" y="52" font-size="11" fill="${DG.am2}" text-anchor="middle">d₁</text>
+    <text x="210" y="52" font-size="11" fill="${DG.bl2}" text-anchor="middle">d₂</text>
+    <text x="170" y="166" font-size="11.5" fill="${DG.ink}" text-anchor="middle">in equilibrium:  F₁ × d₁ = F₂ × d₂</text></svg>`;
+}
+
+/* Three-pin plug. */
+function svgPlug(){
+  return `<svg viewBox="0 0 280 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Wiring of a three-pin plug">
+    <rect x="46" y="24" width="188" height="150" rx="12" fill="none" stroke="${DG.ink}" stroke-width="2"/>
+    <rect x="128" y="38" width="24" height="42" rx="3" fill="#22C55E" fill-opacity="0.55" stroke="${DG.ink}" stroke-width="1.5"/>
+    <rect x="66" y="96" width="24" height="40" rx="3" fill="#78350F" stroke="${DG.ink}" stroke-width="1.5"/>
+    <rect x="190" y="96" width="24" height="40" rx="3" fill="#1D4ED8" stroke="${DG.ink}" stroke-width="1.5"/>
+    <text x="140" y="94" font-size="10.5" fill="#4ADE80" text-anchor="middle">EARTH</text>
+    <text x="78" y="152" font-size="10.5" fill="#FBBF24" text-anchor="middle">LIVE</text>
+    <text x="202" y="152" font-size="10.5" fill="${DG.bl2}" text-anchor="middle">NEUTRAL</text>
+    <rect x="60" y="60" width="36" height="14" rx="3" fill="${DG.amb}" fill-opacity="0.5" stroke="${DG.am2}" stroke-width="1.5"/>
+    <text x="78" y="52" font-size="10.5" fill="${DG.am2}" text-anchor="middle">fuse</text>
+    <text x="140" y="192" font-size="11" fill="${DG.mute}" text-anchor="middle">fuse and switch always go in the LIVE wire</text></svg>`;
+}
+
+/* Transformer. */
+function svgTransformer(){
+  const coil=(x,n,col)=>Array.from({length:n},(_,i)=>`<path d="M${x},${52+i*15} a9,7.5 0 1 ${x<160?0:1} 0,15" fill="none" stroke="${col}" stroke-width="2.2"/>`).join('');
+  return `<svg viewBox="0 0 320 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Transformer">
+    <rect x="120" y="34" width="80" height="120" fill="none" stroke="${DG.mute}" stroke-width="9"/>
+    ${coil(120,6,DG.am2)}${coil(200,4,DG.grn)}
+    <text x="86" y="30" font-size="11.5" font-weight="700" fill="${DG.am2}" text-anchor="middle">primary</text>
+    <text x="236" y="30" font-size="11.5" font-weight="700" fill="${DG.grn}" text-anchor="middle">secondary</text>
+    <text x="86" y="172" font-size="11" fill="${DG.mute}" text-anchor="middle">Nₚ turns, Vₚ</text>
+    <text x="236" y="172" font-size="11" fill="${DG.mute}" text-anchor="middle">Nₛ turns, Vₛ</text>
+    <text x="160" y="100" font-size="10.5" fill="${DG.mute}" text-anchor="middle" transform="rotate(-90 160 100)">soft-iron core</text>
+    <text x="160" y="188" font-size="11.5" fill="${DG.ink}" text-anchor="middle">Vₚ / Vₛ = Nₚ / Nₛ</text></svg>`;
+}
+
+/* Penetrating power of alpha, beta, gamma. */
+function svgPenetration(){
+  const row=(y,lab,col,stop)=>`<text x="8" y="${y+4}" font-size="12" font-weight="700" fill="${col}">${lab}</text>
+    <line x1="52" y1="${y}" x2="${stop}" y2="${y}" stroke="${col}" stroke-width="2.6" marker-end="url(#pn-${col.slice(1)})"/>`;
+  const cols=[DG.ros,DG.am2,DG.grn];
+  const defs='<defs>'+cols.map(c=>`<marker id="pn-${c.slice(1)}" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="${c}"/></marker>`).join('')+'</defs>';
+  return `<svg viewBox="0 0 340 170" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Penetrating power of radiation">
+    ${defs}
+    <rect x="108" y="18" width="10" height="110" fill="${DG.mute}" fill-opacity="0.55"/>
+    <rect x="188" y="18" width="14" height="110" fill="${DG.bl2}" fill-opacity="0.45"/>
+    <rect x="272" y="18" width="22" height="110" fill="${DG.line}" fill-opacity="0.85"/>
+    <text x="113" y="144" font-size="10.5" fill="${DG.mute}" text-anchor="middle">paper</text>
+    <text x="195" y="144" font-size="10.5" fill="${DG.bl2}" text-anchor="middle">aluminium</text>
+    <text x="283" y="144" font-size="10.5" fill="${DG.mute}" text-anchor="middle">lead</text>
+    ${row(44,'α',DG.ros,112)}
+    ${row(74,'β',DG.am2,192)}
+    ${row(104,'γ',DG.grn,320)}
+    <text x="170" y="164" font-size="11" fill="${DG.ink}" text-anchor="middle">ionising power is the reverse order: α &gt; β &gt; γ</text></svg>`;
+}
+
+/* pH scale. */
+function svgPHScale(){
+  const cols=['#DC2626','#EA580C','#F59E0B','#EAB308','#84CC16','#22C55E','#10B981','#14B8A6','#0EA5E9','#3B82F6','#4F46E5','#6D28D9','#7C3AED','#8B5CF6','#A78BFA'];
+  const cells=cols.map((c,i)=>`<rect x="${14+i*21}" y="40" width="21" height="34" fill="${c}" fill-opacity="0.75"/>
+    <text x="${24.5+i*21}" y="88" font-size="9.5" fill="${DG.mute}" text-anchor="middle">${i}</text>`).join('');
+  return `<svg viewBox="0 0 340 130" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The pH scale">
+    ${cells}
+    <text x="60" y="30" font-size="11.5" font-weight="700" fill="#F87171" text-anchor="middle">ACIDIC</text>
+    <text x="161" y="30" font-size="11.5" font-weight="700" fill="#4ADE80" text-anchor="middle">NEUTRAL</text>
+    <text x="270" y="30" font-size="11.5" font-weight="700" fill="${DG.bl2}" text-anchor="middle">ALKALINE</text>
+    <text x="60" y="108" font-size="10.5" fill="${DG.mute}" text-anchor="middle">more H⁺</text>
+    <text x="161" y="108" font-size="10.5" fill="${DG.mute}" text-anchor="middle">H⁺ = OH⁻</text>
+    <text x="270" y="108" font-size="10.5" fill="${DG.mute}" text-anchor="middle">more OH⁻</text>
+    <text x="170" y="126" font-size="10.5" fill="${DG.am2}" text-anchor="middle">pH 7 is neutral — pure water</text></svg>`;
+}
+
+/* Atom with electron shells. */
+function svgAtomShells(p){
+  const shells=p.shells||[2,8,1];
+  const rs=[30,52,74];
+  const rings=shells.map((n,i)=>{
+    const r=rs[i];
+    let e='';
+    for(let k=0;k<n;k++){ const a=(k/n)*2*Math.PI - Math.PI/2;
+      e+=`<circle cx="${130+r*Math.cos(a)}" cy="${100+r*Math.sin(a)}" r="4" fill="${DG.bl2}"/>`; }
+    return `<circle cx="130" cy="100" r="${r}" fill="none" stroke="${DG.line}" stroke-width="1.2"/>${e}`;
+  }).join('');
+  return `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Atom with electron shells">
+    ${rings}
+    <circle cx="130" cy="100" r="15" fill="${DG.ros}" fill-opacity="0.35" stroke="${DG.ros}" stroke-width="2"/>
+    <text x="130" y="104" font-size="10.5" font-weight="700" fill="${DG.ink}" text-anchor="middle">${esc(p.sym||'Na')}</text>
+    <text x="226" y="60" font-size="11" fill="${DG.ros}">nucleus: p⁺ and n⁰</text>
+    <text x="226" y="80" font-size="11" fill="${DG.bl2}">electrons in shells</text>
+    <text x="226" y="104" font-size="11.5" font-weight="700" fill="${DG.ink}">${shells.join(', ')}</text>
+    <text x="226" y="122" font-size="10.5" fill="${DG.mute}">electronic config.</text>
+    <text x="150" y="190" font-size="11" fill="${DG.mute}" text-anchor="middle">shells fill 2, then 8, then 8</text></svg>`;
+}
+
+/* Flow diagram: labelled boxes joined by arrows. */
+function svgFlow(p){
+  const boxes=(p.boxes||[]).map(b=>`<rect x="${b.x}" y="${b.y}" width="${b.w||96}" height="${b.h||40}" rx="7" fill="${b.color||DG.blue}" fill-opacity="0.16" stroke="${b.color||DG.blue}" stroke-width="1.8"/>
+    ${(b.text||'').split('|').map((t,i,a)=>`<text x="${b.x+(b.w||96)/2}" y="${b.y+(b.h||40)/2 + (i-(a.length-1)/2)*13 + 4}" font-size="11" font-weight="600" fill="${DG.ink}" text-anchor="middle">${esc(t)}</text>`).join('')}`).join('');
+  const arrows=(p.arrows||[]).map(a=>`<line x1="${a.x1}" y1="${a.y1}" x2="${a.x2}" y2="${a.y2}" stroke="${a.color||DG.mute}" stroke-width="2" marker-end="url(#fl-ar)"/>
+    ${a.label?`<text x="${(a.x1+a.x2)/2 + (a.dx||0)}" y="${(a.y1+a.y2)/2 + (a.dy||-6)}" font-size="10.5" fill="${a.color||DG.mute}" text-anchor="middle">${esc(a.label)}</text>`:''}`).join('');
+  return `<svg viewBox="0 0 ${p.w||360} ${p.h||220}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(p.alt||'flow diagram')}">
+    <defs><marker id="fl-ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="${DG.mute}"/></marker></defs>
+    ${arrows}${boxes}</svg>`;
+}
+
+/* Vertical ordered ladder (reactivity series). */
+function svgLadder(p){
+  const items=p.items||[];
+  const rows=items.map((it,i)=>`<rect x="70" y="${16+i*23}" width="180" height="19" rx="4" fill="${it.hi?DG.amb:DG.blue}" fill-opacity="${it.hi?0.24:0.13}" stroke="${it.hi?DG.am2:DG.blue}" stroke-width="1.3"/>
+    <text x="160" y="${29+i*23}" font-size="11.5" font-weight="${it.hi?'700':'500'}" fill="${DG.ink}" text-anchor="middle">${esc(it.t)}</text>`).join('');
+  const h=16+items.length*23+22;
+  return `<svg viewBox="0 0 320 ${h}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(p.alt||'ordered list')}">
+    ${rows}
+    <text x="34" y="34" font-size="10.5" fill="${DG.ros}" text-anchor="middle">most</text>
+    <text x="34" y="46" font-size="10.5" fill="${DG.ros}" text-anchor="middle">reactive</text>
+    <text x="34" y="${h-30}" font-size="10.5" fill="${DG.grn}" text-anchor="middle">least</text>
+    <text x="34" y="${h-18}" font-size="10.5" fill="${DG.grn}" text-anchor="middle">reactive</text>
+    <line x1="60" y1="18" x2="60" y2="${h-24}" stroke="${DG.line}" stroke-width="1.4"/></svg>`;
+}
+
+/* Pressure in a liquid column. */
+function svgPressureCol(){
+  return `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pressure increases with depth">
+    <path d="M60,26 v150 h180 v-150" fill="${DG.blue}" fill-opacity="0.14" stroke="${DG.ink}" stroke-width="2"/>
+    ${[70,110,150].map((y,i)=>`<line x1="240" y1="${y}" x2="${254+i*10}" y2="${y}" stroke="${DG.am2}" stroke-width="2" marker-end="url(#pr-a)"/>`).join('')}
+    <defs><marker id="pr-a" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="${DG.am2}"/></marker></defs>
+    <line x1="44" y1="26" x2="44" y2="150" stroke="${DG.grn}" stroke-width="1.8"/>
+    <line x1="40" y1="26" x2="48" y2="26" stroke="${DG.grn}" stroke-width="1.8"/>
+    <line x1="40" y1="150" x2="48" y2="150" stroke="${DG.grn}" stroke-width="1.8"/>
+    <text x="30" y="92" font-size="12" fill="${DG.grn}" text-anchor="middle">h</text>
+    <text x="150" y="196" font-size="11.5" fill="${DG.ink}" text-anchor="middle">p = h ρ g — deeper means greater pressure</text>
+    <text x="150" y="18" font-size="10.5" fill="${DG.mute}" text-anchor="middle">longer arrow = greater pressure</text></svg>`;
+}
+
+/* Energy profile for exo/endothermic reactions. */
+function svgEnergyProfile(p){
+  const exo = p.mode!=='endo';
+  const yR = exo?70:130, yP = exo?130:70, peak=34;
+  const pts=`60,${yR} 110,${yR} 160,${peak} 210,${yP} 300,${yP}`;
+  return `<svg viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Energy profile diagram">
+    <line x1="46" y1="20" x2="46" y2="170" stroke="${DG.line}" stroke-width="1.6"/>
+    <line x1="46" y1="170" x2="326" y2="170" stroke="${DG.line}" stroke-width="1.6"/>
+    <polyline points="${pts}" fill="none" stroke="${exo?DG.ros:DG.bl2}" stroke-width="2.6" stroke-linejoin="round"/>
+    <line x1="110" y1="${yR}" x2="110" y2="${peak}" stroke="${DG.am2}" stroke-width="1.6" stroke-dasharray="4 3"/>
+    <text x="118" y="${(yR+peak)/2}" font-size="11" fill="${DG.am2}">Eₐ</text>
+    <line x1="272" y1="${yR}" x2="272" y2="${yP}" stroke="${DG.grn}" stroke-width="1.6" stroke-dasharray="4 3"/>
+    <text x="280" y="${(yR+yP)/2+4}" font-size="11" fill="${DG.grn}">ΔH</text>
+    <line x1="60" y1="${yR}" x2="272" y2="${yR}" stroke="${DG.line}" stroke-width="0.9" stroke-dasharray="3 4"/>
+    <text x="64" y="${yR-10}" font-size="11" fill="${DG.mute}">reactants</text>
+    <text x="196" y="${yP-10}" font-size="11" fill="${DG.mute}">products</text>
+    <text x="24" y="96" font-size="11" fill="${DG.mute}" text-anchor="middle" transform="rotate(-90 24 96)">energy</text>
+    <text x="186" y="192" font-size="11.5" fill="${exo?DG.ros:DG.bl2}" text-anchor="middle">${exo?'EXOTHERMIC — products lower, ΔH negative':'ENDOTHERMIC — products higher, ΔH positive'}</text></svg>`;
+}
+
+/* Dot-and-cross bonding diagram (two atoms). */
+function svgDotCross(p){
+  const ring=(cx,sym,own,shared,useCross)=>{
+    let e='';
+    for(let k=0;k<own;k++){ const a=(k/Math.max(own,1))*2*Math.PI - Math.PI/2 + (p.spin||0);
+      e+= useCross
+        ? `<path d="M${cx+42*Math.cos(a)-3.5},${100+42*Math.sin(a)-3.5} l7,7 M${cx+42*Math.cos(a)+3.5},${100+42*Math.sin(a)-3.5} l-7,7" stroke="${DG.am2}" stroke-width="1.9"/>`
+        : `<circle cx="${cx+42*Math.cos(a)}" cy="${100+42*Math.sin(a)}" r="3.6" fill="${DG.bl2}"/>`;
+    }
+    return `<circle cx="${cx}" cy="100" r="42" fill="none" stroke="${DG.line}" stroke-width="1.4"/>
+      <text x="${cx}" y="106" font-size="16" font-weight="700" fill="${DG.ink}" text-anchor="middle">${esc(sym)}</text>${e}`;
+  };
+  return `<svg viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dot and cross diagram">
+    ${ring(112,p.a||'H',p.aN==null?1:p.aN,0,false)}
+    ${ring(228,p.b||'Cl',p.bN==null?7:p.bN,0,true)}
+    <circle cx="170" cy="94" r="3.6" fill="${DG.bl2}"/>
+    <path d="M166.5,102.5 l7,7 M173.5,102.5 l-7,7" stroke="${DG.am2}" stroke-width="1.9"/>
+    <ellipse cx="170" cy="102" rx="17" ry="24" fill="none" stroke="${DG.grn}" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <text x="170" y="150" font-size="11" fill="${DG.grn}" text-anchor="middle">shared pair</text>
+    <text x="170" y="186" font-size="11" fill="${DG.mute}" text-anchor="middle">${esc(p.caption2||'a covalent bond is one shared pair of electrons')}</text></svg>`;
+}
+
+/* Force on a current-carrying conductor in a magnetic field. */
+function svgFleming(){
+  return `<svg viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Force on a current-carrying conductor">
+    <defs><marker id="flm-f" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="${DG.grn}"/></marker>
+    <marker id="flm-i" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="${DG.am2}"/></marker>
+    <marker id="flm-b" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="${DG.bl2}"/></marker></defs>
+    <rect x="40" y="34" width="34" height="132" fill="${DG.ros}" fill-opacity="0.3" stroke="${DG.ros}" stroke-width="1.8"/>
+    <rect x="266" y="34" width="34" height="132" fill="${DG.blue}" fill-opacity="0.3" stroke="${DG.blue}" stroke-width="1.8"/>
+    <text x="57" y="26" font-size="13" font-weight="700" fill="${DG.ink}" text-anchor="middle">N</text>
+    <text x="283" y="26" font-size="13" font-weight="700" fill="${DG.ink}" text-anchor="middle">S</text>
+    ${[62,100,138].map(y=>`<line x1="76" y1="${y}" x2="262" y2="${y}" stroke="${DG.bl2}" stroke-width="1.5" marker-end="url(#flm-b)"/>`).join('')}
+    <line x1="170" y1="186" x2="170" y2="112" stroke="${DG.am2}" stroke-width="3" marker-end="url(#flm-i)"/>
+    <circle cx="170" cy="100" r="7" fill="${DG.bg}" stroke="${DG.am2}" stroke-width="2.5"/>
+    <line x1="170" y1="88" x2="170" y2="40" stroke="${DG.grn}" stroke-width="3" marker-end="url(#flm-f)"/>
+    <text x="182" y="160" font-size="11.5" font-weight="700" fill="${DG.am2}">current I</text>
+    <text x="182" y="56" font-size="11.5" font-weight="700" fill="${DG.grn}">force F</text>
+    <text x="120" y="76" font-size="11" fill="${DG.bl2}">field B</text>
+    <text x="170" y="196" font-size="10.5" fill="${DG.mute}" text-anchor="middle">left hand: First finger = Field, seCond = Current, thuMb = Motion</text></svg>`;
+}
+
+/* ============================================================
+   PER-TOPIC DIAGRAMS + PRACTICE QUESTIONS
+   Keyed by the exact topic name used in each deck.
+   ============================================================ */
+const TOPIC_EXTRAS = {
+physics: {
+"1. Physical Quantities, Units & Measurement": {
+  diagram:{ type:"vectors", gridMin:-1, gridMax:7, caption:"Adding vectors tip-to-tail: the resultant (amber) runs from the start of the first to the tip of the second.",
+    arrows:[{x1:0,y1:0,x2:4,y2:0,label:'a',color:'#3B82F6'},{x1:4,y1:0,x2:4,y2:3,label:'b',color:'#34D399'},{x1:0,y1:0,x2:4,y2:3,label:'R',color:'#FCD34D'}],
+    points:[{x:0,y:0,label:'O'}] },
+  practice:[
+    { level:"Easy", q:"Convert 2.5 kilometres into metres, and 450 milliamperes into amperes.",
+      steps:["kilo means ×10³, so 2.5 km = 2.5 × 10³ = 2500 m.","milli means ×10⁻³, so 450 mA = 450 × 10⁻³ A."],
+      ans:"2500 m and 0.45 A." },
+    { level:"Medium", q:"A force of 3.0 N acts due east and a force of 4.0 N acts due north on the same object. Find the magnitude and direction of the resultant force.",
+      steps:["The two forces are perpendicular, so draw them tip-to-tail to form a right-angled triangle.","Magnitude: R = √(3.0² + 4.0²) = √(9+16) = √25 = 5.0 N.","Direction: tan θ = opposite/adjacent = 4.0/3.0, so θ = tan⁻¹(1.333) = 53.1° north of east."],
+      ans:"5.0 N at 53.1° north of east (bearing 036.9°)." },
+    { level:"O-Level standard", q:"State whether each is a scalar or a vector, and explain the difference between the distance travelled and the displacement of a runner who completes one full lap of a 400 m track: (a) distance, (b) displacement, (c) speed, (d) velocity.",
+      steps:["Scalars have magnitude only; vectors have both magnitude and direction.","(a) distance — scalar. (b) displacement — vector. (c) speed — scalar. (d) velocity — vector.","After one full lap the runner has travelled a path length of 400 m, so the distance is 400 m.","But the runner finishes exactly where they started, so the straight-line change in position is zero — the displacement is 0 m."],
+      ans:"(a) scalar (b) vector (c) scalar (d) vector. Distance = 400 m; displacement = 0 m, because the start and finish points are the same." },
+  ]},
+"2. Kinematics": {
+  diagram:{ type:"axes", alt:"Velocity-time graph", xlabel:"time / s", ylabel:"velocity / m s⁻¹", xmax:10, ymax:10,
+    xticks:[{v:0,t:'0'},{v:2,t:'2'},{v:6,t:'6'},{v:10,t:'10'}], yticks:[{v:0,t:'0'},{v:8,t:'8'}],
+    series:[{pts:[[0,0],[2,8],[6,8],[10,0]],color:'#3B82F6'}],
+    shade:[{pts:[[0,0],[2,8],[6,8],[10,0]],color:'#3B82F6'}],
+    notes:[{x:1.2,y:5.4,text:'accelerating',color:'#FCD34D'},{x:4,y:8.9,text:'constant velocity',color:'#34D399'},{x:8.6,y:5.4,text:'decelerating',color:'#FB7185'},{x:5,y:3.2,text:'area = distance',color:'#93C5FD'}],
+    caption:"On a velocity–time graph the gradient is the acceleration and the shaded area is the distance travelled." },
+  practice:[
+    { level:"Easy", q:"A car accelerates uniformly from rest to 20 m/s in 8.0 s. Calculate its acceleration.",
+      steps:["a = change in velocity ÷ time taken.","a = (20 − 0) ÷ 8.0 = 2.5 m/s²."],
+      ans:"2.5 m/s²." },
+    { level:"Medium", q:"Using the velocity–time graph above (0→8 m/s in 2 s, constant for 4 s, then to rest in 4 s), find (a) the acceleration in the first 2 s, (b) the total distance travelled.",
+      steps:["(a) Gradient of the first section = (8 − 0) ÷ 2 = 4 m/s².","(b) Distance = area under the graph. Split into a triangle, a rectangle and a triangle.","Triangle 1: ½ × 2 × 8 = 8 m. Rectangle: 4 × 8 = 32 m. Triangle 2: ½ × 4 × 8 = 16 m.","Total = 8 + 32 + 16 = 56 m."],
+      ans:"(a) 4 m/s². (b) 56 m." },
+    { level:"O-Level standard", q:"A ball is dropped from rest from a height of 45 m. Taking g = 10 m/s² and ignoring air resistance, find (a) the time taken to reach the ground, (b) its velocity on impact. (c) State how your answer to (a) would change if air resistance were significant.",
+      steps:["(a) Using distance = ½at²: 45 = ½ × 10 × t², so 45 = 5t², giving t² = 9 and t = 3.0 s.","(b) v = at = 10 × 3.0 = 30 m/s downwards.","(c) Air resistance acts upwards, opposing motion, so the resultant force and therefore the acceleration are reduced.","The ball takes longer than 3.0 s to fall, and may reach terminal velocity."],
+      ans:"(a) 3.0 s. (b) 30 m/s. (c) It would take longer, because air resistance reduces the resultant downward force and so the acceleration." },
+  ]},
+"3. Dynamics": {
+  diagram:{ type:"freebody", caption:"A free body diagram shows every force on one body. Here the vertical forces balance, so any acceleration is horizontal." },
+  practice:[
+    { level:"Easy", q:"A resultant force of 12 N acts on a 4.0 kg trolley. Calculate its acceleration.",
+      steps:["Resultant force = mass × acceleration, so a = F ÷ m.","a = 12 ÷ 4.0 = 3.0 m/s²."],
+      ans:"3.0 m/s², in the direction of the resultant force." },
+    { level:"Medium", q:"A 1200 kg car experiences a forward driving force of 4000 N and a total resistive force of 1600 N. (a) Find the resultant force. (b) Find the acceleration. (c) State what happens to the motion when the driving force falls to 1600 N.",
+      steps:["(a) Resultant = 4000 − 1600 = 2400 N forwards.","(b) a = F ÷ m = 2400 ÷ 1200 = 2.0 m/s².","(c) The forces are now balanced, so the resultant force is zero."],
+      ans:"(a) 2400 N forwards. (b) 2.0 m/s². (c) The car travels at constant velocity — it neither speeds up nor slows down." },
+    { level:"O-Level standard", q:"A skydiver of mass 70 kg falls from a plane. Taking g = 10 N/kg, (a) state her weight. (b) Explain, in terms of forces, why she initially accelerates but eventually reaches a constant terminal velocity. (c) Describe and explain what happens immediately after her parachute opens.",
+      steps:["(a) W = mg = 70 × 10 = 700 N.","(b) At first air resistance is small, so there is a large resultant downward force and she accelerates.","As her speed rises, air resistance increases. When air resistance grows equal to her 700 N weight, the resultant force is zero, so acceleration is zero and she falls at constant terminal velocity.","(c) Opening the parachute greatly increases the surface area, so air resistance rises sharply and becomes larger than her weight.","The resultant force now acts upwards, so she decelerates. As she slows, air resistance falls until it again equals her weight, giving a new, much lower terminal velocity."],
+      ans:"(a) 700 N. (b) She accelerates while weight exceeds air resistance; at terminal velocity the two are equal so the resultant force is zero. (c) She decelerates rapidly, then settles at a new, lower terminal velocity." },
+  ]},
+"4. Turning Effects of Forces": {
+  diagram:{ type:"lever", caption:"For a body in equilibrium, clockwise moments about the pivot equal anticlockwise moments." },
+  practice:[
+    { level:"Easy", q:"A force of 25 N acts at a perpendicular distance of 0.40 m from a pivot. Calculate the moment.",
+      steps:["Moment = force × perpendicular distance from the pivot.","= 25 × 0.40 = 10 N m."],
+      ans:"10 N m." },
+    { level:"Medium", q:"A uniform metre rule is pivoted at its centre. A 2.0 N weight hangs 30 cm to the left of the pivot. At what distance to the right must a 3.0 N weight hang to balance it?",
+      steps:["The rule is uniform and pivoted at its centre, so its own weight acts at the pivot and gives no moment.","Anticlockwise moment = 2.0 × 30 = 60 N cm.","For equilibrium, clockwise moment must also be 60 N cm: 3.0 × d = 60.","d = 60 ÷ 3.0 = 20 cm."],
+      ans:"20 cm to the right of the pivot." },
+    { level:"O-Level standard", q:"A uniform beam of weight 40 N and length 4.0 m rests on a pivot 1.5 m from its left end. A load of 60 N hangs from the left end. (a) State where the beam's weight acts. (b) Calculate the moment of the 60 N load about the pivot. (c) Find the force needed at the right end to balance the beam.",
+      steps:["(a) The beam is uniform, so its weight acts at its centre of gravity — the midpoint, 2.0 m from the left end.","(b) The load is at the left end, 1.5 m from the pivot: moment = 60 × 1.5 = 90 N m anticlockwise.","(c) The beam's weight acts 2.0 − 1.5 = 0.5 m to the right of the pivot: moment = 40 × 0.5 = 20 N m clockwise.","The right end is 4.0 − 1.5 = 2.5 m from the pivot. Let the force there be F, giving a clockwise moment of 2.5F.","Taking moments about the pivot: 90 = 20 + 2.5F, so 2.5F = 70 and F = 28 N."],
+      ans:"(a) At the midpoint, 2.0 m from the left end. (b) 90 N m anticlockwise. (c) 28 N downwards." },
+  ]},
+"5. Pressure": {
+  diagram:{ type:"pressurecol", caption:"Pressure in a liquid increases with depth and acts equally in all directions at a given depth." },
+  practice:[
+    { level:"Easy", q:"A force of 200 N acts on an area of 0.50 m². Calculate the pressure.",
+      steps:["p = F ÷ A.","= 200 ÷ 0.50 = 400 Pa."],
+      ans:"400 Pa (N/m²)." },
+    { level:"Medium", q:"Calculate the pressure due to the water at a depth of 12 m in a lake. Take the density of water as 1000 kg/m³ and g as 10 N/kg.",
+      steps:["Pressure due to a liquid column: p = hρg.","= 12 × 1000 × 10 = 120 000 Pa.","= 1.2 × 10⁵ Pa."],
+      ans:"1.2 × 10⁵ Pa (120 kPa)." },
+    { level:"O-Level standard", q:"In a hydraulic press, a force of 30 N is applied to a small piston of area 0.0020 m². The large piston has an area of 0.050 m². (a) Calculate the pressure produced. (b) Calculate the force on the large piston. (c) Explain why the liquid must be effectively incompressible.",
+      steps:["(a) p = F ÷ A = 30 ÷ 0.0020 = 15 000 Pa.","(b) Pressure is transmitted equally throughout the liquid, so the large piston experiences the same 15 000 Pa.","F = p × A = 15 000 × 0.050 = 750 N.","(c) If the liquid could be compressed, the applied force would go into squashing the liquid instead of being transmitted."],
+      ans:"(a) 15 000 Pa. (b) 750 N. (c) So that the pressure is transmitted fully and immediately to the large piston, rather than being lost compressing the liquid." },
+  ]},
+"6. Energy": {
+  diagram:{ type:"flow", alt:"Energy transfer in a falling ball", w:360, h:170,
+    boxes:[{x:16,y:60,w:104,h:48,text:"gravitational|potential store",color:'#3B82F6'},
+           {x:132,y:60,w:96,h:48,text:"kinetic|store",color:'#34D399'},
+           {x:244,y:60,w:100,h:48,text:"internal store|(heat + sound)",color:'#FB7185'}],
+    arrows:[{x1:122,y1:84,x2:130,y2:84,label:'falls',dy:-12},{x1:230,y1:84,x2:242,y2:84,label:'impact',dy:-12}],
+    caption:"Energy is never used up — it is transferred between stores. The total stays constant." },
+  practice:[
+    { level:"Easy", q:"A 2.0 kg book is lifted 1.5 m onto a shelf. Taking g = 10 N/kg, calculate the gain in gravitational potential energy.",
+      steps:["Eₚ = mgh.","= 2.0 × 10 × 1.5 = 30 J."],
+      ans:"30 J." },
+    { level:"Medium", q:"A motor lifts a 50 kg load through 6.0 m in 10 s. Taking g = 10 N/kg, calculate (a) the useful work done, (b) the useful power output. (c) If the motor draws 400 W, find its efficiency.",
+      steps:["(a) Work done against gravity = mgh = 50 × 10 × 6.0 = 3000 J.","(b) P = W ÷ t = 3000 ÷ 10 = 300 W.","(c) Efficiency = (useful output ÷ total input) × 100% = (300 ÷ 400) × 100% = 75%."],
+      ans:"(a) 3000 J. (b) 300 W. (c) 75%." },
+    { level:"O-Level standard", q:"A ball of mass 0.20 kg is dropped from a height of 5.0 m and rebounds to 3.2 m. Take g = 10 N/kg. (a) Find its potential energy at the start. (b) Find its speed just before impact, assuming no air resistance. (c) Calculate the energy 'lost' in the bounce and state where it goes.",
+      steps:["(a) Eₚ = mgh = 0.20 × 10 × 5.0 = 10 J.","(b) All the potential energy transfers to the kinetic store: ½mv² = 10, so ½ × 0.20 × v² = 10.","0.10v² = 10, so v² = 100 and v = 10 m/s.","(c) Potential energy at the rebound height = 0.20 × 10 × 3.2 = 6.4 J.","Energy transferred away = 10 − 6.4 = 3.6 J."],
+      ans:"(a) 10 J. (b) 10 m/s. (c) 3.6 J, transferred to the internal (thermal) store of the ball and ground, and to the surroundings as sound — not destroyed, just no longer useful." },
+  ]},
+"7. Kinetic Particle Model of Matter": {
+  diagram:{ type:"particles", caption:"Solid: fixed regular positions, vibrating. Liquid: close but disordered, sliding. Gas: far apart, fast and random." },
+  practice:[
+    { level:"Easy", q:"State and explain, using the kinetic particle model, why a gas can be compressed easily but a solid cannot.",
+      steps:["In a gas the particles are very far apart with large spaces between them.","Applying pressure pushes the particles closer, so the volume falls — the gas is easily compressed.","In a solid the particles are already touching in a regular packed arrangement, with almost no space between them."],
+      ans:"A gas compresses easily because its particles are far apart with space to close up; a solid cannot, because its particles are already closely packed with negligible spaces." },
+    { level:"Medium", q:"Explain, in terms of particles, why the pressure of a fixed mass of gas in a sealed container increases when it is heated.",
+      steps:["Heating increases the average kinetic energy of the gas particles, so they move faster.","Faster particles collide with the container walls more frequently.","Each collision also exerts a greater force, because the particles have greater momentum.","Pressure is the total force per unit area on the walls, so both effects raise the pressure."],
+      ans:"The particles move faster, hitting the walls more often and harder, so the total force per unit area — the pressure — increases." },
+    { level:"O-Level standard", q:"A smoke cell is viewed under a microscope and bright specks are seen moving in a random, jerky way. (a) Name this effect. (b) Explain what causes the motion. (c) State and explain what is observed if the cell is warmed.",
+      steps:["(a) This is Brownian motion.","(b) The bright specks are smoke particles, which are much larger than the surrounding air molecules.","Air molecules move rapidly and randomly, and bombard each smoke particle unevenly from all sides. At any instant the bombardment is unbalanced, so the smoke particle is pushed in a random direction — giving jerky motion.","(c) Warming increases the average kinetic energy of the air molecules, so they move faster and collide harder and more often."],
+      ans:"(a) Brownian motion. (b) Uneven bombardment of large smoke particles by fast, randomly moving air molecules. (c) The specks move faster and more erratically, because the air molecules have greater kinetic energy." },
+  ]},
+"8. Thermal Processes": {
+  diagram:{ type:"flow", alt:"Three methods of thermal energy transfer", w:360, h:190,
+    boxes:[{x:14,y:24,w:104,h:52,text:"CONDUCTION|solids · vibration|+ free electrons",color:'#3B82F6'},
+           {x:128,y:24,w:104,h:52,text:"CONVECTION|fluids · density|differences",color:'#34D399'},
+           {x:242,y:24,w:104,h:52,text:"RADIATION|no medium needed|infrared waves",color:'#FB7185'}],
+    arrows:[{x1:180,y1:88,x2:180,y2:120,label:'',dy:0}],
+    caption:"Energy always flows from hotter to colder, until both reach the same temperature (thermal equilibrium)." },
+  practice:[
+    { level:"Easy", q:"State which method of thermal energy transfer does not require a medium, and explain why.",
+      steps:["Conduction needs particles to vibrate and pass energy on; convection needs a fluid to flow.","Radiation transfers energy as electromagnetic (infrared) waves."],
+      ans:"Radiation — it travels as electromagnetic waves, which can pass through a vacuum, so no particles are needed." },
+    { level:"Medium", q:"Explain, in terms of particles, why metals are much better conductors of heat than non-metals.",
+      steps:["In all solids, heating makes particles vibrate more vigorously, and they pass energy to neighbouring particles by collisions.","Metals additionally contain free (delocalised) electrons that are able to move throughout the structure.","These free electrons gain kinetic energy at the hot end, move rapidly through the metal, and transfer energy to particles at the cold end."],
+      ans:"Metals conduct far better because, as well as lattice vibration, they have free electrons that carry energy quickly through the whole structure — non-metals have no free electrons." },
+    { level:"O-Level standard", q:"A vacuum flask keeps a drink hot. Explain how each feature reduces energy transfer: (a) the vacuum between the double walls, (b) the silvered surfaces, (c) the insulating plastic stopper.",
+      steps:["(a) A vacuum contains almost no particles.","Conduction needs particles to collide and pass energy on, and convection needs a fluid to circulate — neither can occur, so both are essentially eliminated.","(b) Shiny silver surfaces are poor emitters and poor absorbers of infrared radiation.","The inner silvered surface reflects radiation back into the drink, reducing radiation losses.","(c) Plastic is a poor conductor and the stopper seals the flask, preventing hot liquid and vapour escaping by convection."],
+      ans:"(a) The vacuum stops conduction and convection, as both need particles. (b) Silvering reflects infrared back and emits poorly, cutting radiation losses. (c) The stopper conducts poorly and blocks convection currents carrying hot vapour away." },
+  ]},
+"9. Thermal Properties of Matter": {
+  diagram:{ type:"axes", alt:"Heating curve", xlabel:"time", ylabel:"temperature / °C", xmax:10, ymax:10, grid:false,
+    xticks:[], yticks:[{v:2,t:'0'},{v:7,t:'100'}],
+    series:[{pts:[[0,0.6],[1.6,2],[4,2],[5.4,7],[7.6,7],[9.6,9.2]],color:'#FB7185'}],
+    notes:[{x:2.8,y:1.1,text:'melting',color:'#93C5FD'},{x:5.9,y:6.1,text:'boiling',color:'#93C5FD'},{x:8.9,y:8.2,text:'gas',color:'#94A3B8'},{x:0.9,y:0.2,text:'solid',color:'#94A3B8'}],
+    caption:"Flat sections are changes of state: energy goes into breaking forces between particles, not into raising the temperature." },
+  practice:[
+    { level:"Easy", q:"Calculate the thermal energy needed to raise the temperature of 2.0 kg of water by 30 °C. The specific heat capacity of water is 4200 J/(kg·K).",
+      steps:["E = mcΔθ.","= 2.0 × 4200 × 30 = 252 000 J."],
+      ans:"252 000 J (2.52 × 10⁵ J)." },
+    { level:"Medium", q:"A 0.50 kg block of metal is heated by a 100 W heater for 2.0 minutes and its temperature rises by 48 °C. Assuming no energy is lost, calculate the specific heat capacity of the metal.",
+      steps:["Energy supplied = power × time = 100 × (2.0 × 60) = 12 000 J.","Rearranging E = mcΔθ gives c = E ÷ (mΔθ).","c = 12 000 ÷ (0.50 × 48) = 12 000 ÷ 24 = 500 J/(kg·K)."],
+      ans:"500 J/(kg·K)." },
+    { level:"O-Level standard", q:"Ice at 0 °C is heated until it becomes water at 20 °C. Given specific latent heat of fusion of ice = 3.4 × 10⁵ J/kg and specific heat capacity of water = 4200 J/(kg·K), calculate the total energy needed for 0.30 kg of ice. Explain why the temperature stays at 0 °C during melting.",
+      steps:["Stage 1 — melting the ice at 0 °C: E = ml = 0.30 × 3.4 × 10⁵ = 102 000 J.","Stage 2 — heating the water from 0 °C to 20 °C: E = mcΔθ = 0.30 × 4200 × 20 = 25 200 J.","Total = 102 000 + 25 200 = 127 200 J ≈ 1.27 × 10⁵ J.","During melting, the energy supplied is used to overcome and break the forces of attraction between the particles.","This increases the potential energy of the particles but not their average kinetic energy — and temperature depends only on average kinetic energy."],
+      ans:"1.27 × 10⁵ J. The temperature stays constant because the energy increases the particles' potential energy by breaking bonds, not their average kinetic energy." },
+  ]},
+"10. General Properties of Waves": {
+  diagram:{ type:"wave", caption:"A transverse wave: amplitude is measured from the rest position, wavelength from one point to the next in phase." },
+  practice:[
+    { level:"Easy", q:"A wave has a frequency of 50 Hz and a wavelength of 6.0 m. Calculate its speed.",
+      steps:["v = fλ.","= 50 × 6.0 = 300 m/s."],
+      ans:"300 m/s." },
+    { level:"Medium", q:"A wave of speed 320 m/s has a period of 0.0040 s. Calculate (a) its frequency, (b) its wavelength.",
+      steps:["(a) f = 1 ÷ T = 1 ÷ 0.0040 = 250 Hz.","(b) Rearranging v = fλ gives λ = v ÷ f.","λ = 320 ÷ 250 = 1.28 m."],
+      ans:"(a) 250 Hz. (b) 1.28 m." },
+    { level:"O-Level standard", q:"Water waves in a ripple tank pass from deep water into shallow water, where they slow down. (a) State what happens to the frequency. (b) Deduce what happens to the wavelength, with reasoning. (c) State the type of wave, and how it differs from a longitudinal wave.",
+      steps:["(a) The frequency is set by the source (the vibrating dipper), so it does not change when the wave enters a new medium.","(b) From v = fλ, if v decreases while f stays constant, then λ must decrease.","(c) Water waves are transverse."],
+      ans:"(a) Frequency stays the same. (b) Wavelength decreases, since v = fλ and v falls while f is constant. (c) Transverse — particles vibrate perpendicular to the direction of energy transfer, whereas in a longitudinal wave they vibrate parallel to it." },
+  ]},
+"11. Sound": {
+  diagram:{ type:"wave", mode:"longitudinal", caption:"Sound travels as compressions (particles bunched, high pressure) and rarefactions (particles spread, low pressure)." },
+  practice:[
+    { level:"Easy", q:"Explain why sound cannot travel through a vacuum.",
+      steps:["Sound is a longitudinal wave that travels by the vibration of particles passing energy to neighbouring particles.","A vacuum contains no particles."],
+      ans:"There are no particles in a vacuum to vibrate and pass the energy on, so sound cannot be transmitted." },
+    { level:"Medium", q:"A person shouts at a cliff and hears the echo 1.6 s later. Taking the speed of sound as 330 m/s, calculate the distance to the cliff.",
+      steps:["The sound travels to the cliff and back, so the total path = speed × time = 330 × 1.6 = 528 m.","The distance to the cliff is half of this total path.","528 ÷ 2 = 264 m."],
+      ans:"264 m." },
+    { level:"O-Level standard", q:"A ship uses sonar to find the depth of the sea bed. An ultrasound pulse returns after 0.090 s, and the speed of sound in water is 1500 m/s. (a) Define ultrasound. (b) Calculate the depth. (c) Explain how the trace on an oscilloscope would change if the same note were played more loudly, and at a higher pitch.",
+      steps:["(a) Ultrasound is sound with a frequency above the upper limit of human hearing, that is above 20 000 Hz.","(b) Total distance travelled = 1500 × 0.090 = 135 m.","This is down to the sea bed and back, so the depth = 135 ÷ 2 = 67.5 m.","(c) Loudness depends on amplitude, and pitch depends on frequency."],
+      ans:"(a) Sound above 20 000 Hz. (b) 67.5 m. (c) Louder → larger amplitude (taller trace); higher pitch → higher frequency, so more waves in the same width (waves closer together)." },
+  ]},
+"12. Electromagnetic Spectrum": {
+  diagram:{ type:"spectrum", caption:"Learn the order — it is asked for directly, and the uses and hazards follow the same sequence." },
+  practice:[
+    { level:"Easy", q:"List the seven regions of the electromagnetic spectrum in order of increasing frequency.",
+      steps:["Frequency increases as wavelength decreases.","Start from the longest wavelength (radio) and work to the shortest (gamma)."],
+      ans:"Radio waves, microwaves, infrared, visible light, ultraviolet, X-rays, gamma rays." },
+    { level:"Medium", q:"State one use for each of: (a) infrared, (b) ultraviolet, (c) X-rays, (d) microwaves. For each, briefly say why that region is suited to the job.",
+      steps:["Match the property of the radiation to the task required."],
+      ans:"(a) Infrared — remote controllers and thermal imaging, since warm objects emit infrared. (b) Ultraviolet — authenticating banknotes and disinfecting water, since UV causes fluorescence and kills bacteria. (c) X-rays — medical radiology and security screening, since they pass through soft tissue but are absorbed by bone and metal. (d) Microwaves — mobile phone and satellite communication, since they pass through the atmosphere." },
+    { level:"O-Level standard", q:"(a) State two properties common to all electromagnetic waves. (b) Explain why ultraviolet, X-rays and gamma rays are classed as more hazardous than radio waves. (c) A radio station broadcasts at 90 MHz. Calculate the wavelength, taking c = 3.0 × 10⁸ m/s.",
+      steps:["(a) All electromagnetic waves are transverse, and all travel at 3.0 × 10⁸ m/s in a vacuum. (They also all transfer energy and can travel through a vacuum.)","(b) These three have the highest frequencies and therefore carry the most energy per wave.","They are ionising: they can knock electrons out of atoms in living cells, damaging or killing the cell and causing mutations that may lead to cancer. Radio waves have far too little energy to ionise.","(c) λ = c ÷ f = (3.0 × 10⁸) ÷ (90 × 10⁶) = 3.3 m."],
+      ans:"(a) Transverse, and all travel at 3.0 × 10⁸ m/s in a vacuum. (b) They are ionising — high enough energy to remove electrons from atoms, damaging cells and causing mutation/cancer. (c) 3.3 m." },
+  ]},
+"13. Light": {
+  diagram:{ type:"ray", mode:"refraction", caption:"Entering a denser medium the ray slows and bends towards the normal, so the angle of refraction is smaller than the angle of incidence." },
+  practice:[
+    { level:"Easy", q:"A ray of light strikes a plane mirror at an angle of incidence of 35°. State the angle of reflection, and name the line from which both angles are measured.",
+      steps:["By the law of reflection, the angle of incidence equals the angle of reflection.","Both angles are measured from the normal — the line perpendicular to the mirror at the point of incidence."],
+      ans:"35°, measured from the normal." },
+    { level:"Medium", q:"Light passes from air into glass of refractive index 1.5, with an angle of incidence of 40°. Calculate the angle of refraction.",
+      steps:["n = sin i ÷ sin r, so sin r = sin i ÷ n.","sin r = sin 40° ÷ 1.5 = 0.6428 ÷ 1.5 = 0.4285.","r = sin⁻¹(0.4285) = 25.4°."],
+      ans:"25.4° (to 1 d.p.)." },
+    { level:"O-Level standard", q:"A glass block has a refractive index of 1.5. (a) Calculate the critical angle. (b) State the two conditions required for total internal reflection. (c) Explain how optical fibres use this effect, and give one advantage over copper cable.",
+      steps:["(a) At the critical angle c, the angle of refraction is 90°, so n = sin 90° ÷ sin c = 1 ÷ sin c.","sin c = 1 ÷ 1.5 = 0.6667, so c = sin⁻¹(0.6667) = 41.8°.","(b) Light must travel from a denser to a less dense medium, and the angle of incidence must be greater than the critical angle.","(c) Light entering the fibre strikes the boundary at an angle greater than the critical angle, so it totally internally reflects repeatedly and is guided along the fibre with very little loss."],
+      ans:"(a) 41.8°. (b) Light going from denser to less dense medium, and angle of incidence greater than the critical angle. (c) Repeated total internal reflection guides the light along the fibre; advantages include far greater data capacity, lower signal loss and no electrical interference." },
+  ]},
+"14. Static Electricity": {
+  diagram:{ type:"field", mode:"charges", caption:"Electric field lines run from positive to negative and show the direction of the force on a positive test charge." },
+  practice:[
+    { level:"Easy", q:"A polythene rod is rubbed with a cloth and becomes negatively charged. State which particle has moved and in which direction.",
+      steps:["Protons are fixed in the nuclei of atoms and cannot move between objects.","Only electrons can be transferred by rubbing.","The rod became negative, so it gained electrons."],
+      ans:"Electrons moved from the cloth to the rod. (The cloth is left positively charged.)" },
+    { level:"Medium", q:"Explain why a charged balloon sticks to a neutral wall.",
+      steps:["The charged balloon is brought close to the wall.","Its charge repels like charges in the wall's surface atoms and attracts unlike charges, so the near surface of the wall gains an induced opposite charge.","The opposite charges on the balloon and the wall's near surface attract each other.","This attraction is stronger than the repulsion from the like charges, because those have been pushed further away."],
+      ans:"The balloon induces an opposite charge on the wall's surface, and the attraction between the balloon and this induced charge holds it in place." },
+    { level:"O-Level standard", q:"(a) Explain why a fuel tanker is earthed by a metal chain or wire before fuel is transferred. (b) Describe how an electrostatic precipitator removes smoke particles from waste gases.",
+      steps:["(a) Fuel flowing through pipes rubs against them, transferring electrons and causing charge to build up on the tanker.","If enough charge accumulates, the potential difference becomes large enough to cause a spark. A spark near flammable fuel vapour could ignite it and cause an explosion.","Earthing provides a conducting path for the excess charge to flow safely to the ground, so no dangerous build-up occurs.","(b) Waste gas passes a charged metal grid, which transfers charge to the smoke and dust particles so they all become charged.","The charged particles are then attracted to plates carrying the opposite charge, where they stick and collect, and can be removed periodically."],
+      ans:"(a) To let charge built up by friction flow safely to earth, preventing a spark that could ignite fuel vapour. (b) Particles are charged by a grid, then attracted to and collected on oppositely charged plates." },
+  ]},
+"15. Current of Electricity": {
+  diagram:{ type:"axes", alt:"I-V characteristic graphs", xlabel:"potential difference V", ylabel:"current I", xmax:10, ymax:10, grid:false,
+    xticks:[{v:0,t:'0'}], yticks:[],
+    series:[{pts:[[0,0],[9,9]],color:'#34D399'},{pts:[[0,0],[1.5,2.4],[3.5,4.2],[6,5.4],[9,6.2]],color:'#FCD34D'}],
+    notes:[{x:8.4,y:9.6,text:'ohmic (metal)',color:'#34D399',anchor:'end'},{x:9.2,y:5.1,text:'filament lamp',color:'#FCD34D',anchor:'end'}],
+    caption:"A metal at constant temperature gives a straight line through the origin. A filament lamp curves as it heats and its resistance rises." },
+  practice:[
+    { level:"Easy", q:"A current of 0.25 A flows for 40 s. Calculate the charge that passes.",
+      steps:["Q = It.","= 0.25 × 40 = 10 C."],
+      ans:"10 C." },
+    { level:"Medium", q:"A 12 V supply drives a current of 0.40 A through a resistor. Calculate (a) its resistance, (b) the power dissipated.",
+      steps:["(a) R = V ÷ I = 12 ÷ 0.40 = 30 Ω.","(b) P = VI = 12 × 0.40 = 4.8 W."],
+      ans:"(a) 30 Ω. (b) 4.8 W." },
+    { level:"O-Level standard", q:"(a) Sketch and describe the I–V graph for a filament lamp. (b) Explain its shape in terms of particles. (c) A wire is replaced by one of the same material but twice the length and half the cross-sectional area. State the effect on its resistance.",
+      steps:["(a) The graph is a curve through the origin that becomes progressively shallower as V increases — the current rises less and less steeply.","(b) A shallower gradient means the resistance is increasing.","As current increases the filament gets hotter, so the metal lattice ions vibrate more vigorously and obstruct the flow of electrons more, raising the resistance.","(c) Resistance is proportional to length: doubling the length doubles R.","Resistance is inversely proportional to cross-sectional area: halving the area doubles R again."],
+      ans:"(a) A curve through the origin, flattening as V rises. (b) The filament heats up, lattice ions vibrate more and impede electron flow, so resistance increases. (c) Resistance becomes 2 × 2 = 4 times greater." },
+  ]},
+"16. D.C. Circuits": {
+  diagram:{ type:"circuit", mode:"parallel", caption:"In parallel: the p.d. across each branch is the same, and the branch currents add up to the supply current." },
+  practice:[
+    { level:"Easy", q:"Two resistors of 4.0 Ω and 6.0 Ω are connected in series. Calculate the effective resistance.",
+      steps:["In series, resistances simply add.","R = 4.0 + 6.0 = 10 Ω."],
+      ans:"10 Ω." },
+    { level:"Medium", q:"The same 4.0 Ω and 6.0 Ω resistors are now connected in parallel. Calculate the effective resistance.",
+      steps:["In parallel: 1/R = 1/R₁ + 1/R₂.","1/R = 1/4.0 + 1/6.0 = 0.25 + 0.1667 = 0.4167.","R = 1 ÷ 0.4167 = 2.4 Ω.","Note the answer is smaller than the smallest individual resistor — always check this."],
+      ans:"2.4 Ω." },
+    { level:"O-Level standard", q:"A 12 V supply is connected to a 3000 Ω fixed resistor in series with a light-dependent resistor (LDR), forming a potential divider. The output is taken across the fixed resistor. (a) In darkness the LDR has a resistance of 9000 Ω — calculate the output p.d. (b) State and explain what happens to the output as light intensity increases.",
+      steps:["(a) Total resistance = 3000 + 9000 = 12 000 Ω.","Current = V ÷ R = 12 ÷ 12 000 = 0.0010 A.","Output p.d. across the fixed resistor = IR = 0.0010 × 3000 = 3.0 V.","(b) As light intensity increases, the resistance of the LDR decreases.","The LDR then takes a smaller share of the total p.d., so a larger share appears across the fixed resistor."],
+      ans:"(a) 3.0 V. (b) The output p.d. increases, because the LDR's resistance falls so it takes a smaller share of the supply voltage — this is how an automatic light-sensing circuit is triggered." },
+  ]},
+"17. Practical Electricity": {
+  diagram:{ type:"plug", caption:"Brown = live, blue = neutral, green/yellow = earth. The fuse always sits in the live wire." },
+  practice:[
+    { level:"Easy", q:"An appliance is rated 240 V, 1500 W. Calculate the current it draws, and state which fuse you would fit: 3 A, 5 A or 13 A.",
+      steps:["P = VI, so I = P ÷ V.","I = 1500 ÷ 240 = 6.25 A.","Choose the smallest standard fuse that is above the normal operating current."],
+      ans:"6.25 A, so fit a 13 A fuse (a 5 A fuse would blow in normal use)." },
+    { level:"Medium", q:"A 2.0 kW heater runs for 3.0 hours. Electricity costs 25 cents per kW h. Calculate the cost.",
+      steps:["Energy in kW h = power in kW × time in hours.","= 2.0 × 3.0 = 6.0 kW h.","Cost = 6.0 × 25 = 150 cents."],
+      ans:"150 cents ($1.50)." },
+    { level:"O-Level standard", q:"(a) Explain the purpose of the earth wire in an appliance with a metal casing. (b) Explain why the fuse and switch must be placed in the live wire. (c) State why a double-insulated appliance needs no earth wire.",
+      steps:["(a) If a fault lets the live wire touch the metal casing, the casing becomes live and would give a fatal shock to anyone touching it.","The earth wire provides a low-resistance path from the casing to the ground, so a very large current flows, which blows the fuse and disconnects the appliance, making the casing safe.","(b) The live wire carries the high voltage from the supply. If the fuse or switch were in the neutral wire, then when they operated the appliance would be disconnected from earth but still connected to the live supply.","The appliance would remain at a dangerous high potential even when switched off or after the fuse blew.","(c) A double-insulated appliance has a non-conducting plastic casing, so no exposed metal part can ever become live."],
+      ans:"(a) It gives fault current a safe low-resistance path to ground, blowing the fuse and making the casing safe. (b) So operating them isolates the appliance from the high voltage — otherwise it would stay live and dangerous. (c) Its casing is non-conducting plastic, so it cannot become live." },
+  ]},
+"18. Magnetism": {
+  diagram:{ type:"field", mode:"magnet", caption:"Field lines leave the north pole and enter the south pole, never cross, and are closest together where the field is strongest." },
+  practice:[
+    { level:"Easy", q:"State the only reliable test to show that a bar of metal is a magnet rather than just a magnetic material.",
+      steps:["A magnetic material such as iron is always attracted to a magnet, whichever pole is used.","Only a magnet can be repelled."],
+      ans:"Repulsion — bring a known magnet's pole near it; if it is repelled, it must be a magnet." },
+    { level:"Medium", q:"Explain the difference between a soft and a hard magnetic material, and state a use for each.",
+      steps:["Soft magnetic materials, such as iron, magnetise easily but also lose their magnetism easily.","Hard magnetic materials, such as steel, are harder to magnetise but retain their magnetism."],
+      ans:"Soft (iron) — temporary magnetism, used for electromagnet cores so the magnetism can be switched off. Hard (steel) — permanent magnets, used for compass needles and fridge magnets." },
+    { level:"O-Level standard", q:"An unmagnetised iron nail is brought close to the north pole of a strong magnet and is attracted. (a) Name the effect responsible. (b) State which pole is induced at the near end of the nail, and explain why this causes attraction. (c) State what happens when the magnet is removed, and how the answer would differ for a steel nail.",
+      steps:["(a) This is induced magnetism.","(b) The magnet's north pole induces a south pole at the near end of the nail (and a north pole at the far end).","Unlike poles attract, so the induced south pole is attracted to the magnet's north pole — and this attraction is stronger than the repulsion from the more distant induced north pole.","(c) Iron is a soft magnetic material, so it loses its induced magnetism almost immediately once the magnet is removed."],
+      ans:"(a) Induced magnetism. (b) A south pole, which is attracted to the magnet's north pole since unlike poles attract. (c) The iron nail loses its magnetism at once; a steel nail is hard magnetic and would keep much of its magnetism, becoming a permanent magnet." },
+  ]},
+"19. Electromagnetism": {
+  diagram:{ type:"fleming", caption:"A current-carrying conductor at right angles to a magnetic field experiences a force. Use the left hand to find its direction." },
+  practice:[
+    { level:"Easy", q:"State the three quantities represented by the thumb, first finger and second finger in Fleming's left-hand rule.",
+      steps:["Use the mnemonic built into the words: First = Field, seCond = Current, thuMb = Motion."],
+      ans:"First finger = magnetic Field, second finger = Current, thumb = Motion (the force)." },
+    { level:"Medium", q:"State three ways to increase the strength of an electromagnet.",
+      steps:["The magnetic field of a solenoid depends on the current, the number of turns, and the core material."],
+      ans:"Increase the current; increase the number of turns on the coil; use a soft-iron core (or wind the turns more closely)." },
+    { level:"O-Level standard", q:"A simple d.c. motor consists of a coil in a magnetic field connected to a supply through a split-ring commutator. (a) Explain why the coil experiences a turning effect. (b) Explain the purpose of the split-ring commutator. (c) State two ways to make the coil turn faster.",
+      steps:["(a) Current flows in opposite directions along the two sides of the coil.","Since the two sides carry current in opposite directions in the same magnetic field, the forces on them act in opposite directions — one side is pushed up and the other down.","This pair of opposite forces produces a turning effect (a moment) about the axis, so the coil rotates.","(b) Without it, the coil would stop after half a turn as the forces would then oppose the rotation.","The split-ring commutator reverses the direction of the current in the coil every half turn, so the force on each side always acts to keep the coil turning the same way.","(c) Increase the current, or increase the number of turns on the coil (a stronger magnet or a soft-iron core also works)."],
+      ans:"(a) The two sides carry current in opposite directions, so the forces on them are opposite, creating a turning moment. (b) It reverses the current every half turn so rotation continues in one direction instead of stopping. (c) Increase the current; increase the number of turns (or use a stronger magnet)." },
+  ]},
+"20. Electromagnetic Induction": {
+  diagram:{ type:"transformer", caption:"An alternating current in the primary creates a changing field in the core, inducing an alternating e.m.f. in the secondary." },
+  practice:[
+    { level:"Easy", q:"State three ways to increase the size of the e.m.f. induced when a magnet is moved into a coil.",
+      steps:["The induced e.m.f. depends on how fast the field linking the coil changes."],
+      ans:"Move the magnet faster; use more turns on the coil; use a stronger magnet." },
+    { level:"Medium", q:"A transformer has 200 turns on the primary and 1200 turns on the secondary. The primary is connected to a 240 V a.c. supply. (a) Calculate the secondary voltage. (b) State whether it is a step-up or step-down transformer.",
+      steps:["(a) Vₚ/Vₛ = Nₚ/Nₛ, so Vₛ = Vₚ × (Nₛ ÷ Nₚ).","Vₛ = 240 × (1200 ÷ 200) = 240 × 6 = 1440 V.","(b) The secondary voltage is higher than the primary."],
+      ans:"(a) 1440 V. (b) Step-up." },
+    { level:"O-Level standard", q:"(a) Explain why a transformer will not work with a direct current supply. (b) Explain why electrical power is transmitted across the country at very high voltage. (c) An ideal transformer has an input of 240 V, 5.0 A and an output of 12 V. Calculate the output current.",
+      steps:["(a) A transformer works by electromagnetic induction, which needs the magnetic field linking the secondary coil to be continuously changing.","A steady direct current produces a constant magnetic field, so there is no change in flux linkage and therefore no induced e.m.f. in the secondary (except momentarily at switch-on and switch-off).","(b) Power transmitted = VI, so for a given power a higher voltage means a smaller current.","Energy wasted heating the cables is given by I²R, so reducing the current greatly reduces the energy lost — the loss depends on the square of the current.","(c) For an ideal transformer, input power = output power: VₚIₚ = VₛIₛ.","240 × 5.0 = 12 × Iₛ, so 1200 = 12Iₛ and Iₛ = 100 A."],
+      ans:"(a) A steady d.c. gives a constant magnetic field, so there is no changing flux linkage and no induced e.m.f. (b) High voltage means low current, and power loss in cables is I²R, so losses fall sharply. (c) 100 A." },
+  ]},
+"21. Radioactivity": {
+  diagram:{ type:"penetration", caption:"Penetrating power: α stopped by paper, β by a few mm of aluminium, γ only reduced by thick lead." },
+  practice:[
+    { level:"Easy", q:"A radioactive source has a half-life of 6 hours and an initial count rate of 800 counts per minute. What is the count rate after 18 hours?",
+      steps:["18 hours ÷ 6 hours = 3 half-lives.","After each half-life the count rate halves: 800 → 400 → 200 → 100."],
+      ans:"100 counts per minute." },
+    { level:"Medium", q:"A nucleus of radium-226 (proton number 88) emits an alpha particle. State the nucleon number and proton number of the nucleus formed, and explain your reasoning.",
+      steps:["An alpha particle is a helium nucleus containing 2 protons and 2 neutrons, so it has nucleon number 4 and proton number 2.","Nucleon number of the new nucleus = 226 − 4 = 222.","Proton number of the new nucleus = 88 − 2 = 86."],
+      ans:"Nucleon number 222, proton number 86." },
+    { level:"O-Level standard", q:"A detector reads 520 counts/min next to a source. With no source present it reads 20 counts/min. (a) Explain the 20 counts/min and name two sources of it. (b) Calculate the corrected count rate. (c) The corrected rate falls to 125 counts/min after 24 days — calculate the half-life. (d) Suggest, with a reason, which type of radiation is best for a medical tracer injected into a patient.",
+      steps:["(a) This is background radiation — the low-level ionising radiation always present in the environment. Natural sources include rocks (radon gas), cosmic rays and food; artificial sources include medical X-rays.","(b) Corrected count rate = 520 − 20 = 500 counts/min.","(c) 500 → 250 → 125 is 2 half-lives, and this took 24 days.","Half-life = 24 ÷ 2 = 12 days.","(d) Alpha is too strongly ionising and would be absorbed inside the body, damaging tissue; it also could not escape to be detected."],
+      ans:"(a) Background radiation, from e.g. rocks/radon and cosmic rays. (b) 500 counts/min. (c) 12 days. (d) Gamma — it is weakly ionising so does least tissue damage, yet penetrating enough to escape the body and be detected outside." },
+  ]},
+},
+chemistry: {
+"1. Experimental Chemistry": {
+  diagram:{ type:"apparatus", mode:"distillation", caption:"Simple distillation: the solvent evaporates, condenses in the cooled condenser, and is collected as pure distillate." },
+  practice:[
+    { level:"Easy", q:"Name the method you would use to separate (a) sand from water, (b) pure water from sea water, (c) different coloured dyes in an ink.",
+      steps:["Sand is insoluble in water, so it can be trapped by filter paper.","Pure water is the solvent, so evaporate and condense it.","Dyes have different solubilities, so they travel different distances up paper."],
+      ans:"(a) Filtration. (b) Simple distillation. (c) Paper chromatography." },
+    { level:"Medium", q:"In a chromatogram, the solvent front travels 8.0 cm and a spot travels 3.0 cm. (a) Calculate the Rf value. (b) State why Rf values are useful. (c) Explain why the starting line must be drawn in pencil.",
+      steps:["(a) Rf = distance moved by spot ÷ distance moved by solvent front = 3.0 ÷ 8.0 = 0.375.","(b) Rf is constant for a given substance in a given solvent.","(c) Pencil is made of graphite, which is insoluble in the solvent."],
+      ans:"(a) 0.375. (b) It is constant for a given substance in a given solvent, so it can be used to identify unknown components. (c) Pencil does not dissolve and travel up the paper, whereas ink would separate and ruin the result." },
+    { level:"O-Level standard", q:"A student has a mixture of solid ammonium chloride, sand and sodium chloride. Describe how to obtain a pure, dry sample of each component, explaining the property used at each stage.",
+      steps:["Step 1 — Heat the mixture gently. Ammonium chloride sublimes: it turns directly from solid to vapour, which can be cooled on a cold surface to re-form pure solid ammonium chloride. Sand and sodium chloride do not sublime.","Step 2 — Add water to the remaining solid and stir. Sodium chloride is soluble and dissolves; sand is insoluble and does not.","Step 3 — Filter the mixture. The sand is trapped as residue in the filter paper; wash it with distilled water and dry it in an oven.","Step 4 — The filtrate is sodium chloride solution. Heat it to evaporate some water until saturated, then leave it to cool so crystals form (crystallisation).","Step 5 — Filter off the crystals and dry them between filter paper."],
+      ans:"Sublimation removes the ammonium chloride; filtration separates the insoluble sand from the dissolved sodium chloride; crystallisation of the filtrate recovers the sodium chloride." },
+  ]},
+"2. The Particulate Nature of Matter": {
+  diagram:{ type:"atom", shells:[2,8,1], sym:"Na", caption:"Sodium: 11 protons, electronic configuration 2, 8, 1 — the single outer electron is why it is a very reactive Group 1 metal." },
+  practice:[
+    { level:"Easy", q:"An atom has a proton number of 17 and a nucleon number of 35. State the number of protons, neutrons and electrons, and write its electronic configuration.",
+      steps:["Protons = proton number = 17. In a neutral atom, electrons = protons = 17.","Neutrons = nucleon number − proton number = 35 − 17 = 18.","Fill the shells 2, then 8, then 8: 2 + 8 + 7 = 17."],
+      ans:"17 protons, 18 neutrons, 17 electrons; configuration 2, 8, 7 (chlorine)." },
+    { level:"Medium", q:"Chlorine has two isotopes, ³⁵Cl and ³⁷Cl. (a) Define isotopes. (b) Explain why they have identical chemical properties. (c) State one physical property that differs.",
+      steps:["(a) Isotopes are atoms of the same element with the same proton number but different numbers of neutrons, and so different nucleon numbers.","(b) Chemical properties are determined by the number and arrangement of electrons.","Both isotopes have 17 protons and therefore 17 electrons, with the same configuration 2,8,7 — so they react identically.","(c) They have different masses, since they contain different numbers of neutrons."],
+      ans:"(a) Same proton number, different numbers of neutrons. (b) They have identical electronic configurations, and chemistry is determined by electrons. (c) Density/mass — ³⁷Cl atoms are heavier, so it also diffuses slightly more slowly." },
+    { level:"O-Level standard", q:"Cotton wool soaked in concentrated ammonia solution is put at one end of a long glass tube, and cotton wool soaked in concentrated hydrochloric acid at the other. A white ring of ammonium chloride forms nearer the hydrochloric acid end. (a) Name the process. (b) Explain why the ring forms nearer the acid end. (c) State what happens if the tube is warmed.",
+      steps:["(a) Diffusion — the net movement of particles from high to low concentration due to their random motion.","(b) Ammonia (Mr = 17) has a smaller relative molecular mass than hydrogen chloride (Mr = 36.5).","At the same temperature, lighter particles move faster, so ammonia diffuses more quickly along the tube.","The ammonia therefore travels further before the two gases meet, so the white ring forms closer to the slower-moving hydrogen chloride.","(c) Warming gives all particles more kinetic energy, so they move faster."],
+      ans:"(a) Diffusion. (b) Ammonia has the smaller Mr so it diffuses faster and travels further before meeting the HCl. (c) Both gases diffuse faster, so the ring forms sooner (in roughly the same position)." },
+  ]},
+"3. Chemical Bonding and Structure": {
+  diagram:{ type:"dotcross", a:"H", aN:1, b:"Cl", bN:7, caption2:"HCl — one shared pair gives hydrogen 2 electrons and chlorine 8", caption:"A covalent bond is one shared pair of electrons; dots and crosses just show which atom each electron came from." },
+  practice:[
+    { level:"Easy", q:"State the type of bonding in (a) magnesium oxide, (b) carbon dioxide, (c) copper.",
+      steps:["Metal + non-metal → electrons transferred → ionic.","Non-metal + non-metal → electrons shared → covalent.","Metal only → lattice of positive ions in a sea of delocalised electrons → metallic."],
+      ans:"(a) Ionic. (b) Covalent. (c) Metallic." },
+    { level:"Medium", q:"Explain why sodium chloride has a high melting point and conducts electricity when molten but not when solid.",
+      steps:["Sodium chloride has a giant ionic lattice of Na⁺ and Cl⁻ ions held by strong electrostatic forces of attraction.","A large amount of energy is needed to overcome these strong forces, so the melting point is high.","To conduct electricity, charged particles must be free to move.","When solid, the ions are held in fixed positions in the lattice, so they cannot move and it does not conduct.","When molten, the lattice breaks down and the ions become free to move and carry charge."],
+      ans:"High melting point because strong electrostatic attraction between oppositely charged ions must be overcome. It conducts only when molten because only then are the ions free to move and carry charge." },
+    { level:"O-Level standard", q:"Diamond and graphite are both forms of carbon. (a) State the type of structure both have. (b) Explain why diamond is extremely hard while graphite is soft and slippery. (c) Explain why graphite conducts electricity but diamond does not.",
+      steps:["(a) Both have a giant covalent (macromolecular) structure.","(b) In diamond, each carbon atom forms four strong covalent bonds in a rigid three-dimensional tetrahedral lattice, so the structure cannot be distorted — it is very hard.","In graphite, each carbon forms only three covalent bonds, giving flat layers of hexagons. The layers are held to each other by weak forces only, so they slide over one another easily — making it soft and a good lubricant.","(c) In diamond all four outer electrons of every carbon atom are used in covalent bonding, so there are no free electrons to carry charge.","In graphite each carbon uses only three of its four outer electrons in bonding, leaving one delocalised electron per atom free to move along the layers."],
+      ans:"(a) Giant covalent (macromolecular). (b) Diamond has four bonds per atom in a rigid 3D lattice; graphite has three bonds per atom in layers held by weak forces, which slide. (c) Graphite has one delocalised electron per carbon atom free to move; in diamond all four outer electrons are locked in bonds." },
+  ]},
+"4. Chemical Calculations": {
+  diagram:{ type:"flow", alt:"Mole calculation map", w:360, h:210,
+    boxes:[{x:130,y:84,w:100,h:44,text:"MOLES|n",color:'#F59E0B'},
+           {x:14,y:14,w:96,h:40,text:"mass (g)",color:'#3B82F6'},
+           {x:250,y:14,w:96,h:40,text:"volume of gas|(dm³)",color:'#34D399'},
+           {x:14,y:158,w:96,h:40,text:"concentration|× volume",color:'#A78BFA'},
+           {x:250,y:158,w:96,h:40,text:"number of|particles",color:'#FB7185'}],
+    arrows:[{x1:110,y1:44,x2:140,y2:82,label:'÷ Mr',dx:-16,dy:2},
+            {x1:250,y1:44,x2:220,y2:82,label:'÷ 24',dx:16,dy:2},
+            {x1:110,y1:172,x2:140,y2:130,label:'× vol',dx:-16,dy:6},
+            {x1:250,y1:172,x2:220,y2:130,label:'÷ 6.02e23',dx:24,dy:6}],
+    caption:"Everything routes through moles — convert to moles first, use the equation ratio, then convert back." },
+  practice:[
+    { level:"Easy", q:"Calculate the number of moles in 8.0 g of methane, CH₄. (Ar: C = 12, H = 1)",
+      steps:["Mr of CH₄ = 12 + (4 × 1) = 16.","moles = mass ÷ Mr = 8.0 ÷ 16 = 0.50 mol."],
+      ans:"0.50 mol." },
+    { level:"Medium", q:"25.0 cm³ of 0.100 mol/dm³ sodium hydroxide is exactly neutralised by hydrochloric acid: NaOH + HCl → NaCl + H₂O. If 20.0 cm³ of acid was used, calculate its concentration.",
+      steps:["moles of NaOH = concentration × volume in dm³ = 0.100 × (25.0 ÷ 1000) = 0.00250 mol.","From the equation, NaOH : HCl is 1 : 1, so moles of HCl = 0.00250 mol.","concentration of HCl = moles ÷ volume in dm³ = 0.00250 ÷ (20.0 ÷ 1000).","= 0.00250 ÷ 0.0200 = 0.125 mol/dm³."],
+      ans:"0.125 mol/dm³." },
+    { level:"O-Level standard", q:"Calcium carbonate decomposes: CaCO₃ → CaO + CO₂. 25.0 g of impure limestone produces 4.80 dm³ of carbon dioxide at r.t.p. (Ar: Ca = 40, C = 12, O = 16; molar gas volume = 24 dm³/mol.) Calculate (a) the moles of CO₂, (b) the mass of pure CaCO₃, (c) the percentage purity of the limestone.",
+      steps:["(a) moles of CO₂ = volume ÷ 24 = 4.80 ÷ 24 = 0.200 mol.","(b) From the equation, CaCO₃ : CO₂ is 1 : 1, so moles of CaCO₃ = 0.200 mol.","Mr of CaCO₃ = 40 + 12 + (3 × 16) = 100.","mass = moles × Mr = 0.200 × 100 = 20.0 g.","(c) percentage purity = (mass of pure substance ÷ total mass) × 100% = (20.0 ÷ 25.0) × 100% = 80.0%."],
+      ans:"(a) 0.200 mol. (b) 20.0 g. (c) 80.0%." },
+  ]},
+"5. Acid-Base Chemistry": {
+  diagram:{ type:"phscale", caption:"Below 7 acidic (more H⁺), 7 neutral, above 7 alkaline (more OH⁻)." },
+  practice:[
+    { level:"Easy", q:"Complete the three reactions of dilute hydrochloric acid with (a) magnesium, (b) copper(II) oxide, (c) sodium carbonate — naming the products in each case.",
+      steps:["Acid + metal → salt + hydrogen.","Acid + base (metal oxide) → salt + water.","Acid + carbonate → salt + water + carbon dioxide."],
+      ans:"(a) Magnesium chloride + hydrogen. (b) Copper(II) chloride + water. (c) Sodium chloride + water + carbon dioxide." },
+    { level:"Medium", q:"Explain the difference between a strong acid and a weak acid, and between a concentrated acid and a dilute acid. Give an example of each type of acid.",
+      steps:["Strong and weak describe the extent of ionisation in water — a chemical property.","A strong acid, e.g. hydrochloric acid, is completely ionised in water, producing the maximum number of H⁺ ions.","A weak acid, e.g. ethanoic acid, is only partially ionised, so far fewer H⁺ ions are released.","Concentrated and dilute describe how much acid is dissolved in a given volume of water — nothing to do with ionisation."],
+      ans:"Strong vs weak = fully vs partially ionised in water (HCl vs ethanoic acid). Concentrated vs dilute = amount of acid per unit volume of solution. A weak acid can be concentrated, and a strong acid can be dilute." },
+    { level:"O-Level standard", q:"Describe how you would prepare a pure, dry sample of copper(II) sulfate crystals from copper(II) oxide and dilute sulfuric acid, explaining why an excess of copper(II) oxide is used.",
+      steps:["Warm some dilute sulfuric acid in a beaker.","Add copper(II) oxide a little at a time, stirring, until no more dissolves and some solid remains at the bottom — this excess guarantees all the acid has reacted.","Filter the mixture to remove the unreacted copper(II) oxide, leaving copper(II) sulfate solution as the filtrate.","Heat the filtrate to evaporate some of the water until a saturated solution forms (test with a glass rod — crystals form on cooling).","Leave the solution to cool slowly so that crystals form.","Filter off the crystals and dry them between sheets of filter paper.","Excess is used because copper(II) oxide is insoluble, so any unreacted excess can simply be filtered off — leaving no acid impurity in the product."],
+      ans:"React warm dilute sulfuric acid with excess copper(II) oxide, filter off the excess, then crystallise the filtrate and dry the crystals. The excess ensures no unreacted acid remains, and being insoluble it is easily filtered out." },
+  ]},
+"6. Qualitative Analysis — Cations": {
+  diagram:{ type:"table", caption:"Learn this grid — the pattern of 'soluble in excess' is what separates the look-alikes.",
+    head:["Cation","+ aqueous NaOH","+ aqueous NH₃"],
+    rows:[["Aluminium, Al³⁺","White ppt, <b>soluble in excess</b>","White ppt, insoluble in excess"],
+          ["Ammonium, NH₄⁺","No ppt; NH₃ gas on warming","—"],
+          ["Calcium, Ca²⁺","White ppt, insoluble in excess","<b>No ppt</b>"],
+          ["Copper(II), Cu²⁺","Light blue ppt, insoluble","Light blue ppt, <b>soluble giving dark blue</b>"],
+          ["Iron(II), Fe²⁺","Green ppt, insoluble","Green ppt, insoluble"],
+          ["Iron(III), Fe³⁺","Red-brown ppt, insoluble","Red-brown ppt, insoluble"],
+          ["Zinc, Zn²⁺","White ppt, soluble in excess","White ppt, <b>soluble in excess</b>"]] },
+  practice:[
+    { level:"Easy", q:"A solution gives a red-brown precipitate with aqueous sodium hydroxide, which does not dissolve in excess. Identify the cation.",
+      steps:["Red-brown precipitates are characteristic of iron(III).","Iron(II) would give a green precipitate."],
+      ans:"Iron(III), Fe³⁺." },
+    { level:"Medium", q:"Two colourless solutions both give a white precipitate with aqueous sodium hydroxide that dissolves in excess. Describe one further test to tell them apart, giving the expected results.",
+      steps:["Both aluminium and zinc give a white precipitate with NaOH that dissolves in excess, so NaOH alone cannot distinguish them.","Test with aqueous ammonia instead, adding it drop by drop and then in excess."],
+      ans:"Add aqueous ammonia: aluminium gives a white precipitate that is insoluble in excess, whereas zinc gives a white precipitate that dissolves in excess to give a colourless solution." },
+    { level:"O-Level standard", q:"A student has an unknown solution X. Adding aqueous sodium hydroxide and warming produces a gas that turns damp red litmus paper blue. Adding aqueous silver nitrate (after acidifying with dilute nitric acid) gives a yellow precipitate. (a) Identify the cation and the anion. (b) Name compound X. (c) Explain why the nitric acid must be added before the silver nitrate.",
+      steps:["(a) A gas that turns damp red litmus blue is ammonia, which is only released when a cation reacts with NaOH — so the cation is ammonium, NH₄⁺.","A yellow precipitate with acidified silver nitrate indicates iodide, I⁻ (a chloride would give white).","(b) Combining the two ions gives ammonium iodide.","(c) Carbonate ions, if present, would also react with silver nitrate to give a white precipitate of silver carbonate, giving a false positive."],
+      ans:"(a) Ammonium (NH₄⁺) and iodide (I⁻). (b) Ammonium iodide, NH₄I. (c) The dilute nitric acid reacts with and removes any carbonate ions, which would otherwise form their own precipitate and give a misleading result." },
+  ]},
+"7. Qualitative Analysis — Anions & Gases": {
+  diagram:{ type:"table", caption:"Anion tests (top) and gas tests (bottom) — both are guaranteed marks if learned exactly.",
+    head:["Test for","Method","Positive result"],
+    rows:[["Carbonate, CO₃²⁻","Add dilute acid","Effervescence; gas turns limewater milky"],
+          ["Chloride, Cl⁻","Acidify with dilute HNO₃, add AgNO₃","<b>White</b> precipitate"],
+          ["Iodide, I⁻","Acidify with dilute HNO₃, add AgNO₃","<b>Yellow</b> precipitate"],
+          ["Nitrate, NO₃⁻","Add NaOH + aluminium foil, warm","Ammonia gas — damp red litmus turns blue"],
+          ["Sulfate, SO₄²⁻","Acidify with dilute HNO₃, add Ba(NO₃)₂","White precipitate"],
+          ["Ammonia, NH₃","Damp red litmus paper","Turns blue"],
+          ["Carbon dioxide, CO₂","Bubble through limewater","Turns milky"],
+          ["Chlorine, Cl₂","Damp litmus paper","Bleached"],
+          ["Hydrogen, H₂","Lighted splint","Pops"],
+          ["Oxygen, O₂","Glowing splint","Relights"],
+          ["Sulfur dioxide, SO₂","Acidified KMnO₄","Purple → colourless"]] },
+  practice:[
+    { level:"Easy", q:"A gas relights a glowing splint. Identify it, and state the test and result for hydrogen.",
+      steps:["Only oxygen relights a glowing splint, since it supports combustion.","Hydrogen is tested with a lighted splint."],
+      ans:"Oxygen. Hydrogen 'pops' with a lighted splint." },
+    { level:"Medium", q:"Describe how you would test a solution for sulfate ions, and explain each step.",
+      steps:["First add dilute nitric acid to the solution.","This removes any carbonate ions present, which would otherwise form a white precipitate and be mistaken for sulfate.","Then add aqueous barium nitrate.","A white precipitate of barium sulfate confirms sulfate ions are present."],
+      ans:"Acidify with dilute nitric acid (to destroy any carbonate), then add aqueous barium nitrate — a white precipitate confirms sulfate." },
+    { level:"O-Level standard", q:"A white solid Y is added to dilute hydrochloric acid and effervesces, giving a gas that turns limewater milky. The resulting solution gives a white precipitate with aqueous sodium hydroxide that is insoluble in excess, and no precipitate with aqueous ammonia. (a) Identify the anion and cation. (b) Name Y. (c) Write a word equation for the reaction with hydrochloric acid.",
+      steps:["(a) Effervescence with acid, giving a gas that turns limewater milky, shows the gas is carbon dioxide — so the anion is carbonate, CO₃²⁻.","A white precipitate with NaOH insoluble in excess, and no precipitate at all with aqueous ammonia, is the unique signature of calcium, Ca²⁺.","(b) The compound is therefore calcium carbonate.","(c) Acid + carbonate → salt + water + carbon dioxide."],
+      ans:"(a) Carbonate (CO₃²⁻) and calcium (Ca²⁺). (b) Calcium carbonate, CaCO₃. (c) Calcium carbonate + hydrochloric acid → calcium chloride + water + carbon dioxide." },
+  ]},
+"8. Redox Chemistry": {
+  diagram:{ type:"apparatus", mode:"electrolysis", caption:"Cathode is negative and attracts cations (reduction); anode is positive and attracts anions (oxidation)." },
+  practice:[
+    { level:"Easy", q:"In the reaction Zn + CuSO₄ → ZnSO₄ + Cu, state which species is oxidised and which is reduced, in terms of electrons.",
+      steps:["Zinc starts as a neutral atom and ends as Zn²⁺ in zinc sulfate, so it has lost 2 electrons.","Copper starts as Cu²⁺ and ends as neutral Cu metal, so it has gained 2 electrons.","OIL RIG: Oxidation Is Loss, Reduction Is Gain."],
+      ans:"Zinc is oxidised (loses electrons); copper(II) ions are reduced (gain electrons). Zinc is the reducing agent and Cu²⁺ is the oxidising agent." },
+    { level:"Medium", q:"Concentrated aqueous sodium chloride is electrolysed with inert electrodes. State the products at each electrode and explain the choice at the anode.",
+      steps:["At the cathode, the cations present are Na⁺ and H⁺. The ion of the less reactive element is discharged, and hydrogen is less reactive than sodium, so hydrogen gas is produced.","At the anode, the anions present are Cl⁻ and OH⁻.","Because the solution is concentrated, the halide is discharged in preference to hydroxide, so chlorine gas is produced.","(If it were dilute, oxygen would be produced instead.)"],
+      ans:"Cathode: hydrogen. Anode: chlorine — because the chloride solution is concentrated, the halide is discharged in preference to hydroxide." },
+    { level:"O-Level standard", q:"Impure copper is purified by electrolysis of aqueous copper(II) sulfate. (a) State what each electrode is made of. (b) Write the half-equation at each electrode. (c) Explain what happens to the impurities and to the concentration of the electrolyte.",
+      steps:["(a) The anode is made of the impure copper, and the cathode is a thin sheet of pure copper.","(b) At the anode, copper atoms lose electrons and dissolve into solution: Cu → Cu²⁺ + 2e⁻ (oxidation).","At the cathode, copper ions gain electrons and are deposited as pure copper: Cu²⁺ + 2e⁻ → Cu (reduction).","(c) Impurities in the anode are usually less reactive metals that do not dissolve; they fall to the bottom of the cell as anode sludge.","Copper ions enter solution at the anode at the same rate as they are removed at the cathode."],
+      ans:"(a) Anode = impure copper, cathode = pure copper. (b) Anode: Cu → Cu²⁺ + 2e⁻; cathode: Cu²⁺ + 2e⁻ → Cu. (c) Impurities collect below the anode as sludge, and the electrolyte concentration stays constant since copper dissolves as fast as it is deposited." },
+  ]},
+"9. Patterns in the Periodic Table": {
+  diagram:{ type:"ladder", alt:"Reactivity series",
+    items:[{t:"potassium  K"},{t:"sodium  Na"},{t:"calcium  Ca"},{t:"magnesium  Mg"},{t:"zinc  Zn"},{t:"iron  Fe"},{t:"lead  Pb"},{t:"(hydrogen)  H",hi:true},{t:"copper  Cu"},{t:"silver  Ag"}],
+    caption:"The syllabus list — note it includes lead and hydrogen, but not aluminium or gold." },
+  practice:[
+    { level:"Easy", q:"An element is in Group 2 and Period 3 of the Periodic Table. State its number of outer electrons, its number of electron shells, and whether it is a metal.",
+      steps:["The group number gives the number of outer (valence) electrons: 2.","The period number gives the number of occupied electron shells: 3.","Groups 1 and 2 are on the left-hand side of the table."],
+      ans:"2 outer electrons, 3 shells, and it is a metal (magnesium)." },
+    { level:"Medium", q:"Chlorine water is added to potassium iodide solution and the mixture turns brown. (a) Explain what has happened. (b) Predict and explain what happens if bromine water is added to potassium chloride solution.",
+      steps:["(a) Chlorine is above iodine in Group 17, so chlorine is the more reactive halogen.","A more reactive halogen displaces a less reactive one from its halide solution, so chlorine displaces iodine: Cl₂ + 2KI → 2KCl + I₂.","The brown colour is the iodine that has been displaced.","(b) Bromine is below chlorine in Group 17, so bromine is less reactive than chlorine."],
+      ans:"(a) Chlorine, being more reactive, displaces iodine from potassium iodide; the brown colour is displaced iodine. (b) No reaction — bromine is less reactive than chlorine and cannot displace it from a chloride." },
+    { level:"O-Level standard", q:"An iron ship's hull is protected by bolting on blocks of magnesium. (a) Name this method. (b) Explain in terms of reactivity why it protects the iron. (c) State the two substances required for iron to rust, and name one other prevention method.",
+      steps:["(a) This is sacrificial protection.","(b) Magnesium is higher than iron in the reactivity series, so it loses electrons more readily than iron does.","The magnesium therefore corrodes preferentially, oxidising in place of the iron, and must be replaced periodically. The iron is left unreacted.","(c) Rusting requires both oxygen and water."],
+      ans:"(a) Sacrificial protection. (b) Magnesium is more reactive than iron, so it loses electrons and corrodes preferentially, leaving the iron protected. (c) Oxygen and water; also prevented by barrier methods such as painting, greasing or galvanising." },
+  ]},
+"10. Chemical Energetics": {
+  diagram:{ type:"energyprofile", mode:"exo", caption:"Exothermic: products end lower than reactants, so energy is released and ΔH is negative. Eₐ is the hump that must be climbed first." },
+  practice:[
+    { level:"Easy", q:"A reaction causes the temperature of the surroundings to fall. State whether it is exothermic or endothermic and give the sign of ΔH.",
+      steps:["A temperature fall means the reaction has taken in energy from the surroundings.","Energy absorbed means the products store more energy than the reactants."],
+      ans:"Endothermic, and ΔH is positive." },
+    { level:"Medium", q:"State whether bond breaking and bond making are exothermic or endothermic, and explain how this determines whether a reaction is exothermic overall.",
+      steps:["Breaking bonds requires energy to be supplied to overcome the attraction holding atoms together, so bond breaking is always endothermic.","Making bonds releases energy as new attractions form, so bond making is always exothermic.","Compare the two totals for the reaction."],
+      ans:"Bond breaking is endothermic; bond making is exothermic. If more energy is released making bonds than is absorbed breaking them, the reaction is exothermic overall (ΔH negative); if less, it is endothermic." },
+    { level:"O-Level standard", q:"Sketch and label an energy profile diagram for an exothermic reaction, marking the activation energy and ΔH. Then explain how adding a catalyst changes the diagram, and whether it changes ΔH.",
+      steps:["Draw energy on the vertical axis and progress of reaction on the horizontal axis.","Reactants start at a higher energy level; the curve rises to a peak, then falls to the products at a lower energy level.","The activation energy Eₐ is measured from the reactants' level up to the peak.","ΔH is measured from the reactants' level down to the products' level, and is negative for an exothermic reaction.","A catalyst provides an alternative reaction pathway with a lower activation energy, so the peak of the curve is lower.","The catalyst does not change the energy of the reactants or of the products, only the height of the barrier between them."],
+      ans:"Reactants high, curve peaks, products lower; Eₐ from reactants to peak, ΔH (negative) from reactants down to products. A catalyst lowers the peak (smaller Eₐ) but ΔH is unchanged, since the reactant and product energy levels are unaffected." },
+  ]},
+"11. Rate of Reactions": {
+  diagram:{ type:"axes", alt:"Rate of reaction curves", xlabel:"time", ylabel:"volume of gas", xmax:10, ymax:10, grid:false,
+    xticks:[{v:0,t:'0'}], yticks:[],
+    series:[{pts:[[0,0],[1,4.4],[2,6.6],[3.2,7.8],[5,8.4],[8,8.6],[10,8.6]],color:'#FB7185'},
+            {pts:[[0,0],[2,3.2],[4,5.4],[6,7],[8,8.1],[10,8.6]],color:'#3B82F6'}],
+    notes:[{x:5.4,y:9.4,text:'higher temp / smaller pieces',color:'#FB7185'},{x:9.6,y:6.2,text:'slower',color:'#93C5FD',anchor:'end'}],
+    caption:"A steeper initial gradient means a faster rate. Both curves level off at the same height if the amount of reactant is the same." },
+  practice:[
+    { level:"Easy", q:"State three ways to increase the rate of the reaction between marble chips and dilute hydrochloric acid.",
+      steps:["Rate increases when collisions are more frequent or more energetic."],
+      ans:"Increase the temperature; increase the acid concentration; use smaller marble chips (greater surface area). A catalyst would also work." },
+    { level:"Medium", q:"Explain, in terms of collisions, why increasing the temperature increases the rate of reaction. Your answer should mention two effects.",
+      steps:["Increasing the temperature gives the particles more kinetic energy, so they move faster.","Effect 1 — the particles collide more frequently, because they cover more distance per second.","Effect 2 — a greater proportion of collisions have energy equal to or greater than the activation energy, so a greater proportion of collisions are successful.","The second effect is the more important of the two."],
+      ans:"Particles move faster, so collisions are more frequent, AND a greater proportion of those collisions have energy above the activation energy — so more collisions are successful." },
+    { level:"O-Level standard", q:"Excess marble chips are added to 50 cm³ of dilute hydrochloric acid and the volume of CO₂ is measured over time. (a) Sketch the shape of the curve and explain it. (b) On the same axes, sketch the curve if the experiment is repeated with the same mass of powdered marble, and explain the difference. (c) Explain why both curves finish at the same final volume.",
+      steps:["(a) The curve is steepest at the start, then gradually becomes less steep, and finally flattens to a horizontal line.","At the start the acid concentration is highest, so collisions are most frequent and the rate is fastest. As acid is used up, its concentration falls, collisions become less frequent and the rate slows.","The line becomes horizontal when the acid is completely used up and the reaction has stopped.","(b) The powdered curve is steeper at the start and levels off sooner.","Powder has a much larger total surface area exposed to the acid, so there are more frequent collisions per second and a faster rate.","(c) The marble is in excess in both experiments, so the acid is the limiting reactant, and the same amount of acid is used each time."],
+      ans:"(a) Steep then levelling off — rate falls as acid is used up, and stops when acid is exhausted. (b) Steeper and levels off sooner, because powder has a far greater surface area giving more frequent collisions. (c) The acid is the limiting reactant and the same amount is used in both, so the same total volume of CO₂ is produced." },
+  ]},
+"12. Organic Chemistry": {
+  diagram:{ type:"table", caption:"The four homologous series you must know — learn the functional group and the general formula together.",
+    head:["Series","Functional group","General formula","Example"],
+    rows:[["Alkanes","only C–C single bonds","CₙH₂ₙ₊₂","methane, CH₄"],
+          ["Alkenes","C=C double bond","CₙH₂ₙ","ethene, C₂H₄"],
+          ["Alcohols","–OH","CₙH₂ₙ₊₁OH","ethanol, C₂H₅OH"],
+          ["Carboxylic acids","–CO₂H","CₙH₂ₙ₊₁CO₂H","ethanoic acid, CH₃CO₂H"]] },
+  practice:[
+    { level:"Easy", q:"Describe the test to distinguish ethane from ethene, giving the result for each.",
+      steps:["Ethene is unsaturated (contains a C=C double bond); ethane is saturated.","Add aqueous bromine and shake."],
+      ans:"Add aqueous bromine: ethene decolourises it (orange → colourless) by an addition reaction, while ethane produces no change." },
+    { level:"Medium", q:"(a) Define a homologous series. (b) State what happens to the boiling points of the alkanes as the number of carbon atoms increases, and explain why. (c) Name the process used to break large alkanes into smaller ones.",
+      steps:["(a) A family of compounds with the same general formula and similar chemical properties, in which each member differs from the next by –CH₂–, and which shows a gradual change in physical properties.","(b) Boiling point increases as the molecules get larger.","Larger molecules have stronger intermolecular forces between them, so more energy is needed to separate them.","(c) Large, less useful alkane molecules are broken into smaller, more useful ones."],
+      ans:"(a) A family with the same general formula and similar chemistry, each member differing by –CH₂–. (b) Boiling point increases, because larger molecules have stronger intermolecular forces needing more energy to overcome. (c) Cracking." },
+    { level:"O-Level standard", q:"Ethanol can be made by fermentation or by the addition of steam to ethene. (a) State the conditions for fermentation. (b) Name the reaction type used in the ethene route. (c) Ethanol is oxidised to form compound Z, which turns damp blue litmus red and reacts with sodium carbonate to give a gas. Identify Z and name the reaction of Z with ethanol.",
+      steps:["(a) Fermentation uses glucose (from sugar or starch) with yeast, at a warm temperature of about 30–40 °C, in the absence of air.","(b) Steam adds across the C=C double bond of ethene, with a catalyst — this is an addition reaction.","(c) Turning damp blue litmus red shows Z is acidic, and reacting with a carbonate to give a gas (carbon dioxide) confirms it is an acid.","Oxidising ethanol gives the corresponding carboxylic acid, ethanoic acid.","A carboxylic acid reacting with an alcohol produces an ester."],
+      ans:"(a) Glucose + yeast, about 30–40 °C, without air. (b) Addition (of steam, with a catalyst). (c) Z is ethanoic acid; with ethanol it undergoes esterification, forming ethyl ethanoate and water." },
+  ]},
+"13. Maintaining Air Quality": {
+  diagram:{ type:"flow", alt:"The carbon cycle", w:360, h:220,
+    boxes:[{x:118,y:14,w:124,h:44,text:"CO₂ in the|atmosphere",color:'#94A3B8'},
+           {x:12,y:150,w:120,h:52,text:"plants|(photosynthesis|removes CO₂)",color:'#34D399'},
+           {x:228,y:150,w:120,h:52,text:"combustion &|respiration|(add CO₂)",color:'#FB7185'}],
+    arrows:[{x1:116,y1:52,x2:74,y2:146,label:'removed',dx:-26,dy:0},
+            {x1:246,y1:146,x2:236,y2:56,label:'released',dx:30,dy:0}],
+    caption:"Photosynthesis removes CO₂; respiration and combustion return it. Burning fossil fuels tips the balance." },
+  practice:[
+    { level:"Easy", q:"State the approximate percentage composition of dry air, and name the gas responsible for about 21%.",
+      steps:["Air is mostly nitrogen, with oxygen second.","The remainder is noble gases (mainly argon) plus carbon dioxide."],
+      ans:"About 78% nitrogen, 21% oxygen, with the rest noble gases (mainly argon) and carbon dioxide. Oxygen makes up the 21%." },
+    { level:"Medium", q:"(a) Name the pollutant formed by the incomplete combustion of a hydrocarbon fuel. (b) Explain why it is toxic. (c) Name the pollutant that causes acid rain from burning coal, and state one effect of acid rain.",
+      steps:["(a) Incomplete combustion means there is not enough oxygen, so carbon monoxide forms instead of carbon dioxide.","(b) Carbon monoxide binds to haemoglobin in red blood cells in place of oxygen.","This reduces the blood's ability to transport oxygen around the body, which can be fatal.","(c) Coal contains sulfur impurities, which burn to form sulfur dioxide; this dissolves in rain water to form acid rain."],
+      ans:"(a) Carbon monoxide. (b) It binds to haemoglobin instead of oxygen, reducing oxygen transport in the blood. (c) Sulfur dioxide; acid rain corrodes limestone buildings and statues, damages plants and makes lakes acidic, harming aquatic life." },
+    { level:"O-Level standard", q:"(a) Explain how oxides of nitrogen are formed in a car engine. (b) Describe how a catalytic converter reduces the pollution from car exhausts. (c) Explain why the ozone layer is important and what damages it.",
+      steps:["(a) A car engine reaches very high temperatures during combustion.","At these high temperatures nitrogen and oxygen from the air, drawn into the engine, have enough energy to react together and form oxides of nitrogen (NO and NO₂).","(b) The converter contains a catalyst with a very large surface area, over which the exhaust gases pass.","Redox reactions convert the harmful gases into less harmful ones: carbon monoxide is oxidised to carbon dioxide, and the oxides of nitrogen are reduced to nitrogen.","(c) Ozone in the upper atmosphere absorbs harmful ultraviolet radiation from the Sun, preventing much of it reaching the surface.","Chlorofluorocarbons (CFCs) release chlorine-containing compounds that react with and destroy ozone, thinning the layer."],
+      ans:"(a) The very high temperature in the engine makes nitrogen and oxygen from the air react together. (b) Redox reactions over a catalyst oxidise CO to CO₂ and reduce nitrogen oxides to nitrogen. (c) It absorbs harmful UV; CFCs release chlorine compounds that destroy ozone, increasing UV reaching the surface and so skin cancer risk." },
+  ]},
+},
+};
 
 /* ============================================================
    DIAGRAMS — small SVG builders, called at render time
@@ -2659,17 +3681,29 @@ function svgBearing(p){
   </svg>`;
 }
 
+const DIAGRAM_BUILDERS = {
+  venn2:svgVenn2, venn3:svgVenn3, boxplot:svgBoxplot, vectors:svgVectorGrid,
+  cone:svgCone, bearing:svgBearing, axes:svgAxes, particles:svgParticles,
+  wave:svgWaveLabelled, spectrum:svgSpectrum, circuit:svgCircuit,
+  field:svgFieldMagnet, ray:svgRayDiagram, apparatus:svgApparatus,
+  freebody:svgFreeBody, lever:svgLever, plug:svgPlug, transformer:svgTransformer,
+  penetration:svgPenetration, phscale:svgPHScale, atom:svgAtomShells,
+  flow:svgFlow, ladder:svgLadder, pressurecol:svgPressureCol,
+  energyprofile:svgEnergyProfile, dotcross:svgDotCross, fleming:svgFleming,
+};
+
 function renderDiagram(d){
   if(!d) return '';
-  let svg='';
-  if(d.type==='venn2') svg=svgVenn2(d);
-  else if(d.type==='venn3') svg=svgVenn3(d);
-  else if(d.type==='boxplot') svg=svgBoxplot(d);
-  else if(d.type==='vectors') svg=svgVectorGrid(d);
-  else if(d.type==='cone') svg=svgCone(d);
-  else if(d.type==='bearing') svg=svgBearing(d);
-  if(!svg) return '';
-  return `<div class="diagram-wrap">${svg}${d.caption?`<div class="diagram-cap">${esc(d.caption)}</div>`:''}</div>`;
+  const cap = d.caption ? `<div class="diagram-cap">${esc(d.caption)}</div>` : '';
+  if(d.type==='table'){
+    return `<div class="diagram-wrap dg-table"><table class="dtable">
+      <thead><tr>${(d.head||[]).map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead>
+      <tbody>${(d.rows||[]).map(r=>`<tr>${r.map((c,i)=>`<td${i===0?' class="dt-key"':''}>${c}</td>`).join('')}</tr>`).join('')}</tbody>
+    </table>${cap}</div>`;
+  }
+  const fn = DIAGRAM_BUILDERS[d.type];
+  if(!fn) return '';
+  return `<div class="diagram-wrap">${fn(d)}${cap}</div>`;
 }
 
 function renderSection(s){
