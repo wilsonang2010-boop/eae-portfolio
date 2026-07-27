@@ -238,6 +238,27 @@ header{
 .note{background:var(--blue-soft); border:1px solid var(--border-strong); border-radius:12px; padding:16px 18px; margin-top:26px; font-size:13.5px; color:var(--slate-300);}
 .note b{color:var(--white);}
 
+/* ── Syllabus flags (struck-out / caveated cards) ───────────── */
+.flash.struck{opacity:.62; border-color:rgba(251,113,133,.34); background:rgba(251,113,133,.04);}
+.flash.struck .term{text-decoration:line-through; text-decoration-color:rgba(251,113,133,.75); text-decoration-thickness:2px;}
+.flash.struck .def{color:var(--slate-500);}
+.flash.caveat{border-color:rgba(245,158,11,.34);}
+.syl-flag{display:inline-flex; align-items:center; gap:5px; font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:3px 8px; border-radius:5px; margin-top:9px;}
+.flag-excluded{background:rgba(251,113,133,.16); color:#FDA4AF; border:1px solid rgba(251,113,133,.4);}
+.flag-caveat{background:rgba(245,158,11,.15); color:#FCD34D; border:1px solid rgba(245,158,11,.4);}
+.syl-why{margin-top:8px; font-size:12.5px; line-height:1.55; color:var(--slate-400); border-top:1px solid var(--border); padding-top:8px;}
+.syl-why b{color:var(--slate-300);}
+.audit{background:var(--card); border:1px solid var(--border); border-left:3px solid var(--blue); border-radius:12px; padding:18px 20px; margin-top:22px;}
+.audit h4{font-size:1rem; margin-bottom:9px;}
+.audit p{font-size:13.5px; color:var(--slate-400); line-height:1.6; margin-bottom:8px;}
+.audit ul{margin:10px 0 4px; padding-left:2px;}
+.audit li{position:relative; padding-left:19px; margin-bottom:7px; font-size:13.5px; color:var(--slate-300); line-height:1.55;}
+.audit li:before{content:"—"; position:absolute; left:0; color:var(--blue-bright);}
+.audit .src{font-size:12px; color:var(--slate-500); margin-top:12px;}
+.toggle-btn{font-size:13px; font-weight:500; padding:9px 14px; border-radius:9px; border:1px solid var(--border); color:var(--slate-400); transition:.2s var(--ease); white-space:nowrap;}
+.toggle-btn:hover{color:var(--white); border-color:var(--border-strong);}
+.toggle-btn.on{background:var(--blue-soft); color:var(--blue-bright); border-color:var(--border-strong);}
+
 /* ── Planner: phase banner ─────────────────────────────────── */
 .phase-banner{
   display:flex; align-items:center; gap:14px; flex-wrap:wrap;
@@ -385,19 +406,22 @@ const PHYSICS = {
       { t:"Speed", d:"The distance travelled per unit time." },
       { t:"Velocity", d:"The rate of change of displacement, or displacement per unit time." },
       { t:"Acceleration", d:"The rate of change of velocity." },
-      { t:"Free fall", d:"The motion of an object falling under the force of gravity only, with no air resistance.", x:"Acceleration of free fall g ≈ 9.8 m/s² (use 10 m/s² unless told otherwise)." },
+      { t:"Free fall", d:"The motion of an object falling under the force of gravity only, with no air resistance.", x:"Syllabus LO 2(i): the acceleration of free fall near the Earth is constant and approximately 10 m/s². Use 10, not 9.8." },
     ]},
     { name:"Dynamics & Forces", cards:[
       { t:"Force", d:"A push or pull that can change the size, shape, or motion of an object.", x:"SI unit: newton (N)." },
-      { t:"Newton's First Law", d:"An object will continue in its state of rest or uniform motion in a straight line unless acted upon by a resultant force." },
-      { t:"Newton's Second Law", d:"When a resultant force acts on an object, the object accelerates in the direction of the force; the resultant force equals the rate of change of momentum (F = ma for constant mass)." },
-      { t:"Newton's Third Law", d:"When object A exerts a force on object B, object B exerts an equal and opposite force on object A." },
+      { t:"Newton's First Law", d:"An object will continue in its state of rest or uniform motion in a straight line unless acted upon by a resultant force.", flag:"excluded",
+        why:"Syllabus 6091, topic 3 (Dynamics), LO 3(g): <b>“stating of Newton's Laws is not required”</b>. You are never asked to recite them. You <i>are</i> required to apply them — describe balanced vs unbalanced forces, identify action–reaction pairs, and use resultant force = mass × acceleration." },
+      { t:"Newton's Second Law", d:"When a resultant force acts on an object, the object accelerates in the direction of the force; the resultant force equals the rate of change of momentum (F = ma for constant mass).", flag:"excluded",
+        why:"Syllabus LO 3(g): <b>“stating of Newton's Laws is not required”</b>. Learn LO 3(j) instead — recall and apply <b>resultant force = mass × acceleration</b>. Note also that “rate of change of momentum” is A-Level phrasing; momentum is not in the 6091 syllabus at all." },
+      { t:"Newton's Third Law", d:"When object A exerts a force on object B, object B exerts an equal and opposite force on object A.", flag:"excluded",
+        why:"Syllabus LO 3(g): <b>“stating of Newton's Laws is not required”</b>. What <i>is</i> required is LO 3(g)(iii): <b>identify action–reaction pairs acting on two interacting bodies</b>." },
       { t:"Friction", d:"A force that opposes the relative motion (or tendency of motion) between two surfaces in contact." },
       { t:"Resultant force", d:"The single force that has the same effect as all the forces acting on an object combined." },
       { t:"Inertia", d:"The reluctance of an object to change its state of rest or motion, due to its mass." },
     ]},
     { name:"Mass, Weight & Density", cards:[
-      { t:"Mass", d:"A measure of the amount of substance in a body; it is also a measure of its inertia.", x:"SI unit: kilogram (kg). Constant everywhere." },
+      { t:"Mass", d:"A measure of the amount of matter in a body; it is also the property that resists a change in motion (inertia).", x:"Syllabus wording, LO 3(b): “mass is a measure of the amount of matter in a body” — say matter, not substance. SI unit: kilogram (kg)." },
       { t:"Weight", d:"The gravitational force acting on an object.", x:"W = mg. SI unit: newton (N)." },
       { t:"Gravitational field strength (g)", d:"The gravitational force acting per unit mass.", x:"g ≈ 10 N/kg on Earth. Equal to acceleration of free fall." },
       { t:"Density", d:"The mass per unit volume of a substance.", x:"ρ = m/V. SI unit: kg/m³." },
@@ -460,14 +484,17 @@ const PHYSICS = {
       { t:"Electromotive force (e.m.f.)", d:"The work done by a source in driving a unit charge around a complete circuit.", x:"SI unit: volt (V)." },
       { t:"Potential difference (p.d.)", d:"The work done to drive a unit charge through a component (between two points).", x:"V = W/Q. SI unit: volt (V)." },
       { t:"Resistance", d:"The ratio of the potential difference across a component to the current flowing through it.", x:"R = V/I. SI unit: ohm (Ω)." },
-      { t:"Ohm's Law", d:"The current through a metallic conductor is directly proportional to the potential difference across it, provided the temperature and other physical conditions remain constant." },
+      { t:"Ohm's Law", d:"The current through a metallic conductor is directly proportional to the potential difference across it, provided the temperature and other physical conditions remain constant.", flag:"caveat",
+        why:"<b>“Ohm's Law” is never named in the 2026 syllabus.</b> The term used is “ohmic conductor”. What is examinable is LO 14(k): <b>sketch and interpret the I–V characteristic graphs</b> for a metallic conductor at constant temperature (ohmic — a straight line through the origin), a filament lamp (curve that flattens), and a semiconductor diode. Learn the graphs, not the wording." },
       { t:"Electrical power", d:"The rate at which electrical energy is transferred (converted).", x:"P = VI = I²R = V²/R." },
     ]},
     { name:"Magnetism & Electromagnetism", cards:[
       { t:"Magnetic field", d:"A region in which a magnetic material or a moving charge experiences a magnetic force." },
       { t:"Electromagnetic induction", d:"The production of an e.m.f. across a conductor when it experiences a change in the magnetic flux linking it." },
-      { t:"Faraday's Law", d:"The magnitude of the induced e.m.f. is directly proportional to the rate of change of magnetic flux linkage." },
-      { t:"Lenz's Law", d:"The direction of the induced current is such that it always opposes the change producing it." },
+      { t:"Faraday's Law", d:"The magnitude of the induced e.m.f. is directly proportional to the rate of change of magnetic flux linkage.", flag:"excluded",
+        why:"Not a named law anywhere in the 6091 syllabus, and <b>“magnetic flux linkage” is A-Level physics, not O-Level</b>. LO 19(a) only requires you to deduce, from Faraday's <i>experiments</i>, <b>the factors affecting the magnitude of the induced e.m.f.</b> (speed of movement, number of turns, strength of magnet). Learn those factors instead." },
+      { t:"Lenz's Law", d:"The direction of the induced current is such that it always opposes the change producing it.", flag:"caveat",
+        why:"The <b>idea is definitely examinable</b> — LO 19(a)(ii): “that the direction of the induced e.m.f. <b>opposes the change producing it</b>” — but the syllabus never uses the name “Lenz's Law”. Know the effect; don't rely on being asked for the name." },
       { t:"Fleming's left-hand rule", d:"Used to find the direction of force on a current-carrying conductor in a magnetic field: thumb = force/motion, first finger = field, second finger = current." },
     ]},
     { name:"Radioactivity", cards:[
@@ -517,7 +544,7 @@ const CHEMISTRY = {
       { t:"Giant covalent (macromolecular) structure", d:"A large lattice of atoms joined by strong covalent bonds.", x:"e.g. diamond, graphite, silicon dioxide. Very high melting point." },
     ]},
     { name:"The Mole & Stoichiometry", cards:[
-      { t:"Mole", d:"The amount of substance that contains the same number of particles as there are atoms in 12 g of carbon-12.", x:"One mole contains 6.02 × 10²³ particles (the Avogadro constant)." },
+      { t:"Mole", d:"The amount of substance that contains 6.02 × 10²³ particles — that is, as many particles as the Avogadro constant.", x:"LO 4.2(c) says to define the mole <b>in terms of the Avogadro constant</b>, so lead with 6.02 × 10²³. The older “same number of atoms as in 12 g of carbon-12” phrasing is not the syllabus framing." },
       { t:"Molar mass", d:"The mass of one mole of a substance, numerically equal to its relative molecular/atomic mass in grams.", x:"Units: g/mol." },
       { t:"Avogadro constant", d:"The number of particles in one mole of a substance, equal to 6.02 × 10²³.", x:"n = number of particles / 6.02×10²³." },
       { t:"Concentration", d:"The amount of solute dissolved in a unit volume of solution.", x:"Units: mol/dm³ or g/dm³." },
@@ -557,12 +584,17 @@ const CHEMISTRY = {
       { t:"Period", d:"A horizontal row of elements arranged in order of increasing proton number." },
       { t:"Noble gases (Group 0/18)", d:"Unreactive gases with a full outer shell of electrons (stable electronic configuration)." },
       { t:"Alloy", d:"A mixture of a metal with one or more other elements (usually metals).", x:"Alloys are usually harder and stronger than the pure metal." },
-      { t:"Reactivity series", d:"A list of metals arranged in order of their decreasing reactivity.", x:"K, Na, Ca, Mg, Al, (C), Zn, Fe, (H), Cu, Ag, Au." },
+      { t:"Reactivity series", d:"A list of metals arranged in order of decreasing reactivity — that is, their decreasing tendency to form positive ions.", flag:"caveat",
+        x:"Syllabus list, LO 8.4(a): potassium, sodium, calcium, magnesium, zinc, iron, lead, (hydrogen), copper, silver.",
+        why:"The syllabus names <b>exactly ten</b> species: potassium, sodium, calcium, magnesium, zinc, iron, <b>lead</b>, (hydrogen), copper, silver. <b>Aluminium and gold are not on the syllabus list</b>, and <b>lead — which many notes leave out — is</b>. Learn this exact list; it's the one used for selective discharge in electrolysis (7.2e) and for simple cells (7.2j)." },
       { t:"Rusting", d:"The corrosion of iron to form hydrated iron(III) oxide, which requires both oxygen and water." },
     ]},
     { name:"Air, Ammonia & Sulfur", cards:[
-      { t:"Haber process", d:"The industrial manufacture of ammonia by reacting nitrogen and hydrogen.", x:"N₂ + 3H₂ ⇌ 2NH₃; ~450 °C, ~250 atm, iron catalyst." },
-      { t:"Contact process", d:"The industrial manufacture of sulfuric acid, whose key step converts sulfur dioxide to sulfur trioxide.", x:"2SO₂ + O₂ ⇌ 2SO₃; ~450 °C, ~2 atm, vanadium(V) oxide catalyst." },
+      { t:"Haber process", d:"The industrial manufacture of ammonia by reacting nitrogen (from air) with hydrogen (from cracking crude oil). The reaction is reversible: N₂ + 3H₂ ⇌ 2NH₃.", flag:"caveat",
+        x:"Required by LO 5.3(a)–(c).",
+        why:"The process itself <b>is examinable</b>, but the specific numbers are <b>not recall items</b>. LO 5.3(c) asks you to <i>“interpret data relating to the conditions used in industry”</i> — those conditions will be given to you in the question. The syllabus also states explicitly: <b>“knowledge of Le Chatelier's Principle is not required”</b>. Learn the reagents, the reversibility, and how to read the data." },
+      { t:"Contact process", d:"The industrial manufacture of sulfuric acid, whose key step converts sulfur dioxide to sulfur trioxide.", flag:"excluded",
+        why:"<b>Not in the 2026 syllabus (6092).</b> The syllabus has exactly 12 topics and <b>none of them is Sulfur</b> — the old Sulfur topic, which carried the Contact process, has been removed. Sulfur now appears only as sulfur dioxide, an air pollutant, in Topic 12 (Maintaining Air Quality), and as a qualitative-analysis gas test. Do not revise this." },
       { t:"Greenhouse effect", d:"The trapping of infrared radiation by greenhouse gases (e.g. CO₂, methane) in the atmosphere, warming the Earth." },
       { t:"Acid rain", d:"Rain made acidic by dissolved oxides of sulfur and nitrogen (from burning fossil fuels)." },
     ]},
@@ -1851,6 +1883,7 @@ let state = {
   query:'',
   weekOffset:0,       // weeks from the current week
   logFilter:'all',
+  hideExcluded:false,
 };
 let cdTimer = null;
 
@@ -2174,7 +2207,9 @@ function renderDeck(subj){
       <button class="${state.mode==='quiz'?'on':''}" data-mode="quiz">Quiz mode</button>
     </div>
     <span class="stat"><b>${knownCount}</b> / ${total} learnt · <a href="#" class="reset-btn" id="resetKnown">reset</a></span>
+    <button class="toggle-btn ${state.hideExcluded?'on':''}" id="hideExcl">${state.hideExcluded?'Showing syllabus only':'Hide off-syllabus'}</button>
   </div>
+  ${auditHTML(sub, allCards)}
 
   <div class="topic-nav" id="topicNav">
     <button class="topic-pill ${state.topic==='all'?'active':''}" data-topic="all">All topics</button>
@@ -2187,6 +2222,36 @@ function renderDeck(subj){
   drawCards(subj, allCards);
 }
 
+/* Syllabus audit summary, shown above each science deck. */
+const AUDIT_GAPS = {
+  physics: ["Sound — production, compression/rarefaction, loudness vs amplitude, pitch vs frequency, echoes, ultrasound (LO 10f–j)",
+            "Static Electricity — the whole of topic 13: charge, electric fields, charging by rubbing and induction, hazards, the electrostatic precipitator",
+            "D.C. Circuits — topic 15: series/parallel rules, effective resistance, potential dividers, thermistors and LDRs",
+            "Practical Electricity — topic 16: fuses, earthing, live/neutral/earth, mains plug wiring, cost in kW h",
+            "Magnetism (topic 17), the d.c. motor and split-ring commutator, the a.c. generator, and transformers",
+            "Nuclide notation, the nature of α/β/γ radiation, and nuclear fission vs fusion (LO 20c, 20e, 20j)"],
+  chemistry:["Qualitative Analysis — the whole of topic 6: tests for cations (Al³⁺, NH₄⁺, Ca²⁺, Cu²⁺, Fe²⁺, Fe³⁺, Zn²⁺), anions (carbonate, chloride, iodide, nitrate, sulfate) and gases",
+            "Electrolysis in depth — selective discharge, electroplating, purifying copper, simple cells, the hydrogen fuel cell (LO 7.2e–k)",
+            "Group 1, Group 17 and transition element properties (LO 8.2, 8.3)",
+            "Salt preparation methods and the solubility rules (LO 5.2)",
+            "Sublimation and the separating funnel — both named separation methods you're missing (LO 1.2a)",
+            "Air quality detail — pollutant sources, catalytic converters, the carbon cycle, the ozone layer and CFCs (topic 12)"],
+};
+function auditHTML(sub, allCards){
+  if(sub!=='physics' && sub!=='chemistry') return '';
+  const ex = allCards.filter(c=>c.flag==='excluded').length;
+  const cv = allCards.filter(c=>c.flag==='caveat').length;
+  const code = sub==='physics' ? '6091' : '6092';
+  return `<div class="audit">
+    <h4>Checked against the official ${code} syllabus</h4>
+    <p>Every card in this deck was cross-referenced against the SEAB / Cambridge <b>${code} (2026)</b> syllabus document.
+    <b>${ex}</b> ${ex===1?'card is':'cards are'} struck out as not tested, and <b>${cv}</b> carry a wording warning. Everything else is confirmed examinable.</p>
+    <p style="margin-top:12px;color:var(--slate-300);"><b>Still missing from this deck</b> — content that <i>is</i> in the syllabus but has no cards yet:</p>
+    <ul>${AUDIT_GAPS[sub].map(g=>`<li>${esc(g)}</li>`).join('')}</ul>
+    <div class="src">Source: Singapore–Cambridge GCE Ordinary Level (2026) ${sub==='physics'?'Physics':'Chemistry'} (Syllabus ${code}), © MOE &amp; Cambridge University Press &amp; Assessment 2024.</div>
+  </div>`;
+}
+
 function drawCards(subj, allCards){
   const sub = state.subject;
   const deck = document.getElementById('deck');
@@ -2196,20 +2261,27 @@ function drawCards(subj, allCards){
   topics.forEach(t=>{
     const cards = t.cards
       .map((c,ci)=>({...c, id:sub+'-'+subj.topics.indexOf(t)+'-'+ci}))
-      .filter(c=>matches(c, state.query));
+      .filter(c=>matches(c, state.query))
+      .filter(c=> !(state.hideExcluded && c.flag==='excluded'));
     if(!cards.length) return;
     shown += cards.length;
     out += `<div class="topic-block"><h3>${esc(t.name)}</h3><div class="topic-sub">${cards.length} definition${cards.length>1?'s':''}</div><div class="card-grid">`;
     cards.forEach(c=>{
       const known = isKnown(sub, c.id);
       const quiz = state.mode==='quiz';
+      const flagCls = c.flag==='excluded' ? 'struck' : (c.flag==='caveat' ? 'caveat' : '');
+      const badge = c.flag==='excluded'
+        ? `<div class="syl-flag flag-excluded">✕ Not tested in 2026</div>`
+        : (c.flag==='caveat' ? `<div class="syl-flag flag-caveat">! Check the wording</div>` : '');
       out += `
-      <div class="flash ${known?'known':''}" data-id="${c.id}">
+      <div class="flash ${known?'known':''} ${flagCls}" data-id="${c.id}">
         <button class="mark" data-mark="${c.id}" title="Mark as learnt">✓</button>
         <div class="term">${esc(c.t)}</div>
         ${quiz ? `<div class="prompt">Define this — then tap to check.</div>` : ``}
         <div class="def ${quiz?'hidden':''}">${esc(c.d)}</div>
-        ${c.x ? `<div class="extra ${quiz?'hidden':''}">${esc(c.x)}</div>` : ``}
+        ${c.x ? `<div class="extra ${quiz?'hidden':''}">${c.x}</div>` : ``}
+        ${badge}
+        ${c.why ? `<div class="syl-why">${c.why}</div>` : ``}
         ${quiz ? `<div class="reveal-hint">Tap to reveal ▾</div>` : ``}
       </div>`;
     });
@@ -2256,6 +2328,8 @@ function wireDeck(subj, allCards){
     b.classList.add('active');
     drawCards(subj, allCards);
   });
+  const he = document.getElementById('hideExcl');
+  if(he) he.addEventListener('click', ()=>{ state.hideExcluded = !state.hideExcluded; renderDeck(DATA[state.subject]); });
   const reset = document.getElementById('resetKnown');
   reset.addEventListener('click', e=>{
     e.preventDefault();
