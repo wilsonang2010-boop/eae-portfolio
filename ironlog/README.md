@@ -40,13 +40,21 @@ _"Rest Day 💪 Recovery is part of progress."_
 - **Summary** — sets completed, duration, completion %, and a calorie estimate.
 - **History** — every workout is saved. Month calendar with completed days, a recent
   list, and tap-to-view/edit past sessions.
-- **Statistics** — current & longest streak, total workouts, total sets, completion
-  rate, and personal records (heaviest working set per exercise).
+- **Session flexibility** — add or remove sets, add a warm-up, skip an exercise when a
+  machine is taken, and swap today's split (do Push on a Tuesday, or train on a rest day).
+- **Auto-progression** — hit every rep at the same weight last time and a chip offers the
+  next jump (+2.5 kg upper, +5 kg lower), applied to all working sets in one tap.
+  "Repeat last" refills an exercise from your previous session.
+- **Exercise detail** — tap any exercise name for its full history, volume and estimated
+  1RM trend charts, and its PR.
+- **Statistics** — this week vs last (workouts, sets, volume), current & longest streak,
+  totals, completion rate, muscle-group balance, and personal records ranked by
+  **estimated 1RM** (so 60 kg × 8 correctly outranks 70 kg × 1).
 - **Smart weights** — when you start a workout, the previous week's weights for each
-  exercise are pre-filled.
+  exercise are pre-filled; warm-ups suggest ~50% of the working weight.
 - **Settings** — rest-timer length, which set types auto-rest, units (kg/lbs), accent
   colour, AMOLED black, timer sound, vibration, daily reminders, bodyweight (for
-  calories), and JSON export/import.
+  calories), and JSON or CSV export / JSON import.
 
 ## Offline & data
 
