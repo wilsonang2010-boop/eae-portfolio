@@ -123,6 +123,40 @@ input{font-family:inherit}
 .ex-card.complete .ex-done-badge{display:flex}
 .ex-card.complete .ex-tag{display:none}
 
+.ex-title{text-align:left;flex:1;min-width:0;padding:0;display:block}
+.ex-title:active .ex-name{color:var(--accent)}
+.ex-menu{
+  flex:0 0 auto;width:34px;height:34px;border-radius:10px;margin-left:6px;
+  background:var(--panel-2);border:1px solid var(--border);color:var(--muted);
+  font-size:17px;font-weight:800;line-height:1;
+}
+.ex-card.skipped{opacity:.55}
+.ex-card.skipped .ex-name{text-decoration:line-through}
+.skip-note{font-size:13px;color:var(--muted);padding:4px 4px 12px}
+.swap-btn{
+  width:34px;height:34px;border-radius:10px;margin-left:10px;vertical-align:middle;
+  background:var(--panel-2);border:1px solid var(--border);color:var(--muted);
+  font-size:16px;font-weight:800;
+}
+.swap-btn:active{color:var(--accent);border-color:var(--accent)}
+/* Progression nudge */
+.prog-chip{
+  display:flex;align-items:center;gap:8px;width:100%;text-align:left;
+  background:var(--accent-ghost);border:1px solid rgba(34,197,94,.4);border-radius:13px;
+  padding:10px 12px;margin:2px 0 10px;font-size:13px;color:var(--text);font-weight:600;
+}
+.prog-chip .up{color:var(--accent);font-size:11px}
+.prog-chip b{color:var(--accent)}
+.prog-chip:active{transform:scale(.99)}
+/* Card footer actions */
+.ex-foot{display:flex;flex-wrap:wrap;gap:8px;padding:10px 2px 8px;border-top:1px solid var(--border);margin-top:6px}
+.foot-btn{
+  font-size:12.5px;font-weight:700;color:var(--muted);background:var(--panel-2);
+  border:1px solid var(--border);border-radius:10px;padding:8px 11px;
+}
+.foot-btn:active{color:var(--accent);border-color:var(--accent)}
+.foot-btn.del{color:var(--muted-2)}
+
 /* ---------- Set rows ---------- */
 .set{
   display:flex;align-items:center;gap:12px;padding:9px 4px;border-radius:14px;
@@ -319,9 +353,42 @@ input{font-family:inherit}
 }
 .pr-row .nm{font-weight:700;font-size:15px}
 .pr-row .mg{font-size:12px;color:var(--muted)}
+.pr-row{width:100%;text-align:left}
 .pr-row .val{margin-left:auto;font-size:18px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+.pr-row .val small{font-size:12px;color:var(--muted);font-weight:700}
+.pr-row:active{border-color:var(--accent)}
 .empty{text-align:center;color:var(--muted);padding:40px 20px;font-size:15px}
 .empty .em{font-size:40px;display:block;margin-bottom:10px;opacity:.7}
+.hint-inline{font-size:11.5px;color:var(--muted-2);font-weight:600;letter-spacing:0}
+
+/* ---------- Week summary / balance / charts ---------- */
+.week-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin:8px 2px 14px}
+.week-head{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.week-head span{color:var(--muted-2);letter-spacing:0;text-transform:none;font-weight:600}
+.week-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.week-grid .n{font-size:24px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.week-grid .l{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:1px}
+.week-grid .d{font-size:11px;font-weight:700;margin-top:3px;min-height:14px}
+.dl{font-weight:800}
+.dl.up{color:var(--accent)} .dl.down{color:var(--danger)} .dl.flat{color:var(--muted-2)}
+.bal-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin:0 2px 6px}
+.bal-row + .bal-row{margin-top:12px}
+.bal-top{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:6px}
+.bal-top b{color:var(--text);font-variant-numeric:tabular-nums}
+.bal-bar{height:7px;border-radius:99px;background:var(--panel-2);overflow:hidden}
+.bal-bar>span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent-dim),var(--accent))}
+.chart-card{background:var(--panel-2);border:1px solid var(--border);border-radius:16px;padding:14px 14px 8px;margin-bottom:12px}
+.chart-head{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:8px}
+.chart-head b{color:var(--text);font-variant-numeric:tabular-nums}
+.spark{display:block;overflow:visible}
+.ex-hist-row{
+  display:flex;align-items:center;gap:12px;background:var(--panel-2);border:1px solid var(--border);
+  border-radius:13px;padding:11px 13px;margin-bottom:8px;
+}
+.ex-hist-row .d{font-size:13.5px;font-weight:700}
+.ex-hist-row .s{font-size:12px;color:var(--muted);margin-top:2px;font-variant-numeric:tabular-nums}
+.ex-hist-row .v{margin-left:auto;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;font-size:15px}
+.ex-hist-row .v small{color:var(--muted);font-weight:600;font-size:11px}
 
 /* ---------- Calendar ---------- */
 .cal-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin:6px 2px 18px}
@@ -613,8 +680,111 @@ function preloadWeights(w){
 }
 function totals(w){
   let done=0, total=0;
-  w.exercises.forEach(e=>e.sets.forEach(s=>{ total++; if(s.done) done++; }));
+  w.exercises.forEach(e=>e.sets.forEach(s=>{
+    if (e.skipped) return;
+    total++; if(s.done) done++;
+  }));
   return { done, total, pct: total? Math.round(done/total*100):0 };
+}
+
+/* ============================================================
+   ANALYTICS
+   ============================================================ */
+// Epley estimated 1-rep max. Lets us compare 60kg×8 against 70kg×3 — a plain
+// "heaviest weight" comparison calls the second a PR when it usually isn't.
+function e1rm(kg, reps){
+  if (kg==null || !reps || reps<1) return null;
+  if (reps === 1) return kg;
+  return kg * (1 + reps/30);
+}
+function setVolume(s){ return (s.done && s.weightKg!=null && s.reps) ? s.weightKg*s.reps : 0; }
+function workoutVolume(w){
+  let v=0;
+  w.exercises.forEach(e=>{ if(!e.skipped) e.sets.forEach(s=>{ v += setVolume(s); }); });
+  return v;
+}
+function exerciseVolume(e){
+  let v=0; e.sets.forEach(s=>{ v += setVolume(s); }); return v;
+}
+// Every logged session that contains this exercise, newest first.
+function exerciseHistory(name){
+  return Object.values(history)
+    .filter(w => w.exercises.some(e=>e.name===name))
+    .sort((a,b)=> a.date<b.date?1:-1)
+    .map(w => {
+      const e = w.exercises.find(x=>x.name===name);
+      const working = e.sets.filter(s=>s.kind==="working" && s.done && s.weightKg!=null);
+      let best = null;
+      working.forEach(s=>{ const v=e1rm(s.weightKg,s.reps); if(v!=null && (best==null || v>best.v)) best={v, kg:s.weightKg, reps:s.reps}; });
+      return { date:w.date, type:w.type, ex:e, sets:working, best, volume:exerciseVolume(e),
+               topKg: working.reduce((m,s)=> s.weightKg>m ? s.weightKg : m, 0) };
+    });
+}
+// The most recent completed session for an exercise, for "repeat last time".
+function lastSessionFor(name, excludeDate){
+  return exerciseHistory(name).find(h => h.date !== excludeDate && h.sets.length) || null;
+}
+/* Did every working set hit its rep target at the same weight last time? If so
+   it's time to add weight — 2.5kg upper body, 5kg lower. */
+function progressionSuggestion(ex, w){
+  if (ex.plyo) return null;
+  const last = lastSessionFor(ex.name, w.date);
+  if (!last) return null;
+  const target = ex.reps;
+  const all = last.ex.sets.filter(s=>s.kind==="working");
+  if (!all.length || !all.every(s=> s.done && s.weightKg!=null && (s.reps||0) >= target)) return null;
+  const base = all[0].weightKg;
+  if (!all.every(s=> Math.abs(s.weightKg-base) < 0.01)) return null;
+  const lower = /leg|squat|calf|hip/i.test(ex.name) || ex.group==="Weights";
+  const step = lower ? 5 : 2.5;
+  return { from: base, to: +(base+step).toFixed(2), step };
+}
+function suggestedWarmupKg(ex){
+  const working = ex.sets.filter(s=>s.kind==="working" && s.weightKg!=null);
+  if (!working.length) return null;
+  const target = working[0].weightKg;
+  if (!target) return null;
+  const half = target/2;
+  const step = 2.5;                                   // round to the nearest plate pair
+  return Math.max(step, Math.round(half/step)*step);
+}
+// Monday-anchored week key, so "this week" matches the training split.
+function weekStart(d){
+  const x = new Date(d); x.setHours(0,0,0,0);
+  const dow = (x.getDay()+6)%7;                        // Mon=0
+  x.setDate(x.getDate()-dow);
+  return x;
+}
+function weekStats(offset){
+  const start = weekStart(new Date()); start.setDate(start.getDate() - offset*7);
+  const end = new Date(start); end.setDate(end.getDate()+7);
+  let workouts=0, sets=0, volume=0;
+  Object.values(history).forEach(w=>{
+    const d = new Date(w.date+"T00:00:00");
+    if (d>=start && d<end){
+      const t = totals(w);
+      if (t.done>0){ workouts++; sets += t.done; volume += workoutVolume(w); }
+    }
+  });
+  return { workouts, sets, volume, start };
+}
+// Completed working-set volume per muscle group, for a balance check.
+function groupVolumes(){
+  const g = {};
+  Object.values(history).forEach(w=> w.exercises.forEach(e=>{
+    if (e.plyo) return;
+    const v = exerciseVolume(e);
+    if (v>0) g[e.group] = (g[e.group]||0) + v;
+  }));
+  return g;
+}
+// Returns the value *with* its unit — callers must not append one.
+function fmtVolume(kg){
+  const u = settings.units==="kg" ? "kg" : "lb";
+  const v = settings.units==="kg" ? kg : kg/KG_PER_LB;
+  if (v >= 10000) return `${Math.round(v/1000)}k ${u}`;
+  if (v >= 1000)  return `${(v/1000).toFixed(1)}k ${u}`;
+  return `${Math.round(v)} ${u}`;
 }
 function workoutCalories(w){
   const dur = ((w.endedAt||Date.now()) - (w.startedAt||w.endedAt||Date.now()))/1000;
@@ -626,20 +796,62 @@ function workoutCalories(w){
 /* ============================================================
    TODAY VIEW
    ============================================================ */
-function ensureToday(){
-  const type = todayType();
-  if (type === "Rest") return null;
+/* The scheduled split for today, unless an override has been chosen (missed
+   Monday and doing Push on Tuesday, or training on a rest day). */
+function activeType(){
   const tISO = todayISO();
-  if (current && current.date===tISO && current.type===type) return current;
-  if (history[tISO] && history[tISO].type===type){ current = history[tISO]; saveCurrent(); return current; }
-  current = buildWorkout(type, tISO);
+  if (current && current.date===tISO) return current.type;
+  if (history[tISO]) return history[tISO].type;
+  return todayType();
+}
+function ensureToday(type){
+  const t = type || activeType();
+  if (t === "Rest") return null;
+  const tISO = todayISO();
+  if (current && current.date===tISO && current.type===t) return current;
+  if (history[tISO] && history[tISO].type===t){ current = history[tISO]; saveCurrent(); return current; }
+  current = buildWorkout(t, tISO);
   saveCurrent();
   return current;
+}
+// Switch today's workout to another split.
+function chooseWorkout(){
+  const scheduled = todayType();
+  const cur = activeType();
+  openSheet(`
+    <h3 class="sh-title">Train something else</h3>
+    <p class="sh-sub">Today is scheduled as <b>${scheduled}</b>. Pick any session — useful if you missed a day.</p>
+    ${["Push","Pull","Legs"].map(t=>`<button class="btn${t===cur?" primary":""}" data-t="${t}" style="margin-bottom:10px">${t} Day</button>`).join("")}
+    ${cur!=="Rest" ? `<button class="btn" id="mkRest" style="margin-bottom:10px">Make it a rest day</button>` : ""}
+    <button class="btn ghost" id="pickClose">Cancel</button>`);
+  $("#sheet").querySelectorAll("button[data-t]").forEach(b=> b.onclick = ()=>{
+    const t = b.dataset.t;
+    const tISO = todayISO();
+    if (activeType() !== t){
+      const existing = history[tISO];
+      if (existing && totals(existing).done > 0 && existing.type !== t){
+        // Don't silently bin a logged session.
+        toast("Finish or clear today's log first");
+        return;
+      }
+      current = buildWorkout(t, tISO);
+      saveCurrent();
+    }
+    closeSheet(); renderToday();
+  });
+  const mk = $("#mkRest");
+  if (mk) mk.onclick = ()=>{
+    const tISO = todayISO();
+    if (history[tISO] && totals(history[tISO]).done>0){ toast("Today already has logged sets"); return; }
+    current = null; saveCurrent(); delete history[tISO]; saveHistory();
+    closeSheet(); renderToday();
+  };
+  $("#pickClose").onclick = closeSheet;
 }
 
 function renderToday(){
   const view = $("#view-today");
-  const type = todayType();
+  const type = activeType();
   const dayName = DAYS[new Date().getDay()];
 
   if (type === "Rest"){
@@ -652,18 +864,22 @@ function renderToday(){
         <div class="em">💪</div>
         <h2>Rest Day</h2>
         <p>Recovery is part of progress.</p>
-      </div>`;
+      </div>
+      <div class="finish-wrap"><button class="btn ghost" id="pickBtn">Train anyway →</button></div>`;
+    $("#pickBtn").onclick = chooseWorkout;
     return;
   }
 
-  const w = ensureToday();
+  const w = ensureToday(type);
   const t = totals(w);
   const finished = !!w.endedAt;
 
   view.innerHTML = `
     <div class="today-hero">
-      <div class="k">${dayName}${finished ? " · Completed" : ""}</div>
-      <div class="v">Today's <span class="type">${type}</span></div>
+      <div class="k">${dayName}${finished ? " · Completed" : ""}${type!==todayType() ? " · swapped" : ""}</div>
+      <div class="v">Today's <span class="type">${type}</span>
+        <button class="swap-btn" id="pickBtn" aria-label="Change workout">⇄</button>
+      </div>
     </div>
     ${finished ? `<div class="done-note">✓ Workout logged. You can still edit any set below.</div>` : ""}
     <div class="progress-wrap">
@@ -682,11 +898,14 @@ function renderToday(){
 
   renderExercises($("#exList"), w, true);
   $("#finishBtn").onclick = ()=> finishWorkout(w);
+  $("#pickBtn").onclick = chooseWorkout;
 }
 
-/* Renders exercise cards into `host`. `editable` allows checking/typing. */
+/* Renders exercise cards into `host`. `editable` allows checking/typing.
+   Structural edits (add/remove set, skip) re-run this to redraw in place. */
 function renderExercises(host, w, editable){
   host.innerHTML = "";
+  const redraw = ()=>{ renderExercises(host, w, editable); updateProgress(w); };
   let lastGroup = null;
   w.exercises.forEach(ex => {
     if (ex.group !== lastGroup){
@@ -696,33 +915,60 @@ function renderExercises(host, w, editable){
       host.appendChild(gl);
       lastGroup = ex.group;
     }
-    host.appendChild(exerciseCard(ex, w, editable));
+    host.appendChild(exerciseCard(ex, w, editable, redraw));
   });
 }
 
-function exerciseCard(ex, w, editable){
+function exerciseCard(ex, w, editable, redraw){
   const card = document.createElement("div");
-  card.className = "ex-card";
+  card.className = "ex-card" + (ex.skipped ? " skipped" : "");
   const working = ex.sets.filter(s=>s.kind==="working").length;
   const scheme = `${working} × ${ex.reps}${ex.plyo?"  ·  plyometric":""}`;
-  const allDone = ex.sets.every(s=>s.done);
+  const allDone = !ex.skipped && ex.sets.every(s=>s.done);
   if (allDone) card.classList.add("complete");
+  const last = lastSessionFor(ex.name, w.date);
 
   card.innerHTML = `
     <div class="ex-head">
-      <div>
+      <button class="ex-title" aria-label="${esc(ex.name)} history">
         <h3 class="ex-name">${esc(ex.name)}</h3>
-        <div class="ex-scheme">${scheme}</div>
-      </div>
+        <div class="ex-scheme">${scheme}${last ? ` · last ${fmtWeightKg(last.topKg)}` : ""}</div>
+      </button>
       <span class="ex-tag">${esc(ex.group)}</span>
       <span class="ex-done-badge">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         Done
       </span>
+      <button class="ex-menu" aria-label="Exercise options"${editable?"":" disabled"}>⋯</button>
     </div>`;
 
+  card.querySelector(".ex-title").onclick = ()=> openExerciseDetail(ex.name);
+  if (editable) card.querySelector(".ex-menu").onclick = ()=> openExerciseMenu(ex, w, redraw);
+
+  // Time to add weight? Offer it as a one-tap chip.
+  const prog = editable && !ex.skipped ? progressionSuggestion(ex, w) : null;
+  if (prog){
+    const chip = document.createElement("button");
+    chip.className = "prog-chip";
+    chip.innerHTML = `<span class="up">▲</span> Hit all reps at ${fmtWeightKg(prog.from)} — try <b>${fmtWeightKg(prog.to)}</b>`;
+    chip.onclick = ()=>{
+      ex.sets.forEach(s=>{ if (s.kind==="working") s.weightKg = prog.to; });
+      const wu = suggestedWarmupKg(ex);
+      ex.sets.forEach(s=>{ if (s.kind==="warmup" && s.weightKg==null && wu) s.weightKg = wu; });
+      saveCurrentOrHistory(w); toast(`Set to ${fmtWeightKg(prog.to)}`); redraw();
+    };
+    card.appendChild(chip);
+  }
+
+  if (ex.skipped){
+    const note = document.createElement("div");
+    note.className = "skip-note";
+    note.textContent = "Skipped — machine busy or swapped out.";
+    card.appendChild(note);
+    return card;
+  }
+
   ex.sets.forEach((set, si) => {
-    let n = 0;
     const setEl = document.createElement("div");
     setEl.className = "set" + (set.done ? " done" : "");
     const isWarm = set.kind==="warmup";
@@ -811,7 +1057,75 @@ function exerciseCard(ex, w, editable){
     card.appendChild(noteRow);
   });
 
+  if (editable){
+    const foot = document.createElement("div");
+    foot.className = "ex-foot";
+    const canWarm = !ex.sets.some(s=>s.kind==="warmup") && !ex.plyo;
+    foot.innerHTML = `
+      <button class="foot-btn add">＋ Add set</button>
+      ${canWarm ? `<button class="foot-btn warm">＋ Warm-up</button>` : ""}
+      ${last ? `<button class="foot-btn repeat">↻ Repeat last</button>` : ""}
+      ${ex.sets.length > 1 ? `<button class="foot-btn del">− Remove set</button>` : ""}`;
+
+    foot.querySelector(".add").onclick = ()=>{
+      const lastWorking = [...ex.sets].reverse().find(s=>s.kind==="working");
+      ex.sets.push({ kind:"working", done:false,
+                     weightKg: lastWorking ? lastWorking.weightKg : null,
+                     reps: ex.reps, note:"" });
+      saveCurrentOrHistory(w); redraw();
+    };
+    const warmBtn = foot.querySelector(".warm");
+    if (warmBtn) warmBtn.onclick = ()=>{
+      ex.sets.unshift({ kind:"warmup", done:false, weightKg:suggestedWarmupKg(ex), reps:ex.reps, note:"" });
+      saveCurrentOrHistory(w); redraw();
+    };
+    const repBtn = foot.querySelector(".repeat");
+    if (repBtn) repBtn.onclick = ()=>{
+      // Copy last session's working weights/reps onto this session's working sets.
+      const src = last.ex.sets.filter(s=>s.kind==="working");
+      let i = 0;
+      ex.sets.forEach(s=>{
+        if (s.kind!=="working") return;
+        const from = src[Math.min(i, src.length-1)];
+        if (from){ s.weightKg = from.weightKg; if (from.reps) s.reps = from.reps; }
+        i++;
+      });
+      saveCurrentOrHistory(w); toast("Filled from last session"); redraw();
+    };
+    const delBtn = foot.querySelector(".del");
+    if (delBtn) delBtn.onclick = ()=>{
+      for (let i=ex.sets.length-1; i>=0; i--){
+        if (ex.sets[i].kind==="working"){ ex.sets.splice(i,1); break; }
+      }
+      saveCurrentOrHistory(w); redraw();
+    };
+    card.appendChild(foot);
+  }
+
   return card;
+}
+
+/* Per-exercise options: skip, un-skip, reset. */
+function openExerciseMenu(ex, w, redraw){
+  openSheet(`
+    <h3 class="sh-title">${esc(ex.name)}</h3>
+    <p class="sh-sub">${esc(ex.group)} · ${ex.sets.filter(s=>s.kind==="working").length} × ${ex.reps}</p>
+    <button class="btn" id="exHist" style="margin-bottom:10px">View history &amp; trend</button>
+    <button class="btn" id="exSkip" style="margin-bottom:10px">${ex.skipped?"Un-skip exercise":"Skip this exercise"}</button>
+    <button class="btn" id="exReset" style="margin-bottom:10px">Clear this exercise's sets</button>
+    <button class="btn ghost" id="exClose">Close</button>`);
+  $("#exHist").onclick = ()=>{ closeSheet(); setTimeout(()=>openExerciseDetail(ex.name), 260); };
+  $("#exSkip").onclick = ()=>{
+    ex.skipped = !ex.skipped;
+    if (ex.skipped) ex.sets.forEach(s=> s.done=false);
+    saveCurrentOrHistory(w); closeSheet(); redraw();
+    toast(ex.skipped ? "Exercise skipped" : "Exercise restored");
+  };
+  $("#exReset").onclick = ()=>{
+    ex.sets.forEach(s=>{ s.done=false; s.note=""; });
+    saveCurrentOrHistory(w); closeSheet(); redraw(); toast("Cleared");
+  };
+  $("#exClose").onclick = closeSheet;
 }
 
 // Persist to whichever store the workout belongs to.
@@ -1035,6 +1349,11 @@ function tick(){
   if (rem === timer.remaining) return;
   timer.remaining = rem;
   tickRender();
+  // Short cue on the last three seconds so you can be set before it ends.
+  if (rem > 0 && rem <= 3){
+    cue();
+    if (settings.vibrate && navigator.vibrate) navigator.vibrate(35);
+  }
   if (rem <= 0) finishRest();
 }
 function tickRender(){
@@ -1118,6 +1437,22 @@ $("#manualTimer").onclick = ()=> startRest("");
 
 /* Beep via WebAudio (no asset needed). */
 let audioCtx = null;
+// Single short tick for the 3-2-1 countdown.
+function cue(){
+  if (!settings.sound) return;
+  try{
+    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+    if (audioCtx.state==="suspended") audioCtx.resume();
+    const t0 = audioCtx.currentTime;
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type="sine"; o.frequency.value=660;
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(0.18, t0+0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, t0+0.12);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(t0); o.stop(t0+0.14);
+  }catch(e){}
+}
 function beep(){
   if (!settings.sound) return;
   try{
@@ -1236,6 +1571,70 @@ function openWorkoutDetail(dateISO){
 }
 
 /* ============================================================
+   EXERCISE DETAIL — history, trend and PR for one movement
+   ============================================================ */
+// Inline SVG sparkline; no chart library, stays offline-safe.
+function sparkline(values, w, h){
+  if (values.length < 2) return "";
+  const max = Math.max(...values), min = Math.min(...values);
+  const span = (max-min) || 1;
+  const step = w/(values.length-1);
+  const pts = values.map((v,i)=>[i*step, h - ((v-min)/span)*(h-6) - 3]);
+  const d = pts.map((p,i)=> `${i?"L":"M"}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" ");
+  const area = `${d} L${w},${h} L0,${h} Z`;
+  const lastPt = pts[pts.length-1];
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" preserveAspectRatio="none" class="spark">
+    <path d="${area}" fill="var(--accent-ghost)"/>
+    <path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${lastPt[0].toFixed(1)}" cy="${lastPt[1].toFixed(1)}" r="3" fill="var(--accent)"/>
+  </svg>`;
+}
+
+function openExerciseDetail(name){
+  const hist = exerciseHistory(name);
+  const pr = computePRs()[name];
+  const done = hist.filter(h=>h.sets.length);
+  const chrono = [...done].reverse();                  // oldest → newest for the chart
+  const volumes = chrono.map(h=>h.volume).filter(v=>v>0);
+  const bests = chrono.map(h=>h.best && h.best.v).filter(v=>v!=null);
+
+  const rows = done.slice(0,20).map(h=>{
+    const d = new Date(h.date+"T00:00:00");
+    const detail = h.sets.map(s=>`${toDisplay(s.weightKg)}×${s.reps||"?"}`).join("  ·  ");
+    return `<div class="ex-hist-row">
+      <div>
+        <div class="d">${d.toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"})}</div>
+        <div class="s">${esc(detail)}</div>
+      </div>
+      <div class="v">${fmtVolume(h.volume)}</div>
+    </div>`;
+  }).join("");
+
+  openSheet(`
+    <h3 class="sh-title">${esc(name)}</h3>
+    <p class="sh-sub">${done.length} session${done.length===1?"":"s"} logged</p>
+    ${pr ? `
+      <div class="sum-grid" style="margin-bottom:16px">
+        <div class="sum-cell accent"><div class="n">${toDisplay(pr.e1rm||pr.kg)}<small style="font-size:14px"> ${unitLabel()}</small></div><div class="l">Est. 1RM</div></div>
+        <div class="sum-cell"><div class="n">${toDisplay(pr.topKg)}<small style="font-size:14px"> ${unitLabel()}</small></div><div class="l">Heaviest set</div></div>
+      </div>` : ""}
+    ${volumes.length>1 ? `
+      <div class="chart-card">
+        <div class="chart-head"><span>Volume per session</span><b>${fmtVolume(volumes[volumes.length-1])}</b></div>
+        ${sparkline(volumes, 300, 64)}
+      </div>` : ""}
+    ${bests.length>1 ? `
+      <div class="chart-card">
+        <div class="chart-head"><span>Estimated 1RM</span><b>${toDisplay(bests[bests.length-1])} ${unitLabel()}</b></div>
+        ${sparkline(bests, 300, 64)}
+      </div>` : ""}
+    ${rows ? `<div class="section-title" style="margin-left:2px">Sessions</div>${rows}`
+           : `<div class="empty"><span class="em">📈</span>No completed sets logged yet.</div>`}
+    <button class="btn ghost" id="exDetClose" style="margin-top:14px">Close</button>`, true);
+  $("#exDetClose").onclick = closeSheet;
+}
+
+/* ============================================================
    STATS VIEW
    ============================================================ */
 function isRestDate(ds){ return new Date(ds+"T00:00:00").getDay()===6; }
@@ -1272,16 +1671,24 @@ function computeStreaks(){
   return { current: cur, longest };
 }
 
+/* Ranked by estimated 1RM rather than raw weight, so a heavier-but-shorter set
+   doesn't displace a genuinely stronger one. Heaviest weight is kept alongside. */
 function computePRs(){
-  const pr = {}; // name -> {kg, reps, group}
+  const pr = {}; // name -> { e1rm, kg, reps, group, topKg, date }
   Object.values(history).forEach(w=>{
     w.exercises.forEach(e=>{
       if (e.plyo) return;
       e.sets.forEach(s=>{
-        if (s.done && s.kind==="working" && s.weightKg!=null){
-          if (!pr[e.name] || s.weightKg > pr[e.name].kg){
-            pr[e.name] = { kg:s.weightKg, reps:s.reps, group:e.group };
-          }
+        if (!(s.done && s.kind==="working" && s.weightKg!=null)) return;
+        const est = e1rm(s.weightKg, s.reps);
+        const cur = pr[e.name];
+        if (!cur){
+          pr[e.name] = { e1rm:est, kg:s.weightKg, reps:s.reps, group:e.group, topKg:s.weightKg, date:w.date };
+          return;
+        }
+        if (s.weightKg > cur.topKg) cur.topKg = s.weightKg;
+        if (est!=null && (cur.e1rm==null || est > cur.e1rm)){
+          cur.e1rm = est; cur.kg = s.weightKg; cur.reps = s.reps; cur.date = w.date;
         }
       });
     });
@@ -1298,19 +1705,53 @@ function renderStats(){
   all.forEach(w=>{ const t=totals(w); doneSets+=t.done; allSets+=t.total; });
   const rate = allSets? Math.round(doneSets/allSets*100):0;
   const prs = computePRs();
-  const prList = Object.entries(prs).sort((a,b)=> b[1].kg-a[1].kg);
+  const prList = Object.entries(prs).sort((a,b)=> (b[1].e1rm||b[1].kg)-(a[1].e1rm||a[1].kg));
+  const totalVol = all.reduce((v,w)=> v + workoutVolume(w), 0);
+
+  // This week vs last, so the numbers mean something in context.
+  const wk = weekStats(0), lastWk = weekStats(1);
+  // No comparison until the week is actually underway — a fresh Monday would
+  // otherwise always read "down 100%".
+  const started = wk.workouts > 0;
+  const delta = (a,b)=>{
+    if (!started || !b) return "";
+    const pct = Math.round((a-b)/b*100);
+    if (!isFinite(pct) || pct===0) return `<span class="dl flat">even</span>`;
+    return `<span class="dl ${pct>0?"up":"down"}">${pct>0?"▲":"▼"}${Math.abs(pct)}%</span>`;
+  };
+
+  const groups = groupVolumes();
+  const gMax = Math.max(1, ...Object.values(groups));
+  const gRows = Object.entries(groups).sort((a,b)=>b[1]-a[1]).map(([g,v])=>`
+    <div class="bal-row">
+      <div class="bal-top"><span>${esc(g)}</span><b>${fmtVolume(v)}</b></div>
+      <div class="bal-bar"><span style="width:${Math.round(v/gMax*100)}%"></span></div>
+    </div>`).join("");
 
   view.innerHTML = `
     <div class="today-hero"><div class="k">Your progress</div><div class="v">Statistics</div></div>
+
+    <div class="week-card">
+      <div class="week-head">This week <span>${wk.start.toLocaleDateString(undefined,{day:"numeric",month:"short"})} –</span></div>
+      <div class="week-grid">
+        <div><div class="n">${wk.workouts}</div><div class="l">workouts</div><div class="d">${delta(wk.workouts,lastWk.workouts)}</div></div>
+        <div><div class="n">${wk.sets}</div><div class="l">sets</div><div class="d">${delta(wk.sets,lastWk.sets)}</div></div>
+        <div><div class="n">${fmtVolume(wk.volume)}</div><div class="l">volume</div><div class="d">${delta(wk.volume,lastWk.volume)}</div></div>
+      </div>
+    </div>
+
     <div class="stat-grid">
       <div class="stat accent"><div class="n">${streaks.current}<small> 🔥</small></div><div class="l">Current streak</div></div>
       <div class="stat"><div class="n">${streaks.longest}</div><div class="l">Longest streak</div></div>
       <div class="stat"><div class="n">${totalWorkouts}</div><div class="l">Workouts completed</div></div>
       <div class="stat"><div class="n">${doneSets}</div><div class="l">Total sets</div></div>
       <div class="stat"><div class="n">${rate}<small>%</small></div><div class="l">Completion rate</div></div>
-      <div class="stat"><div class="n">${prList.length}</div><div class="l">Personal records</div></div>
+      <div class="stat"><div class="n">${fmtVolume(totalVol)}</div><div class="l">Total volume</div></div>
     </div>
-    <div class="section-title">Personal Records</div>
+
+    ${gRows ? `<div class="section-title">Muscle group balance</div><div class="bal-card">${gRows}</div>` : ""}
+
+    <div class="section-title">Personal Records <span class="hint-inline">by est. 1RM</span></div>
     <div id="prList"></div>`;
 
   const host = $("#prList");
@@ -1319,10 +1760,12 @@ function renderStats(){
     return;
   }
   prList.forEach(([name, r])=>{
-    const row = document.createElement("div");
+    const row = document.createElement("button");
     row.className = "pr-row";
-    row.innerHTML = `<div><div class="nm">${esc(name)}</div><div class="mg">${esc(r.group)} · ${r.reps||8} reps</div></div>
-      <div class="val">${fmtWeightKg(r.kg)}</div>`;
+    row.innerHTML = `<div><div class="nm">${esc(name)}</div>
+        <div class="mg">${esc(r.group)} · best ${toDisplay(r.kg)}${unitLabel()} × ${r.reps||8}</div></div>
+      <div class="val">${toDisplay(r.e1rm||r.kg)}<small> ${unitLabel()}</small></div>`;
+    row.onclick = ()=> openExerciseDetail(name);
     host.appendChild(row);
   });
 }
@@ -1401,6 +1844,7 @@ function renderSettings(){
 
     <div class="set-group">
       <div class="set-row" id="exportRow"><div><div class="lab">Export backup</div><div class="desc">Save all data as a file</div></div><div class="ctl"><span class="link">Export</span></div></div>
+      <div class="set-row" id="csvRow"><div><div class="lab">Export CSV</div><div class="desc">Every set, for a spreadsheet</div></div><div class="ctl"><span class="link">CSV</span></div></div>
       <div class="set-row" id="importRow"><div><div class="lab">Import backup</div><div class="desc">Restore from a file</div></div><div class="ctl"><span class="link">Import</span></div></div>
       <div class="set-row" id="resetRow"><div><div class="lab" style="color:var(--danger)">Reset all data</div><div class="desc">Delete history &amp; settings</div></div><div class="ctl"><span class="link" style="color:var(--danger)">Reset</span></div></div>
     </div>
@@ -1428,6 +1872,7 @@ function renderSettings(){
   $("#remSw").onclick    = toggleReminders;
   // Data
   $("#exportRow").onclick = exportData;
+  $("#csvRow").onclick = exportCSV;
   $("#importRow").onclick = ()=> $("#importFile").click();
   $("#importFile").onchange = importData;
   $("#resetRow").onclick = ()=>{
@@ -1474,6 +1919,31 @@ function exportData(){
   URL.revokeObjectURL(url);
   toast("Backup exported");
 }
+// One row per set, so the log opens cleanly in Sheets/Excel.
+function exportCSV(){
+  const esc = v => `"${String(v==null?"":v).replace(/"/g,'""')}"`;
+  const rows = [["date","workout","group","exercise","set","kind","weight_kg","reps","volume_kg","completed","note"]];
+  Object.values(history).sort((a,b)=> a.date<b.date?-1:1).forEach(w=>{
+    w.exercises.forEach(ex=>{
+      let n=0;
+      ex.sets.forEach(s=>{
+        if (s.kind==="working") n++;
+        rows.push([ w.date, w.type, ex.group, ex.name, s.kind==="working"?n:0, s.kind,
+                    s.weightKg==null?"":s.weightKg, s.reps==null?"":s.reps,
+                    (s.done && s.weightKg!=null && s.reps) ? s.weightKg*s.reps : 0,
+                    s.done?"yes":"no", s.note||"" ]);
+      });
+    });
+  });
+  const csv = rows.map(r=>r.map(esc).join(",")).join("\r\n");
+  const blob = new Blob(["﻿"+csv], {type:"text/csv;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = `ironlog-${todayISO()}.csv`; a.click();
+  URL.revokeObjectURL(url);
+  toast(rows.length>1 ? "CSV exported" : "Nothing logged yet");
+}
+
 function importData(e){
   const file = e.target.files[0]; if(!file) return;
   const reader = new FileReader();
