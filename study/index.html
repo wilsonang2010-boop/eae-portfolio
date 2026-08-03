@@ -68,8 +68,20 @@ header{
 .home-link:hover{color:var(--white); border-color:var(--border-strong);}
 
 /* Subject tabs */
-.tabs{display:flex; gap:8px; overflow-x:auto; padding:12px 0; border-bottom:1px solid var(--border); -ms-overflow-style:none; scrollbar-width:none;}
-.tabs::-webkit-scrollbar{display:none;}
+.tabs{display:flex; flex-wrap:wrap; gap:8px; padding:12px 0; border-bottom:1px solid var(--border);}
+@media(max-width:560px){
+  /* Nine tabs wrap to several rows, so a sticky header would eat a third of
+     the screen. Let it scroll away instead — switching tabs already jumps to top. */
+  header{position:static;}
+  .tabs{gap:6px; padding:10px 0;}
+  .tab{padding:7px 11px; font-size:12.5px; gap:6px;}
+  .tab .dot{width:7px; height:7px;}
+  .head-inner{padding:12px 0;}
+  .brand span{display:none;}
+  .brand-mark{width:32px; height:32px; font-size:15px; border-radius:8px;}
+  .brand h1{font-size:.95rem;}
+  .home-link{padding:6px 10px; font-size:12px;}
+}
 .tab{
   display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
   font-size:14px; font-weight:500; padding:10px 18px; border-radius:10px;
@@ -385,7 +397,7 @@ header{
         <div class="brand-mark">O</div>
         <div>
           <h1>O-Level HQ · 2026</h1>
-          <span>Plan · Log · E-Math · A-Math · Physics · Chem · History</span>
+          <span>Planner · Lessons · Definitions · Practice</span>
         </div>
       </div>
       <a class="home-link" href="../index.html">← Portfolio</a>
@@ -396,8 +408,8 @@ header{
       <button class="tab tab-emath" data-subject="emath"><span class="dot"></span>E-Math</button>
       <button class="tab tab-amath" data-subject="amath"><span class="dot"></span>A-Math</button>
       <button class="tab tab-phys" data-subject="physics"><span class="dot"></span>Physics</button>
-      <button class="tab tab-chem" data-subject="chemistry"><span class="dot"></span>Chemistry</button>
       <button class="tab tab-phylesson" data-subject="phylesson"><span class="dot"></span>Phy Lessons</button>
+      <button class="tab tab-chem" data-subject="chemistry"><span class="dot"></span>Chemistry</button>
       <button class="tab tab-chemlesson" data-subject="chemlesson"><span class="dot"></span>Chem Lessons</button>
       <button class="tab tab-hist" data-subject="history"><span class="dot"></span>History</button>
     </nav>
