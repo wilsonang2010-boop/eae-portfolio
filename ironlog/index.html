@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<meta name="theme-color" content="#0a0b0f">
+<meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="IronLog">
@@ -15,17 +15,23 @@
 <style>
 /* ---------- Theme ---------- */
 :root{
-  --bg:#0a0b0f;
-  --panel:#14161c;
-  --panel-2:#1b1e26;
-  --panel-3:#232732;
-  --border:#262b36;
-  --text:#f3f5f8;
-  --muted:#8b93a3;
-  --muted-2:#5c6472;
-  --accent:#22c55e;
-  --accent-dim:#16a34a;
-  --accent-ghost:rgba(34,197,94,.14);
+  --bg:#000000;
+  --panel:#101013;
+  --panel-2:#17171c;
+  --panel-3:#212128;
+  --border:#2a2a33;
+  --text:#f6f4f6;
+  --muted:#9a919b;
+  --muted-2:#6a626e;
+  /* Accent is fully variable-driven so a theme swap reaches every surface.
+     applyTheme() rewrites all five from the chosen palette entry. */
+  --accent:#ec4899;
+  --accent-dim:#db2777;
+  --accent-ghost:rgba(236,72,153,.15);
+  --accent-line:rgba(236,72,153,.42);
+  --accent-glow:rgba(236,72,153,.55);
+  --on-accent:#1a0410;
+  --info:#38bdf8;
   --danger:#ef4444;
   --amber:#f59e0b;
   --radius:22px;
@@ -34,7 +40,7 @@
   --safe-b:env(safe-area-inset-bottom,0px);
   --safe-t:env(safe-area-inset-top,0px);
 }
-:root[data-amoled="1"]{ --bg:#000000; --panel:#0c0d11; --panel-2:#141620; }
+:root[data-amoled="1"]{ --panel:#08080a; --panel-2:#0f0f13; --panel-3:#17171c; --border:#212128; }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
 body{
@@ -63,7 +69,7 @@ input{font-family:inherit}
 .brand{display:flex;align-items:center;gap:10px}
 .brand .logo{
   width:30px;height:30px;border-radius:9px;flex:0 0 auto;
-  background:linear-gradient(160deg,#1b1e26,#0d0e12);
+  background:linear-gradient(160deg,var(--panel-2),#000);
   border:1px solid var(--border);
   display:grid;place-items:center;
 }
@@ -110,7 +116,7 @@ input{font-family:inherit}
   background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
   padding:16px 16px 8px;margin-bottom:14px;transition:border-color .3s;
 }
-.ex-card.complete{border-color:rgba(34,197,94,.4)}
+.ex-card.complete{border-color:var(--accent-line)}
 .ex-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
 .ex-name{font-size:21px;font-weight:800;letter-spacing:-.02em;line-height:1.15;margin:0}
 .ex-scheme{font-size:12.5px;color:var(--muted);margin-top:3px}
@@ -142,7 +148,7 @@ input{font-family:inherit}
 /* Progression nudge */
 .prog-chip{
   display:flex;align-items:center;gap:8px;width:100%;text-align:left;
-  background:var(--accent-ghost);border:1px solid rgba(34,197,94,.4);border-radius:13px;
+  background:var(--accent-ghost);border:1px solid var(--accent-line);border-radius:13px;
   padding:10px 12px;margin:2px 0 10px;font-size:13px;color:var(--text);font-weight:600;
 }
 .prog-chip .up{color:var(--accent);font-size:11px}
@@ -173,7 +179,7 @@ input{font-family:inherit}
 .check svg{width:24px;height:24px;stroke:var(--muted-2);transition:stroke .2s;opacity:.0}
 .check:active{transform:scale(.9)}
 .set.done .check{background:var(--accent);border-color:var(--accent)}
-.set.done .check svg{stroke:#04120a;opacity:1;stroke-width:3.2}
+.set.done .check svg{stroke:var(--on-accent);opacity:1;stroke-width:3.2}
 @keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.18)}100%{transform:scale(1)}}
 .check.pop{animation:pop .32s ease}
 .set-main{flex:1;min-width:0}
@@ -209,7 +215,7 @@ input{font-family:inherit}
 
 /* ---------- Numeric keypad ---------- */
 .kp-overlay{
-  position:fixed;inset:0;z-index:96;background:rgba(4,5,8,.72);backdrop-filter:blur(6px);
+  position:fixed;inset:0;z-index:96;background:rgba(0,0,0,.74);backdrop-filter:blur(6px);
   display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .24s;
 }
 .kp-overlay.show{opacity:1;pointer-events:auto}
@@ -224,7 +230,7 @@ input{font-family:inherit}
 .kp-value{font-size:34px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.1}
 .kp-value small{font-size:16px;color:var(--muted);font-weight:700;margin-left:3px}
 .kp-done{
-  margin-left:auto;background:var(--accent);color:#04120a;font-weight:800;font-size:15px;
+  margin-left:auto;background:var(--accent);color:var(--on-accent);font-weight:800;font-size:15px;
   padding:12px 22px;border-radius:13px;
 }
 .kp-plates{font-size:11.5px;color:var(--accent);font-weight:700;margin-top:3px;letter-spacing:.01em}
@@ -245,7 +251,7 @@ input{font-family:inherit}
   font-size:12px;color:var(--muted);background:var(--panel-2);border:1px solid var(--border);
   border-radius:10px;height:40px;padding:0 8px;font-weight:600;white-space:nowrap;flex:0 0 auto;
 }
-.note-btn.has{color:var(--accent);border-color:rgba(34,197,94,.4)}
+.note-btn.has{color:var(--accent);border-color:var(--accent-line)}
 .note-row{padding:0 4px 8px 60px;overflow:hidden}
 .note-row input{
   width:100%;background:var(--panel-2);border:1px solid var(--border);border-radius:11px;
@@ -259,7 +265,7 @@ input{font-family:inherit}
 }
 .set-more.has{border-color:var(--muted-2)}
 .set-more .dot{width:9px;height:9px;border-radius:99px;background:var(--muted-2);display:block}
-.set-more .dot.easy{background:#38bdf8}
+.set-more .dot.easy{background:var(--info)}
 .set-more .dot.solid{background:var(--accent)}
 .set-more .dot.hard{background:var(--amber)}
 .set-more .nd{font-size:9px;line-height:1}
@@ -274,8 +280,8 @@ input{font-family:inherit}
   flex:1;padding:12px 0;border-radius:12px;font-size:13.5px;font-weight:700;color:var(--muted);
   background:var(--panel-2);border:1px solid var(--border);
 }
-.eff.on{color:#04120a;background:var(--muted-2);border-color:var(--muted-2)}
-.eff.easy.on{background:#38bdf8;border-color:#38bdf8}
+.eff.on{color:var(--on-accent);background:var(--muted-2);border-color:var(--muted-2)}
+.eff.easy.on{background:var(--info);border-color:var(--info)}
 .eff.solid.on{background:var(--accent);border-color:var(--accent)}
 .eff.hard.on{background:var(--amber);border-color:var(--amber)}
 /* Session note */
@@ -313,9 +319,9 @@ input{font-family:inherit}
   transition:transform .1s,filter .2s;
 }
 .btn:active{transform:scale(.98)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:#04120a}
-.btn.primary.ready{box-shadow:0 8px 30px -8px rgba(34,197,94,.6);animation:glow 1.8s ease-in-out infinite}
-@keyframes glow{0%,100%{box-shadow:0 8px 24px -10px rgba(34,197,94,.5)}50%{box-shadow:0 10px 34px -8px rgba(34,197,94,.8)}}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.primary.ready{box-shadow:0 8px 30px -8px var(--accent-glow);animation:glow 1.8s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 8px 24px -10px var(--accent-glow)}50%{box-shadow:0 10px 34px -8px var(--accent-glow)}}
 .btn.ghost{background:transparent}
 .btn.small{width:auto;padding:11px 16px;font-size:14px;border-radius:13px}
 .finish-wrap{margin:22px 2px 6px}
@@ -340,7 +346,7 @@ input{font-family:inherit}
 .today-hero .v .type{color:var(--accent)}
 .done-note{
   display:flex;gap:10px;align-items:center;background:var(--accent-ghost);
-  border:1px solid rgba(34,197,94,.35);border-radius:14px;padding:11px 14px;margin:12px 2px 4px;
+  border:1px solid var(--accent-line);border-radius:14px;padding:11px 14px;margin:12px 2px 4px;
   font-size:14px;color:var(--text);font-weight:600;
 }
 
@@ -377,13 +383,13 @@ input{font-family:inherit}
   flex:1;padding:14px;border-radius:14px;font-size:15px;font-weight:800;
   background:var(--panel-2);border:1px solid var(--border);
 }
-.rt-btns .skip{background:var(--accent);border-color:var(--accent);color:#04120a}
+.rt-btns .skip{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 
 /* ---------- Bottom nav ---------- */
 .nav{
   position:fixed;left:0;right:0;bottom:0;z-index:50;
   height:calc(var(--nav-h) + var(--safe-b));padding-bottom:var(--safe-b);
-  background:rgba(12,13,17,.86);backdrop-filter:blur(18px);
+  background:rgba(0,0,0,.82);backdrop-filter:blur(18px);
   border-top:1px solid var(--border);
   display:flex;max-width:520px;margin:0 auto;
 }
@@ -485,7 +491,7 @@ input{font-family:inherit}
 .set-row .ctl{margin-left:auto;flex:0 0 auto}
 .seg{display:flex;background:var(--panel-2);border:1px solid var(--border);border-radius:11px;padding:3px}
 .seg button{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:700;color:var(--muted)}
-.seg button.on{background:var(--accent);color:#04120a}
+.seg button.on{background:var(--accent);color:var(--on-accent)}
 .switch{width:52px;height:31px;border-radius:99px;background:var(--panel-3);border:1px solid var(--border);position:relative;transition:background .25s}
 .switch::after{content:"";position:absolute;top:2px;left:2px;width:25px;height:25px;border-radius:99px;background:#fff;transition:transform .25s}
 .switch.on{background:var(--accent);border-color:var(--accent)}
@@ -501,7 +507,7 @@ input{font-family:inherit}
 
 /* ---------- Modal ---------- */
 .overlay{
-  position:fixed;inset:0;z-index:80;background:rgba(4,5,8,.72);backdrop-filter:blur(6px);
+  position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.74);backdrop-filter:blur(6px);
   display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .28s;
 }
 .overlay.show{opacity:1;pointer-events:auto}
@@ -552,7 +558,7 @@ input{font-family:inherit}
   font-size:13px;font-weight:700;color:var(--muted);background:var(--panel);
   border:1px solid var(--border);border-radius:99px;padding:7px 14px;
 }
-.chip.on{background:var(--accent);border-color:var(--accent);color:#04120a}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 
 /* ---------- Plateau ---------- */
 .stall-card{background:var(--panel);border:1px solid rgba(245,158,11,.35);border-radius:var(--radius);padding:14px 16px;margin:0 2px 6px}
@@ -572,7 +578,7 @@ input{font-family:inherit}
   <header class="topbar">
     <div class="brand">
       <span class="logo" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M4 9v6M6.5 7.5v9M17.5 7.5v9M20 9v6M6.5 12h11" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round"/></svg>
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 9v6M6.5 7.5v9M17.5 7.5v9M20 9v6M6.5 12h11" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/></svg>
       </span>
       <h1>IronLog</h1>
       <div class="sub"><b id="topDay">—</b><span id="topDate">—</span></div>
@@ -697,16 +703,18 @@ const TEMPLATES = {
   ],
 };
 
+/* Accent palette. `rgb` drives the translucent tints, `on` is the text colour
+   used on top of a filled accent surface. Pink is the default theme. */
 const ACCENTS = {
-  green:  { a:"#22c55e", d:"#16a34a", g:"rgba(34,197,94,.14)" },
-  blue:   { a:"#3b82f6", d:"#2563eb", g:"rgba(59,130,246,.14)" },
-  violet: { a:"#8b5cf6", d:"#7c3aed", g:"rgba(139,92,246,.14)" },
-  orange: { a:"#f59e0b", d:"#d97706", g:"rgba(245,158,11,.14)" },
-  red:    { a:"#ef4444", d:"#dc2626", g:"rgba(239,68,68,.14)" },
+  pink:   { a:"#ec4899", d:"#db2777", rgb:"236,72,153",  on:"#1a0410" },
+  rose:   { a:"#fb7185", d:"#e11d48", rgb:"251,113,133", on:"#1d0509" },
+  violet: { a:"#a78bfa", d:"#7c3aed", rgb:"167,139,250", on:"#12061f" },
+  green:  { a:"#22c55e", d:"#16a34a", rgb:"34,197,94",   on:"#04120a" },
+  blue:   { a:"#38bdf8", d:"#0284c7", rgb:"56,189,248",  on:"#031420" },
 };
 
 const DEFAULT_SETTINGS = {
-  restSec: 150, units: "kg", accent: "green", amoled: false,
+  restSec: 150, units: "kg", accent: "pink", amoled: false,
   reminders: false, sound: true, vibrate: true, bodyKg: 70,
   // Which kinds of set auto-start the rest timer. Working sets always do.
   restAfterPlyo: true, restAfterWarmup: false,
@@ -743,10 +751,44 @@ function toDisplay(kg){ if(kg==null) return ""; const v = settings.units==="kg"?
 function fromDisplay(v){ if(v===""||v==null||isNaN(v)) return null; return settings.units==="kg"? +v : +v*KG_PER_LB; }
 function unitLabel(){ return settings.units; }
 function fmtWeightKg(kg){ if(kg==null) return "—"; return `${toDisplay(kg)} ${unitLabel()}`; }
-function saveSettings(){ LS.set(K_SET, settings); }
-function saveHistory(){ LS.set(K_HIST, history); }
-function saveCurrent(){ if(current) LS.set(K_CUR, current); else localStorage.removeItem(K_CUR); }
-function saveBodylog(){ LS.set(K_BODY, bodylog); }
+/* Persistence is debounced: tapping through a workout used to re-serialise the
+   whole history on every checkbox, weight and note keystroke. Writes coalesce
+   into one, and always flush before the page can go away. */
+const _dirty = new Set();
+let _saveTimer = null;
+function markDirty(key){
+  _dirty.add(key);
+  // Only the logged history feeds the analytics; the in-progress workout
+  // doesn't, so ticking sets must not keep clearing the memo.
+  if (key === K_HIST) invalidateAnalytics();
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(flushSaves, 180);
+}
+function flushSaves(){
+  clearTimeout(_saveTimer); _saveTimer = null;
+  if (!_dirty.size) return;
+  if (_dirty.has(K_SET))  LS.set(K_SET, settings);
+  if (_dirty.has(K_HIST)) LS.set(K_HIST, history);
+  if (_dirty.has(K_BODY)) LS.set(K_BODY, bodylog);
+  if (_dirty.has(K_CUR)){
+    if (current) LS.set(K_CUR, current);
+    else { try{ localStorage.removeItem(K_CUR); }catch(e){} }
+  }
+  _dirty.clear();
+}
+function saveSettings(){ markDirty(K_SET); }
+function saveHistory(){ markDirty(K_HIST); }
+function saveCurrent(){ markDirty(K_CUR); }
+function saveBodylog(){ markDirty(K_BODY); }
+window.addEventListener("pagehide", flushSaves);
+window.addEventListener("beforeunload", flushSaves);
+document.addEventListener("visibilitychange", ()=>{ if (document.hidden) flushSaves(); });
+
+/* Analytics memo. exerciseHistory/computePRs each scan and sort the whole log,
+   and a single render calls them once per exercise card — this collapses that
+   to one scan per data change. */
+let _memoEx = new Map(), _memoPRs = null, _memoStall = null;
+function invalidateAnalytics(){ _memoEx.clear(); _memoPRs = null; _memoStall = null; }
 
 /* ---------- Workout building ---------- */
 function buildWorkout(type, dateISO){
@@ -805,8 +847,16 @@ function workoutVolume(w){
 function exerciseVolume(e){
   let v=0; e.sets.forEach(s=>{ v += setVolume(s); }); return v;
 }
-// Every logged session that contains this exercise, newest first.
+// Every logged session that contains this exercise, newest first. Memoized:
+// a single render asks for the same exercise several times.
 function exerciseHistory(name){
+  const hit = _memoEx.get(name);
+  if (hit) return hit;
+  const out = _exerciseHistory(name);
+  _memoEx.set(name, out);
+  return out;
+}
+function _exerciseHistory(name){
   return Object.values(history)
     .filter(w => w.exercises.some(e=>e.name===name))
     .sort((a,b)=> a.date<b.date?1:-1)
@@ -926,10 +976,12 @@ function plateauFor(name, sessions){
   return { sessions:n, kg: recent[0].best.kg, reps: recent[0].best.reps };
 }
 function plateauedExercises(){
+  if (_memoStall) return _memoStall;
   const names = new Set();
   Object.values(history).forEach(w=> w.exercises.forEach(e=>{ if(!e.plyo) names.add(e.name); }));
   const out = [];
   names.forEach(n=>{ const p = plateauFor(n); if (p) out.push({ name:n, ...p }); });
+  _memoStall = out;
   return out;
 }
 
@@ -2033,6 +2085,7 @@ function computeStreaks(){
 /* Ranked by estimated 1RM rather than raw weight, so a heavier-but-shorter set
    doesn't displace a genuinely stronger one. Heaviest weight is kept alongside. */
 function computePRs(){
+  if (_memoPRs) return _memoPRs;
   const pr = {}; // name -> { e1rm, kg, reps, group, topKg, date }
   Object.values(history).forEach(w=>{
     w.exercises.forEach(e=>{
@@ -2052,6 +2105,7 @@ function computePRs(){
       });
     });
   });
+  _memoPRs = pr;
   return pr;
 }
 
@@ -2284,7 +2338,7 @@ function renderSettings(){
       <button class="btn ghost" id="resetNo">Cancel</button>`);
     $("#resetYes").onclick = ()=>{ hideRest();
       [K_HIST,K_CUR,K_SET,K_TIMER,K_BODY].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
-      settings=Object.assign({},DEFAULT_SETTINGS); history={}; current=null; bodylog={};
+      settings=Object.assign({},DEFAULT_SETTINGS); history={}; current=null; bodylog={}; invalidateAnalytics();
       applyTheme(); closeSheet(); go("today"); toast("All data cleared"); };
     $("#resetNo").onclick = closeSheet;
   };
@@ -2361,7 +2415,7 @@ function importData(e){
       if (data.bodylog) bodylog = data.bodylog;
       saveHistory(); saveSettings(); saveBodylog();
       current = history[todayISO()] || null; saveCurrent();
-      applyTheme(); toast("Backup imported"); go("today");
+      invalidateAnalytics(); applyTheme(); toast("Backup imported"); go("today");
     }catch(err){ toast("Could not read that file"); }
   };
   reader.readAsText(file);
@@ -2372,14 +2426,17 @@ function importData(e){
    THEME / NAV / SHELL
    ============================================================ */
 function applyTheme(){
-  const acc = ACCENTS[settings.accent] || ACCENTS.green;
+  const acc = ACCENTS[settings.accent] || ACCENTS.pink;
   const r = document.documentElement;
   r.style.setProperty("--accent", acc.a);
   r.style.setProperty("--accent-dim", acc.d);
-  r.style.setProperty("--accent-ghost", acc.g);
+  r.style.setProperty("--accent-ghost", `rgba(${acc.rgb},.15)`);
+  r.style.setProperty("--accent-line",  `rgba(${acc.rgb},.42)`);
+  r.style.setProperty("--accent-glow",  `rgba(${acc.rgb},.55)`);
+  r.style.setProperty("--on-accent", acc.on);
   r.setAttribute("data-amoled", settings.amoled ? "1" : "0");
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute("content", settings.amoled ? "#000000" : "#0a0b0f");
+  if (meta) meta.setAttribute("content", "#000000");
 }
 
 function go(tab){
