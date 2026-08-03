@@ -92,6 +92,7 @@ header{
 .tab .dot{width:8px; height:8px; border-radius:50%;}
 .tab-plan .dot{background:#3B82F6;}
 .tab-log .dot{background:#FB7185;}
+.tab-ask .dot{background:#FACC15;}
 .tab-emath .dot{background:#818CF8;}
 .tab-amath .dot{background:#6366F1;}
 .tab-phys .dot{background:#38BDF8;}
@@ -233,6 +234,39 @@ header{
 .diagram-wrap svg{max-width:100%; height:auto; width:340px;}
 .diagram-cap{margin-top:10px; font-size:12.5px; color:var(--slate-500);}
 .example-card .diagram-wrap{margin:14px 0 4px;}
+
+
+/* ── Ask: offline tutor ──────────────────────────────────────── */
+.ask-form{display:flex; gap:10px; margin-top:24px; flex-wrap:wrap;}
+.ask-form input{flex:1; min-width:220px; background:var(--card); border:1px solid var(--border-strong); color:var(--white); padding:14px 16px; border-radius:11px; font-size:15px;}
+.ask-form input::placeholder{color:var(--slate-500);}
+.ask-form input:focus{outline:2px solid var(--blue); outline-offset:1px;}
+.ask-chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
+.ask-chips .topic-pill{font-size:12.5px;}
+.ask-answer{margin-top:28px; background:var(--card); border:1px solid var(--border-strong); border-radius:14px; padding:22px 24px;}
+.ask-head{display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:9px;}
+.ask-kind{font-size:10.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; padding:3px 9px; border-radius:5px;}
+.kind-definition{background:rgba(59,130,246,.18); color:#93C5FD;}
+.kind-lesson{background:rgba(34,211,238,.16); color:#67E8F9;}
+.kind-practice{background:rgba(251,113,133,.15); color:#FDA4AF;}
+.kind-diagram{background:rgba(245,158,11,.15); color:#FCD34D;}
+.ask-topic{font-size:12.5px; color:var(--slate-500);}
+.ask-title{font-size:1.25rem; margin-bottom:12px;}
+.ask-body{color:var(--slate-300); line-height:1.7;}
+.ask-body p{margin-bottom:11px;}
+.ask-body p:last-child{margin-bottom:0;}
+.ask-note{font-size:13.5px; color:var(--slate-400); border-top:1px solid var(--border); padding-top:10px;}
+.ask-answer .mini-btn{margin-top:16px;}
+.ask-mini{color:var(--slate-300); font-size:14.5px; line-height:1.6;}
+.ask-more-h{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--slate-500); font-weight:700; margin:30px 0 12px;}
+.ask-more{display:grid; grid-template-columns:1fr; gap:12px;}
+@media(min-width:760px){.ask-more{grid-template-columns:1fr 1fr;}}
+.ask-card{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px 18px;}
+.ask-card-title{font-family:var(--font-display); color:var(--white); font-weight:600; font-size:1rem; margin-bottom:7px;}
+.ask-snip{font-size:13.5px; color:var(--slate-400); line-height:1.55;}
+.ask-card .mini-btn{margin-top:12px;}
+.ask-empty{margin-top:28px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:22px 24px; color:var(--slate-300);}
+.ask-empty p{margin-bottom:8px;}
 
 /* ── Per-topic extras: diagram + practice questions ──────────── */
 .topic-extras{margin-top:8px; padding-top:4px; border-top:1px solid var(--border);}
@@ -404,6 +438,7 @@ header{
     </div>
     <nav class="tabs" id="tabs">
       <button class="tab tab-plan active" data-subject="plan"><span class="dot"></span>Plan</button>
+      <button class="tab tab-ask" data-subject="ask"><span class="dot"></span>Ask</button>
       <button class="tab tab-log" data-subject="log"><span class="dot"></span>Error Log</button>
       <button class="tab tab-emath" data-subject="emath"><span class="dot"></span>E-Math</button>
       <button class="tab tab-amath" data-subject="amath"><span class="dot"></span>A-Math</button>
@@ -2818,6 +2853,271 @@ const CHEM_LESSONS = {
 };
 
 /* ============================================================
+   ASK — offline tutor.
+   Answers come only from this app's own syllabus content, so it
+   cannot invent facts. No network, no API, works offline.
+   ============================================================ */
+function stripTags(s){ return String(s).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim(); }
+
+const TAB_LABELS = { physics:'Physics', chemistry:'Chemistry', phylesson:'Phy Lessons',
+                     chemlesson:'Chem Lessons', emath:'E-Math', amath:'A-Math', history:'History' };
+
+let ASK_INDEX = null;
+function buildAskIndex(){
+  if(ASK_INDEX) return ASK_INDEX;
+  const idx = [];
+  const add = e => { e.hay = (e.title + ' ' + e.body).toLowerCase(); idx.push(e); };
+
+  /* Definitions from the two science decks */
+  [['physics',PHYSICS],['chemistry',CHEMISTRY]].forEach(([key,deck])=>{
+    deck.topics.forEach(t=>{
+      t.cards.forEach(c=>{
+        add({ kind:'Definition', tab:key, topic:t.name, title:c.t,
+              body: stripTags(c.d + ' ' + (c.x||'')),
+              html: `<p>${esc(c.d)}</p>` + (c.x ? `<p class="ask-note">${c.x}</p>` : '') });
+      });
+    });
+  });
+
+  /* Lesson sections, chapter by chapter */
+  [['phylesson',PHY_LESSONS],['chemlesson',CHEM_LESSONS],['emath',EMATH],['amath',AMATH],['history',HISTORY]]
+  .forEach(([key,S])=>{
+    (S.chapters||[]).forEach(ch=>{
+      (ch.sections||[]).forEach(sec=>{
+        let text='', html='';
+        if(sec.type==='text'){
+          text = sec.body.map(stripTags).join(' ');
+          html = sec.body.map(p=>`<p>${p}</p>`).join('');
+        } else if(sec.type==='bullets'){
+          text = sec.body.map(stripTags).join(' ');
+          html = `<ul class="bullets">${sec.body.map(li=>`<li>${li}</li>`).join('')}</ul>`;
+        } else if(sec.type==='formulas'){
+          text = sec.body.map(f=>stripTags(f.f+' '+f.d)).join(' ');
+          html = `<div class="formula-list">${sec.body.map(f=>
+                   `<div class="formula-row"><div class="f-expr">${f.f}</div><div class="f-desc">${esc(f.d)}</div></div>`).join('')}</div>`;
+        } else if(sec.type==='terms'){
+          text = sec.body.join(' ');
+          html = `<div class="keyterms">${sec.body.map(t=>`<span class="keyterm">${esc(t)}</span>`).join('')}</div>`;
+        } else if(sec.type==='timeline'){
+          text = sec.body.map(e=>e.d+' '+e.t).join(' ');
+          html = `<div class="timeline">${sec.body.map(e=>`<div class="tl-item"><div class="tl-date">${esc(e.d)}</div><div class="tl-text">${esc(e.t)}</div></div>`).join('')}</div>`;
+        } else if(sec.type==='diagram'){
+          const d = sec.body;
+          text = stripTags((d.caption||'') + ' ' + (d.head||[]).join(' ') + ' ' +
+                 (d.rows||[]).map(r=>r.join(' ')).join(' '));
+          html = renderDiagram(d);
+        } else if(sec.type==='examples'){
+          text = sec.body.map(x=>stripTags(x.q+' '+x.ans)).join(' ');
+          html = sec.body.map(x=>`<div class="ask-mini"><b>${esc(x.level)}</b> — ${x.q}
+                   <div class="example-ans" style="margin-top:8px;"><b>Answer:</b> ${x.ans}</div></div>`).join('');
+        } else if(sec.type==='html'){
+          text = stripTags(sec.body); html = sec.body;
+        }
+        if(text) add({ kind:'Lesson', tab:key, topic:ch.title,
+                       title:`${ch.title} — ${sec.h}`, body:text, html });
+      });
+    });
+  });
+
+  /* Per-topic diagrams and practice questions from the science decks */
+  Object.entries(TOPIC_EXTRAS).forEach(([sub,topics])=>{
+    Object.entries(topics).forEach(([tname,ex])=>{
+      if(ex.diagram){
+        const d = ex.diagram;
+        const text = stripTags((d.caption||'') + ' ' + (d.head||[]).join(' ') + ' ' +
+                     (d.rows||[]).map(r=>r.join(' ')).join(' '));
+        if(text) add({ kind:'Diagram', tab:sub, topic:tname, title:`${tname} — diagram`,
+                       body:text, html:renderDiagram(d) });
+      }
+      (ex.practice||[]).forEach(pr=>{
+        add({ kind:'Practice', tab:sub, topic:tname,
+              title:`${stripTags(pr.q).slice(0,70)}…`,
+              body: stripTags(pr.q + ' ' + pr.steps.join(' ') + ' ' + pr.ans),
+              html: `<div class="ask-mini">${pr.q}
+                      <ol class="step-list" style="margin-top:12px;">${pr.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+                      <div class="example-ans"><b>Answer:</b> ${pr.ans}</div></div>` });
+      });
+    });
+  });
+
+  ASK_INDEX = idx;
+  return idx;
+}
+
+const ASK_STOP = new Set(('a an the is are was were be been being do does did of in on at to for from with by and or as ' +
+  'if it its this that these those i me my we our you your what which who how why when where whats cant can could ' +
+  'would should tell explain about please help need know understand mean means work works some any there').split(' '));
+
+function askTokens(q){
+  return q.toLowerCase()
+    .replace(/[^a-z0-9\s'’+\-]/g,' ')
+    .split(/\s+/)
+    .map(w=>w.replace(/['’]s$/,''))
+    .filter(w=>w.length>1 && !ASK_STOP.has(w));
+}
+
+function askSearch(q){
+  const idx = buildAskIndex();
+  const words = askTokens(q);
+  if(!words.length) return [];
+  const phrase = words.join(' ');
+  const ql = q.toLowerCase();
+
+  // Light intent detection — nudges the right kind of content to the top.
+  const wantDef     = /\b(what is|what are|define|definition of|meaning of)\b/.test(ql);
+  const wantFormula = /\b(formula|equation|calculate|work out)\b/.test(ql);
+  const wantTest    = /\b(test for|identify|how do i test)\b/.test(ql);
+  const wantPractice= /\b(practice|question|example|worked)\b/.test(ql);
+  const wantConcept = /\b(how|why|explain|describe|works?)\b/.test(ql);
+
+  const out = [];
+  idx.forEach(e=>{
+    const title = e.title.toLowerCase();
+    let s = 0;
+    if(title.includes(phrase)) s += 70;
+    if(e.hay.includes(phrase)) s += 20;
+    words.forEach(w=>{
+      const inTitleWord = title.split(/[^a-z0-9]+/).includes(w);
+      if(inTitleWord) s += 16;
+      else if(title.includes(w)) s += 9;
+      const hits = e.hay.split(w).length - 1;
+      if(hits) s += Math.min(hits,4) * 2.4;
+    });
+    // Reward entries that contain ALL the query terms, not just one common one.
+    const present = words.filter(w=>e.hay.includes(w)).length;
+    const cov = present / words.length;
+    if(cov < 0.5) s *= 0.2;
+    s *= (0.5 + 0.85 * cov);
+    if(s <= 0) return;
+    if(wantDef     && e.kind==='Definition') s *= 1.45;
+    if(wantFormula && /f-expr/.test(e.html))  s *= 1.9;
+    if(wantTest    && /dtable/.test(e.html))  s *= 1.4;
+    if(wantPractice&& e.kind==='Practice')    s *= 1.5;
+    if(!wantPractice && e.kind==='Practice')  s *= 0.8;
+    // "how / why does X work" wants the explanation, not a bare equation.
+    if(wantConcept && !wantFormula){
+      if(e.kind==='Lesson') s *= 1.5;
+      if(e.kind==='Definition' && /equation/i.test(e.title)) s *= 0.6;
+    }
+    out.push({ e, s });
+  });
+  out.sort((a,b)=>b.s-a.s);
+  return out.slice(0, 7);
+}
+
+/* Recent questions */
+function askRecent(){ try{ return JSON.parse(localStorage.getItem('osp-ask')||'[]'); }catch(e){ return []; } }
+function askRemember(q){
+  const r = askRecent().filter(x=>x.toLowerCase()!==q.toLowerCase());
+  r.unshift(q);
+  localStorage.setItem('osp-ask', JSON.stringify(r.slice(0,6)));
+}
+
+const ASK_SUGGESTIONS = [
+  "What is specific latent heat?",
+  "Why does temperature stay constant while ice melts?",
+  "How do I test for sulfate ions?",
+  "Difference between strong and weak acid",
+  "What is terminal velocity?",
+  "Formula for pressure in a liquid",
+  "How does a transformer work?",
+  "Test for aluminium and zinc",
+];
+
+function renderAsk(){
+  const recent = askRecent();
+  const q = state.askQuery || '';
+  const results = q.trim() ? askSearch(q) : [];
+
+  let answer = '';
+  if(q.trim()){
+    if(!results.length){
+      answer = `<div class="ask-empty">
+        <p>Nothing in the syllabus content matches <b>“${esc(q)}”</b>.</p>
+        <p class="t-sub">Try fewer words, or the key term on its own — for example <i>latent heat</i> rather than a full sentence.</p></div>`;
+    } else {
+      const top = results[0].e;
+      answer = `<div class="ask-answer">
+        <div class="ask-head">
+          <span class="ask-kind kind-${top.kind.toLowerCase()}">${esc(top.kind)}</span>
+          <span class="ask-topic">${esc(top.topic)}</span>
+        </div>
+        <h3 class="ask-title">${esc(top.title)}</h3>
+        <div class="ask-body">${top.html}</div>
+        <button class="mini-btn" data-jump="${esc(top.tab)}" data-jtopic="${esc(top.topic)}">Open in ${esc(TAB_LABELS[top.tab]||top.tab)} →</button>
+      </div>`;
+      if(results.length > 1){
+        answer += `<h4 class="ask-more-h">Also relevant</h4><div class="ask-more">` +
+          results.slice(1).map(r=>`
+            <div class="ask-card">
+              <div class="ask-head">
+                <span class="ask-kind kind-${r.e.kind.toLowerCase()}">${esc(r.e.kind)}</span>
+                <span class="ask-topic">${esc(r.e.topic)}</span>
+              </div>
+              <div class="ask-card-title">${esc(r.e.title)}</div>
+              <div class="ask-snip">${esc(r.e.body.slice(0,190))}${r.e.body.length>190?'…':''}</div>
+              <button class="mini-btn" data-jump="${esc(r.e.tab)}" data-jtopic="${esc(r.e.topic)}">Open in ${esc(TAB_LABELS[r.e.tab]||r.e.tab)} →</button>
+            </div>`).join('') + `</div>`;
+      }
+    }
+  }
+
+  app.innerHTML = `
+  <section class="subject-hero">
+    <span class="eyebrow">Offline tutor · no internet needed</span>
+    <h2>Ask</h2>
+    <p>Ask a question and this searches every definition, lesson, diagram and worked example in this app — ${buildAskIndex().length} pieces of syllabus content — and shows you the real answer.</p>
+  </section>
+
+  <form class="ask-form" id="ask-form">
+    <input id="ask-input" type="text" autocomplete="off" placeholder="e.g. why does evaporation cool a liquid?" value="${esc(q)}" />
+    <button class="btn-solid" type="submit">Ask</button>
+  </form>
+
+  <div class="ask-chips">
+    ${(recent.length ? recent : ASK_SUGGESTIONS).slice(0,8).map(s=>
+      `<button class="topic-pill" data-ask="${esc(s)}">${esc(s)}</button>`).join('')}
+    ${recent.length ? `<button class="reset-btn" id="ask-clear" style="align-self:center;">clear history</button>` : ''}
+  </div>
+
+  ${answer}
+
+  <div class="note" style="margin-top:34px;">
+    <b>What this is:</b> a search over this app's own syllabus content — every answer you see is real material from the Physics, Chemistry, Maths and History sections, not generated text. That means it can't make things up, but it also only knows what is in this app.
+  </div>
+  ` + footerHTML();
+
+  const form = document.getElementById('ask-form');
+  const input = document.getElementById('ask-input');
+  form.addEventListener('submit', ev=>{
+    ev.preventDefault();
+    const v = input.value.trim();
+    if(!v) return;
+    state.askQuery = v; askRemember(v); renderAsk();
+    window.scrollTo({top:0, behavior:'instant'});
+  });
+  app.querySelectorAll('[data-ask]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      state.askQuery = b.dataset.ask; askRemember(b.dataset.ask); renderAsk();
+      window.scrollTo({top:0, behavior:'instant'});
+    });
+  });
+  const clr = document.getElementById('ask-clear');
+  if(clr) clr.addEventListener('click', ()=>{ localStorage.removeItem('osp-ask'); renderAsk(); });
+  app.querySelectorAll('[data-jump]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const tab = b.dataset.jump, topic = b.dataset.jtopic;
+      state.subject = tab;
+      state.query = '';
+      state.topic = (tab==='physics'||tab==='chemistry') ? topic : 'all';
+      document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.subject===tab));
+      render();
+    });
+  });
+  input.focus({preventScroll:true});
+}
+
+/* ============================================================
    PLANNER — schedule, phases, streak, error log
    ============================================================ */
 const MATH_EXAM = new Date(2026,9,21,8,30,0);   // 21 Oct 2026 — countdown target
@@ -3023,6 +3323,7 @@ let state = {
   query:'',
   weekOffset:0,       // weeks from the current week
   logFilter:'all',
+  askQuery:'',
 };
 let cdTimer = null;
 
@@ -3057,6 +3358,7 @@ function render(){
   if(cdTimer){ clearInterval(cdTimer); cdTimer = null; }
   if(state.subject==='plan'){ renderPlan(); return; }
   if(state.subject==='log'){ renderLog(); return; }
+  if(state.subject==='ask'){ renderAsk(); return; }
   if(SYLLABUS_SUBJECTS.includes(state.subject)){ renderSyllabus(DATA[state.subject], state.subject); return; }
   renderDeck(DATA[state.subject]);
   window.scrollTo({top:0, behavior:'instant'});
