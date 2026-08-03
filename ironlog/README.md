@@ -1,8 +1,8 @@
 # IronLog
 
 A personal, mobile-first workout tracker built around a fixed **Push / Pull / Legs**
-weekly split. Sleek dark theme, green "completed" accents, an automatic rest timer,
-history, and stats — inspired by apps like Strong and Hevy but tailored to one routine.
+weekly split. True-black theme with pink accents, an automatic rest timer, history, and
+stats — inspired by apps like Strong and Hevy but tailored to one routine.
 
 **Live:** https://wilsonang2010-boop.github.io/eae-portfolio/ironlog/
 
@@ -25,7 +25,7 @@ _"Rest Day 💪 Recovery is part of progress."_
 
 - **Workout tracking** — muscle-group sections, warm-up + working sets, a big tap
   checkbox on every set, per-set weight (kg/lbs), reps, and an optional note. Completed
-  sets turn green; a progress bar at the top tracks completion %.
+  sets turn pink; a progress bar at the top tracks completion %.
 - **Built-in keypad** — weight and reps open a large in-app numeric pad with plate
   shortcuts (±2.5 / ±5) instead of the phone keyboard. Keeps the OS keyboard out of the
   way, and stops iOS "shake to undo" firing mid-workout. Bar lifts also show a **plate
@@ -59,8 +59,28 @@ _"Rest Day 💪 Recovery is part of progress."_
 - **Smart weights** — when you start a workout, the previous week's weights for each
   exercise are pre-filled; warm-ups suggest ~50% of the working weight.
 - **Settings** — rest-timer length, which set types auto-rest, units (kg/lbs), accent
-  colour, AMOLED black, timer sound, vibration, daily reminders, bodyweight (for
-  calories), and JSON or CSV export / JSON import.
+  colour (pink, rose, violet, green, blue), AMOLED black, plate calculator and bar
+  weight, timer sound, vibration, daily reminders, bodyweight, and JSON or CSV export /
+  JSON import.
+
+## Theme
+
+Pure black background with pink accents by default. Every accent surface is driven by CSS
+variables (`--accent`, `--accent-ghost`, `--accent-line`, `--accent-glow`, `--on-accent`)
+that `applyTheme()` rewrites from a single palette entry, so switching accent recolours
+the whole app — checkboxes, charts, timer ring, chips and glows included.
+
+## Performance
+
+The log is read-heavy, so analytics are memoized and writes are coalesced. Measured in
+headless Chromium against a year of training (313 sessions, 421 KB of history):
+
+| | before | after |
+|---|---|---|
+| Render today | 20.3 ms | **4.3 ms** (2.4 ms warm) |
+| Render stats | 31.5 ms | **15.4 ms** (7.0 ms warm) |
+| Render history | 32.4 ms | **11.0 ms** |
+| localStorage writes per 30 taps | 30 | **1** |
 
 ## Offline & data
 
