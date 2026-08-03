@@ -85,6 +85,8 @@ header{
 .tab-phys .dot{background:#38BDF8;}
 .tab-chem .dot{background:#34D399;}
 .tab-hist .dot{background:#A78BFA;}
+.tab-phylesson .dot{background:#22D3EE;}
+.tab-chemlesson .dot{background:#A3E635;}
 
 /* Hero intro per subject */
 .subject-hero{padding:40px 0 8px;}
@@ -395,6 +397,8 @@ header{
       <button class="tab tab-amath" data-subject="amath"><span class="dot"></span>A-Math</button>
       <button class="tab tab-phys" data-subject="physics"><span class="dot"></span>Physics</button>
       <button class="tab tab-chem" data-subject="chemistry"><span class="dot"></span>Chemistry</button>
+      <button class="tab tab-phylesson" data-subject="phylesson"><span class="dot"></span>Phy Lessons</button>
+      <button class="tab tab-chemlesson" data-subject="chemlesson"><span class="dot"></span>Chem Lessons</button>
       <button class="tab tab-hist" data-subject="history"><span class="dot"></span>History</button>
     </nav>
   </div>
@@ -1841,6 +1845,966 @@ const AMATH = {
   ]
 };
 
+const PHY_LESSONS = {
+  eyebrow:"Pure Physics · 6091 · Full lessons",
+  title:"Physics — Taught in Full",
+  intro:"Every syllabus topic taught properly: the idea behind it, how it actually works, the relationships you need, and how examiners ask about it. Read a lesson, then drill the Physics tab for definitions and practice.",
+  cards:[
+    { h:"How to use this", p:"Read the lesson once for understanding, not memorisation. Then go to the Physics tab, which has the definitions, a diagram and three practice questions for the same topic." },
+    { h:"Paper structure", p:"Paper 1 is multiple choice (30 marks, 1 h). Paper 2 has structured questions plus a choice section (75 marks, 1 h 45). Paper 3 is the practical (40 marks, 1 h 50)." },
+    { h:"Where marks leak", p:"Always show the formula, then substitution, then the answer with a unit. Give answers to 3 significant figures unless told otherwise, and never round part-way through a calculation." },
+  ],
+  chapters:[
+    { n:1, title:"Physical Quantities, Units and Measurement", q:"Why every number in physics needs a unit and, sometimes, a direction.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Physics is measurement. Every quantity you meet is either a <b>scalar</b> — a size only — or a <b>vector</b>, which has a size <i>and</i> a direction. Getting this distinction right is not pedantry: it decides whether you add two quantities straight up, or whether you have to combine them geometrically.",
+          "The six SI base quantities (mass, length, time, current, temperature, amount of substance) are the foundation. Everything else — force, energy, pressure — is <i>derived</i> from them. This is why a newton can be written as kg m/s²: it is not a new idea, just a shorthand.",
+        ]},
+        { h:"Scalars versus vectors, and why it matters", type:"text", body:[
+          "Walk 3 m east then 4 m north. The <b>distance</b> you travelled is 7 m — you simply add the path lengths, because distance is a scalar. But your <b>displacement</b> is 5 m, because displacement is a vector and the two legs are at right angles, so they combine by Pythagoras rather than by simple addition.",
+          "That single example contains the whole idea. Whenever a question gives you two quantities acting in different directions, you cannot just add the numbers — you must combine them as vectors, either by drawing them tip-to-tail or by using Pythagoras and trigonometry when they are perpendicular.",
+        ]},
+        { h:"Prefixes", type:"formulas", body:[
+          { f:"n = 10⁻⁹   µ = 10⁻⁶   m = 10⁻³   c = 10⁻²   d = 10⁻¹", d:"The sub-unit prefixes named in the syllabus." },
+          { f:"k = 10³   M = 10⁶   G = 10⁹   T = 10¹²", d:"The multiplying prefixes. Convert to base units before substituting into any formula." },
+        ]},
+        { h:"Adding vectors", type:"diagram", body:{ type:"vectors", gridMin:-1, gridMax:7,
+            arrows:[{x1:0,y1:0,x2:4,y2:0,label:'a',color:'#3B82F6'},{x1:4,y1:0,x2:4,y2:3,label:'b',color:'#34D399'},{x1:0,y1:0,x2:4,y2:3,label:'R',color:'#FCD34D'}],
+            points:[{x:0,y:0,label:'O'}],
+            caption:"Draw the vectors tip-to-tail; the resultant runs from the very start to the very end." } },
+        { h:"Exam technique", type:"bullets", body:[
+          "Convert every prefix to base units <b>before</b> substituting — km to m, mA to A, cm³ to m³.",
+          "If two vectors are perpendicular, use Pythagoras for the size and <b>tan θ</b> for the direction. Always state the direction as part of the answer.",
+          "A vector answer without a direction is incomplete and loses a mark.",
+        ]},
+      ]},
+    { n:2, title:"Kinematics", q:"Describing motion with graphs — where the gradient and the area each mean something.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Kinematics describes <i>how</i> things move without asking why. Almost every question reduces to reading a graph correctly, and there are only two rules you need — but you must know which graph you are looking at, because the same shape means different things on each.",
+        ]},
+        { h:"The two rules", type:"text", body:[
+          "On a <b>displacement–time</b> graph, the gradient is the velocity. A horizontal line means the object is stationary; a steeper line means it is moving faster. There is no useful meaning to the area under this graph.",
+          "On a <b>velocity–time</b> graph, the gradient is the acceleration <i>and</i> the area underneath is the displacement. This second fact is the single most-forgotten result in the topic — a large share of marks come from realising a question is asking for the area, not the gradient.",
+          "A negative gradient on a velocity–time graph is a deceleration. A curve on either graph means the quantity given by the gradient is itself changing.",
+        ]},
+        { h:"Reading a velocity–time graph", type:"diagram", body:{ type:"axes", alt:"Velocity-time graph", xlabel:"time / s", ylabel:"velocity / m s⁻¹", xmax:10, ymax:10,
+            xticks:[{v:0,t:'0'},{v:2,t:'2'},{v:6,t:'6'},{v:10,t:'10'}], yticks:[{v:0,t:'0'},{v:8,t:'8'}],
+            series:[{pts:[[0,0],[2,8],[6,8],[10,0]],color:'#3B82F6'}],
+            shade:[{pts:[[0,0],[2,8],[6,8],[10,0]],color:'#3B82F6'}],
+            notes:[{x:1.2,y:5.4,text:'gradient = a',color:'#FCD34D'},{x:5,y:3.2,text:'area = distance',color:'#93C5FD'}],
+            caption:"Split the area into triangles, rectangles and trapeziums to find the total distance." } },
+        { h:"Free fall", type:"text", body:[
+          "Near the Earth's surface, and ignoring air resistance, every object falls with the same acceleration of about <b>10 m/s²</b> whatever its mass. A feather and a hammer really do land together in a vacuum — the heavier object needs proportionally more force to accelerate it, and gravity supplies exactly that.",
+          "In practice air resistance matters, and that is the subject of terminal velocity in the next lesson.",
+        ]},
+        { h:"Key relationships", type:"formulas", body:[
+          { f:"average speed = distance ÷ time", d:"Use total distance over total time for a whole journey." },
+          { f:"a = (v − u) ÷ t", d:"Change in velocity over time taken." },
+          { f:"distance = area under a velocity–time graph", d:"Triangle ½bh · rectangle bh · trapezium ½(a+b)h." },
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Read the <b>y-axis label</b> first. Half the errors in this topic come from treating a displacement–time graph as a velocity–time graph.",
+          "For 'total distance', reach for the area. For 'acceleration', reach for the gradient.",
+          "For a curve, draw a tangent to find the instantaneous gradient — and make the tangent long, so the triangle you use is large and accurate.",
+        ]},
+      ]},
+    { n:3, title:"Dynamics", q:"What forces actually do — and why the syllabus never asks you to recite Newton's Laws.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "A force changes the size, shape or motion of an object. The crucial word in this whole topic is <b>resultant</b>: objects respond not to individual forces but to the single net force left after all of them are combined.",
+          "Note that the 2026 syllabus explicitly does <i>not</i> ask you to state Newton's Laws. It asks you to <b>apply</b> them — to explain motion in terms of balanced and unbalanced forces, to use F = ma, and to identify action–reaction pairs.",
+        ]},
+        { h:"Balanced and unbalanced", type:"text", body:[
+          "If the forces on a body are <b>balanced</b>, the resultant is zero. The body then either stays at rest or keeps moving at constant velocity in a straight line. Notice that constant velocity requires <i>no</i> resultant force — a car cruising at a steady 70 km/h has zero resultant force on it, because the driving force exactly matches the resistive forces.",
+          "If the forces are <b>unbalanced</b>, there is a resultant force and the body accelerates in the direction of that resultant. The bigger the resultant force, or the smaller the mass, the greater the acceleration.",
+          "This is why 'the car is moving, so there must be a resultant force' is wrong, and a common exam trap. Movement needs no force. Only <i>changing</i> movement does.",
+        ]},
+        { h:"Action–reaction pairs", type:"text", body:[
+          "When A pushes B, B pushes back on A with an equal and opposite force. The subtle point examiners test is that these two forces act on <b>different objects</b>, so they can never cancel each other out.",
+          "A book resting on a table: the book's weight (Earth pulls book) and the table's normal force (table pushes book) are <i>not</i> an action–reaction pair — they act on the same object and merely happen to balance. The true partner of the book's weight is the book pulling up on the Earth.",
+        ]},
+        { h:"Terminal velocity", type:"text", body:[
+          "Drop an object and at first only its weight acts, so it accelerates. As it speeds up, air resistance grows. When air resistance has grown to exactly equal the weight, the resultant force is zero — so the acceleration is zero and the object falls at a constant <b>terminal velocity</b>.",
+          "It has not stopped; it simply stops speeding up. Open a parachute and the surface area jumps, air resistance leaps above the weight, the resultant force now points upwards and the skydiver <i>decelerates</i> to a new, much lower terminal velocity.",
+        ]},
+        { h:"Forces on a body", type:"diagram", body:{ type:"freebody", caption:"Draw every force as an arrow from the body. If the vertical arrows balance, any acceleration must be horizontal." } },
+        { h:"Exam technique", type:"bullets", body:[
+          "Always find the <b>resultant force first</b>, then apply F = ma.",
+          "For terminal-velocity explanations, the marks are for naming the two forces and saying that they become <b>equal</b>, so the resultant and hence acceleration are <b>zero</b>.",
+          "Mass is in kilograms, weight is in newtons. Confusing them will cost you marks throughout the paper.",
+        ]},
+      ]},
+    { n:4, title:"Turning Effects of Forces", q:"Moments, balance, and why a wide base makes something hard to topple.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "A force applied away from a pivot produces a turning effect, called a <b>moment</b>. Its size depends on two things: how big the force is, and how far from the pivot it acts — measured <b>perpendicular</b> to the line of the force.",
+          "That word perpendicular is where most marks are lost. If a force acts at an angle, the distance you use is not the length of the rod but the perpendicular distance from the pivot to the line along which the force acts.",
+        ]},
+        { h:"The principle of moments", type:"text", body:[
+          "When an object is balanced and not turning, the total clockwise moment about any pivot equals the total anticlockwise moment about that same pivot. This is one of the few statements the syllabus <i>does</i> require you to be able to state.",
+          "The practical method is always the same: choose the pivot, list every force, work out each moment as force × perpendicular distance, sort them into clockwise and anticlockwise, then set the two totals equal.",
+          "A uniform beam's weight acts at its centre of gravity — its midpoint. If the pivot happens to be at that midpoint, the beam's own weight produces no moment at all, which simplifies the problem enormously.",
+        ]},
+        { h:"Centre of gravity and stability", type:"text", body:[
+          "The centre of gravity is the single point where all the weight can be taken to act. An object topples when its centre of gravity passes outside its base — at that moment, the weight's moment starts to rotate it further over instead of back.",
+          "So stability improves with a <b>lower centre of gravity</b> and a <b>wider base</b>. That is the whole design logic of a racing car, a Bunsen burner and a double-decker bus.",
+        ]},
+        { h:"Balancing a beam", type:"diagram", body:{ type:"lever", caption:"Set total clockwise moments equal to total anticlockwise moments about the pivot." } },
+        { h:"Key relationship", type:"formulas", body:[
+          { f:"moment = force × perpendicular distance from the pivot", d:"Unit: newton metre (N m). Not joules — a moment is not energy." },
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Take moments <b>about the pivot</b>, so that the unknown force at the pivot has zero moment and drops out of the equation.",
+          "Keep distances in consistent units — all in cm or all in m; you do not have to convert, so long as you are consistent.",
+          "A uniform beam's weight always acts at its midpoint. Say so explicitly, as it is usually worth a mark.",
+        ]},
+      ]},
+    { n:5, title:"Pressure", q:"Spreading a force out, and why pressure in a liquid depends only on depth.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Pressure is force spread over area. The same force gives a huge pressure through a small area and a tiny pressure through a large one — which is why a drawing pin pierces wood and a snowshoe stops you sinking, using exactly the same physics from opposite ends.",
+        ]},
+        { h:"Pressure in liquids", type:"text", body:[
+          "In a liquid the pressure comes from the weight of the liquid above, so it increases with depth. It depends on only three things — depth, density and gravitational field strength — and, crucially, <b>not</b> on the shape or width of the container.",
+          "A narrow tube and a wide tank filled to the same depth with the same liquid have exactly the same pressure at the bottom. Students often expect the wider one to have more, because it holds more liquid, but the extra weight is spread over a proportionally larger area, so the pressure is unchanged.",
+          "Pressure at a point in a liquid also acts <b>equally in all directions</b>, not just downwards.",
+        ]},
+        { h:"Hydraulic systems", type:"text", body:[
+          "Liquids are effectively incompressible, so pressure applied at one point is transmitted undiminished throughout. In a hydraulic press, a small force on a small piston creates a pressure; that same pressure acting on a much larger piston produces a much larger force.",
+          "This is a genuine force multiplier — the basis of car brakes and hydraulic jacks. You do not get energy for free, though: the large piston moves a correspondingly smaller distance.",
+        ]},
+        { h:"Depth and pressure", type:"diagram", body:{ type:"pressurecol", caption:"Deeper means greater pressure, and at any depth the pressure acts equally in every direction." } },
+        { h:"Key relationships", type:"formulas", body:[
+          { f:"p = F ÷ A", d:"Pressure in pascals (Pa), where 1 Pa = 1 N/m²." },
+          { f:"p = h ρ g", d:"Pressure due to a liquid column of depth h and density ρ." },
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Convert areas properly: 1 cm² = 1 × 10⁻⁴ m², not 10⁻².",
+          "For hydraulic questions, find the <b>pressure</b> from the small piston first, then apply it to the large piston's area.",
+          "If a question mentions total pressure at depth in the open air, add atmospheric pressure to the hρg value.",
+        ]},
+      ]},
+    { n:6, title:"Energy", q:"Stores and transfers — the modern language the 2026 syllabus uses.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Energy is never created, destroyed or 'used up'. It is only moved between <b>stores</b>. The 2026 syllabus deliberately uses this language: you should talk about energy in the kinetic store, the gravitational potential store, the chemical store, the elastic store, the nuclear store and the internal (thermal) store.",
+          "Energy moves between stores by exactly four <b>transfer</b> routes: mechanically (a force moving through a distance), electrically (a current), by heating (a temperature difference), and by waves.",
+        ]},
+        { h:"Why 'energy is lost' is wrong", type:"text", body:[
+          "When a bouncing ball fails to return to its original height, the missing energy has not vanished. It has been transferred to the internal store of the ball and the ground, warming them very slightly, and radiated away as sound.",
+          "So the correct phrasing is that energy has been <b>dissipated</b> to the surroundings — it is still there, but now spread out so thinly that it can no longer do anything useful. Say 'transferred to the surroundings', never 'lost'.",
+        ]},
+        { h:"Work and power", type:"text", body:[
+          "Work done is the energy transferred mechanically: force multiplied by the distance moved <b>in the direction of the force</b>. Carrying a heavy suitcase horizontally does no work against gravity, because the force you exert is vertical while the motion is horizontal.",
+          "Power is simply how fast energy is transferred. Two motors that lift the same load to the same height do the same work — the more powerful one just does it in less time.",
+        ]},
+        { h:"Following the energy", type:"diagram", body:{ type:"flow", alt:"Energy transfer in a falling ball", w:360, h:170,
+            boxes:[{x:16,y:60,w:104,h:48,text:"gravitational|potential store",color:'#3B82F6'},
+                   {x:132,y:60,w:96,h:48,text:"kinetic|store",color:'#34D399'},
+                   {x:244,y:60,w:100,h:48,text:"internal store|(heat + sound)",color:'#FB7185'}],
+            arrows:[{x1:122,y1:84,x2:130,y2:84,label:'falls',dy:-12},{x1:230,y1:84,x2:242,y2:84,label:'impact',dy:-12}],
+            caption:"The total never changes — only where the energy is stored." } },
+        { h:"Key relationships", type:"formulas", body:[
+          { f:"Eₖ = ½mv²", d:"Kinetic store. Note v is squared — doubling the speed quadruples the energy." },
+          { f:"Eₚ = mgh", d:"Gravitational potential store, relative to a chosen reference level." },
+          { f:"W = F × d", d:"Work done, in joules — the distance must be along the force." },
+          { f:"P = E ÷ t", d:"Power in watts." },
+          { f:"efficiency = (useful output ÷ total input) × 100%", d:"Always less than 100% in reality." },
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "For 'find the speed at the bottom' problems, set mgh = ½mv². The mass cancels, so the answer does not depend on it.",
+          "Never write that energy is 'lost' — say it is transferred to the surroundings, usually to internal (thermal) stores.",
+          "Check efficiency is below 100%. Above 100% always means you have swapped input and output.",
+        ]},
+      ]},
+    { n:7, title:"Kinetic Particle Model of Matter", q:"Everything is particles in motion — and that explains states, pressure and Brownian motion.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "All matter is made of tiny particles in constant motion. Nearly every observable property — whether something holds its shape, whether it can be compressed, what its pressure is — follows from just two variables: how close the particles are, and how fast they are moving.",
+        ]},
+        { h:"The three states", type:"text", body:[
+          "In a <b>solid</b>, particles are packed closely in a regular arrangement with strong forces between them. They cannot move past one another, only vibrate about fixed positions — so a solid has a fixed shape and a fixed volume and cannot be compressed.",
+          "In a <b>liquid</b>, particles are still close together but arranged irregularly and able to slide past each other. So a liquid keeps its volume but flows to take the shape of its container.",
+          "In a <b>gas</b>, particles are far apart, moving fast and randomly with negligible forces between them. A gas has neither fixed shape nor fixed volume, and compresses easily because there is so much empty space to close up.",
+        ]},
+        { h:"Where gas pressure comes from", type:"text", body:[
+          "Gas particles constantly collide with the container walls. Each collision exerts a tiny force; the sum of all these forces, divided by the wall area, is the pressure.",
+          "Heat the gas and the particles gain kinetic energy, so they move faster. They then hit the walls <b>more often</b> and <b>harder</b> — both effects raise the pressure. A good answer names both.",
+        ]},
+        { h:"Brownian motion", type:"text", body:[
+          "Look at smoke in a smoke cell under a microscope and you see bright specks jiggling randomly. The specks are smoke particles, far bigger than the air molecules around them.",
+          "Air molecules bombard each smoke particle from all sides. At any instant the bombardment is uneven, so there is a momentary net push in a random direction — and the smoke particle jerks. This is direct visual evidence that molecules are small, fast and moving randomly.",
+        ]},
+        { h:"The three states", type:"diagram", body:{ type:"particles", caption:"Spacing and freedom of movement explain every difference between solids, liquids and gases." } },
+        { h:"Exam technique", type:"bullets", body:[
+          "Answers about pressure changes should mention <b>both</b> the frequency of collisions and the force of each collision.",
+          "For Brownian motion, the marks are for saying the <b>large</b> particles are hit unevenly by <b>small, fast, randomly moving</b> molecules.",
+          "Never say particles 'melt' or 'expand'. Individual particles do neither — the arrangement and spacing change.",
+        ]},
+      ]},
+    { n:8, title:"Thermal Processes", q:"Three ways energy moves, and how to stop each of them.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Energy always flows from hotter to colder, and it keeps flowing until both regions reach the same temperature — <b>thermal equilibrium</b>. There are exactly three transfer mechanisms, and every insulation question is about blocking one or more of them.",
+        ]},
+        { h:"Conduction", type:"text", body:[
+          "In any solid, hotter particles vibrate more vigorously and pass energy to their neighbours through collisions. This is slow, which is why non-metals are poor conductors.",
+          "Metals have a second, far faster route: <b>free (delocalised) electrons</b>. These gain kinetic energy at the hot end, travel rapidly through the whole structure and deliver energy at the cold end. That extra mechanism is the entire reason metals conduct so much better than everything else.",
+        ]},
+        { h:"Convection", type:"text", body:[
+          "Only fluids convect. Heat a fluid and it expands, becoming less dense, so it rises. Cooler, denser fluid sinks to take its place, and the resulting circulation is a convection current.",
+          "The key phrase examiners look for is <b>density difference</b>. 'Hot air rises' alone will not score; 'the heated fluid expands, becomes less dense and rises' will.",
+        ]},
+        { h:"Radiation", type:"text", body:[
+          "Radiation is energy carried by infrared electromagnetic waves. Uniquely, it needs no particles at all, so it works through a vacuum — which is how the Sun's energy reaches us.",
+          "The rate depends on surface colour and texture, surface temperature and surface area. <b>Dull black</b> surfaces are the best emitters and absorbers; <b>shiny silver</b> surfaces are the worst, which is why they are used to reflect radiation back.",
+        ]},
+        { h:"The three mechanisms", type:"diagram", body:{ type:"flow", alt:"Three methods of thermal energy transfer", w:360, h:130,
+            boxes:[{x:14,y:24,w:104,h:52,text:"CONDUCTION|solids · vibration|+ free electrons",color:'#3B82F6'},
+                   {x:128,y:24,w:104,h:52,text:"CONVECTION|fluids · density|differences",color:'#34D399'},
+                   {x:242,y:24,w:104,h:52,text:"RADIATION|no medium needed|infrared waves",color:'#FB7185'}],
+            arrows:[],
+            caption:"A vacuum flask is the classic exam question because it defeats all three at once." } },
+        { h:"Exam technique", type:"bullets", body:[
+          "For a vacuum flask: the <b>vacuum</b> stops conduction and convection (no particles); the <b>silvering</b> reduces radiation; the <b>stopper</b> blocks convection and conducts poorly.",
+          "Convection explanations must mention expansion and reduced density — not just 'it rises'.",
+          "Radiation is the only mechanism that works through a vacuum. Say so whenever a question involves space or a vacuum.",
+        ]},
+      ]},
+    { n:9, title:"Thermal Properties of Matter", q:"Why temperature stops rising exactly when something is melting.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Internal energy is the total of the kinetic energies of a substance's particles plus the potential energies between them. Splitting internal energy into these two parts is the key that unlocks this whole topic — because heating a substance sometimes raises one and sometimes the other.",
+        ]},
+        { h:"Heating without a change of state", type:"text", body:[
+          "When you heat a substance and its state does not change, the energy goes into the <b>kinetic</b> part: the particles move faster and the temperature rises. How much the temperature rises for a given energy depends on the mass and on the <b>specific heat capacity</b>.",
+          "Water has an unusually high specific heat capacity, 4200 J/(kg·K), which is why it is used as a coolant and why coastal climates are mild — a lot of energy produces only a small temperature change.",
+        ]},
+        { h:"Heating during a change of state", type:"text", body:[
+          "Now the crucial part. While ice melts, you are still supplying energy — but the temperature stays stubbornly at 0 °C. This is not a mistake in the experiment.",
+          "The energy is going entirely into the <b>potential</b> part of the internal energy, weakening and breaking the forces of attraction between particles so they can move apart. Since the average kinetic energy is unchanged, and temperature is a measure of average kinetic energy, the temperature cannot change.",
+          "This 'hidden' energy is the <b>latent heat</b> — latent literally means hidden. It explains why steam scalds far worse than boiling water: condensing steam releases its large latent heat of vaporisation onto your skin, on top of any cooling afterwards.",
+        ]},
+        { h:"The heating curve", type:"diagram", body:{ type:"axes", alt:"Heating curve", xlabel:"time", ylabel:"temperature / °C", xmax:10, ymax:10, grid:false,
+            xticks:[], yticks:[{v:2,t:'0'},{v:7,t:'100'}],
+            series:[{pts:[[0,0.6],[1.6,2],[4,2],[5.4,7],[7.6,7],[9.6,9.2]],color:'#FB7185'}],
+            notes:[{x:2.8,y:1.1,text:'melting',color:'#93C5FD'},{x:5.9,y:6.1,text:'boiling',color:'#93C5FD'}],
+            caption:"Sloping = kinetic energy rising. Flat = potential energy rising, bonds breaking, temperature constant." } },
+        { h:"Boiling versus evaporation", type:"text", body:[
+          "Boiling happens throughout the liquid, at one fixed temperature, with bubbles forming inside it. Evaporation happens only at the surface, at any temperature, as the fastest surface molecules escape.",
+          "Because only the fastest molecules leave, the average kinetic energy of those remaining falls — so evaporation <b>cools</b> the liquid left behind. That is why sweating works.",
+        ]},
+        { h:"Key relationships", type:"formulas", body:[
+          { f:"E = m c Δθ", d:"Heating with a temperature change. c is the specific heat capacity." },
+          { f:"E = m l", d:"Changing state with no temperature change. l is the specific latent heat." },
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Multi-stage problems (ice → water → steam) must be split into separate stages, using mcΔθ for slopes and ml for flats, then added.",
+          "When explaining a flat section, say the energy breaks the <b>forces of attraction between particles</b> and raises potential energy, so average kinetic energy — and therefore temperature — is unchanged.",
+        ]},
+      ]},
+    { n:10, title:"General Properties of Waves", q:"Energy without matter — and the one equation that links everything.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "A wave transfers energy from one place to another <b>without transferring matter</b>. A duck on the sea bobs up and down as waves pass; it does not travel with them. The water moves in place; only the energy travels.",
+        ]},
+        { h:"Transverse and longitudinal", type:"text", body:[
+          "In a <b>transverse</b> wave the particles vibrate perpendicular to the direction the energy travels — water waves, and every electromagnetic wave including light.",
+          "In a <b>longitudinal</b> wave the particles vibrate parallel to the direction of travel, producing compressions and rarefactions. Sound is the example you need.",
+        ]},
+        { h:"The vocabulary", type:"text", body:[
+          "<b>Amplitude</b> is the maximum displacement from the rest position — measured from the middle to a crest, not from crest to trough. <b>Wavelength</b> is the distance between two successive points in phase, for example crest to crest. <b>Frequency</b> is the number of complete waves per second, and <b>period</b> is the time for one complete wave, so the two are reciprocals.",
+        ]},
+        { h:"Anatomy of a wave", type:"diagram", body:{ type:"wave", caption:"Amplitude is from the rest line to a crest; wavelength is crest to crest, one whole wave." } },
+        { h:"What changes when a wave enters a new medium", type:"text", body:[
+          "This is a favourite exam question. The <b>frequency never changes</b> — it is fixed by the source that produced the wave. So when a wave slows down entering a new medium, v = fλ forces the wavelength to decrease. Speed and wavelength change together; frequency stays put.",
+        ]},
+        { h:"Key relationships", type:"formulas", body:[
+          { f:"v = f λ", d:"The wave equation — applies to every wave, always." },
+          { f:"f = 1 ÷ T", d:"Frequency in hertz, period in seconds." },
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Measure amplitude from the <b>rest position</b>, not peak to trough. Peak-to-trough is twice the amplitude.",
+          "When a wave changes medium, state that frequency is unchanged, then deduce the wavelength from v = fλ.",
+        ]},
+      ]},
+    { n:11, title:"Sound", q:"A longitudinal wave you can hear — and use to measure distance.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Sound is produced by a vibrating source and travels as a longitudinal wave through a material medium. Because it needs particles to pass the vibration along, sound <b>cannot travel through a vacuum</b> — the single most commonly tested fact in this topic.",
+        ]},
+        { h:"Compressions and rarefactions", type:"text", body:[
+          "The vibrating source pushes nearby particles together, creating a region of high pressure called a <b>compression</b>. As it moves back it leaves particles spread out, creating a low-pressure <b>rarefaction</b>. These alternating regions travel outwards, and the particles themselves just vibrate back and forth about fixed positions.",
+        ]},
+        { h:"Loudness and pitch", type:"text", body:[
+          "Two separate properties, controlled by two separate quantities. <b>Loudness</b> depends on amplitude — a bigger vibration moves more air and sounds louder. <b>Pitch</b> depends on frequency — more vibrations per second sounds higher.",
+          "On an oscilloscope trace, louder means a taller wave, and higher-pitched means the waves are squeezed closer together.",
+        ]},
+        { h:"Compressions and rarefactions", type:"diagram", body:{ type:"wave", mode:"longitudinal", caption:"Particles bunch into compressions and spread into rarefactions, vibrating along the direction of travel." } },
+        { h:"Echoes and ultrasound", type:"text", body:[
+          "Sound reflects off hard surfaces, and timing that reflection lets you measure distance. The trap is that the sound travels to the surface <b>and back</b>, so the total path is twice the distance you want — always halve it.",
+          "<b>Ultrasound</b> is sound above 20 000 Hz, beyond human hearing. It is used in sonar to measure sea depth and in medical scanning, where it images soft tissue such as a foetus without the ionising-radiation risk of X-rays.",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "In echo and sonar calculations, <b>halve the total distance</b>. Forgetting this is the single most common error in the topic.",
+          "Keep loudness↔amplitude and pitch↔frequency separate; questions often change one and ask about the other.",
+        ]},
+      ]},
+    { n:12, title:"Electromagnetic Spectrum", q:"One family of waves, from radio to gamma, and what each is good for.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "The electromagnetic spectrum is a single continuous family of transverse waves that all travel at <b>3 × 10⁸ m/s in a vacuum</b>. They differ only in frequency and wavelength — and every difference in behaviour, use and danger follows from that one variable.",
+        ]},
+        { h:"The order", type:"text", body:[
+          "Radio, microwave, infrared, visible, ultraviolet, X-ray, gamma. Wavelength decreases and frequency — and therefore energy — increases along that sequence. Learn it in order, because both the uses and the hazards follow the same progression.",
+        ]},
+        { h:"The spectrum", type:"diagram", body:{ type:"spectrum", caption:"Learn the order; uses and hazards both follow it." } },
+        { h:"Uses follow the physics", type:"bullets", body:[
+          "<b>Radio</b> — broadcasting, astronomy, RFID tags: long wavelengths diffract around obstacles and travel far.",
+          "<b>Microwave</b> — mobile phones, satellite TV, microwave ovens: they pass through the atmosphere, and are absorbed by water molecules in food.",
+          "<b>Infrared</b> — remote controllers, thermal imaging, intruder alarms: all warm objects emit it.",
+          "<b>Visible</b> — photography and optical fibres: the only part our eyes detect.",
+          "<b>Ultraviolet</b> — sunbeds, security marking on banknotes, sterilising water: energetic enough to cause fluorescence and kill bacteria.",
+          "<b>X-rays</b> — medical radiology, security scanners, checking for defects: pass through soft tissue but are absorbed by bone and metal.",
+          "<b>Gamma</b> — sterilising equipment and food, detecting and treating cancer: extremely penetrating.",
+        ]},
+        { h:"Hazards", type:"text", body:[
+          "The three highest-frequency regions — ultraviolet, X-rays and gamma — are <b>ionising</b>. They carry enough energy to knock electrons out of atoms in living cells, damaging or killing the cell and causing mutations that can lead to cancer.",
+          "Lower down, the danger is heating rather than ionisation: microwaves and infrared can burn tissue, but they cannot ionise.",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Use c = fλ with c = 3 × 10⁸ m/s, and watch for MHz (×10⁶) and GHz (×10⁹).",
+          "When asked <i>why</i> a region suits a use, name the physical property — penetration, absorption by water, diffraction — not just the application.",
+        ]},
+      ]},
+    { n:13, title:"Light", q:"Reflection, refraction, and trapping light inside a fibre.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Light travels in straight lines until something changes its direction. Two things can: bouncing off a surface (reflection) or crossing into a medium where its speed differs (refraction). Every ray-optics question is one of these two.",
+        ]},
+        { h:"Refraction — why light bends", type:"text", body:[
+          "Light slows down in an optically denser medium. Because one side of the wavefront enters the new medium before the other, the wave pivots — so the ray bends <b>towards the normal</b> entering a denser medium, and away from the normal on leaving it.",
+          "The refractive index measures how much the medium slows light, and equals sin i ÷ sin r. It is always greater than 1 for a real material.",
+        ]},
+        { h:"Refraction at a boundary", type:"diagram", body:{ type:"ray", mode:"refraction", caption:"Into a denser medium: slower, and bent towards the normal, so r is smaller than i." } },
+        { h:"Total internal reflection", type:"text", body:[
+          "Send light the other way — from dense to less dense — and it bends away from the normal. Increase the angle of incidence and eventually the refracted ray grazes along the boundary at exactly 90°. The angle of incidence that does this is the <b>critical angle</b>.",
+          "Beyond that angle, no light escapes at all: it is <b>totally internally reflected</b> back inside. Two conditions are needed, and you must state both — the light must be going from denser to less dense, and the angle of incidence must exceed the critical angle.",
+          "This is exactly how an optical fibre works. Light entering at a shallow angle strikes the wall above the critical angle every time, so it reflects repeatedly and is piped along the fibre with almost no loss — giving huge data capacity, no electrical interference, and the ability to see inside the body with an endoscope.",
+        ]},
+        { h:"Lenses", type:"text", body:[
+          "A converging lens bends parallel rays to meet at the <b>principal focus</b>; the distance from the lens to that point is the <b>focal length</b>. Describe every image with three words: real or virtual, magnified or diminished, upright or inverted.",
+          "Beyond 2F the image is real, diminished and inverted (a camera). Between F and 2F it is real, magnified and inverted (a projector). Inside F it is virtual, magnified and upright — that is a magnifying glass.",
+        ]},
+        { h:"Forming an image", type:"diagram", body:{ type:"ray", mode:"lens", caption:"Two standard rays: one parallel to the axis then through F, one straight through the centre undeviated." } },
+        { h:"Key relationships", type:"formulas", body:[
+          { f:"n = sin i ÷ sin r", d:"Refractive index; angles measured from the normal." },
+          { f:"sin c = 1 ÷ n", d:"Critical angle from refractive index." },
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Measure every angle from the <b>normal</b>, never from the surface.",
+          "For total internal reflection, state <b>both</b> conditions — denser to less dense, and i greater than c.",
+          "In ray diagrams, draw arrows on the rays to show direction; it is often a marked point.",
+        ]},
+      ]},
+    { n:14, title:"Static Electricity", q:"Charge that stays put — useful, and occasionally explosive.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "There are two kinds of charge, positive and negative. Like charges repel, unlike attract. The essential point is that <b>only electrons move</b> — protons are locked in nuclei. Every charging explanation must be told in terms of electrons being transferred.",
+        ]},
+        { h:"Charging by rubbing", type:"text", body:[
+          "Rubbing two insulators transfers electrons from one to the other. The material that <b>gains</b> electrons becomes negatively charged; the one that <b>loses</b> them is left positively charged. The two charges are always equal and opposite, because charge is conserved — nothing is created, only moved.",
+          "Saying 'the rod gained protons' is always wrong and will cost the mark.",
+        ]},
+        { h:"Charging by induction", type:"text", body:[
+          "Bring a charged object near a conductor without touching. Free charges inside the conductor rearrange: opposite charge is attracted to the near side, like charge repelled to the far side. Earth the conductor and the repelled charge escapes to ground. Remove the earth, then remove the charged object, and the conductor is left with a net charge opposite to the original.",
+          "The same rearrangement explains why a charged balloon sticks to a neutral wall: the induced opposite charge on the near surface attracts more strongly than the more distant like charge repels.",
+        ]},
+        { h:"Field between charges", type:"diagram", body:{ type:"field", mode:"charges", caption:"Field lines run from positive to negative and show the force direction on a positive test charge." } },
+        { h:"Dangers and uses", type:"text", body:[
+          "Fuel flowing through a pipe rubs against it and charges the tanker. If enough charge builds, a spark can jump — and near fuel vapour that means an explosion. Earthing the tanker gives the charge a safe path away, which is why the chain or bonding wire is connected before fuelling begins.",
+          "The same physics is put to work in an <b>electrostatic precipitator</b>: smoke particles are charged as they pass a charged grid, then attracted onto oppositely charged plates where they collect instead of leaving the chimney.",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Every charging answer must say which way <b>electrons</b> moved, and hence which object ends up positive and which negative.",
+          "For induction, remember the order: bring charge near → earth → remove earth → remove charge.",
+        ]},
+      ]},
+    { n:15, title:"Current of Electricity", q:"Charge, voltage, resistance — and why a lamp's graph is a curve.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Current is the rate of flow of charge. Potential difference is the energy given to each unit of charge as it passes through a component. Resistance is how strongly a component opposes the flow. Every circuit question is these three quantities in some combination.",
+        ]},
+        { h:"e.m.f. and potential difference", type:"text", body:[
+          "The distinction matters. <b>e.m.f.</b> is the work a source does per unit charge to drive it around the whole circuit — energy being supplied. <b>Potential difference</b> is the work done per unit charge in passing through a component — energy being delivered.",
+          "One is the source pushing; the other is the component consuming.",
+        ]},
+        { h:"What resistance depends on", type:"text", body:[
+          "For a wire, resistance is proportional to <b>length</b> and inversely proportional to <b>cross-sectional area</b>. Twice as long means twice the resistance; twice as thick means half. A longer, thinner wire resists more.",
+          "Temperature matters too: heat a metal and its lattice ions vibrate more vigorously, obstructing the electrons, so resistance rises.",
+        ]},
+        { h:"I–V characteristics", type:"text", body:[
+          "The 2026 syllabus tests these graphs rather than a named 'Ohm's Law'. A metallic conductor at constant temperature gives a <b>straight line through the origin</b> — resistance is constant, and it is called ohmic.",
+          "A <b>filament lamp</b> gives a curve that flattens as voltage rises. As current increases the filament heats up, so its resistance increases and the current rises less and less steeply. A <b>semiconductor diode</b> conducts in one direction only — almost no current in reverse, then a sharp rise once forward-biased.",
+        ]},
+        { h:"Two characteristic graphs", type:"diagram", body:{ type:"axes", alt:"I-V characteristic graphs", xlabel:"potential difference V", ylabel:"current I", xmax:10, ymax:10, grid:false,
+            xticks:[{v:0,t:'0'}], yticks:[],
+            series:[{pts:[[0,0],[9,9]],color:'#34D399'},{pts:[[0,0],[1.5,2.4],[3.5,4.2],[6,5.4],[9,6.2]],color:'#FCD34D'}],
+            notes:[{x:8.4,y:9.6,text:'ohmic (metal)',color:'#34D399',anchor:'end'},{x:9.2,y:5.1,text:'filament lamp',color:'#FCD34D',anchor:'end'}],
+            caption:"Straight line = constant resistance. Flattening curve = resistance rising as it heats." } },
+        { h:"Key relationships", type:"formulas", body:[
+          { f:"I = Q ÷ t", d:"Current in amperes; charge in coulombs." },
+          { f:"R = V ÷ I", d:"Resistance in ohms." },
+          { f:"P = VI = I²R = V²/R", d:"Electrical power in watts." },
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "To explain the filament lamp's curve, link it explicitly: current up → filament hotter → ions vibrate more → resistance up.",
+          "Ammeters go in <b>series</b> and have very low resistance; voltmeters go in <b>parallel</b> and have very high resistance.",
+        ]},
+      ]},
+    { n:16, title:"D.C. Circuits", q:"Series and parallel rules, and the potential divider that runs sensor circuits.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Two rules govern series circuits and two govern parallel circuits. Learn which is which and most circuit questions become bookkeeping.",
+        ]},
+        { h:"The four rules", type:"bullets", body:[
+          "<b>Series — current:</b> the same everywhere in the loop. There is nowhere else for charge to go.",
+          "<b>Series — voltage:</b> the p.d.s across the components add up to the supply p.d.",
+          "<b>Parallel — current:</b> the branch currents add up to the supply current.",
+          "<b>Parallel — voltage:</b> every branch has the same p.d. across it.",
+        ]},
+        { h:"Combining resistances", type:"text", body:[
+          "In series, resistances simply add. In parallel, the reciprocals add — and the result is always <b>smaller than the smallest individual resistor</b>, because adding another branch gives the current an extra route.",
+          "That last sentence is a free error-check: if your parallel answer is bigger than any of the resistors, you have made a mistake.",
+        ]},
+        { h:"A parallel circuit", type:"diagram", body:{ type:"circuit", mode:"parallel", caption:"Same p.d. across each branch; branch currents add to the supply current." } },
+        { h:"The potential divider", type:"text", body:[
+          "Two resistors in series across a supply share the voltage in proportion to their resistances. Take the output across one of them and you have a potential divider — a way of getting any fraction of the supply voltage.",
+          "Replace one resistor with a sensor and it becomes a detector. A <b>thermistor</b>'s resistance falls as it gets hotter; an <b>LDR</b>'s resistance falls as light gets brighter. As the sensor's resistance falls, it takes a smaller share of the voltage, so the output across the fixed resistor rises — and that rising voltage can switch on an alarm, a heater or a lamp.",
+        ]},
+        { h:"Key relationships", type:"formulas", body:[
+          { f:"series:  R = R₁ + R₂", d:"Resistances add." },
+          { f:"parallel:  1/R = 1/R₁ + 1/R₂", d:"Reciprocals add; result is less than the smallest." },
+          { f:"V_out = V × R_out ÷ (R₁ + R₂)", d:"Potential divider — the fraction of the supply across one resistor." },
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Check parallel answers are smaller than the smallest resistor.",
+          "For sensor circuits, trace it through: condition changes → sensor resistance changes → its share of voltage changes → output voltage changes.",
+          "A lamp in parallel stays at full brightness when another is added; in series both dim. Know why.",
+        ]},
+      ]},
+    { n:17, title:"Practical Electricity", q:"Mains wiring, fuses and earthing — the physics that keeps people alive.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Mains electricity is dangerous, and every safety feature is a piece of applied physics. The three hazards are damaged insulation (exposed live wire), overheating cables (fire), and damp conditions (water conducts current to a person).",
+        ]},
+        { h:"The three wires", type:"text", body:[
+          "The <b>live</b> wire (brown) carries the high alternating voltage from the supply. The <b>neutral</b> wire (blue) completes the circuit and sits near zero volts. The <b>earth</b> wire (green and yellow) carries no current in normal use — it is purely a safety path.",
+        ]},
+        { h:"Plug wiring", type:"diagram", body:{ type:"plug", caption:"Brown live, blue neutral, green/yellow earth — and the fuse in the live wire." } },
+        { h:"Why the fuse goes in the live wire", type:"text", body:[
+          "A fuse is a thin wire that melts when the current exceeds its rating, breaking the circuit before the cable overheats. It must be in the <b>live</b> wire so that when it blows, the appliance is cut off from the high voltage.",
+          "Put it in the neutral instead and the fuse would still blow — but the appliance would remain connected to the live supply, sitting at a dangerous potential even though it appears dead. The same reasoning applies to switches.",
+        ]},
+        { h:"Earthing and double insulation", type:"text", body:[
+          "If a fault lets the live wire touch a metal casing, that casing becomes live and would electrocute anyone touching it. The earth wire gives the fault current a very low-resistance path to ground, so a huge current flows, the fuse blows immediately and the casing becomes safe.",
+          "<b>Double-insulated</b> appliances take a different route: the casing is non-conducting plastic, so it can never become live, and no earth wire is needed at all.",
+        ]},
+        { h:"Paying for electricity", type:"text", body:[
+          "Energy is billed in <b>kilowatt-hours</b> — the energy a 1 kW appliance uses in one hour. Convert power to kilowatts and time to hours, multiply, then multiply by the unit cost.",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Choose a fuse rated <b>just above</b> the appliance's normal operating current, found from I = P ÷ V.",
+          "Explaining earthing needs the full chain: fault → casing live → large current to earth → fuse blows → appliance isolated.",
+        ]},
+      ]},
+    { n:18, title:"Magnetism", q:"Fields, induced magnetism, and why only repulsion proves a magnet.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Magnets have north and south poles; like poles repel and unlike poles attract. A magnetic field is the region where a magnetic material feels a force, drawn as field lines running from north to south outside the magnet.",
+          "Field lines never cross, and they are closest together where the field is strongest — that spacing <i>is</i> the information the diagram carries.",
+        ]},
+        { h:"The repulsion test", type:"text", body:[
+          "A magnetic material like iron is attracted to either pole of a magnet. So attraction proves nothing — an unmagnetised nail is attracted too.",
+          "Only a magnet can be <b>repelled</b>. Repulsion is therefore the only reliable test that a bar is genuinely magnetised, and examiners ask this regularly.",
+        ]},
+        { h:"Field around a bar magnet", type:"diagram", body:{ type:"field", mode:"magnet", caption:"From N to S outside the magnet; closer lines mean a stronger field." } },
+        { h:"Induced magnetism, hard and soft", type:"text", body:[
+          "Bring a magnetic material near a magnet and it becomes a magnet itself — <b>induced magnetism</b>. The near end gains the opposite pole, which is why it is attracted.",
+          "<b>Soft</b> magnetic materials such as iron magnetise easily but lose it as soon as the field is removed, making them ideal for electromagnet cores that must switch off. <b>Hard</b> materials such as steel are harder to magnetise but keep their magnetism, so they make permanent magnets and compass needles.",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "'How would you test whether this bar is a magnet?' — the answer is always repulsion, never attraction.",
+          "When drawing fields, add arrowheads (N to S) and never let lines cross or touch.",
+        ]},
+      ]},
+    { n:19, title:"Electromagnetism", q:"Currents make fields, and fields push currents — that is a motor.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "An electric current always produces a magnetic field around it. Wind the wire into a solenoid and the field looks just like a bar magnet's — but this one can be switched off, reversed and made stronger at will.",
+        ]},
+        { h:"Electromagnets", type:"text", body:[
+          "A solenoid wound on a soft-iron core is an electromagnet. Strengthen it by increasing the current, adding more turns, or using that soft-iron core. Soft iron is essential because it must lose its magnetism the instant the current stops — which is what makes relays, circuit breakers and scrapyard cranes work.",
+        ]},
+        { h:"The motor effect", type:"text", body:[
+          "Put a current-carrying wire in a magnetic field and the two fields interact, producing a force on the wire. Reverse either the current or the field and the force reverses; reverse both and it stays the same.",
+          "Find the direction with <b>Fleming's left-hand rule</b> — one of the few named rules the syllabus keeps. First finger Field, seCond finger Current, thuMb Motion.",
+        ]},
+        { h:"Force on a conductor", type:"diagram", body:{ type:"fleming", caption:"Field, current and force are mutually perpendicular — use the left hand for motors." } },
+        { h:"How a d.c. motor works", type:"text", body:[
+          "In a coil, the two sides carry current in <b>opposite</b> directions. Being in the same field, they therefore experience forces in opposite directions — one side pushed up, the other down. That pair of opposite forces is a couple, and it makes the coil rotate.",
+          "After half a turn the sides have swapped over, and the forces would now oppose the rotation and stall it. The <b>split-ring commutator</b> solves this by reversing the current in the coil every half turn, so the turning effect always acts the same way and rotation continues.",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Use the <b>left</b> hand for the motor effect. (The right hand is for induced current — a different situation.)",
+          "The commutator answer must say it <b>reverses the current every half turn</b> so the coil keeps turning in one direction.",
+        ]},
+      ]},
+    { n:20, title:"Electromagnetic Induction", q:"Moving magnets make electricity — generators and transformers.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Run the motor effect backwards. Instead of using a current to produce motion, use motion to produce a current. Whenever the magnetic field linking a conductor <b>changes</b>, an e.m.f. is induced across it.",
+          "The word that matters is <i>changing</i>. Hold a magnet still inside a coil, however strong, and nothing at all is induced.",
+        ]},
+        { h:"What controls the size and direction", type:"text", body:[
+          "The induced e.m.f. is larger if you move faster, use more turns on the coil, or use a stronger magnet — those three factors are exactly what the syllabus asks for.",
+          "The direction always <b>opposes the change producing it</b>. Push a north pole into a coil and the coil's near face becomes a north pole to push back. This is energy conservation in action: you must do work against that opposition, and that work is what becomes electrical energy.",
+        ]},
+        { h:"The a.c. generator", type:"text", body:[
+          "Rotate a coil in a magnetic field and the field linking it changes continuously, inducing an alternating e.m.f. Slip rings keep the connection to the external circuit without reversing it, so the output alternates — a sine curve, largest when the coil is moving parallel to the field and cutting lines fastest, and zero when it is moving along them.",
+        ]},
+        { h:"Transformers", type:"text", body:[
+          "Two coils on a soft-iron core. Alternating current in the primary creates a continuously changing magnetic field in the core, which induces an alternating e.m.f. in the secondary. The voltage ratio equals the turns ratio.",
+          "A transformer cannot work on d.c., because a steady current gives an unchanging field and therefore no induced e.m.f. — a favourite exam question.",
+        ]},
+        { h:"A transformer", type:"diagram", body:{ type:"transformer", caption:"Changing field in the core links both coils; the voltage ratio equals the turns ratio." } },
+        { h:"Why the grid uses high voltage", type:"text", body:[
+          "Power delivered is VI, so for a fixed power a higher voltage means a smaller current. Energy wasted heating the cables is I²R — proportional to the <b>square</b> of the current. Halving the current cuts the losses to a quarter.",
+          "So electricity is stepped up to hundreds of kilovolts for transmission and stepped back down for safe use.",
+        ]},
+        { h:"Key relationships", type:"formulas", body:[
+          { f:"Vₚ / Vₛ = Nₚ / Nₛ", d:"Voltage ratio equals turns ratio." },
+          { f:"VₚIₚ = VₛIₛ", d:"For an ideal transformer, power in = power out." },
+          { f:"power loss in cables = I²R", d:"Why transmission uses low current at high voltage." },
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Every induction answer should contain the word <b>changing</b> — a static field induces nothing.",
+          "For transmission questions, quote I²R explicitly: it is the reason low current matters so much.",
+        ]},
+      ]},
+    { n:21, title:"Radioactivity", q:"Unstable nuclei, three radiations, and half-life.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Some nuclei are unstable and lose energy by emitting radiation. The process is <b>spontaneous</b> — nothing you do to it, heating, cooling or chemically reacting, changes the rate — and <b>random</b>, meaning you cannot predict which nucleus decays next, only the average behaviour of many.",
+        ]},
+        { h:"The three radiations", type:"text", body:[
+          "<b>Alpha</b> is a helium nucleus: 2 protons and 2 neutrons, charge +2. Being large and highly charged it ionises strongly, which also means it gives up its energy fast — so it is stopped by a sheet of paper.",
+          "<b>Beta</b> is a fast electron from the nucleus, charge −1. Smaller and less charged, so less ionising but more penetrating — stopped by a few millimetres of aluminium.",
+          "<b>Gamma</b> is a high-frequency electromagnetic wave with no charge and no mass. Weakly ionising but extremely penetrating — only reduced by thick lead or concrete.",
+          "Notice the pattern: ionising power and penetrating power run in <b>opposite</b> directions, and for the same reason. Something that gives up energy readily cannot travel far.",
+        ]},
+        { h:"Penetrating power", type:"diagram", body:{ type:"penetration", caption:"α stopped by paper, β by aluminium, γ only reduced by lead — ionising power is the reverse." } },
+        { h:"Half-life", type:"text", body:[
+          "The half-life is the time for half the undecayed nuclei to decay, or equivalently for the activity to halve. Because decay is random, this is a statistical average — but with the vast numbers of nuclei in any real sample, it is extremely reliable.",
+          "The count is a fixed <i>fraction</i> each time, not a fixed amount: 800 → 400 → 200 → 100. So the activity never quite reaches zero.",
+          "Always subtract <b>background radiation</b> before doing half-life work. Background comes from rocks and radon, cosmic rays and food, plus artificial sources like medical X-rays — and forgetting to subtract it is the classic mistake.",
+        ]},
+        { h:"Uses and safety", type:"text", body:[
+          "Choose the radiation by matching its properties to the job. A medical tracer must escape the body to be detected, so gamma is used — alpha would be absorbed inside and do serious damage. Thickness monitoring uses beta, since the amount getting through varies usefully with thickness. Sterilising equipment uses gamma for its penetration.",
+        ]},
+        { h:"Fission and fusion", type:"text", body:[
+          "<b>Fission</b> splits a large unstable nucleus into smaller ones, releasing energy — the basis of nuclear power stations. <b>Fusion</b> joins two light nuclei into a heavier one, releasing much more energy still, and is what powers the Sun.",
+          "The syllabus asks you to know what each is and that both release energy; it does not require E = mc² or reactor design.",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "<b>Subtract background</b> before every half-life calculation.",
+          "In decay equations, nucleon numbers must balance and proton numbers must balance — alpha removes 4 and 2, beta adds 1 to the proton number.",
+          "When choosing a source, justify it by half-life <b>and</b> penetrating power, linked to the actual application.",
+        ]},
+      ]},
+  ]
+};
+
+const CHEM_LESSONS = {
+  eyebrow:"Pure Chemistry · 6092 · Full lessons",
+  title:"Chemistry — Taught in Full",
+  intro:"All 12 syllabus topics taught properly: the idea, the mechanism, the equations that matter, and the exam technique. Read a lesson, then drill the Chemistry tab for definitions, diagrams and practice.",
+  cards:[
+    { h:"How to use this", p:"Read for understanding first. Then use the Chemistry tab, which carries the definitions, a diagram and three practice questions for the same topic." },
+    { h:"Paper structure", p:"Paper 1 is multiple choice (40 marks, 1 h). Paper 2 is structured plus free response (80 marks, 1 h 45). Paper 3 is the practical (40 marks, 1 h 50), where qualitative analysis is heavily tested." },
+    { h:"Where marks leak", p:"Balance every equation and include state symbols when asked. Give answers to 3 significant figures. In explanations, always name the particles involved — ions, electrons, molecules." },
+  ],
+  chapters:[
+    { n:1, title:"Experimental Chemistry", q:"Choosing the right separation method, and proving something is pure.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Every separation method exploits a <b>difference in physical property</b> between the components. Identify which property differs and the method chooses itself — that is the whole logic of this topic.",
+        ]},
+        { h:"Matching method to property", type:"bullets", body:[
+          "<b>Filtration</b> — one component is insoluble. The solid stays as residue; the liquid passes as filtrate.",
+          "<b>Crystallisation</b> — recovering a dissolved solid. Evaporate to saturation, then cool slowly so crystals form. Used when the solid would decompose on strong heating.",
+          "<b>Simple distillation</b> — recovering the pure solvent. It evaporates, then condenses back to liquid in the condenser.",
+          "<b>Fractional distillation</b> — miscible liquids with different boiling points. The lowest boiling point distils over first.",
+          "<b>Sublimation</b> — one component turns straight from solid to gas (iodine, ammonium chloride) and can be cooled back to a pure solid.",
+          "<b>Separating funnel</b> — two immiscible liquids. They settle into layers; run off the denser lower layer.",
+          "<b>Chromatography</b> — components with different solubilities. The more soluble travels further.",
+        ]},
+        { h:"Distillation apparatus", type:"diagram", body:{ type:"apparatus", mode:"distillation", caption:"The solvent evaporates, condenses in the cooled condenser, and is collected as pure distillate." } },
+        { h:"Chromatography and Rf", type:"text", body:[
+          "A spot's <b>Rf value</b> is the distance it moved divided by the distance the solvent front moved. Because it is a ratio it has no units and is always between 0 and 1, and it is constant for a given substance in a given solvent — which is what makes it an identification tool.",
+          "Always draw the start line in <b>pencil</b>: graphite is insoluble and stays put, whereas ink would dissolve and run up the paper with the sample. Colourless spots are revealed with a locating agent, though the syllabus says you need not know specific ones.",
+        ]},
+        { h:"Purity", type:"text", body:[
+          "A pure substance melts and boils at a <b>sharp, fixed</b> temperature. Impurities lower and broaden the melting point and raise the boiling point. This is exactly how the purity of medicines and foods is checked in practice.",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Multi-stage separations follow a fixed order: remove anything that sublimes first, then dissolve, then filter, then crystallise.",
+          "Always say <b>why</b> a method works — 'sand is insoluble so it is trapped as residue', not just 'filter it'.",
+        ]},
+      ]},
+    { n:2, title:"The Particulate Nature of Matter", q:"Particles, atoms and isotopes — the foundation everything else sits on.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "All matter is particles in motion. How closely packed they are, and how fast they move, explains the three states and every change between them.",
+        ]},
+        { h:"Diffusion", type:"text", body:[
+          "Particles move randomly, so over time they spread from where they are concentrated to where they are not. Two factors control the rate: <b>temperature</b> (hotter means faster particles) and <b>relative molecular mass</b> (lighter particles move faster at a given temperature).",
+          "The classic experiment has ammonia and hydrogen chloride diffusing towards each other along a tube. Ammonia (Mr 17) is lighter than hydrogen chloride (Mr 36.5), so it travels further before they meet — the white ring of ammonium chloride forms nearer the hydrochloric acid end. That asymmetry <i>is</i> the evidence.",
+        ]},
+        { h:"Inside the atom", type:"text", body:[
+          "Protons (charge +1, mass 1) and neutrons (charge 0, mass 1) sit in the nucleus. Electrons (charge −1, mass negligible) occupy shells around it, filling 2, then 8, then 8.",
+          "The <b>proton number</b> defines which element it is. The <b>nucleon number</b> is protons plus neutrons. Neutrons are the difference between the two.",
+        ]},
+        { h:"An atom", type:"diagram", body:{ type:"atom", shells:[2,8,1], sym:"Na", caption:"Sodium, 2·8·1 — that single outer electron is why it is so reactive." } },
+        { h:"Isotopes", type:"text", body:[
+          "Isotopes are atoms of the same element with different numbers of neutrons. Because chemistry is governed entirely by <b>electrons</b>, and isotopes have identical electron arrangements, their chemical properties are identical.",
+          "Only physical properties that depend on mass — density, rate of diffusion — differ. This is a favourite two-part exam question: same chemistry, different mass.",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Explain isotope questions via electrons: same electronic configuration → same chemistry.",
+          "For diffusion comparisons, quote the Mr values and state that the lighter particle moves faster.",
+        ]},
+      ]},
+    { n:3, title:"Chemical Bonding and Structure", q:"Three bond types, and why structure decides every physical property.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Atoms bond to achieve a full outer shell — the stable configuration of a noble gas. <i>How</i> they do it depends on what is bonding: metal with non-metal transfers electrons, non-metal with non-metal shares them, metal with metal pools them.",
+          "The bonding then dictates the structure, and the structure dictates every physical property. Melting point, conductivity and hardness are never arbitrary facts to memorise — they are consequences.",
+        ]},
+        { h:"Ionic bonding", type:"text", body:[
+          "A metal loses its outer electrons to become a positive ion; a non-metal gains them to become negative. The bond is the strong <b>electrostatic attraction</b> between these oppositely charged ions.",
+          "The ions build a giant lattice, so melting points are high — a huge number of strong attractions must be overcome. Conductivity is the tell-tale: ionic compounds do <b>not</b> conduct when solid, because the ions are locked in place, but they do when molten or dissolved, because the ions are then free to move and carry charge.",
+        ]},
+        { h:"Covalent bonding", type:"text", body:[
+          "Non-metals share electrons. Each shared pair is one covalent bond, and both atoms count the shared pair towards their own full shell.",
+          "Crucially, this gives two very different structures. <b>Simple molecular</b> substances have strong bonds <i>inside</i> each small molecule but only weak forces <i>between</i> molecules. Melting merely separates the molecules, not the bonds inside them, so melting points are low — and with no free ions or electrons, they do not conduct.",
+          "<b>Giant covalent</b> substances are one enormous lattice of atoms bonded throughout. Melting means breaking actual covalent bonds, so melting points are extremely high.",
+        ]},
+        { h:"A covalent bond", type:"diagram", body:{ type:"dotcross", a:"H", aN:1, b:"Cl", bN:7, caption2:"HCl — the shared pair completes both shells", caption:"Dots and crosses only record which atom each electron came from; the electrons are identical." } },
+        { h:"Diamond and graphite", type:"text", body:[
+          "Both are pure carbon, and the difference is purely structural. In <b>diamond</b> every carbon forms four covalent bonds in a rigid 3D tetrahedral lattice — hence extreme hardness — and all four outer electrons are locked in bonds, so it cannot conduct.",
+          "In <b>graphite</b> each carbon forms only three bonds, giving flat layers held to one another by weak forces. The layers slide, so graphite is soft and a lubricant. And the fourth outer electron per atom is delocalised and free to move — so graphite conducts electricity, unlike almost every other non-metal.",
+        ]},
+        { h:"Metallic bonding", type:"text", body:[
+          "Positive metal ions in a 'sea' of delocalised electrons. The strong attraction between them gives high melting points; the mobile electrons give excellent electrical and thermal conduction; and because the layers of ions can slide without breaking the bonding, metals are malleable.",
+          "<b>Alloys</b> are harder than pure metals because atoms of different size disrupt the regular layers, so they can no longer slide past each other easily.",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Never say 'the covalent bonds are broken when it melts' for a simple molecular substance — only the <b>weak forces between molecules</b> are overcome.",
+          "For conductivity, always name the mobile charge carrier: free ions, or delocalised electrons.",
+        ]},
+      ]},
+    { n:4, title:"Chemical Calculations", q:"The mole — the bridge between the balanced equation and the balance.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "A balanced equation tells you the ratio in which <b>particles</b> react. But you weigh substances in grams and measure gases in cubic decimetres. The mole is the conversion factor that connects the two worlds, and essentially every calculation is: convert to moles, use the equation ratio, convert back.",
+        ]},
+        { h:"The route map", type:"diagram", body:{ type:"flow", alt:"Mole calculation map", w:360, h:210,
+            boxes:[{x:130,y:84,w:100,h:44,text:"MOLES|n",color:'#F59E0B'},
+                   {x:14,y:14,w:96,h:40,text:"mass (g)",color:'#3B82F6'},
+                   {x:250,y:14,w:96,h:40,text:"volume of gas|(dm³)",color:'#34D399'},
+                   {x:14,y:158,w:96,h:40,text:"concentration|× volume",color:'#A78BFA'},
+                   {x:250,y:158,w:96,h:40,text:"number of|particles",color:'#FB7185'}],
+            arrows:[{x1:110,y1:44,x2:140,y2:82,label:'÷ Mr',dx:-16,dy:2},
+                    {x1:250,y1:44,x2:220,y2:82,label:'÷ 24',dx:16,dy:2},
+                    {x1:110,y1:172,x2:140,y2:130,label:'× vol',dx:-16,dy:6},
+                    {x1:250,y1:172,x2:220,y2:130,label:'÷ 6.02e23',dx:24,dy:6}],
+            caption:"Everything routes through moles — never convert directly between the outer boxes." } },
+        { h:"The three conversions", type:"formulas", body:[
+          { f:"moles = mass ÷ Mr", d:"For solids and liquids of known formula." },
+          { f:"moles of gas = volume in dm³ ÷ 24", d:"At room temperature and pressure. 1000 cm³ = 1 dm³." },
+          { f:"moles = concentration × volume in dm³", d:"For solutions. Divide cm³ by 1000 first." },
+        ]},
+        { h:"Limiting reactants", type:"text", body:[
+          "When both reactant quantities are given, one runs out first — the <b>limiting reactant</b> — and it alone determines how much product forms. The other is in excess and some is left over.",
+          "The method: convert both to moles, divide each by its coefficient in the balanced equation, and whichever gives the smaller number is limiting. Work the rest of the question from that one only.",
+        ]},
+        { h:"Yield and purity", type:"text", body:[
+          "<b>Percentage yield</b> compares what you actually got with the theoretical maximum. It is below 100% because of losses in transfer, incomplete reactions and side reactions.",
+          "<b>Percentage purity</b> compares the mass of the desired substance with the total sample mass. Do not confuse the two — they answer different questions.",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Write the balanced equation first, always. Without it the ratio step is guesswork.",
+          "Convert cm³ to dm³ by dividing by 1000. This single slip causes more lost marks than any other in the topic.",
+          "Carry full accuracy through and round only at the very end, to 3 significant figures.",
+        ]},
+      ]},
+    { n:5, title:"Acid-Base Chemistry", q:"H⁺ and OH⁻, and how to make any salt you are asked for.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "An acid produces <b>H⁺ ions</b> in water; an alkali produces <b>OH⁻ ions</b>. Everything else in this topic — pH, neutralisation, salt preparation — follows from those two ions.",
+        ]},
+        { h:"Strong versus weak, concentrated versus dilute", type:"text", body:[
+          "These are two completely different ideas, and mixing them up is a guaranteed lost mark.",
+          "<b>Strong or weak</b> is about <i>ionisation</i>: a strong acid is completely ionised in water so it releases the maximum H⁺; a weak acid is only partially ionised, so far fewer H⁺ ions are present. It is a fixed chemical property.",
+          "<b>Concentrated or dilute</b> is about <i>how much acid is dissolved per unit volume</i>. You can have a concentrated weak acid or a dilute strong acid — the two scales are independent.",
+        ]},
+        { h:"The pH scale", type:"diagram", body:{ type:"phscale", caption:"Below 7 more H⁺, 7 neutral, above 7 more OH⁻." } },
+        { h:"The three acid reactions", type:"formulas", body:[
+          { f:"acid + metal → salt + hydrogen", d:"Only for metals above hydrogen in the reactivity series." },
+          { f:"acid + base → salt + water", d:"Base = metal oxide or hydroxide. This is neutralisation." },
+          { f:"acid + carbonate → salt + water + carbon dioxide", d:"The effervescence and limewater test identify the carbonate." },
+        ]},
+        { h:"Neutralisation", type:"text", body:[
+          "Strip away the spectator ions and every neutralisation is the same single reaction: H⁺ + OH⁻ → H₂O. That is why acids and alkalis cancel each other out regardless of which particular acid and alkali are involved.",
+          "The practical application worth knowing is soil: excess acidity harms crops and is treated by adding calcium hydroxide (slaked lime).",
+        ]},
+        { h:"Making salts — pick the right route", type:"text", body:[
+          "Which method you use depends entirely on <b>solubility</b>, so learn the solubility rules first: all nitrates and all Group 1 and ammonium salts are soluble; most chlorides are soluble except silver and lead; most sulfates are soluble except barium, calcium and lead; most carbonates and hydroxides are insoluble except Group 1 and ammonium.",
+          "<b>Soluble salt from an insoluble base:</b> add the base, metal or carbonate in <i>excess</i> to warm acid, filter off what is left over, then crystallise. The excess guarantees all the acid is used up, and being insoluble it filters out cleanly.",
+          "<b>Soluble salt from a soluble base (alkali):</b> you cannot filter off an excess, so use <b>titration</b> to find the exact volumes, then repeat without indicator.",
+          "<b>Insoluble salt:</b> mix two solutions containing the required ions so it precipitates, then filter, wash and dry.",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Salt-preparation answers must name the method <b>and</b> justify it from solubility.",
+          "Explaining the 'excess' step is worth a mark: it ensures no unreacted acid remains, and the excess can be filtered out because it is insoluble.",
+        ]},
+      ]},
+    { n:6, title:"Qualitative Analysis", q:"Identifying unknowns — the topic that decides your practical mark.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Qualitative analysis is pure pattern recognition. There is no derivation and no shortcut: you learn the grid, then read the observations carefully. It is heavily weighted in Paper 3, and it is the most reliably scored topic in the whole syllabus — provided you have memorised the table.",
+        ]},
+        { h:"Cation tests", type:"diagram", body:{ type:"table", caption:"The 'soluble in excess' column is what separates the look-alikes.",
+            head:["Cation","+ aqueous NaOH","+ aqueous NH₃"],
+            rows:[["Aluminium, Al³⁺","White ppt, <b>soluble in excess</b>","White ppt, insoluble in excess"],
+                  ["Ammonium, NH₄⁺","No ppt; NH₃ gas on warming","—"],
+                  ["Calcium, Ca²⁺","White ppt, insoluble in excess","<b>No ppt</b>"],
+                  ["Copper(II), Cu²⁺","Light blue ppt, insoluble","Light blue ppt, <b>soluble giving dark blue</b>"],
+                  ["Iron(II), Fe²⁺","Green ppt, insoluble","Green ppt, insoluble"],
+                  ["Iron(III), Fe³⁺","Red-brown ppt, insoluble","Red-brown ppt, insoluble"],
+                  ["Zinc, Zn²⁺","White ppt, soluble in excess","White ppt, <b>soluble in excess</b>"]] } },
+        { h:"Telling the white precipitates apart", type:"text", body:[
+          "Three cations give a white precipitate with sodium hydroxide — aluminium, calcium and zinc — so NaOH alone can never identify them. Aqueous ammonia is what separates them.",
+          "<b>Calcium</b> gives no precipitate at all with ammonia. <b>Zinc</b> gives a white precipitate that dissolves in excess ammonia. <b>Aluminium</b> gives a white precipitate that does <i>not</i> dissolve in excess ammonia. Learn those three lines and the hardest part of the topic is done.",
+        ]},
+        { h:"Anion and gas tests", type:"diagram", body:{ type:"table", caption:"Note that three of the anion tests begin by acidifying with dilute nitric acid.",
+            head:["Test for","Method","Positive result"],
+            rows:[["Carbonate, CO₃²⁻","Add dilute acid","Effervescence; gas turns limewater milky"],
+                  ["Chloride, Cl⁻","Acidify with HNO₃, add AgNO₃","<b>White</b> precipitate"],
+                  ["Iodide, I⁻","Acidify with HNO₃, add AgNO₃","<b>Yellow</b> precipitate"],
+                  ["Nitrate, NO₃⁻","Add NaOH + aluminium foil, warm","Ammonia — damp red litmus turns blue"],
+                  ["Sulfate, SO₄²⁻","Acidify with HNO₃, add Ba(NO₃)₂","White precipitate"],
+                  ["Ammonia, NH₃","Damp red litmus","Turns blue"],
+                  ["Carbon dioxide, CO₂","Limewater","Turns milky"],
+                  ["Chlorine, Cl₂","Damp litmus","Bleached"],
+                  ["Hydrogen, H₂","Lighted splint","Pops"],
+                  ["Oxygen, O₂","Glowing splint","Relights"],
+                  ["Sulfur dioxide, SO₂","Acidified KMnO₄","Purple → colourless"]] } },
+        { h:"Why you acidify first", type:"text", body:[
+          "Before testing for chloride, iodide or sulfate you add dilute <b>nitric acid</b>. This is not a ritual — carbonate ions would also give a white precipitate with silver nitrate or barium nitrate, producing a false positive.",
+          "The nitric acid destroys any carbonate present (fizzing it off as carbon dioxide) so that whatever precipitate you then see must be genuine. Explaining this correctly is a standard exam mark.",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Report exactly what you see — colour, and whether a precipitate forms and whether it redissolves. Never write conclusions in the observation column.",
+          "Add reagents <b>drop by drop first, then in excess</b>: the whole diagnosis often depends on what happens in excess.",
+          "'Soluble in excess NaOH' narrows it to aluminium or zinc; ammonia then decides between them.",
+        ]},
+      ]},
+    { n:7, title:"Redox Chemistry and Electrolysis", q:"Electron transfer, and using electricity to force reactions.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Redox is about <b>electron transfer</b>. Oxidation is loss of electrons, reduction is gain — <b>OIL RIG</b>. The two always happen together, because electrons lost by one species must be gained by another.",
+          "The older definitions in terms of oxygen and hydrogen still work, but the electron definition is the one that covers every case and the one examiners want.",
+        ]},
+        { h:"Agents", type:"text", body:[
+          "The naming trips people up because it is deliberately counter-intuitive. An <b>oxidising agent</b> oxidises something else, and is therefore itself <i>reduced</i> — it gains electrons. A <b>reducing agent</b> reduces something else, so it is itself <i>oxidised</i> — it loses electrons.",
+          "The agent always does the opposite to itself of what its name suggests it does to others.",
+        ]},
+        { h:"Electrolysis", type:"text", body:[
+          "Electrolysis uses electrical energy to force a decomposition that would not happen spontaneously. It only works when ions are <b>free to move</b> — so the compound must be molten or dissolved. A solid ionic compound has its ions locked in the lattice and does not conduct.",
+          "The <b>cathode</b> is negative, so it attracts positive cations, which gain electrons — <b>reduction</b> at the cathode. The <b>anode</b> is positive, attracting anions, which lose electrons — oxidation at the anode.",
+        ]},
+        { h:"An electrolysis cell", type:"diagram", body:{ type:"apparatus", mode:"electrolysis", caption:"Reduction at the cathode (negative), oxidation at the anode (positive)." } },
+        { h:"Selective discharge", type:"text", body:[
+          "In aqueous solution, water supplies H⁺ and OH⁻ alongside the salt's own ions, so there is a competition at each electrode.",
+          "At the <b>cathode</b>, the ion of the <b>less reactive</b> element is discharged. So in sodium chloride solution, hydrogen is produced rather than sodium.",
+          "At the <b>anode</b>, concentration decides. In a <b>concentrated</b> halide solution the halide wins and chlorine is released. In a <b>dilute</b> solution, or with sulfates, hydroxide wins and oxygen is released.",
+          "This is why concentrated brine gives chlorine but dilute brine gives oxygen — same solution, different concentration, different product.",
+        ]},
+        { h:"Applications", type:"text", body:[
+          "<b>Purifying copper:</b> the impure copper is the anode and dissolves (Cu → Cu²⁺ + 2e⁻); pure copper deposits on the cathode (Cu²⁺ + 2e⁻ → Cu). Impurities, being less reactive, fall below as anode sludge. The electrolyte concentration stays constant because copper enters solution as fast as it leaves.",
+          "<b>Electroplating:</b> make the object the cathode in a solution of the plating metal's ions, to improve appearance or resist corrosion.",
+          "<b>Simple cells:</b> two different metals in an electrolyte generate a voltage, and the bigger the reactivity difference the bigger the voltage. The more reactive metal is the negative electrode.",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Half-equations must balance for both atoms and charge. Electrons go on the left for reduction, the right for oxidation.",
+          "For anode products in solution, state whether it is concentrated or dilute — that is the deciding factor.",
+        ]},
+      ]},
+    { n:8, title:"Patterns in the Periodic Table", q:"Why the table's shape predicts chemical behaviour.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "The elements are arranged by increasing proton number, and that arrangement puts elements with the same number of outer electrons in the same <b>group</b>. Since chemistry is governed by outer electrons, elements in a group behave alike — the table is a predictive tool, not a list.",
+          "The group number gives the outer electrons; the period number gives the number of shells.",
+        ]},
+        { h:"Group 1 — alkali metals", type:"text", body:[
+          "Lithium, sodium and potassium: soft, low-density metals with one outer electron they lose easily. Going <b>down</b> the group reactivity <b>increases</b>, because the outer electron is further from the nucleus and more shielded, so it is lost more readily.",
+          "Melting point decreases down the group, and all react vigorously with water to give hydrogen and an alkaline hydroxide.",
+        ]},
+        { h:"Group 17 — halogens", type:"text", body:[
+          "Chlorine, bromine and iodine: diatomic non-metals needing one electron to complete their shell. Going down the group they get darker and change gas → liquid → solid, and reactivity <b>decreases</b> — the opposite trend to Group 1, and for the same underlying reason: the outer shell is further from the nucleus, so it attracts an extra electron less strongly.",
+          "A more reactive halogen <b>displaces</b> a less reactive one from its halide solution. Chlorine displaces iodine from potassium iodide, turning the solution brown; bromine cannot displace chlorine from a chloride.",
+        ]},
+        { h:"Group 18 and transition elements", type:"text", body:[
+          "<b>Noble gases</b> are monatomic and unreactive because their outer shell is already full — which is exactly why they are used where an inert atmosphere is needed, such as argon in light bulbs and in steel making.",
+          "<b>Transition elements</b> sit in the middle block: high melting points and densities, <b>variable oxidation states</b>, and <b>coloured compounds</b>. They and their compounds are widely used as catalysts.",
+        ]},
+        { h:"The reactivity series", type:"diagram", body:{ type:"ladder", alt:"Reactivity series",
+            items:[{t:"potassium  K"},{t:"sodium  Na"},{t:"calcium  Ca"},{t:"magnesium  Mg"},{t:"zinc  Zn"},{t:"iron  Fe"},{t:"lead  Pb"},{t:"(hydrogen)  H",hi:true},{t:"copper  Cu"},{t:"silver  Ag"}],
+            caption:"The syllabus list. Hydrogen is the dividing line for acid + metal reactions." } },
+        { h:"Metals and corrosion", type:"text", body:[
+          "The reactivity series predicts displacement, how a metal reacts with acid and water, and how its ore must be extracted: the most reactive metals need electrolysis, moderately reactive ones can be reduced by carbon, and unreactive ones like silver occur native. The more reactive the metal, the more stable its carbonate is to heat.",
+          "<b>Rusting</b> needs both oxygen and water. Barrier methods — painting, greasing, galvanising — keep them out. <b>Sacrificial protection</b> works differently: attach a more reactive metal such as magnesium or zinc, and it corrodes preferentially, protecting the iron until it is used up and replaced.",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Explain group trends using <b>distance from the nucleus and shielding</b>, not just 'it gets more reactive'.",
+          "Remember the two trends run opposite ways: Group 1 more reactive down, Group 17 less reactive down.",
+        ]},
+      ]},
+    { n:9, title:"Chemical Energetics", q:"Where the heat comes from — bonds breaking and bonds forming.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Every reaction breaks some bonds and makes others. <b>Breaking bonds always absorbs energy</b>; <b>making bonds always releases energy</b>. Which of those two totals is bigger decides whether the reaction warms or cools its surroundings.",
+        ]},
+        { h:"Exothermic and endothermic", type:"text", body:[
+          "If more energy is released making bonds than was absorbed breaking them, there is energy left over — it escapes to the surroundings, the temperature rises, and the reaction is <b>exothermic</b> with a negative ΔH. Combustion, neutralisation and respiration are all exothermic.",
+          "If breaking costs more than making returns, the shortfall is taken from the surroundings, which cool. That is <b>endothermic</b>, with a positive ΔH — thermal decomposition and photosynthesis are examples.",
+          "Be careful with the sign convention: energy released <i>by the reaction</i> means the products store less energy than the reactants, so ΔH is negative even though the surroundings get hotter.",
+        ]},
+        { h:"Energy profile", type:"diagram", body:{ type:"energyprofile", mode:"exo", caption:"Exothermic: products lower than reactants, ΔH negative. Eₐ is the barrier that must be climbed first." } },
+        { h:"Activation energy", type:"text", body:[
+          "Even a strongly exothermic reaction needs a push to start, because bonds must be broken before new ones can form. That initial barrier is the <b>activation energy</b> — the minimum energy colliding particles must have to react.",
+          "It explains why petrol does not spontaneously ignite: the energy released is huge, but the barrier still has to be crossed first by a spark.",
+          "A <b>catalyst</b> lowers this barrier by providing an alternative pathway. It changes the <i>height of the hump</i>, not the levels of reactants or products — so ΔH is completely unchanged.",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Label energy profiles fully: reactants, products, Eₐ from reactants to the peak, and ΔH from reactants to products.",
+          "State clearly that a catalyst lowers Eₐ but leaves ΔH unchanged — that contrast is the marked point.",
+        ]},
+      ]},
+    { n:10, title:"Rate of Reactions", q:"Collision theory, and the four ways to make a reaction go faster.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Particles must <b>collide</b> to react, and the collision must have at least the activation energy. So anything that makes collisions more frequent, or more energetic, speeds the reaction up. Every rate factor is one of those two effects — say which one when you explain.",
+        ]},
+        { h:"The four factors", type:"bullets", body:[
+          "<b>Concentration (or gas pressure):</b> more particles in the same volume means collisions are more frequent.",
+          "<b>Surface area:</b> smaller pieces expose more surface, so more particles are available to be hit — powder reacts far faster than lumps.",
+          "<b>Temperature:</b> the only factor with <i>two</i> effects. Particles move faster, so collide more often, <b>and</b> a greater proportion of collisions have energy above the activation energy. The second effect is the larger one — say both.",
+          "<b>Catalyst:</b> provides an alternative pathway of lower activation energy, so a greater proportion of existing collisions are successful. It is not used up.",
+        ]},
+        { h:"Reading rate graphs", type:"diagram", body:{ type:"axes", alt:"Rate of reaction curves", xlabel:"time", ylabel:"volume of gas", xmax:10, ymax:10, grid:false,
+            xticks:[{v:0,t:'0'}], yticks:[],
+            series:[{pts:[[0,0],[1,4.4],[2,6.6],[3.2,7.8],[5,8.4],[8,8.6],[10,8.6]],color:'#FB7185'},
+                    {pts:[[0,0],[2,3.2],[4,5.4],[6,7],[8,8.1],[10,8.6]],color:'#3B82F6'}],
+            notes:[{x:5.4,y:9.4,text:'faster',color:'#FB7185'},{x:9.6,y:6.2,text:'slower',color:'#93C5FD',anchor:'end'}],
+            caption:"Steeper start = faster rate. Same final height = same amount of limiting reactant." } },
+        { h:"Why curves flatten", type:"text", body:[
+          "A rate curve is always steepest at the start and gradually flattens. That is because the reactants are being used up, so their concentration falls, collisions become less frequent, and the rate drops. The curve goes horizontal when the limiting reactant is completely used up and the reaction has stopped.",
+          "The final <b>height</b> depends only on how much limiting reactant there was — not on how fast it reacted. So changing temperature or particle size changes the steepness but <i>not</i> the final volume. That distinction is a very common exam question.",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Temperature answers need <b>both</b> effects: more frequent collisions and a greater proportion exceeding the activation energy.",
+          "If the amount of limiting reactant is unchanged, both curves must end at the same height — check your sketch.",
+        ]},
+      ]},
+    { n:11, title:"Organic Chemistry", q:"Carbon chains, functional groups and polymers.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Carbon forms four bonds and chains with itself endlessly, so organic compounds are vast in number but highly organised. They group into <b>homologous series</b>: families sharing a general formula and a <b>functional group</b>, where each member differs from the next by –CH₂–.",
+          "That means you never learn compounds individually. Learn the functional group and you know the chemistry of the whole family.",
+        ]},
+        { h:"The four series", type:"diagram", body:{ type:"table", caption:"Learn the functional group and general formula together.",
+            head:["Series","Functional group","General formula","Example"],
+            rows:[["Alkanes","only C–C single bonds","CₙH₂ₙ₊₂","methane, CH₄"],
+                  ["Alkenes","C=C double bond","CₙH₂ₙ","ethene, C₂H₄"],
+                  ["Alcohols","–OH","CₙH₂ₙ₊₁OH","ethanol, C₂H₅OH"],
+                  ["Carboxylic acids","–CO₂H","CₙH₂ₙ₊₁CO₂H","ethanoic acid, CH₃CO₂H"]] } },
+        { h:"Saturated and unsaturated", type:"text", body:[
+          "<b>Alkanes</b> are saturated — only single C–C bonds — and are fairly unreactive apart from burning and substitution with chlorine.",
+          "<b>Alkenes</b> contain a C=C double bond and are unsaturated, which makes them much more reactive: the double bond can open up and add atoms across it. That is why alkenes undergo addition with bromine, with steam (to make alcohols) and with hydrogen.",
+          "The test follows directly: shake with <b>aqueous bromine</b>. An alkene decolourises it from orange to colourless by addition; an alkane leaves it unchanged.",
+        ]},
+        { h:"Crude oil and cracking", type:"text", body:[
+          "Crude oil is a mixture of hydrocarbons separated by fractional distillation into fractions with different boiling ranges. Larger molecules have stronger intermolecular forces, so they boil at higher temperatures and are more viscous.",
+          "The problem is that distillation gives too much of the heavy, less useful fractions and not enough petrol. <b>Cracking</b> solves this by breaking large molecules into smaller, more useful ones — producing alkenes and hydrogen as a bonus, which then feed the polymer industry.",
+        ]},
+        { h:"Alcohols, acids and esters", type:"text", body:[
+          "<b>Ethanol</b> is made two ways: adding steam to ethene with a catalyst, or fermenting glucose with yeast at 30–40 °C without air.",
+          "Oxidising ethanol — by air or by acidified potassium manganate(VII) — gives <b>ethanoic acid</b>, a weak carboxylic acid that behaves like any acid with carbonates, bases and metals.",
+          "A carboxylic acid plus an alcohol gives an <b>ester</b> (plus water). Esters are named alcohol-part first: ethanol + ethanoic acid → ethyl ethanoate.",
+        ]},
+        { h:"Polymers", type:"text", body:[
+          "<b>Addition polymerisation</b> joins many unsaturated monomers into one long chain, with <i>no other product</i> — ethene becomes poly(ethene).",
+          "<b>Condensation polymerisation</b> joins monomers while eliminating a small molecule such as water each time — this gives nylon (a polyamide) and Terylene (a polyester).",
+          "Most plastics are non-biodegradable, so they persist in landfill, and burning them can release toxic gases. Recycling is either physical (melt into pellets) or chemical (<b>depolymerisation</b> and cracking back into feedstock and fuel).",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "State the bromine water result precisely: <b>orange to colourless</b> — 'clear' is not a colour and scores nothing.",
+          "Addition polymers form with no other product; condensation polymers eliminate a small molecule. Questions often hinge on that difference.",
+        ]},
+      ]},
+    { n:12, title:"Maintaining Air Quality", q:"Pollutants, where they come from, and how we clean them up.",
+      sections:[
+        { h:"The big idea", type:"text", body:[
+          "Clean dry air is roughly 78% nitrogen, 21% oxygen, and the rest noble gases (mainly argon) plus carbon dioxide. Pollution is what we add to that, and every pollutant question follows the same three-part structure: source, effect, and remedy.",
+        ]},
+        { h:"The pollutants and their sources", type:"bullets", body:[
+          "<b>Carbon monoxide</b> — incomplete combustion of carbon-containing fuels, where there is not enough oxygen.",
+          "<b>Oxides of nitrogen</b> — lightning, and internal combustion engines, where the very high temperature makes nitrogen and oxygen from the air react together.",
+          "<b>Sulfur dioxide</b> — volcanoes, and burning fossil fuels that contain sulfur impurities.",
+          "<b>Methane</b>, <b>ozone</b> and <b>unburnt hydrocarbons</b> complete the syllabus list of six.",
+        ]},
+        { h:"Their effects", type:"text", body:[
+          "<b>Carbon monoxide</b> is toxic because it binds to haemoglobin in place of oxygen, so the blood can no longer carry oxygen properly — and it is odourless, which is what makes it so dangerous.",
+          "<b>Sulfur dioxide and nitrogen dioxide</b> dissolve in rain water to form <b>acid rain</b>, which corrodes limestone buildings and statues, damages plants, and acidifies lakes so that aquatic life dies.",
+        ]},
+        { h:"Cleaning up", type:"text", body:[
+          "A <b>catalytic converter</b> in a car exhaust uses redox reactions over a large catalyst surface: carbon monoxide is oxidised to carbon dioxide, and oxides of nitrogen are reduced to nitrogen.",
+          "<b>Calcium carbonate</b> is used both to neutralise acidified lakes and soils, and in flue gas desulfurisation to strip sulfur dioxide out of power station emissions before release.",
+        ]},
+        { h:"The carbon cycle", type:"diagram", body:{ type:"flow", alt:"The carbon cycle", w:360, h:220,
+            boxes:[{x:118,y:14,w:124,h:44,text:"CO₂ in the|atmosphere",color:'#94A3B8'},
+                   {x:12,y:150,w:120,h:52,text:"plants|(photosynthesis|removes CO₂)",color:'#34D399'},
+                   {x:228,y:150,w:120,h:52,text:"combustion &|respiration|(add CO₂)",color:'#FB7185'}],
+            arrows:[{x1:116,y1:52,x2:74,y2:146,label:'removed',dx:-26,dy:0},
+                    {x1:246,y1:146,x2:236,y2:56,label:'released',dx:30,dy:0}],
+            caption:"Photosynthesis removes CO₂; respiration and combustion return it. Fossil fuels tip the balance." } },
+        { h:"Ozone and greenhouse gases", type:"text", body:[
+          "High in the atmosphere, <b>ozone</b> absorbs harmful ultraviolet radiation. <b>CFCs</b> release chlorine-containing compounds that react with and destroy ozone, thinning the layer and letting more UV through — raising skin cancer risk.",
+          "Separately, <b>carbon dioxide and methane</b> are greenhouse gases that may contribute to global warming, bringing more extreme weather and melting polar ice. Keep the two issues distinct: ozone depletion and global warming are different problems with different causes, and confusing them is a common error.",
+        ]},
+        { h:"Exam technique", type:"bullets", body:[
+          "Answer pollutant questions in the order <b>source → effect → remedy</b>; questions are usually structured that way.",
+          "Do not mix up the ozone layer with the greenhouse effect — different gases, different mechanisms, different consequences.",
+        ]},
+      ]},
+  ]
+};
+
 /* ============================================================
    PLANNER — schedule, phases, streak, error log
    ============================================================ */
@@ -2036,8 +3000,9 @@ function saveLog(a){ localStorage.setItem('osp-log', JSON.stringify(a)); }
 /* ============================================================
    APP LOGIC
    ============================================================ */
-const DATA = { physics:PHYSICS, chemistry:CHEMISTRY, history:HISTORY, emath:EMATH, amath:AMATH };
-const SYLLABUS_SUBJECTS = ['history','emath','amath'];
+const DATA = { physics:PHYSICS, chemistry:CHEMISTRY, history:HISTORY, emath:EMATH, amath:AMATH,
+               phylesson:PHY_LESSONS, chemlesson:CHEM_LESSONS };
+const SYLLABUS_SUBJECTS = ['history','emath','amath','phylesson','chemlesson'];
 const app = document.getElementById('app');
 let state = {
   subject:'plan',
