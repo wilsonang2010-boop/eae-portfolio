@@ -481,6 +481,7 @@ input{font-family:inherit}
 .hist-row .h-p{margin-left:auto;text-align:right}
 .hist-row .h-p .pct{font-weight:800;color:var(--accent);font-size:16px}
 .hist-row .h-p .st{font-size:12px;color:var(--muted)}
+.list-more{text-align:center;color:var(--muted-2);font-size:12.5px;padding:12px 8px 4px}
 
 /* ---------- Settings ---------- */
 .set-group{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);margin:8px 2px 16px;overflow:hidden}
@@ -743,6 +744,9 @@ let histQuery = "", histFilter = "All";
 /* ---------- Helpers ---------- */
 const $ = s => document.querySelector(s);
 function isoDate(d){ const x=new Date(d); return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`; }
+/* "2026-08-04" parsed bare is UTC midnight, which renders as the *previous*
+   day anywhere west of UTC. Always read a log key as local midnight. */
+function dateOf(ds){ return new Date(ds+"T00:00:00"); }
 function todayISO(){ return isoDate(new Date()); }
 function todayType(){ return SCHEDULE[new Date().getDay()]; }
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
@@ -909,7 +913,7 @@ function weekStats(offset){
   const end = new Date(start); end.setDate(end.getDate()+7);
   let workouts=0, sets=0, volume=0;
   Object.values(history).forEach(w=>{
-    const d = new Date(w.date+"T00:00:00");
+    const d = dateOf(w.date);
     if (d>=start && d<end){
       const t = totals(w);
       if (t.done>0){ workouts++; sets += t.done; volume += workoutVolume(w); }
@@ -1126,7 +1130,7 @@ function renderToday(){
 function editWorkoutNote(w){
   openSheet(`
     <h3 class="sh-title">Session note</h3>
-    <p class="sh-sub">${w.type} · ${new Date(w.date+"T00:00:00").toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"short"})}</p>
+    <p class="sh-sub">${w.type} · ${dateOf(w.date).toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"short"})}</p>
     <input class="sheet-input" id="wNoteIn" placeholder="How did it go?" value="${esc(w.note||"")}">
     <button class="btn primary" id="wNoteSave" style="margin:14px 0 10px">Save</button>
     <button class="btn ghost" id="wNoteCancel">Cancel</button>`);
@@ -1456,11 +1460,25 @@ function openExerciseMenu(ex, w, redraw){
   $("#exClose").onclick = closeSheet;
 }
 
+/* A session earns its place in the log the moment a set is ticked, not when
+   "Finish" is tapped. The calendar, history list, stats and streak all read
+   from `history`, so waiting for Finish meant a real session showed up
+   nowhere — and boot drops a `current` from an earlier day, so an unfinished
+   one was silently lost at midnight. */
+function logIfWorked(w){
+  if (totals(w).done > 0){ history[w.date] = w; saveHistory(); return; }
+  if (history[w.date] === w){
+    // Nothing completed — don't leave an empty day sitting in the log.
+    if (!w.endedAt) delete history[w.date];
+    saveHistory();
+  }
+}
+
 // Persist to whichever store the workout belongs to.
 function saveCurrentOrHistory(w){
-  if (history[w.date] === w){ saveHistory(); }
-  else if (current === w){ saveCurrent(); if (w.endedAt){ history[w.date]=w; saveHistory(); } }
-  else if (w.date && history[w.date]){ history[w.date]=w; saveHistory(); }
+  if (!w || !w.date) return;
+  if (current === w) saveCurrent();
+  if (current === w || history[w.date]) logIfWorked(w);
 }
 
 function updateProgress(w){
@@ -1499,7 +1517,7 @@ function showSummary(w){
       <div class="celebrate">
         <div class="em">🎉</div>
         <h2>Workout Complete</h2>
-        <p>${w.type} · ${new Date(w.date).toLocaleDateString(undefined,{weekday:"long",month:"short",day:"numeric"})}</p>
+        <p>${w.type} · ${dateOf(w.date).toLocaleDateString(undefined,{weekday:"long",month:"short",day:"numeric"})}</p>
       </div>
       <div class="sum-grid">
         <div class="sum-cell accent"><div class="n">${t.done}</div><div class="l">Sets Completed</div></div>
@@ -1840,13 +1858,16 @@ function beep(){
 /* ============================================================
    HISTORY VIEW
    ============================================================ */
+// Sessions with at least one completed set, newest first. Anything with
+// nothing ticked isn't a workout, and shouldn't reach the calendar or the list.
+function loggedWorkouts(){
+  return Object.values(history)
+    .filter(w=> w && w.date && totals(w).done > 0)
+    .sort((a,b)=> a.date<b.date?1:-1);
+}
+
 function renderHistory(){
   const view = $("#view-history");
-  const entries = Object.values(history).sort((a,b)=> a.date<b.date?1:-1);
-
-  // Every exercise ever logged, for the filter chips.
-  const names = new Set();
-  entries.forEach(w=> w.exercises.forEach(e=> names.add(e.name)));
 
   view.innerHTML = `
     <div class="today-hero"><div class="k">Log</div><div class="v">History</div></div>
@@ -1882,12 +1903,13 @@ function renderHistory(){
 function paintHistList(){
   const list = $("#histList"); if (!list) return;
   const q = histQuery.trim().toLowerCase();
-  let entries = Object.values(history).sort((a,b)=> a.date<b.date?1:-1);
+  const all = loggedWorkouts();
+  let entries = all;
   if (histFilter && histFilter!=="All") entries = entries.filter(w=> w.type===histFilter);
   if (q) entries = entries.filter(w =>
     w.type.toLowerCase().includes(q) ||
     w.date.includes(q) ||
-    new Date(w.date+"T00:00:00").toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"}).toLowerCase().includes(q) ||
+    dateOf(w.date).toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"}).toLowerCase().includes(q) ||
     (w.note||"").toLowerCase().includes(q) ||
     w.exercises.some(e=> e.name.toLowerCase().includes(q) || e.group.toLowerCase().includes(q))
   );
@@ -1898,19 +1920,26 @@ function paintHistList(){
 
   list.innerHTML = "";
   if (!entries.length){
-    list.innerHTML = Object.keys(history).length
+    list.innerHTML = all.length
       ? `<div class="empty"><span class="em">🔍</span>Nothing matches that.</div>`
-      : `<div class="empty"><span class="em">📅</span>No workouts logged yet.<br>Finish today's session to start your history.</div>`;
+      : `<div class="empty"><span class="em">📅</span>No workouts logged yet.<br>Tick your first set to start your history.</div>`;
     return;
   }
-  entries.slice(0, 40).forEach(w => list.appendChild(histRow(w)));
+  const CAP = 40;
+  entries.slice(0, CAP).forEach(w => list.appendChild(histRow(w)));
+  if (entries.length > CAP){
+    const more = document.createElement("div");
+    more.className = "list-more";
+    more.textContent = `+ ${entries.length - CAP} older — search to narrow it down`;
+    list.appendChild(more);
+  }
 }
 
 function histRow(w){
   const t = totals(w);
   const el = document.createElement("button");
   el.className = "hist-row";
-  const d = new Date(w.date);
+  const d = dateOf(w.date);
   el.innerHTML = `
     <span class="ic">${typeIcon(w.type)}</span>
     <div>
@@ -1944,14 +1973,14 @@ function renderCalendar(){
   for (let day=1; day<=daysIn; day++){
     const ds = `${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
     const w = history[ds];
-    const dow = new Date(year, month, day).getDay();
-    const rest = dow===6;
+    const logged = !!w && totals(w).done > 0;   // an entry with nothing ticked isn't a workout
+    const rest = isRestDay(new Date(year, month, day).getDay());
     let cls = "cal-day";
-    if (w) cls += " has";
+    if (logged) cls += " has";
     else if (rest) cls += " rest";
     if (ds===tISO) cls += " today";
-    const tag = w ? `<span class="tp">${w.type[0]}</span>` : "";
-    cells += `<button class="${cls}" ${w?`data-date="${ds}"`:""}>${day}${tag}</button>`;
+    const tag = logged ? `<span class="tp">${esc(String(w.type||"?")[0])}</span>` : "";
+    cells += `<button class="${cls}" ${logged?`data-date="${ds}"`:""}>${day}${tag}</button>`;
   }
 
   card.innerHTML = `
@@ -1971,7 +2000,7 @@ function openWorkoutDetail(dateISO){
   const w = history[dateISO];
   if (!w) return;
   const t = totals(w);
-  const d = new Date(dateISO);
+  const d = dateOf(dateISO);
   openSheet(`
     <h3 class="sh-title">${w.type} Day</h3>
     <p class="sh-sub">${d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"})} · ${t.done}/${t.total} sets · ${t.pct}%</p>
@@ -2010,7 +2039,7 @@ function openExerciseDetail(name){
   const bests = chrono.map(h=>h.best && h.best.v).filter(v=>v!=null);
 
   const rows = done.slice(0,20).map(h=>{
-    const d = new Date(h.date+"T00:00:00");
+    const d = dateOf(h.date);
     const detail = h.sets.map(s=>`${toDisplay(s.weightKg)}×${s.reps||"?"}`).join("  ·  ");
     return `<div class="ex-hist-row">
       <div>
@@ -2048,34 +2077,39 @@ function openExerciseDetail(name){
 /* ============================================================
    STATS VIEW
    ============================================================ */
-function isRestDate(ds){ return new Date(ds+"T00:00:00").getDay()===6; }
-function workoutDone(w){ return totals(w).done > 0; }
+// Derive the rest day from the schedule rather than hardcoding Saturday in
+// three places — they only have to disagree once to make the streak nonsense.
+function isRestDay(dow){ return SCHEDULE[dow] === "Rest"; }
+function isRestDate(ds){ return isRestDay(dateOf(ds).getDay()); }
+function workoutDone(w){ return !!w && totals(w).done > 0; }
 
 function computeStreaks(){
   const done = new Set(Object.keys(history).filter(k=> workoutDone(history[k])));
+  const tISO = todayISO();
+
   // Current streak: walk backwards from today; rest days are neutral bridges.
   let cur = 0;
   let d = new Date(); d.setHours(0,0,0,0);
-  if (!done.has(todayISO()) && new Date().getDay()!==6) d.setDate(d.getDate()-1); // today not done yet → don't penalise
+  // An untouched today doesn't count yet, but it mustn't break the run either.
+  if (!done.has(tISO)) d.setDate(d.getDate()-1);
   for (let guard=0; guard<3650; guard++){
-    const ds = isoDate(d);
-    if (d.getDay()===6){ d.setDate(d.getDate()-1); continue; }
-    if (done.has(ds)){ cur++; d.setDate(d.getDate()-1); }
-    else break;
+    if (isRestDay(d.getDay())){ d.setDate(d.getDate()-1); continue; }
+    if (!done.has(isoDate(d))) break;
+    cur++; d.setDate(d.getDate()-1);
   }
+
   // Longest streak: scan forward across the full logged range.
-  const keys = Object.keys(history).filter(k=>workoutDone(history[k])).sort();
-  let longest = cur ? cur : 0;
+  const keys = [...done].sort();
+  let longest = cur;
   if (keys.length){
     let run = 0;
-    const start = new Date(keys[0]+"T00:00:00");
     const end = new Date(); end.setHours(0,0,0,0);
-    for (let dd=new Date(start); dd<=end; dd.setDate(dd.getDate()+1)){
+    for (let dd=dateOf(keys[0]); dd<=end; dd.setDate(dd.getDate()+1)){
+      if (isRestDay(dd.getDay())) continue;        // rest = neutral
       const ds = isoDate(dd);
-      if (dd.getDay()===6) continue;             // rest = neutral
       if (done.has(ds)) run++;
-      else if (isoDate(dd)===todayISO()) continue; // today pending
-      else run = 0;
+      else if (ds===tISO) continue;                // today still pending
+      else { run = 0; continue; }
       if (run>longest) longest = run;
     }
   }
@@ -2495,8 +2529,12 @@ function renderHeader(){
 function boot(){
   applyTheme();
   renderHeader();
-  // If a stored "current" is stale (different day), drop it so today rebuilds.
-  if (current && current.date !== todayISO()) current = null;
+  // If a stored "current" is stale (different day), file any work it holds into
+  // the log before dropping it, then let today rebuild.
+  if (current && current.date !== todayISO()){
+    if (totals(current).done > 0){ history[current.date] = current; saveHistory(); }
+    current = null; saveCurrent();
+  }
   go("today");
   restoreTimer();
   if (settings.reminders) scheduleReminder();

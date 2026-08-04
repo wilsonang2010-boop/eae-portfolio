@@ -42,8 +42,10 @@ _"Rest Day 💪 Recovery is part of progress."_
   always trigger it; plyometrics (on by default) and warm-ups (off by default) are
   toggleable in Settings.
 - **Summary** — sets completed, duration, completion %, and a calorie estimate.
-- **History** — every workout is saved. Month calendar with completed days, a recent
-  list, **search and Push/Pull/Legs filters**, and tap-to-view/edit past sessions.
+- **History** — a session joins the log the moment you tick your first set, so the
+  calendar, stats and streak stay live mid-workout and an unfinished day is never lost.
+  Month calendar with completed days, a recent list, **search and Push/Pull/Legs
+  filters**, and tap-to-view/edit past sessions.
 - **Session flexibility** — add or remove sets, add a warm-up, skip an exercise when a
   machine is taken, and swap today's split (do Push on a Tuesday, or train on a rest day).
   Destructive actions offer **Undo**. Rest length can be **overridden per exercise**.
