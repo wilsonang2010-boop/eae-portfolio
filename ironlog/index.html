@@ -349,6 +349,11 @@ input{font-family:inherit}
   border:1px solid var(--accent-line);border-radius:14px;padding:11px 14px;margin:12px 2px 4px;
   font-size:14px;color:var(--text);font-weight:600;
 }
+.done-note .txt{flex:1;min-width:0}
+.done-note .done-resume{
+  flex:0 0 auto;background:var(--accent);color:var(--on-accent);border-radius:10px;
+  padding:8px 14px;font-size:13.5px;font-weight:800;
+}
 
 /* ---------- Rest timer sheet ---------- */
 /* z-index sits above the modal overlay (80) so the timer is still visible
@@ -610,7 +615,7 @@ input{font-family:inherit}
         <div class="time" id="rtTime">2:30</div>
       </div>
       <div>
-        <div class="rt-label">Rest</div>
+        <div class="rt-label" id="rtTitle">Rest</div>
         <div class="rt-sub" id="rtSub">Recovering…</div>
       </div>
       <div class="rt-adjust">
@@ -723,6 +728,7 @@ const DEFAULT_SETTINGS = {
   exRest: {},
   barKg: 20, plates: [20,15,10,5,2.5,1.25], showPlates: true,
   lastBackup: null, workoutsSinceBackup: 0,
+  askedNotify: false,   // only prompt for notification permission once
 };
 
 /* ---------- Storage ---------- */
@@ -1103,7 +1109,10 @@ function renderToday(){
         <button class="swap-btn" id="pickBtn" aria-label="Change workout">⇄</button>
       </div>
     </div>
-    ${finished ? `<div class="done-note">✓ Workout logged. You can still edit any set below.</div>` : ""}
+    ${finished ? `<div class="done-note">
+      <span class="txt">✓ Workout logged — edit any set below, or pick up where you left off.</span>
+      <button class="done-resume" id="resumeBtn">Resume</button>
+    </div>` : ""}
     <button class="wnote-btn${w.note?" has":""}" id="wNoteBtn">${w.note ? `📝 ${esc(w.note)}` : "📝 Add a note for this session"}</button>
     <div class="progress-wrap">
       <div class="progress-head">
@@ -1123,7 +1132,30 @@ function renderToday(){
   $("#finishBtn").onclick = ()=> finishWorkout(w);
   $("#pickBtn").onclick = chooseWorkout;
   $("#wNoteBtn").onclick = ()=> editWorkoutNote(w);
+  const res = $("#resumeBtn");
+  if (res) res.onclick = ()=> resumeWorkout(w);
   startSessionClock(w);
+}
+
+/* Finish is a big button and easy to hit by accident — and a session isn't
+   necessarily over just because it's been logged. Resuming clears the end
+   stamp so the clock, the Finish button and the rest timer all come back.
+   The log entry stays where it is; only the "completed" stamp lifts. */
+function resumeWorkout(w){
+  if (!w || !w.endedAt) return;
+  const ended = w.endedAt;
+  w.endedAt = null;
+  // Finishing again must not count the same session twice toward the nudge.
+  settings.workoutsSinceBackup = Math.max(0, (settings.workoutsSinceBackup||0) - 1);
+  saveSettings();
+  saveCurrentOrHistory(w);
+  closeSheet();
+  renderToday();
+  toast("Workout resumed", ()=>{
+    w.endedAt = ended;
+    settings.workoutsSinceBackup = (settings.workoutsSinceBackup||0) + 1;
+    saveSettings(); saveCurrentOrHistory(w); renderToday();
+  });
 }
 
 /* Session-level note — "slept badly", "gym packed", etc. */
@@ -1526,8 +1558,11 @@ function showSummary(w){
         <div class="sum-cell"><div class="n">${cal}</div><div class="l">Calories (est.)</div></div>
       </div>
       <button class="btn primary" id="sumDone" style="margin-top:16px">Done</button>
+      ${w.date===todayISO() ? `<button class="btn ghost" id="sumResume" style="margin-top:10px">↩ Not done yet — resume</button>` : ""}
     </div>`);
   $("#sumDone").onclick = ()=>{ closeSheet(); maybeRemindBackup(); };
+  const sr = $("#sumResume");
+  if (sr) sr.onclick = ()=> resumeWorkout(w);
 }
 
 /* localStorage can be evicted by the browser, and export is manual — so nudge
@@ -1648,6 +1683,7 @@ function startRest(exerciseName){
   timer.exercise = exerciseName || "";
   timer.running = true;
   timer.finished = false;
+  $("#rtTitle").textContent = "Rest";
   $("#rtSub").textContent = exerciseName ? `After ${exerciseName}` : "Recovering…";
   $("#restTimer").classList.add("show");
   $("#rtPause").textContent = "Pause";
@@ -1655,6 +1691,7 @@ function startRest(exerciseName){
   startLoop();
   persistTimer();
   acquireWake();
+  ensureNotifyPermission();
 }
 function startLoop(){
   clearInterval(timer.iv);
@@ -1676,6 +1713,38 @@ function persistTimer(){
   } else {
     try{ localStorage.removeItem(K_TIMER); }catch(e){}
   }
+  // Every timer state change routes through here, so the background alarm
+  // below stays in step with start / pause / adjust / restart / skip.
+  if (timer.running) scheduleRestAlarm(); else cancelRestAlarm();
+}
+
+/* Our own setInterval/setTimeout get throttled — and on a locked phone frozen
+   outright — once the app isn't in front, so the finish moment can pass with
+   nothing firing. Hand the deadline to the service worker as well: it lives
+   outside the page and can raise the notification on its own. The OS can still
+   kill the worker (iOS reliably does), so this is a safety net, not a promise. */
+function restBody(){
+  return timer.exercise ? `Rest done after ${timer.exercise} — next set 💥` : "Rest complete — next set 💥";
+}
+function swPost(msg){
+  try{
+    const c = navigator.serviceWorker && navigator.serviceWorker.controller;
+    if (c) c.postMessage(msg);
+  }catch(e){}
+}
+function scheduleRestAlarm(){ swPost({ type:"schedule-rest", at: timer.endAt, body: restBody() }); }
+function cancelRestAlarm(){ swPost({ type:"cancel-rest" }); }
+
+/* Nothing can notify without permission, and the app only ever asked inside
+   the daily-reminder toggle — so for anyone who never turned reminders on,
+   the rest timer was silently unable to notify at all. Ask the first time a
+   rest actually runs; startRest is always reached from a tap, which is what
+   iOS requires. */
+function ensureNotifyPermission(){
+  if (!("Notification" in window)) return;
+  if (Notification.permission !== "default" || settings.askedNotify) return;
+  settings.askedNotify = true; saveSettings();
+  try{ const r = Notification.requestPermission(); if (r && r.catch) r.catch(()=>{}); }catch(e){}
 }
 function restoreTimer(){
   const s = LS.get(K_TIMER, null);
@@ -1683,14 +1752,16 @@ function restoreTimer(){
   timer.total = s.total || settings.restSec;
   timer.exercise = s.exercise || "";
   timer.finished = false;
+  $("#rtTitle").textContent = "Rest";
   $("#rtSub").textContent = timer.exercise ? `After ${timer.exercise}` : "Recovering…";
   if (s.running){
     const rem = Math.round((s.endAt - Date.now())/1000);
-    if (rem <= 0){ try{ localStorage.removeItem(K_TIMER); }catch(e){} return; } // elapsed while away
+    if (rem <= 0){ try{ localStorage.removeItem(K_TIMER); }catch(e){} missedRest(s.endAt); return; }
     timer.endAt = s.endAt; timer.remaining = rem; timer.running = true;
     $("#rtPause").textContent = "Pause";
     $("#restTimer").classList.add("show");
     tickRender(); startLoop(); acquireWake();
+    persistTimer();                     // re-arms the background alarm too
   } else {
     timer.remaining = s.remaining || 0;
     if (timer.remaining <= 0) return;
@@ -1699,6 +1770,23 @@ function restoreTimer(){
     $("#restTimer").classList.add("show");
     tickRender();
   }
+}
+
+/* The rest ran out while the app was closed, so none of our timers fired and
+   there was no beep. It used to just delete the saved countdown and show
+   nothing at all — say so on the way back in instead. */
+function missedRest(endAt){
+  const ago = Math.max(0, Math.round((Date.now()-endAt)/1000));
+  timer.total = timer.total || settings.restSec;
+  timer.remaining = 0; timer.running = false; timer.finished = true;
+  $("#rtSub").textContent = ago < 90
+    ? "Rest finished while you were away"
+    : `Rest finished ${Math.round(ago/60)} min ago`;
+  $("#rtTitle").textContent = "Rest done";
+  $("#restTimer").classList.add("show");
+  tickRender();
+  cancelRestAlarm();
+  setTimeout(()=>{ if (timer.finished) hideRest(); }, 4000);
 }
 
 /* Keep the screen on while resting so the phone doesn't sleep mid-countdown. */
@@ -1724,6 +1812,17 @@ function notifyRestDone(){
     } else {
       new Notification("IronLog", { body, icon:"icon-192.png" });
     }
+  }catch(e){}
+}
+function clearRestNotification(){
+  try{
+    if (!navigator.serviceWorker || !navigator.serviceWorker.ready) return;
+    const close = ()=> navigator.serviceWorker.ready.then(reg=>{
+      if (reg.getNotifications) reg.getNotifications({ tag:"ironlog-rest" })
+        .then(ns=> ns.forEach(n=> n.close())).catch(()=>{});
+    }).catch(()=>{});
+    close();
+    setTimeout(close, 500);             // in case the alarm just pipped us
   }catch(e){}
 }
 function tick(){
@@ -1754,7 +1853,9 @@ function finishRest(){
   persistTimer();
   beep();
   if (settings.vibrate && navigator.vibrate) navigator.vibrate([120,80,120,80,200]);
-  if (document.hidden) notifyRestDone();
+  // If you're looking at the app you've already had the beep — make sure the
+  // background alarm doesn't leave a banner behind for a rest you watched end.
+  if (document.hidden) notifyRestDone(); else clearRestNotification();
   releaseWake();
   $("#rtSub").textContent = "Rest complete 💥";
   setTimeout(()=>{ if (timer.finished) hideRest(); }, 1500);
@@ -1789,6 +1890,7 @@ function restartRest(){
   timer.running = true;
   timer.finished = false;
   $("#rtPause").textContent = "Pause";
+  $("#rtTitle").textContent = "Rest";
   $("#rtSub").textContent = timer.exercise ? `After ${timer.exercise}` : "Recovering…";
   tickRender();
   startLoop();

@@ -37,10 +37,11 @@ _"Rest Day 💪 Recovery is part of progress."_
   and a beep + vibration when it finishes. The stopwatch button in the top bar starts a
   rest any time. The countdown runs off wall-clock time and is saved as it goes, so it
   stays accurate if the phone locks, you switch apps, or you close IronLog entirely —
-  reopening picks it up at the right second. It holds a screen wake lock while running and
-  posts a notification if it finishes while the app is in the background. Working sets
-  always trigger it; plyometrics (on by default) and warm-ups (off by default) are
-  toggleable in Settings.
+  reopening picks it up at the right second, and tells you if it ran out while you were
+  away. It holds a screen wake lock while running. Working sets always trigger it;
+  plyometrics (on by default) and warm-ups (off by default) are toggleable in Settings.
+  See [Background notifications](#background-notifications) for what does and doesn't
+  reach you when the app isn't in front.
 - **Summary** — sets completed, duration, completion %, and a calorie estimate.
 - **History** — a session joins the log the moment you tick your first set, so the
   calendar, stats and streak stay live mid-workout and an unfinished day is never lost.
@@ -48,7 +49,9 @@ _"Rest Day 💪 Recovery is part of progress."_
   filters**, and tap-to-view/edit past sessions.
 - **Session flexibility** — add or remove sets, add a warm-up, skip an exercise when a
   machine is taken, and swap today's split (do Push on a Tuesday, or train on a rest day).
-  Destructive actions offer **Undo**. Rest length can be **overridden per exercise**.
+  Tapped Finish by mistake? **Resume** from the summary sheet or the banner on Today —
+  the clock and Finish button come back and the log entry stays put. Destructive actions
+  offer **Undo**. Rest length can be **overridden per exercise**.
 - **Auto-progression** — hit every rep at the same weight last time and a chip offers the
   next jump (+2.5 kg upper, +5 kg lower), applied to all working sets in one tap.
   "Repeat last" refills an exercise from your previous session.
@@ -83,6 +86,26 @@ headless Chromium against a year of training (313 sessions, 421 KB of history):
 | Render stats | 31.5 ms | **15.4 ms** (7.0 ms warm) |
 | Render history | 32.4 ms | **11.0 ms** |
 | localStorage writes per 30 taps | 30 | **1** |
+
+## Background notifications
+
+Whether the rest timer can reach you depends on how far into the background the app is,
+and the honest answer is "usually, but not guaranteed":
+
+| situation | what you get |
+|---|---|
+| App in front | Beep, vibration, 3-2-1 countdown cue |
+| Switched tabs / app backgrounded but alive | Notification, raised by the service worker |
+| Phone locked, app frozen by the OS | Best-effort — the worker raises it if the OS kept it alive |
+| App fully closed / evicted | No notification, but reopening says *"Rest finished N min ago"* |
+
+The countdown deadline is handed to the service worker so the alarm doesn't depend on the
+page staying awake — the page's own `setTimeout` is throttled, and on a locked phone
+frozen outright. The OS can still evict the worker, and iOS reliably does, so a genuinely
+closed PWA can't be woken without a push server. IronLog has no backend by design, so
+instead of pretending, it catches up on reopen and tells you the rest already ended.
+
+Permission is requested the first time you actually start a rest — never on load.
 
 ## Offline & data
 
