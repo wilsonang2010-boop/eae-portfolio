@@ -39,8 +39,30 @@
   --nav-h:64px;
   --safe-b:env(safe-area-inset-bottom,0px);
   --safe-t:env(safe-area-inset-top,0px);
+  /* Chrome surfaces that sit over content — translucent, so they need their
+     own value per theme rather than a literal black. */
+  --chrome:rgba(0,0,0,.82);
+  --logo-2:#000;
+  --shadow-strong:rgba(0,0,0,.85);
 }
 :root[data-amoled="1"]{ --panel:#08080a; --panel-2:#0f0f13; --panel-3:#17171c; --border:#212128; }
+/* Light theme. Only the neutrals move — the accent cascade is untouched, so
+   every palette still works and nothing needs a second set of overrides.
+   --on-accent stays dark because accent fills stay saturated in both themes. */
+:root[data-theme="light"]{
+  --bg:#f7f6f7;
+  --panel:#ffffff;
+  --panel-2:#f0eef0;
+  --panel-3:#e4e1e5;
+  --border:#dcd8dd;
+  --text:#16141a;
+  --muted:#6b636f;
+  --muted-2:#948c98;
+  --chrome:rgba(255,255,255,.86);
+  --logo-2:#dcd8dd;
+  --shadow-strong:rgba(20,16,24,.18);
+}
+:root[data-theme="light"][data-amoled="1"]{ --panel:#ffffff; --panel-2:#f0eef0; --panel-3:#e4e1e5; --border:#dcd8dd; }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
 body{
@@ -69,7 +91,7 @@ input{font-family:inherit}
 .brand{display:flex;align-items:center;gap:10px}
 .brand .logo{
   width:30px;height:30px;border-radius:9px;flex:0 0 auto;
-  background:linear-gradient(160deg,var(--panel-2),#000);
+  background:linear-gradient(160deg,var(--panel-2),var(--logo-2));
   border:1px solid var(--border);
   display:grid;place-items:center;
 }
@@ -189,6 +211,12 @@ input{font-family:inherit}
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .set-label.warm{color:var(--amber)}
+/* Only shown on a set that set a record — hidden everywhere else. */
+.pr-badge{display:none}
+.set.pr .pr-badge{
+  display:inline-block;flex:0 0 auto;font-size:9.5px;font-weight:900;letter-spacing:.06em;
+  background:var(--amber);color:#1a1204;border-radius:5px;padding:2px 4px;line-height:1.1;
+}
 .set-inputs{display:flex;align-items:center;gap:6px;margin-left:auto;min-width:0}
 .field{
   display:flex;align-items:center;background:var(--panel-2);border:1px solid var(--border);
@@ -370,7 +398,7 @@ input{font-family:inherit}
   max-width:520px;margin:0 auto;
   background:var(--panel);border:1px solid var(--border);
   border-radius:26px 26px 0 0;padding:18px 20px 18px;
-  box-shadow:0 -20px 50px -20px rgba(0,0,0,.85);
+  box-shadow:0 -20px 50px -20px var(--shadow-strong);
 }
 .rt-top{display:flex;align-items:center;gap:16px;margin-bottom:16px}
 .rt-ring{width:78px;height:78px;flex:0 0 auto;position:relative}
@@ -394,7 +422,7 @@ input{font-family:inherit}
 .nav{
   position:fixed;left:0;right:0;bottom:0;z-index:50;
   height:calc(var(--nav-h) + var(--safe-b));padding-bottom:var(--safe-b);
-  background:rgba(0,0,0,.82);backdrop-filter:blur(18px);
+  background:var(--chrome);backdrop-filter:blur(18px);
   border-top:1px solid var(--border);
   display:flex;max-width:520px;margin:0 auto;
 }
@@ -438,6 +466,25 @@ input{font-family:inherit}
 .week-grid .d{font-size:11px;font-weight:700;margin-top:3px;min-height:14px}
 .dl{font-weight:800}
 .dl.up{color:var(--accent)} .dl.down{color:var(--danger)} .dl.flat{color:var(--muted-2)}
+/* Weekly session goal, under the week-vs-week numbers. */
+.goal-wrap{margin-top:14px;padding-top:13px;border-top:1px solid var(--border)}
+.goal-head{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:7px}
+.goal-head b{color:var(--text);font-variant-numeric:tabular-nums}
+.goal-bar{height:8px;border-radius:99px;background:var(--panel-2);overflow:hidden}
+.goal-bar>span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent-dim),var(--accent));transition:width .3s ease}
+.goal-bar>span.hit{background:var(--accent);box-shadow:0 0 10px var(--accent-glow)}
+/* Twelve-week volume bars. */
+.tw-chart{display:flex;align-items:flex-end;gap:3px;height:64px;padding-bottom:6px}
+.tw-bar{flex:1;height:100%;display:flex;align-items:flex-end}
+.tw-bar>span{display:block;width:100%;border-radius:3px 3px 1px 1px;background:var(--accent-line);min-height:2px}
+.tw-bar:last-child>span{background:var(--accent)}
+/* Days since each group was last trained. */
+.rec-row{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;padding:5px 0}
+.rec-row + .rec-row{border-top:1px solid var(--border)}
+.rec-row .g{font-weight:700}
+.rec-row .d{font-size:12.5px;color:var(--muted);font-weight:600}
+.rec-row .d.fresh{color:var(--accent)}
+.rec-row .d.stale{color:var(--amber)}
 .bal-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin:0 2px 6px}
 .bal-row + .bal-row{margin-top:12px}
 .bal-top{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:6px}
@@ -455,6 +502,10 @@ input{font-family:inherit}
 .ex-hist-row .d{font-size:13.5px;font-weight:700}
 .ex-hist-row .s{font-size:12px;color:var(--muted);margin-top:2px;font-variant-numeric:tabular-nums}
 .ex-hist-row .v{margin-left:auto;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;font-size:15px}
+/* Past notes for a movement, in its detail sheet. */
+.note-hist{background:var(--panel-2);border:1px solid var(--border);border-radius:13px;padding:10px 13px;margin-bottom:8px}
+.note-hist .d{font-size:11.5px;color:var(--muted-2);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.note-hist .t{font-size:13.5px;margin-top:3px;line-height:1.4}
 .ex-hist-row .v small{color:var(--muted);font-weight:600;font-size:11px}
 
 /* ---------- Calendar ---------- */
@@ -487,6 +538,31 @@ input{font-family:inherit}
 .hist-row .h-p .pct{font-weight:800;color:var(--accent);font-size:16px}
 .hist-row .h-p .st{font-size:12px;color:var(--muted)}
 .list-more{text-align:center;color:var(--muted-2);font-size:12.5px;padding:12px 8px 4px}
+
+/* ---------- Programme editor ---------- */
+.split-rows{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;padding:12px 12px 4px}
+.split-row{
+  display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;
+  padding:8px 1px;border-radius:11px;background:var(--panel-2);border:1px solid var(--border);
+}
+.split-row>span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.split-row .dn{font-size:9.5px;font-weight:800;color:var(--muted-2);text-transform:uppercase;letter-spacing:.02em}
+.split-row .dt{font-size:10px;font-weight:800;line-height:1.1}
+.split-row .dt.push{color:var(--accent)}
+.split-row .dt.pull{color:var(--info)}
+.split-row .dt.legs{color:var(--amber)}
+.split-row .dt.rest{color:var(--muted-2)}
+.plan-row{display:flex;align-items:center;gap:10px;background:var(--panel-2);border:1px solid var(--border);border-radius:13px;padding:10px 12px;margin-bottom:8px}
+.plan-row .pr-main{flex:1;min-width:0}
+.plan-row .nm{font-size:14.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plan-row .mt{font-size:11.5px;color:var(--muted);margin-top:1px}
+.plan-row .pr-ctl{display:flex;gap:5px;flex:0 0 auto}
+.plan-row .pr-ctl button{width:31px;height:31px;border-radius:9px;background:var(--panel-3);font-size:14px;font-weight:800;color:var(--muted)}
+.plan-row .pr-ctl button:disabled{opacity:.3}
+.plan-row .pdel{color:var(--danger)!important}
+.plan-add{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:8px;margin-top:8px}
+.plan-add .sheet-input{margin:0}
+.plan-flags{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 
 /* ---------- Settings ---------- */
 .set-group{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);margin:8px 2px 16px;overflow:hidden}
@@ -729,6 +805,12 @@ const DEFAULT_SETTINGS = {
   barKg: 20, plates: [20,15,10,5,2.5,1.25], showPlates: true,
   lastBackup: null, workoutsSinceBackup: 0,
   askedNotify: false,   // only prompt for notification permission once
+  // null means "use the built-in split"; otherwise 7 entries, Sun..Sat.
+  schedule: null,
+  // Per-type exercise lists that override TEMPLATES once edited.
+  plan: {},
+  weeklyGoal: 5,
+  theme: "dark",        // dark | light | auto
 };
 
 /* ---------- Storage ---------- */
@@ -754,7 +836,35 @@ function isoDate(d){ const x=new Date(d); return `${x.getFullYear()}-${String(x.
    day anywhere west of UTC. Always read a log key as local midnight. */
 function dateOf(ds){ return new Date(ds+"T00:00:00"); }
 function todayISO(){ return isoDate(new Date()); }
-function todayType(){ return SCHEDULE[new Date().getDay()]; }
+
+/* The split and the exercise lists both start from the built-in constants and
+   are overridden once edited, so an untouched install behaves exactly as
+   before and a customised one never falls back mid-session. */
+const WORKOUT_TYPES = ["Push","Pull","Legs","Rest"];
+function scheduleFor(dow){
+  const s = settings.schedule;
+  return (Array.isArray(s) && WORKOUT_TYPES.includes(s[dow])) ? s[dow] : SCHEDULE[dow];
+}
+function currentSchedule(){ return [0,1,2,3,4,5,6].map(scheduleFor); }
+function templateFor(type){
+  const p = settings.plan && settings.plan[type];
+  return (Array.isArray(p) && p.length) ? p : (TEMPLATES[type] || []);
+}
+/* A mutable copy of a day's exercise list, seeded from the built-in template
+   the first time it's edited. */
+function editablePlan(type){
+  if (!settings.plan) settings.plan = {};
+  if (!Array.isArray(settings.plan[type]) || !settings.plan[type].length){
+    settings.plan[type] = (TEMPLATES[type]||[]).map(t=> Object.assign({}, t));
+  }
+  return settings.plan[type];
+}
+function planIsCustom(type){
+  const p = settings.plan && settings.plan[type];
+  if (!Array.isArray(p) || !p.length) return false;
+  return JSON.stringify(p) !== JSON.stringify(TEMPLATES[type]||[]);
+}
+function todayType(){ return scheduleFor(new Date().getDay()); }
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 const KG_PER_LB = 0.45359237;
 function toDisplay(kg){ if(kg==null) return ""; const v = settings.units==="kg"? kg : kg/KG_PER_LB; return +(Math.round(v*100)/100); }
@@ -802,7 +912,7 @@ function invalidateAnalytics(){ _memoEx.clear(); _memoPRs = null; _memoStall = n
 
 /* ---------- Workout building ---------- */
 function buildWorkout(type, dateISO){
-  const exercises = TEMPLATES[type].map((t, i) => {
+  const exercises = templateFor(type).map((t, i) => {
     const sets = [];
     if (t.warmup) sets.push({ kind:"warmup", done:false, weightKg:null, reps:t.reps, note:"" });
     for (let s=0; s<t.sets; s++) sets.push({ kind:"working", done:false, weightKg:null, reps:t.reps, note:"" });
@@ -992,6 +1102,60 @@ function plateauedExercises(){
   const out = [];
   names.forEach(n=>{ const p = plateauFor(n); if (p) out.push({ name:n, ...p }); });
   _memoStall = out;
+  return out;
+}
+
+/* Did this set just beat the best estimated 1RM this movement has ever seen?
+   Compared against *other* sessions only — today's own earlier sets shouldn't
+   make every subsequent set a fresh record. Nothing to celebrate on a first
+   ever attempt, so an empty history returns null. */
+function prBeatenBy(ex, set, w){
+  if (!set || !set.done || ex.plyo) return null;
+  if (set.kind !== "working" || set.weightKg == null || !set.reps) return null;
+  const est = e1rm(set.weightKg, set.reps);
+  if (est == null) return null;
+  let prev = 0;
+  exerciseHistory(ex.name).forEach(h=>{ if (h.date !== w.date && h.best && h.best.v > prev) prev = h.best.v; });
+  if (!prev || est <= prev + 0.01) return null;
+  return { est, prev, gain: est - prev };
+}
+
+/* Volume per week for the last n weeks, oldest first — the week-vs-week card
+   can't show whether you're trending up over a training block. */
+function weeklyVolumes(n){
+  const out = [];
+  for (let i = n-1; i >= 0; i--){
+    const s = weekStats(i);
+    out.push({ volume: s.volume, workouts: s.workouts, start: s.start });
+  }
+  return out;
+}
+
+/* Days since each muscle group was last actually worked. */
+function groupRecovery(){
+  const last = {};
+  Object.values(history).forEach(w=>{
+    w.exercises.forEach(e=>{
+      if (!e.sets.some(s=> s.done)) return;
+      if (!last[e.group] || w.date > last[e.group]) last[e.group] = w.date;
+    });
+  });
+  const today = dateOf(todayISO()).getTime();
+  return Object.keys(last).map(g=>({
+    group: g, date: last[g],
+    days: Math.max(0, Math.round((today - dateOf(last[g]).getTime()) / 86400000)),
+  })).sort((a,b)=> b.days - a.days);
+}
+
+/* Every note ever written against a movement — per-set and session-level —
+   newest first. They were previously write-only. */
+function exerciseNotes(name){
+  const out = [];
+  exerciseHistory(name).forEach(h=>{
+    (h.ex.sets||[]).forEach(s=>{ if (s.note) out.push({ date:h.date, text:s.note, kind:"set" }); });
+    const w = history[h.date];
+    if (w && w.note) out.push({ date:h.date, text:w.note, kind:"session" });
+  });
   return out;
 }
 
@@ -1258,7 +1422,7 @@ function exerciseCard(ex, w, editable, redraw){
 
   ex.sets.forEach((set, si) => {
     const setEl = document.createElement("div");
-    setEl.className = "set" + (set.done ? " done" : "");
+    setEl.className = "set" + (set.done ? " done" : "") + (set.pr ? " pr" : "");
     const isWarm = set.kind==="warmup";
     // compute working set number
     let wn = 0;
@@ -1273,6 +1437,7 @@ function exerciseCard(ex, w, editable, redraw){
       <div class="set-main">
         <div class="set-top">
           <span class="set-label${isWarm?" warm":""}">${shortLabel}</span>
+          <span class="pr-badge" aria-label="Personal record">PR</span>
           <div class="set-inputs">
             <button class="field wbtn"${editable?"":" disabled"} aria-label="Weight">
               <span class="val${set.weightKg==null?" empty":""}">${set.weightKg!=null?toDisplay(set.weightKg):"0"}</span>
@@ -1305,6 +1470,19 @@ function exerciseCard(ex, w, editable, redraw){
       card.classList.toggle("complete", ex.sets.every(s=>s.done));
       updateProgress(w);
       saveCurrentOrHistory(w);
+      // A record is worth knowing about while you're still on the bench, not
+      // three taps deep in Stats a week later.
+      if (!set.done) delete set.pr;
+      else {
+        const pr = prBeatenBy(ex, set, w);
+        if (pr){
+          set.pr = true;
+          saveCurrentOrHistory(w);
+          toast(`🏆 PR — ${ex.name} ${fmtWeightKg(set.weightKg)} × ${set.reps}`);
+          if (settings.vibrate && navigator.vibrate) navigator.vibrate([30,50,30,50,90]);
+        }
+      }
+      setEl.classList.toggle("pr", !!set.pr);
       if (set.done && shouldRest(ex, set)) startRest(ex.name);
     });
     const wBtn = setEl.querySelector(".wbtn"), wVal = wBtn.querySelector(".val");
@@ -1345,14 +1523,15 @@ function exerciseCard(ex, w, editable, redraw){
     const moreBtn = setEl.querySelector(".set-more");
     moreBtn.addEventListener("click", ()=>{
       if(!editable) return;
-      openSetSheet(set, `${ex.name} · ${label}`, ()=>{
+      openSetSheet(set, `${ex.name} · ${label}`, (changedInputs)=>{
         moreBtn.className = "set-more" + (set.note||set.rpe ? " has" : "");
         moreBtn.innerHTML = `<span class="dot ${RPE_TAGS[set.rpe||0].cls}"></span>` +
                             (set.note ? "<span class='nd'>📝</span>" : "");
         noteRow.hidden = !set.note;
         noteRow.querySelector(".note-text").textContent = set.note || "";
         saveCurrentOrHistory(w);
-      });
+        if (changedInputs) redraw();          // weight/reps copied in — repaint
+      }, ex.sets[si-1]);
     });
 
     card.appendChild(setEl);
@@ -1408,10 +1587,14 @@ function exerciseCard(ex, w, editable, redraw){
 }
 
 /* Effort tag + note for a single set. */
-function openSetSheet(set, title, onDone){
+function openSetSheet(set, title, onDone, prevSet){
+  // Most sets repeat the one above them; typing both numbers again is busywork.
+  const canCopy = prevSet && (prevSet.weightKg != null || prevSet.reps != null);
   openSheet(`
     <h3 class="sh-title">Set details</h3>
     <p class="sh-sub">${esc(title)}</p>
+    ${canCopy ? `<button class="btn" id="setCopy" style="margin-bottom:16px">↑ Same as previous set${
+      prevSet.weightKg!=null ? ` · ${fmtWeightKg(prevSet.weightKg)}${prevSet.reps?` × ${prevSet.reps}`:""}` : ""}</button>` : ""}
     <div class="eff-label">How did it feel?</div>
     <div class="eff-row" id="effRow">
       ${RPE_TAGS.map(t=>`<button class="eff ${t.cls}${(set.rpe||0)===t.k?" on":""}" data-k="${t.k}">${t.name==="No tag"?"—":t.name}</button>`).join("")}
@@ -1425,10 +1608,19 @@ function openSetSheet(set, title, onDone){
     pick = +b.dataset.k;
     $("#effRow").querySelectorAll(".eff").forEach(x=> x.classList.toggle("on", +x.dataset.k===pick));
   });
+  const copy = $("#setCopy");
+  if (copy) copy.onclick = ()=>{
+    set.rpe = pick || 0;
+    set.note = $("#setNoteIn").value.trim();
+    if (prevSet.weightKg != null) set.weightKg = prevSet.weightKg;
+    if (prevSet.reps != null) set.reps = prevSet.reps;
+    closeSheet(); onDone(true);
+    toast("Copied from the set above");
+  };
   $("#setSave").onclick = ()=>{
     set.rpe = pick || 0;
     set.note = $("#setNoteIn").value.trim();
-    closeSheet(); onDone();
+    closeSheet(); onDone(false);
   };
   $("#setCancel").onclick = closeSheet;
 }
@@ -2152,6 +2344,14 @@ function openExerciseDetail(name){
     </div>`;
   }).join("");
 
+  // Notes were previously write-only — you could add one but never read it back.
+  const noteRows = exerciseNotes(name).slice(0,15).map(n=>`
+    <div class="note-hist">
+      <div class="d">${dateOf(n.date).toLocaleDateString(undefined,{day:"numeric",month:"short"})}${
+        n.kind==="session" ? ` · session` : ""}</div>
+      <div class="t">${esc(n.text)}</div>
+    </div>`).join("");
+
   openSheet(`
     <h3 class="sh-title">${esc(name)}</h3>
     <p class="sh-sub">${done.length} session${done.length===1?"":"s"} logged</p>
@@ -2170,6 +2370,7 @@ function openExerciseDetail(name){
         <div class="chart-head"><span>Estimated 1RM</span><b>${toDisplay(bests[bests.length-1])} ${unitLabel()}</b></div>
         ${sparkline(bests, 300, 64)}
       </div>` : ""}
+    ${noteRows ? `<div class="section-title" style="margin-left:2px">Notes</div>${noteRows}` : ""}
     ${rows ? `<div class="section-title" style="margin-left:2px">Sessions</div>${rows}`
            : `<div class="empty"><span class="em">📈</span>No completed sets logged yet.</div>`}
     <button class="btn ghost" id="exDetClose" style="margin-top:14px">Close</button>`, true);
@@ -2181,7 +2382,7 @@ function openExerciseDetail(name){
    ============================================================ */
 // Derive the rest day from the schedule rather than hardcoding Saturday in
 // three places — they only have to disagree once to make the streak nonsense.
-function isRestDay(dow){ return SCHEDULE[dow] === "Rest"; }
+function isRestDay(dow){ return scheduleFor(dow) === "Rest"; }
 function isRestDate(ds){ return isRestDay(dateOf(ds).getDay()); }
 function workoutDone(w){ return !!w && totals(w).done > 0; }
 
@@ -2269,6 +2470,28 @@ function renderStats(){
     return `<span class="dl ${pct>0?"up":"down"}">${pct>0?"▲":"▼"}${Math.abs(pct)}%</span>`;
   };
 
+  // Weekly goal — the streak is all-or-nothing, so a simple sessions-per-week
+  // target gives the week a shape you can still hit after missing a day.
+  const goal = Math.max(1, settings.weeklyGoal || 5);
+  const goalPct = Math.min(100, Math.round(wk.workouts/goal*100));
+
+  // Twelve weeks of volume, so a training block reads as a trend not a diff.
+  const trend = weeklyVolumes(12);
+  const tMax = Math.max(1, ...trend.map(t=>t.volume));
+  const tBars = trend.map(t=>`
+    <div class="tw-bar" title="${t.start.toLocaleDateString(undefined,{day:"numeric",month:"short"})}">
+      <span style="height:${t.volume ? Math.max(3, Math.round(t.volume/tMax*100)) : 2}%"></span>
+    </div>`).join("");
+  const trendTotal = trend.reduce((a,t)=>a+t.volume, 0);
+
+  const recovery = groupRecovery();
+  const recRows = recovery.map(r=>`
+    <div class="rec-row">
+      <span class="g">${esc(r.group)}</span>
+      <span class="d ${r.days<=1?"fresh":r.days>=5?"stale":""}">${
+        r.days===0 ? "today" : r.days===1 ? "yesterday" : `${r.days} days ago`}</span>
+    </div>`).join("");
+
   const stalled = plateauedExercises();
   const bw = bodyweightSeries();
   const groups = groupVolumes();
@@ -2289,7 +2512,18 @@ function renderStats(){
         <div><div class="n">${wk.sets}</div><div class="l">sets</div><div class="d">${delta(wk.sets,lastWk.sets)}</div></div>
         <div><div class="n">${fmtVolume(wk.volume)}</div><div class="l">volume</div><div class="d">${delta(wk.volume,lastWk.volume)}</div></div>
       </div>
+      <div class="goal-wrap">
+        <div class="goal-head"><span>Weekly goal</span><b>${wk.workouts} / ${goal}</b></div>
+        <div class="goal-bar"><span style="width:${goalPct}%" class="${wk.workouts>=goal?"hit":""}"></span></div>
+      </div>
     </div>
+
+    ${trendTotal > 0 ? `
+      <div class="section-title">Volume trend <span class="hint-inline">last 12 weeks</span></div>
+      <div class="chart-card" style="margin:0 2px 6px">
+        <div class="chart-head"><span>per week · 12wk total</span><b>${fmtVolume(trendTotal)}</b></div>
+        <div class="tw-chart">${tBars}</div>
+      </div>` : ""}
 
     <div class="stat-grid">
       <div class="stat accent"><div class="n">${streaks.current}<small> 🔥</small></div><div class="l">Current streak</div></div>
@@ -2317,6 +2551,9 @@ function renderStats(){
         ${sparkline(bw.map(x=>x.kg), 300, 64)}
       </div>` : ""}
 
+    ${recRows ? `<div class="section-title">Recovery <span class="hint-inline">last trained</span></div>
+      <div class="bal-card">${recRows}</div>` : ""}
+
     ${gRows ? `<div class="section-title">Muscle group balance</div><div class="bal-card">${gRows}</div>` : ""}
 
     <div class="section-title">Personal Records <span class="hint-inline">by est. 1RM</span></div>
@@ -2343,12 +2580,135 @@ function renderStats(){
 /* ============================================================
    SETTINGS VIEW
    ============================================================ */
+/* ---------- Programme editor ----------
+   The built-in templates were fixed: no way to add a movement your gym
+   actually has, drop one it doesn't, or put them in the order you train.
+   Edits apply to workouts built from here on; sessions already logged keep
+   the exercises they were done with. */
+const EX_GROUPS = ["Chest","Shoulders","Triceps","Back","Biceps","Legs","Weights","Plyometrics","Core","Cardio"];
+
+function openPlanEditor(type){
+  const plan = editablePlan(type);
+  const rows = plan.map((t,i)=>`
+    <div class="plan-row">
+      <div class="pr-main">
+        <div class="nm">${esc(t.name)}</div>
+        <div class="mt">${esc(t.group)} · ${t.sets}×${t.reps}${t.warmup?" · warm-up":""}${t.bar?" · bar":""}${t.plyo?" · plyo":""}</div>
+      </div>
+      <div class="pr-ctl">
+        <button class="pmv" data-i="${i}" data-d="-1" aria-label="Move up"${i===0?" disabled":""}>↑</button>
+        <button class="pmv" data-i="${i}" data-d="1" aria-label="Move down"${i===plan.length-1?" disabled":""}>↓</button>
+        <button class="pdel" data-i="${i}" aria-label="Remove">✕</button>
+      </div>
+    </div>`).join("");
+
+  openSheet(`
+    <h3 class="sh-title">${type} exercises</h3>
+    <p class="sh-sub">${plan.length} in this day · reorder, remove, or add your own</p>
+    ${rows || `<div class="empty"><span class="em">🏋️</span>No exercises — add one below.</div>`}
+
+    <div class="section-title" style="margin-left:2px">Add an exercise</div>
+    <input class="sheet-input" id="pnName" placeholder="Exercise name" maxlength="40">
+    <div class="plan-add">
+      <select class="sheet-input" id="pnGroup">
+        ${EX_GROUPS.map(g=>`<option value="${g}">${g}</option>`).join("")}
+      </select>
+      <input class="sheet-input" id="pnSets" type="number" min="1" max="10" value="3" aria-label="Sets">
+      <input class="sheet-input" id="pnReps" type="number" min="1" max="50" value="8" aria-label="Reps">
+    </div>
+    <div class="plan-flags">
+      <button class="chip" id="pnWarm">Warm-up set</button>
+      <button class="chip" id="pnBar">Barbell</button>
+      <button class="chip" id="pnPlyo">Plyometric</button>
+    </div>
+    <button class="btn primary" id="pnAdd" style="margin:14px 0 10px">Add exercise</button>
+    ${planIsCustom(type) ? `<button class="btn" id="pnReset" style="margin-bottom:10px">Reset ${type} to default</button>` : ""}
+    <button class="btn ghost" id="pnClose">Done</button>`, true);
+
+  const reopen = ()=>{ saveSettings(); closeSheet(); setTimeout(()=>openPlanEditor(type), 160); };
+
+  $("#sheet").querySelectorAll(".pmv").forEach(b=> b.onclick = ()=>{
+    const i = +b.dataset.i, j = i + (+b.dataset.d);
+    if (j < 0 || j >= plan.length) return;
+    const [m] = plan.splice(i,1); plan.splice(j,0,m);
+    reopen();
+  });
+  $("#sheet").querySelectorAll(".pdel").forEach(b=> b.onclick = ()=>{
+    const i = +b.dataset.i;
+    const removed = plan[i];
+    plan.splice(i,1);
+    saveSettings(); closeSheet(); renderSettings();
+    toast(`Removed ${removed.name}`, ()=>{
+      plan.splice(i,0,removed); saveSettings(); renderSettings(); openPlanEditor(type);
+    });
+  });
+
+  const flags = { warmup:false, bar:false, plyo:false };
+  const bind = (id, key)=>{ $(id).onclick = ()=>{ flags[key] = !flags[key]; $(id).classList.toggle("on", flags[key]); }; };
+  bind("#pnWarm","warmup"); bind("#pnBar","bar"); bind("#pnPlyo","plyo");
+
+  $("#pnAdd").onclick = ()=>{
+    const name = $("#pnName").value.trim();
+    if (!name){ toast("Give it a name first"); return; }
+    if (plan.some(p=> p.name.toLowerCase() === name.toLowerCase())){
+      toast("Already in this day"); return;
+    }
+    plan.push({
+      group: $("#pnGroup").value,
+      name,
+      warmup: flags.warmup,
+      sets: Math.max(1, Math.min(10, +$("#pnSets").value || 3)),
+      reps: Math.max(1, Math.min(50, +$("#pnReps").value || 8)),
+      bar: flags.bar, plyo: flags.plyo,
+    });
+    reopen();
+    toast(`Added ${name}`);
+  };
+  const rst = $("#pnReset");
+  if (rst) rst.onclick = ()=>{
+    delete settings.plan[type];
+    saveSettings(); closeSheet(); renderSettings();
+    toast(`${type} reset to default`);
+  };
+  $("#pnClose").onclick = ()=>{ closeSheet(); renderSettings(); };
+}
+
 function renderSettings(){
   const view = $("#view-settings");
   const rs = settings.restSec;
   const rm = Math.floor(rs/60), rsec = rs%60;
   view.innerHTML = `
     <div class="today-hero"><div class="k">Preferences</div><div class="v">Settings</div></div>
+
+    <div class="section-title">Your programme</div>
+    <div class="set-group">
+      <div class="split-rows" id="splitRows">
+        ${DAYS.map((d,i)=>`
+          <button class="split-row" data-dow="${i}" aria-label="${d}: ${scheduleFor(i)}">
+            <span class="dn">${d.slice(0,3)}</span>
+            <span class="dt ${scheduleFor(i).toLowerCase()}">${scheduleFor(i)}</span>
+          </button>`).join("")}
+      </div>
+      <div class="set-row" id="splitReset">
+        <div><div class="lab">Weekly split</div>
+             <div class="desc">Tap a day to change it${settings.schedule ? " · customised" : ""}</div></div>
+        <div class="ctl">${settings.schedule ? `<span class="link">Reset</span>` : `<span class="desc">Default</span>`}</div>
+      </div>
+      ${["Push","Pull","Legs"].map(t=>`
+        <div class="set-row exed-row" data-t="${t}">
+          <div><div class="lab">${t} exercises</div>
+               <div class="desc">${templateFor(t).length} exercises${planIsCustom(t)?" · edited":""}</div></div>
+          <div class="ctl"><span class="link">Edit</span></div>
+        </div>`).join("")}
+      <div class="set-row">
+        <div><div class="lab">Weekly goal</div><div class="desc">Sessions you're aiming for</div></div>
+        <div class="ctl stepper">
+          <button id="goalDown">−</button>
+          <span class="v" id="goalVal">${Math.max(1, settings.weeklyGoal||5)}</span>
+          <button id="goalUp">+</button>
+        </div>
+      </div>
+    </div>
 
     <div class="set-group">
       <div class="set-row">
@@ -2404,7 +2764,17 @@ function renderSettings(){
         </div>
       </div>
       <div class="set-row">
-        <div><div class="lab">AMOLED black</div><div class="desc">Pure-black background</div></div>
+        <div><div class="lab">Appearance</div><div class="desc">${
+          settings.theme==="auto" ? `Following the system · currently ${resolvedTheme()}` : "Fixed"}</div></div>
+        <div class="ctl seg" id="themeSeg">
+          <button data-th="dark" class="${(settings.theme||"dark")==="dark"?"on":""}">Dark</button>
+          <button data-th="light" class="${settings.theme==="light"?"on":""}">Light</button>
+          <button data-th="auto" class="${settings.theme==="auto"?"on":""}">Auto</button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div><div class="lab">AMOLED black</div><div class="desc">Pure-black background${
+          resolvedTheme()==="light" ? " · dark theme only" : ""}</div></div>
         <div class="ctl"><button class="switch${settings.amoled?" on":""}" id="amoledSw" role="switch" aria-checked="${settings.amoled}"></button></div>
       </div>
     </div>
@@ -2456,8 +2826,31 @@ function renderSettings(){
   $("#plateSw").onclick = ()=>{ settings.showPlates=!settings.showPlates; saveSettings(); renderSettings(); };
   $("#barDown").onclick = ()=>{ settings.barKg=Math.max(5, +(settings.barKg-2.5).toFixed(2)); saveSettings(); renderSettings(); };
   $("#barUp").onclick   = ()=>{ settings.barKg=Math.min(35, +(settings.barKg+2.5).toFixed(2)); saveSettings(); renderSettings(); };
+  // Programme: tap a day to cycle its workout type, tap a type to edit its list.
+  $("#splitRows").querySelectorAll(".split-row").forEach(b=> b.onclick = ()=>{
+    const dow = +b.dataset.dow;
+    if (!Array.isArray(settings.schedule)) settings.schedule = currentSchedule();
+    const i = WORKOUT_TYPES.indexOf(settings.schedule[dow]);
+    settings.schedule[dow] = WORKOUT_TYPES[(i+1) % WORKOUT_TYPES.length];
+    saveSettings(); renderSettings();
+  });
+  $("#splitReset").onclick = ()=>{
+    if (!settings.schedule) return;
+    settings.schedule = null; saveSettings(); renderSettings();
+    toast("Split reset to default");
+  };
+  view.querySelectorAll(".exed-row").forEach(b=> b.onclick = ()=> openPlanEditor(b.dataset.t));
+  const goalStep = d => {
+    settings.weeklyGoal = Math.max(1, Math.min(7, (settings.weeklyGoal||5) + d));
+    saveSettings(); renderSettings();
+  };
+  $("#goalDown").onclick = ()=> goalStep(-1);
+  $("#goalUp").onclick   = ()=> goalStep(1);
   // Accent
   $("#swatches").querySelectorAll(".swatch").forEach(b=> b.onclick=()=>{ settings.accent=b.dataset.acc; saveSettings(); applyTheme(); renderSettings(); });
+  $("#themeSeg").querySelectorAll("button").forEach(b=> b.onclick=()=>{
+    settings.theme = b.dataset.th; saveSettings(); applyTheme(); renderSettings();
+  });
   // Switches
   $("#amoledSw").onclick = ()=>{ settings.amoled=!settings.amoled; saveSettings(); applyTheme(); renderSettings(); };
   $("#soundSw").onclick  = ()=>{ settings.sound=!settings.sound; saveSettings(); renderSettings(); if(settings.sound) beep(); };
@@ -2571,9 +2964,24 @@ function applyTheme(){
   r.style.setProperty("--accent-glow",  `rgba(${acc.rgb},.55)`);
   r.style.setProperty("--on-accent", acc.on);
   r.setAttribute("data-amoled", settings.amoled ? "1" : "0");
+  r.setAttribute("data-theme", resolvedTheme());
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute("content", "#000000");
+  if (meta) meta.setAttribute("content", resolvedTheme()==="light" ? "#f7f6f7" : "#000000");
 }
+/* "auto" follows the OS. Resolved on every apply so a system switch mid-session
+   lands as soon as anything re-themes. */
+function resolvedTheme(){
+  if (settings.theme === "light") return "light";
+  if (settings.theme === "auto"){
+    try{ return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"; }
+    catch(e){ return "dark"; }
+  }
+  return "dark";
+}
+try{
+  window.matchMedia("(prefers-color-scheme: light)")
+    .addEventListener("change", ()=>{ if (settings.theme === "auto") applyTheme(); });
+}catch(e){}
 
 function go(tab){
   activeTab = tab;
