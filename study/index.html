@@ -103,6 +103,7 @@ header{
 .tab-phys .dot{background:#22D3EE;}
 .tab-chem .dot{background:#4ADE80;}
 .tab-hist .dot{background:#FFA6C6;}
+.tab-histskills .dot{background:#FBBF24;}
 .tab-phylesson .dot{background:#67E8F9;}
 .tab-chemlesson .dot{background:#86EFAC;}
 
@@ -452,6 +453,7 @@ header{
       <button class="tab tab-chem" data-subject="chemistry"><span class="dot"></span>Chemistry</button>
       <button class="tab tab-chemlesson" data-subject="chemlesson"><span class="dot"></span>Chem Lessons</button>
       <button class="tab tab-hist" data-subject="history"><span class="dot"></span>History</button>
+      <button class="tab tab-histskills" data-subject="histskills"><span class="dot"></span>Hist Answers</button>
     </nav>
   </div>
 </header>
@@ -3306,6 +3308,386 @@ Object.entries(LESSON_ADD.chem).forEach(([n,secs])=>{
   if(ch) ch.sections.push(...secs);
 });
 
+const HIST_SKILLS = {
+  eyebrow:"Elective History · Express · Answering technique",
+  title:"History — How to Answer Every Question",
+  intro:"Every question type in the paper, with the exact wording that identifies it, the structure that scores, a model answer, and the mistakes that cap your marks. History is the most formulaic paper you sit — once you know the recipe for each type, the content does the rest.",
+  cards:[
+    { h:"The paper", p:"Section A is the Source-Based Case Study: 5–6 questions on a set of sources, ending with a big hypothesis question. Section B is Structured Essay Questions, answered from your own knowledge." },
+    { h:"The golden rule", p:"Never just quote a source. A quotation on its own is Level 1. You must make a point, support it with the source, then explain what it means — every single time." },
+    { h:"Your own knowledge", p:"Contextual knowledge is what separates top answers from average ones. Reliability, surprise and usefulness questions cannot reach the top level without it." },
+  ],
+  chapters:[
+    { n:1, title:"Identify the question type first", q:"The wording tells you exactly which recipe to use.",
+      sections:[
+        { h:"Why this matters more than anything", type:"text", body:[
+          "Every SBQ mark scheme rewards a <b>specific skill</b>. Write a brilliant reliability answer to an inference question and you score almost nothing, because you answered a question that was not asked.",
+          "So before you write a single word, find the command phrase and match it to the recipe. Ten seconds spent here is worth more than any amount of extra writing.",
+        ]},
+        { h:"The wording → question type table", type:"diagram", body:{ type:"table",
+          caption:"Match the phrasing to the type, then follow that chapter's recipe.",
+          head:["If the question says…","It is testing","Go to"],
+          rows:[
+            ["“What can you <b>learn</b> / <b>infer</b> about…?”","Inference","Chapter 2"],
+            ["“What is the <b>message</b> of this source?”","Message / big point","Chapter 3"],
+            ["“<b>Why</b> was this source published <b>at that time</b>?”","Purpose","Chapter 3"],
+            ["“How far do these two sources <b>agree</b> / <b>differ</b>?”","Comparison","Chapter 4"],
+            ["“How <b>reliable</b> is this source?”","Reliability","Chapter 5"],
+            ["“Are you <b>surprised</b> by…?”","Surprise + context","Chapter 6"],
+            ["“How <b>useful</b> is this source for studying…?”","Utility","Chapter 7"],
+            ["“Study <b>all</b> the sources. <b>How far</b> do they show…?”","Hypothesis testing","Chapter 8"],
+            ["“<b>Explain why</b>…” (no sources)","Essay part (a)","Chapter 9"],
+            ["“<b>How far do you agree</b>…?” / “Was X the <b>main</b> reason…?”","Essay part (b)","Chapter 10"],
+          ] } },
+        { h:"Three habits that apply to every single answer", type:"bullets", body:[
+          "<b>Answer the question in your first sentence.</b> Do not build up to it. Examiners mark what they find, not what you were about to say.",
+          "<b>Never quote without explaining.</b> A quotation proves you can read. The explanation is what earns the mark.",
+          "<b>Use the attribution.</b> The line above each source telling you who wrote it, when, and for whom is not decoration — it is evidence, and for reliability and purpose questions it is the main evidence.",
+        ]},
+      ]},
+    { n:2, title:"Inference — “What can you learn from Source A?”", q:"Read beyond the words on the page.",
+      sections:[
+        { h:"What the examiner wants", type:"text", body:[
+          "An <b>inference</b> is something the source suggests but does not state outright. If you can find your answer word-for-word in the source, it is not an inference — it is comprehension, and it sits at the bottom of the mark scheme.",
+          "Ask yourself: <i>what does this source tell me that the author did not directly say?</i> Look at the tone, the choice of words, what is emphasised, and what is conspicuously left out.",
+        ]},
+        { h:"The structure", type:"formulas", body:[
+          { f:"1. INFER  —  “This source suggests that…”", d:"State the inference immediately, in your own words. Never open with a quotation." },
+          { f:"2. SUPPORT  —  “This is shown when the source says ‘…’”", d:"A short, precisely chosen quotation — a few words, not a whole sentence." },
+          { f:"3. EXPLAIN  —  “This implies… because…”", d:"Say why those words carry that meaning. This is the step most students skip." },
+        ]},
+        { h:"Model answer", type:"examples", body:[
+          { level:"Model answer",
+            q:"<b>Source A:</b> A German newspaper, 1919. “The disgraceful treaty is being signed today. Do not forget it! We will never stop until we win back what we deserve.”<br><br><b>Question:</b> What can you learn from Source A about German attitudes to the Treaty of Versailles? [5]",
+            steps:[
+              "<b>Infer:</b> Source A suggests that Germans felt deeply humiliated by the Treaty and were determined to overturn it in the future.",
+              "<b>Support:</b> This is shown when the source calls it a “disgraceful treaty” and warns “we will never stop until we win back what we deserve”.",
+              "<b>Explain:</b> The word “disgraceful” shows the Treaty was seen not merely as harsh but as a national shame, while “win back” implies Germans believed territory and status had been unjustly taken and would one day be reclaimed by force.",
+              "<b>Second inference (for full marks):</b> The source also suggests that resentment was being deliberately kept alive. The instruction “Do not forget it!” shows the newspaper was actively encouraging readers to nurse the grievance rather than accept the settlement.",
+            ],
+            ans:"Two supported and explained inferences. Notice that nothing in the answer is copied — every point is phrased as what the source <i>suggests</i>, then proved with a short quotation." },
+        ]},
+        { h:"What caps your marks", type:"bullets", body:[
+          "<b>Copying the source.</b> Lifting a sentence and adding “this shows Germans were angry” is Level 1 — you have repeated, not inferred.",
+          "<b>One inference only.</b> If the question is worth 4–5 marks, give <b>two</b> developed inferences.",
+          "<b>Quoting first.</b> Always lead with your own point; the quotation is evidence for it, not a substitute.",
+          "<b>Bringing in reliability.</b> This question does not ask whether the source is trustworthy. Do not discuss the author's bias here.",
+        ]},
+      ]},
+    { n:3, title:"Message and Purpose — cartoons and posters", q:"What is the big point, and why publish it now?",
+      sections:[
+        { h:"Message versus purpose", type:"text", body:[
+          "These are two different questions and students routinely confuse them.",
+          "<b>Message</b> = <i>what</i> the author is saying. The single big argument of the source.",
+          "<b>Purpose</b> = <i>why</i> they said it, at that moment, to that audience. Purpose always needs the date and the context — it is about the intended <b>effect</b> on the reader.",
+        ]},
+        { h:"Reading a cartoon", type:"bullets", body:[
+          "<b>Identify every figure and symbol.</b> Who or what does each represent? Labels, flags, national costume and physical size are all deliberate.",
+          "<b>Look at how figures are drawn.</b> A large, confident figure versus a small, cowering one tells you who the cartoonist thinks has power.",
+          "<b>Read the caption and any words.</b> These usually contain the message directly.",
+          "<b>Date it.</b> Ask what was happening that month. A cartoon is a comment on a specific event.",
+          "<b>Decide the attitude.</b> Is the cartoonist supporting, mocking, or warning? That attitude <i>is</i> the message.",
+        ]},
+        { h:"The structure", type:"formulas", body:[
+          { f:"MESSAGE  —  “The message is that…”", d:"One sentence, the big point. Not a description of what you can see." },
+          { f:"SUPPORT  —  “This is shown by [symbol/figure/caption]…”", d:"Name specific details from the source and say what each represents." },
+          { f:"CONTEXT  —  “At this time…”", d:"Link to the actual historical situation the cartoon is commenting on." },
+          { f:"PURPOSE (if asked)  —  “It was published to…”", d:"Say what the author wanted the audience to think, feel or do." },
+        ]},
+        { h:"Model answer", type:"examples", body:[
+          { level:"Model answer",
+            q:"<b>Source B:</b> A British cartoon, 1919. A large figure labelled “Peace Treaty” hands a heavy sack marked “Reparations” to a small, bent German figure. In the background a child labelled “1940 Class” weeps. <br><br><b>Question:</b> What is the message of Source B? [6]",
+            steps:[
+              "<b>Message:</b> The cartoonist's message is that the Treaty of Versailles was far too harsh on Germany and would cause another war in the future.",
+              "<b>Support — harshness:</b> This is shown by the German figure being drawn small and bent under a heavy sack labelled “Reparations”, suggesting the burden was crushing and out of proportion.",
+              "<b>Support — future war:</b> It is also shown by the weeping child labelled “1940 Class”, meaning the generation who would be old enough to fight in 1940 — the cartoonist is predicting that this child will die in a war caused by this treaty.",
+              "<b>Context:</b> At this time Germany had been forced to accept the War Guilt Clause and pay £6.6 billion in reparations, and many British commentators believed such severe terms would breed lasting resentment.",
+              "<b>Purpose (if asked):</b> It was published to warn the British public and government that the settlement was storing up a future conflict, and to build pressure for more moderate terms.",
+            ],
+            ans:"The message is stated in one sentence, then proved from two specific visual details, then anchored in real context. The “1940 Class” detail is the one that earns the top level — it shows you decoded the symbolism rather than just described the picture." },
+        ]},
+        { h:"What caps your marks", type:"bullets", body:[
+          "<b>Describing instead of interpreting.</b> “There is a big man and a small man” is description. What the size <i>means</i> is interpretation.",
+          "<b>Ignoring the caption or labels.</b> Cartoonists label things precisely so you cannot miss the point. Use every label.",
+          "<b>Forgetting the date.</b> Purpose is impossible to answer without knowing what had just happened.",
+          "<b>Giving several small messages.</b> Find the <b>one big message</b>, then support it. A list of observations is not a message.",
+        ]},
+      ]},
+    { n:4, title:"Comparison — “How far do these sources agree?”", q:"Compare the argument, not the wallpaper.",
+      sections:[
+        { h:"Compare messages, not details", type:"text", body:[
+          "The commonest mistake is comparing surface details: “both sources mention Hitler”. That is a similarity of <i>topic</i>, not of <i>view</i>, and it scores in the bottom band.",
+          "The mark scheme rewards comparison of the <b>overall message or attitude</b>. Two sources can describe the same event and take opposite positions on it, or describe different events and share the same underlying view.",
+          "A full-mark answer almost always finds <b>both</b> agreement and disagreement, then judges which is more significant.",
+        ]},
+        { h:"The structure", type:"formulas", body:[
+          { f:"1. SIMILAR  —  “Both sources agree that…”", d:"State the shared view in your own words." },
+          { f:"2. PROVE BOTH  —  “Source A says ‘…’ and Source B says ‘…’”", d:"One quotation from EACH source. A comparison with evidence from only one source cannot score." },
+          { f:"3. DIFFERENT  —  “However, they differ because…”", d:"State the difference in view, again proved from both sources." },
+          { f:"4. JUDGE  —  “Overall they agree/differ more, because…”", d:"Answer the actual question: 'how far?' demands a verdict." },
+        ]},
+        { h:"Model answer", type:"examples", body:[
+          { level:"Model answer",
+            q:"<b>Source C</b> (German politician, 1919): “We were promised a just peace. Instead we have been robbed and shackled.”<br><b>Source D</b> (French newspaper, 1919): “The terms are severe, but Germany invaded us twice. She must be made unable to do so again.”<br><br><b>Question:</b> How far do Sources C and D agree about the Treaty of Versailles? [7]",
+            steps:[
+              "<b>Agreement:</b> Both sources agree that the terms imposed on Germany were severe.",
+              "<b>Prove both:</b> Source C describes Germany as having been “robbed and shackled”, while Source D concedes directly that “the terms are severe”. Neither pretends the settlement was mild.",
+              "<b>Disagreement:</b> However, they fundamentally disagree about whether that severity was <i>justified</i>.",
+              "<b>Prove both:</b> Source C frames it as a betrayal, contrasting the “promised… just peace” with the outcome, implying the terms were undeserved. Source D justifies them on security grounds — “Germany invaded us twice. She must be made unable to do so again.”",
+              "<b>Explain why they differ:</b> This difference reflects their origins. Source C is German and so emphasises victimhood, while Source D is French, and France had suffered two invasions and the devastation of its industrial north, so it prioritised guaranteeing future security.",
+              "<b>Judgement:</b> Overall the sources differ more than they agree. They share only a factual observation about severity, but they take opposing positions on the fundamental issue of whether the Treaty was just — and that disagreement about justification is far more significant.",
+            ],
+            ans:"Agreement and disagreement are both proved from <b>both</b> sources, the difference is explained through provenance, and the answer ends with an explicit verdict on “how far”." },
+        ]},
+        { h:"What caps your marks", type:"bullets", body:[
+          "<b>Writing two summaries.</b> A paragraph on Source C then a paragraph on Source D is not a comparison. Every point must be cross-referenced.",
+          "<b>Evidence from only one source.</b> Each similarity and each difference needs a quotation from <b>both</b>.",
+          "<b>Comparing topics.</b> “Both mention reparations” is not agreement — agreement is about <i>view</i>.",
+          "<b>No verdict.</b> “How far” requires you to say which side wins, and why.",
+        ]},
+      ]},
+    { n:5, title:"Reliability — “How reliable is this source?”", q:"Not whether it is true, but whether it can be trusted, and for what.",
+      sections:[
+        { h:"The trap that costs the most marks", type:"text", body:[
+          "Most students write “this source is biased, so it is unreliable” and stop. That is a Level 1 answer, and it is also bad history.",
+          "<b>Every source is biased.</b> Bias is not a disqualification — a biased source is perfectly reliable <i>evidence of the attitudes of the person who wrote it</i>. A Nazi propaganda poster is useless for telling you what Germany was really like, but it is excellent, reliable evidence of what the Nazis wanted people to believe.",
+          "So the real question is never “is it reliable?” but <b>“reliable for what purpose?”</b>. Say what it can and cannot be trusted to tell you.",
+        ]},
+        { h:"The four tests: N.O.P.E.", type:"bullets", body:[
+          "<b>N — Nature.</b> What kind of source is it? A private diary has no audience to impress, so it may be candid. A public speech is designed to persuade. An official report may be sanitised.",
+          "<b>O — Origin.</b> Who wrote it and what was their position? Were they an eyewitness or writing later? Did they have something to gain or lose?",
+          "<b>P — Purpose.</b> Why was it produced? To inform, to persuade, to justify, to recruit, to sell newspapers? Purpose is the single strongest indicator of reliability.",
+          "<b>E — Evidence within it.</b> Is the tone measured or emotional? Are there facts and figures, or sweeping claims? Does it present more than one side? Extreme, one-sided language is a warning sign.",
+          "Then <b>cross-reference</b>: does another source, or your own knowledge, corroborate it? Corroboration is what lifts an answer to the top level.",
+        ]},
+        { h:"The structure", type:"formulas", body:[
+          { f:"1. RELIABLE FOR…  —  “This source is reliable evidence of…”", d:"Say what it CAN be trusted to show — usually the author's own attitudes." },
+          { f:"2. PROVENANCE  —  “It was written by… in… for…”", d:"Use the attribution. Explain how origin and purpose shape the content." },
+          { f:"3. LIMITATIONS  —  “However, it is less reliable for… because…”", d:"Say what it cannot be trusted for, and why — purpose, one-sidedness, missing perspective." },
+          { f:"4. CROSS-REFERENCE  —  “Source X supports/contradicts this, and I know that…”", d:"Corroborate with another source AND your own knowledge. This is the top-level move." },
+          { f:"5. JUDGEMENT  —  “Therefore it is reliable for… but not for…”", d:"A conditional verdict, never a flat 'reliable' or 'unreliable'." },
+        ]},
+        { h:"Model answer", type:"examples", body:[
+          { level:"Model answer",
+            q:"<b>Source E:</b> From a speech by Adolf Hitler at a Nazi rally, 1932. “Germany was stabbed in the back by traitors. The Weimar politicians signed away our honour. Only the National Socialists will restore what was stolen.”<br><br><b>Question:</b> How reliable is Source E as evidence about the Treaty of Versailles? [8]",
+            steps:[
+              "<b>Reliable for:</b> Source E is highly reliable evidence of how the Nazis <i>presented</i> the Treaty, and of the political message they used to win support in 1932.",
+              "<b>Provenance:</b> It is a speech by Hitler at a Nazi rally, delivered to an audience of supporters and potential voters during an election period. Its purpose was to win votes, not to give a balanced historical account.",
+              "<b>Limitations:</b> It is therefore unreliable as an account of what actually happened. The “stab in the back” claim is a myth — Germany's army was defeated in the field, and the Weimar politicians signed the armistice because the war was already lost. Hitler blames them to create a scapegoat.",
+              "<b>Language:</b> The emotive vocabulary — “traitors”, “stolen”, “honour” — is designed to provoke anger rather than to inform, which further signals propaganda rather than evidence.",
+              "<b>Cross-reference and own knowledge:</b> However, the underlying resentment it exploits was real. I know the Treaty forced Germany to accept the War Guilt Clause, pay £6.6 billion in reparations and lose territory including the Polish Corridor, and that Germans widely called it a <i>Diktat</i>. Source C, written by a German politician in 1919, shows the same sense of betrayal, which corroborates that the grievance existed independently of Nazi propaganda.",
+              "<b>Judgement:</b> Overall, Source E is unreliable as a factual account of the Treaty, but it is very reliable evidence of Nazi propaganda methods and of the depth of German resentment that the Nazis were able to exploit.",
+            ],
+            ans:"Notice the verdict is <b>conditional</b> — unreliable for one purpose, highly reliable for another. That framing, plus corroboration from another source and specific own knowledge, is what reaches the top band." },
+        ]},
+        { h:"What caps your marks", type:"bullets", body:[
+          "<b>“It is biased so it is unreliable.”</b> The single most common Level 1 sentence in the whole paper. Always ask <i>reliable for what</i>.",
+          "<b>Ignoring the attribution.</b> The provenance line is where most of the marks live.",
+          "<b>No own knowledge.</b> You cannot judge whether a source is accurate without knowing what actually happened.",
+          "<b>A flat verdict.</b> “This source is unreliable” with no qualification throws away the top band.",
+          "<b>Assuming primary means reliable.</b> An eyewitness can be mistaken, partisan or lying. A later historian may be better informed and more balanced.",
+        ]},
+      ]},
+    { n:6, title:"Surprised / Not surprised", q:"The question is really: does this match what I know?",
+      sections:[
+        { h:"What is actually being asked", type:"text", body:[
+          "This question looks odd but it is one of the most predictable in the paper. It is <b>not</b> asking about your feelings. It is asking: <i>does the content of this source fit with what you know about the period, or does it contradict it?</i>",
+          "That means this question is impossible to answer well without <b>contextual knowledge</b>. If your answer contains only the source and no outside facts, you cannot reach the top band, however fluent it is.",
+          "The strongest answers argue <b>both ways</b> — genuinely surprising in one respect, entirely expected in another — and then reach a judgement.",
+        ]},
+        { h:"The structure", type:"formulas", body:[
+          { f:"1. POSITION  —  “I am not surprised by Source F because…”", d:"Commit in the first sentence. Never sit on the fence at the start." },
+          { f:"2. SOURCE  —  “The source says ‘…’”", d:"Quote the specific content you are reacting to." },
+          { f:"3. OWN KNOWLEDGE  —  “This is what I would expect, because I know that…”", d:"The decisive step. Give real facts, dates, events that make the source predictable — or that make it startling." },
+          { f:"4. THE OTHER SIDE  —  “However, I am surprised that…”", d:"Find the aspect that cuts the other way, again with knowledge." },
+          { f:"5. JUDGEMENT  —  “On balance I am (not) surprised, because…”", d:"Decide which side is stronger and say why." },
+        ]},
+        { h:"Model answer", type:"examples", body:[
+          { level:"Model answer",
+            q:"<b>Source F:</b> A British newspaper, October 1938, after the Munich Agreement. “Mr Chamberlain returns a hero. Crowds cheered him at the airport. He has given us peace for our time.”<br><br><b>Question:</b> Are you surprised by the reaction described in Source F? Explain your answer. [8]",
+            steps:[
+              "<b>Position:</b> I am not surprised by the reaction described in Source F.",
+              "<b>Source:</b> The source reports that “crowds cheered him at the airport” and that Chamberlain “returns a hero”.",
+              "<b>Own knowledge:</b> This is exactly what I would expect in Britain in October 1938. The horrors of the First World War were only twenty years past, and Britain was militarily unprepared for another conflict. Appeasement was widely popular precisely because the public feared mass bombing of cities. Chamberlain appeared to have avoided war over the Sudetenland without a shot being fired, so a hero's welcome was a natural reaction.",
+              "<b>The other side:</b> However, I am surprised by the confidence of the phrase “peace for our time”. Hitler had already broken previous promises — remilitarising the Rhineland in 1936 and carrying out the Anschluss in March 1938 — so there was clear evidence that his assurances were worthless.",
+              "<b>Develop it:</b> I am also surprised there is no hint of the criticism that did exist. Churchill described Munich as “a total and unmitigated defeat”, and Czechoslovakia had been dismembered without being consulted.",
+              "<b>Judgement:</b> On balance I am not surprised. Given the dread of another war and the popularity of appeasement in 1938, public relief was overwhelmingly likely, and a newspaper reporting the mood of the crowds would naturally reflect that rather than the minority who objected.",
+            ],
+            ans:"Both sides are argued from <b>real knowledge</b> — the Rhineland, the Anschluss, Churchill's verdict — not from the source alone. That knowledge is what carries the answer into the top band." },
+        ]},
+        { h:"What caps your marks", type:"bullets", body:[
+          "<b>Only using the source.</b> Without outside knowledge you are stuck in the lower bands, no matter how well written the answer is.",
+          "<b>Answering emotionally.</b> “I am surprised because it is shocking” is not a historical judgement.",
+          "<b>Refusing to commit.</b> Start with a clear position. You can complicate it afterwards — that is what the other side is for.",
+          "<b>Only one side.</b> Full marks usually need surprise <i>and</i> lack of surprise, then a verdict.",
+        ]},
+      ]},
+    { n:7, title:"Usefulness — “How useful is this source?”", q:"Useful for finding out what, exactly?",
+      sections:[
+        { h:"Utility is never absolute", type:"text", body:[
+          "Just as with reliability, no source is simply “useful” or “useless”. It is useful <b>for a specific enquiry</b>. Always finish the sentence: useful for finding out <i>what</i>?",
+          "Judge usefulness on two things: the <b>content</b> (what it tells you) and the <b>provenance</b> (who produced it and why, which determines how far you can trust the content and what perspective is missing).",
+          "Crucially, a source being biased or limited does <b>not</b> make it useless — it changes what it is useful <i>for</i>.",
+        ]},
+        { h:"The structure", type:"formulas", body:[
+          { f:"1. USEFUL — CONTENT  —  “It is useful because it tells us that…”", d:"What specific information does it give about the enquiry?" },
+          { f:"2. USEFUL — PROVENANCE  —  “It is especially useful because it was written by…”", d:"An insider, an eyewitness, an official — say why that viewpoint matters." },
+          { f:"3. LIMITS  —  “However, it is limited because…”", d:"One-sided, propaganda, one moment only, one perspective missing." },
+          { f:"4. WHAT IS MISSING  —  “It does not tell us about…”", d:"Name the gap. This shows you know the wider topic." },
+          { f:"5. JUDGEMENT  —  “Overall it is useful for… but for… I would need…”", d:"A conditional verdict, ideally naming what other evidence you would want." },
+        ]},
+        { h:"Model answer", type:"examples", body:[
+          { level:"Model answer",
+            q:"<b>Source G:</b> A photograph taken by a German official in 1936 showing crowded, cheering crowds at a Nazi rally in Nuremberg.<br><br><b>Question:</b> How useful is Source G for studying support for the Nazi regime? [7]",
+            steps:[
+              "<b>Useful — content:</b> Source G is useful because it shows very large, enthusiastic crowds attending a Nazi rally, which indicates that the regime could mobilise mass public participation by 1936.",
+              "<b>Useful — provenance:</b> It is also useful as evidence of how the regime wished to present itself. Taken by a German official, it shows the image of unity and mass enthusiasm the Nazis wanted recorded and circulated.",
+              "<b>Limits:</b> However, it is limited as evidence of genuine support. A photograph captures a single moment from a single angle, and the photographer chose where to point the camera — the crowd may have been carefully assembled or the frame chosen to exclude empty spaces.",
+              "<b>What is missing:</b> It also cannot show us coercion. I know that by 1936 the Gestapo and SS were suppressing opposition, political parties had been banned since 1933, and attendance at such events was often expected, so cheering may reflect fear or conformity rather than belief.",
+              "<b>Judgement:</b> Overall Source G is useful for showing Nazi self-presentation and the scale of public display, but on its own it is weak evidence of genuine popular support. To investigate that I would need private diaries, Gestapo reports on public opinion, or accounts from those who did not attend.",
+            ],
+            ans:"The judgement names <b>exactly what the source is good for</b>, what it cannot show, and what evidence would fill the gap — that final move is a strong top-band signal." },
+        ]},
+        { h:"What caps your marks", type:"bullets", body:[
+          "<b>“It is useless because it is biased.”</b> Bias changes what it is useful for; it does not remove usefulness.",
+          "<b>Only discussing content.</b> Provenance carries half the marks.",
+          "<b>Not naming the enquiry.</b> Always tie usefulness to the specific thing the question asks you to study.",
+          "<b>Ignoring what is absent.</b> Naming the missing perspective is one of the easiest ways to show wider knowledge.",
+        ]},
+      ]},
+    { n:8, title:"The hypothesis question — “How far do the sources show…?”", q:"The last SBQ, worth the most marks. Group and judge.",
+      sections:[
+        { h:"What it demands", type:"text", body:[
+          "The final SBQ gives you a statement and asks how far <b>all</b> the sources support it. It carries the largest mark allocation in Section A and is the question most often rushed.",
+          "The examiner is testing whether you can <b>group and use sources as evidence for an argument</b>, not whether you can summarise them one by one. The single biggest scoring change you can make is to stop writing “Source A says… Source B says…” and start writing “Sources A and C support the statement because…”.",
+          "You must use <b>every</b> source, and you must reach a judgement.",
+        ]},
+        { h:"The structure", type:"formulas", body:[
+          { f:"1. PLAN — two columns", d:"Before writing, list which sources SUPPORT and which CHALLENGE the statement. Some may do both — that is useful, not a problem." },
+          { f:"2. SUPPORT  —  “Sources A and C support this view because…”", d:"Group them. Quote from each and explain HOW each supports the statement." },
+          { f:"3. CHALLENGE  —  “However, Sources B and D suggest otherwise because…”", d:"Same treatment for the other side." },
+          { f:"4. WEIGH  —  “Source B is the most convincing because…”", d:"Use reliability and provenance to decide which evidence carries more weight. This lifts the answer." },
+          { f:"5. JUDGE  —  “Overall the sources show… to a limited/large extent, because…”", d:"Answer 'how far' explicitly. No conclusion means no top band." },
+        ]},
+        { h:"Model paragraph", type:"examples", body:[
+          { level:"Model answer",
+            q:"<b>Question:</b> “The Treaty of Versailles was unfair to Germany.” Study all the sources. How far do these sources support this statement? [12]",
+            steps:[
+              "<b>Plan first:</b> Support — Sources A (German newspaper), C (German politician), B (British cartoon predicting war). Challenge — Sources D (French newspaper), E (Hitler's speech, which supports the view but is propaganda and so must be handled carefully).",
+              "<b>Support paragraph:</b> Sources A, B and C support the statement. Source C describes Germany as “robbed and shackled”, and Source A calls the Treaty “disgraceful”, both presenting it as an injustice rather than a settlement. Source B is more significant because it is <i>British</i> — the cartoon shows Germany crushed under a reparations sack and a child labelled “1940 Class”, meaning even in a victorious Allied country there was a view that the terms were excessive and dangerous.",
+              "<b>Challenge paragraph:</b> However, Source D challenges it. The French newspaper accepts the terms are “severe” but argues they were necessary because “Germany invaded us twice”. This presents the Treaty not as unfair but as a justified security measure, reflecting the fact that France had suffered devastation on its own soil that Germany had not.",
+              "<b>Weigh the evidence:</b> The German sources must be treated with caution: A and C both come from the losing side and had an obvious interest in portraying the Treaty as unjust, and Source E is Nazi election propaganda that deliberately promotes the “stab in the back” myth. Source B carries more weight precisely because it comes from a victorious nation with no motive to defend Germany.",
+              "<b>Judgement:</b> Overall the sources support the statement to a fairly large extent. Most present the Treaty as excessively harsh, and crucially that view is not confined to Germans — Source B shows it was held in Britain too. However, Source D shows the terms were seen very differently by those who had been invaded, so the sources establish that the Treaty was <i>widely regarded</i> as unfair rather than proving that it objectively was.",
+            ],
+            ans:"Sources are grouped, weighed using provenance, and the conclusion answers “how far” with a precise, qualified verdict rather than a simple yes or no." },
+        ]},
+        { h:"What caps your marks", type:"bullets", body:[
+          "<b>Going source by source.</b> The commonest structural error. Group them by what they argue.",
+          "<b>Leaving sources out.</b> “Study all the sources” means all of them.",
+          "<b>Only one side.</b> You must consider both support and challenge.",
+          "<b>No weighing.</b> Saying which evidence is stronger, and why, is what separates the top two bands.",
+          "<b>Running out of time.</b> This question is worth the most marks — leave time for it.",
+        ]},
+      ]},
+    { n:9, title:"Essay part (a) — “Explain why…”", q:"Not a story. A set of reasons, each proved.",
+      sections:[
+        { h:"What it wants", type:"text", body:[
+          "Part (a) of a Structured Essay Question typically asks you to <b>describe</b> or <b>explain why</b> something happened, using only your own knowledge. It is worth fewer marks than part (b), so it must be efficient — but it is where narrative-writing loses the most marks.",
+          "The examiner wants <b>reasons</b>, not a chronology. Telling the story of what happened is Level 1. Explaining <i>why</i> it happened, with specific evidence for each reason, is what scores.",
+          "Aim for <b>two or three developed reasons</b>. Depth beats breadth: three well-explained reasons will outscore six mentioned in passing.",
+        ]},
+        { h:"PEEL — one paragraph per reason", type:"formulas", body:[
+          { f:"P — POINT  —  “One reason was…”", d:"State the reason in the first sentence of the paragraph." },
+          { f:"E — EVIDENCE  —  specific facts, dates, names, figures", d:"This is where marks are won or lost. Be precise: '£6.6 billion', 'January 1933', 'Article 231'." },
+          { f:"E — EXPLAIN  —  “This caused… because…”", d:"Connect the evidence back to the question. Never assume the link is obvious." },
+          { f:"L — LINK  —  “This therefore contributed to…”", d:"Close the loop by naming the outcome the question asked about." },
+        ]},
+        { h:"Model paragraph", type:"examples", body:[
+          { level:"Model answer",
+            q:"<b>Question:</b> Explain why Hitler was able to come to power in Germany by 1933. [8]",
+            steps:[
+              "<b>Point:</b> One important reason was the economic devastation caused by the Great Depression.",
+              "<b>Evidence:</b> After the Wall Street Crash of 1929, American loans to Germany under the Dawes Plan were withdrawn. German unemployment rose to around six million by 1932, and banks and businesses collapsed.",
+              "<b>Explain:</b> This mattered because the Weimar government appeared powerless to fix it, and coalition governments repeatedly failed to agree on a response. Desperate voters therefore abandoned the moderate parties and turned to the extremes, which offered simple and decisive solutions.",
+              "<b>Link:</b> This directly boosted Nazi support — the Nazis rose from 12 seats in 1928 to 230 in July 1932, becoming the largest party in the Reichstag and making it far harder to exclude Hitler from government.",
+              "<b>Then repeat</b> for a second reason (the weaknesses of the Weimar Republic and resentment of Versailles) and a third (Nazi propaganda, Hitler's oratory and the political intrigue that led Hindenburg to appoint him Chancellor in January 1933).",
+            ],
+            ans:"Every sentence does a job. Note the specific figures — six million unemployed, 12 seats to 230 — which is exactly the precision that lifts an answer out of the middle bands." },
+        ]},
+        { h:"What caps your marks", type:"bullets", body:[
+          "<b>Writing a narrative.</b> “First this happened, then that happened” describes; it does not explain.",
+          "<b>Vague evidence.</b> “Lots of people were unemployed” is weak; “around six million by 1932” is strong.",
+          "<b>Listing reasons without developing them.</b> Two explained reasons beat five named ones.",
+          "<b>Never returning to the question.</b> End each paragraph by linking explicitly back to what was asked.",
+        ]},
+      ]},
+    { n:10, title:"Essay part (b) — “How far do you agree?”", q:"The judgement question. Argue, weigh, decide.",
+      sections:[
+        { h:"What it wants", type:"text", body:[
+          "Part (b) carries the most marks in Section B. It gives a statement — often “X was the main reason for Y” — and asks how far you agree.",
+          "The examiner is testing <b>argument and judgement</b>, not recall. You must consider the named factor <b>and</b> other factors, support everything with precise evidence, and reach a conclusion that actually decides the question.",
+          "The decisive skill is <b>weighing</b>: not just listing factors, but explaining why one matters more than another, and how they connect. Factors rarely act alone — showing how they interact is a top-band move.",
+        ]},
+        { h:"The structure", type:"formulas", body:[
+          { f:"INTRO  —  signpost your line", d:"Briefly state the factors you will weigh and hint at your verdict. Two or three sentences maximum." },
+          { f:"AGREE  —  “The statement is right that…”", d:"Take the named factor seriously and prove it with specific evidence." },
+          { f:"DISAGREE  —  “However, other factors were also important…”", d:"One paragraph per alternative factor, each with its own evidence." },
+          { f:"WEIGH  —  “X mattered more than Y because…”", d:"Compare importance directly. Consider which factor was necessary, which was a trigger, which enabled the others." },
+          { f:"CONCLUDE  —  “Overall I agree to a large/limited extent because…”", d:"A real verdict with a reason. Never 'there were many factors and all were important'." },
+        ]},
+        { h:"How to weigh factors properly", type:"bullets", body:[
+          "<b>Necessary versus sufficient.</b> Would the outcome still have happened without this factor? If not, it is fundamental.",
+          "<b>Long-term versus trigger.</b> Long-term causes create the conditions; a trigger sets things off. Both matter, but they matter differently — say which role each played.",
+          "<b>Linkage.</b> Show how factors reinforce one another: the Depression made Nazi propaganda effective, and propaganda alone would have achieved little without the Depression.",
+          "<b>Use a criterion.</b> Say <i>on what basis</i> you are judging — impact, timing, how many people it affected, whether the outcome was possible without it. A stated criterion makes a conclusion look deliberate rather than arbitrary.",
+        ]},
+        { h:"Model conclusion", type:"examples", body:[
+          { level:"Model answer",
+            q:"<b>Question:</b> “The Great Depression was the main reason Hitler came to power.” How far do you agree? [12]",
+            steps:[
+              "<b>Agree:</b> The Depression was clearly fundamental. Unemployment reaching around six million by 1932 destroyed faith in the Weimar government, and Nazi Reichstag seats rose from 12 in 1928 to 230 in July 1932 — a direct correlation between economic collapse and Nazi support.",
+              "<b>Disagree — Weimar's weaknesses:</b> However, the Republic was already fragile. Proportional representation produced unstable coalitions, and the Republic had been tainted from birth by association with the Treaty of Versailles and the “stab in the back” myth.",
+              "<b>Disagree — Nazi methods:</b> Nazi propaganda under Goebbels, Hitler's oratory and the SA's visible presence gave the party an appeal other extremist groups lacked. The Communists also benefited from the Depression but did not take power.",
+              "<b>Disagree — political intrigue:</b> Hitler was not elected Chancellor. He was <i>appointed</i> in January 1933 by Hindenburg, persuaded by von Papen who believed the Nazis could be controlled. Without that miscalculation Hitler might never have taken office.",
+              "<b>Weigh:</b> The Depression was necessary but not sufficient. It created the desperation, but desperation alone does not explain why the <i>Nazis</i> specifically benefited — the Communists faced the same conditions and failed. What converted crisis into Nazi power was the combination of Nazi organisation and elite miscalculation.",
+              "<b>Conclusion:</b> I agree to a large extent that the Depression was the main reason, because without it the Nazis would have remained a fringe party — in 1928 they held just 12 seats. However, it was a necessary rather than a sufficient cause: it opened the door, but Nazi propaganda and, decisively, Hindenburg's appointment of Hitler in January 1933 are what carried him through it.",
+            ],
+            ans:"The conclusion states a criterion (necessary versus sufficient), reaches a clear verdict, and still acknowledges complexity — which is exactly what the top band asks for." },
+        ]},
+        { h:"What caps your marks", type:"bullets", body:[
+          "<b>Ignoring the named factor.</b> If the statement names a factor, you must address it directly and at length.",
+          "<b>Listing without weighing.</b> A well-evidenced list of factors sits in the middle bands. Comparison lifts it.",
+          "<b>A fence-sitting conclusion.</b> “All factors were important” answers nothing. Decide.",
+          "<b>A conclusion that contradicts the essay.</b> If you argued mainly against the statement, do not conclude that you strongly agree.",
+          "<b>No dates or figures.</b> Judgement without evidence is opinion.",
+        ]},
+      ]},
+    { n:11, title:"Timing and exam strategy", q:"Marks per minute, and where students lose them.",
+      sections:[
+        { h:"Spend time in proportion to marks", type:"text", body:[
+          "The most avoidable loss of marks in History is not knowledge — it is running out of time on the questions worth the most. Work out roughly one minute per mark, plus reading time, and hold to it.",
+          "The final SBQ hypothesis question and essay part (b) carry the largest allocations and are the ones most often rushed. Protect their time deliberately, even if that means cutting an earlier answer short.",
+        ]},
+        { h:"Reading the sources", type:"bullets", body:[
+          "Read the <b>background information</b> at the top of the paper first. It is there to give you the context and it is often directly usable.",
+          "For every source, read the <b>attribution</b> before the content — who, when, to whom, why. Underline it.",
+          "Annotate as you read: mark tone, extreme language, and anything that contradicts another source. You will need these for reliability and the hypothesis question.",
+        ]},
+        { h:"A checklist before you hand in", type:"bullets", body:[
+          "Did every answer <b>begin</b> by answering the question asked?",
+          "Did every quotation get <b>explained</b>, not just dropped in?",
+          "Did the reliability, surprise and usefulness answers contain <b>own knowledge</b>?",
+          "Did every “how far” question end with an explicit <b>verdict</b>?",
+          "Did the hypothesis question use <b>every</b> source, grouped rather than listed?",
+          "Did the essays contain <b>specific dates and figures</b>, not vague generalisations?",
+        ]},
+        { h:"A note on this guide", type:"text", body:[
+          "The techniques here are standard, well-established practice for Singapore Elective History and will serve you in any question of these types. The precise mark allocations and level descriptors vary between papers and years, so check the exact band wording your school uses — and, as always, prioritise your own teacher's marking feedback over any general guide.",
+        ]},
+      ]},
+  ]
+};
+
 /* ============================================================
    ASK — offline tutor.
    Answers come only from this app's own syllabus content, so it
@@ -3314,7 +3696,8 @@ Object.entries(LESSON_ADD.chem).forEach(([n,secs])=>{
 function stripTags(s){ return String(s).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim(); }
 
 const TAB_LABELS = { physics:'Physics', chemistry:'Chemistry', phylesson:'Phy Lessons',
-                     chemlesson:'Chem Lessons', emath:'E-Math', amath:'A-Math', history:'History' };
+                     chemlesson:'Chem Lessons', emath:'E-Math', amath:'A-Math',
+                     history:'History', histskills:'Hist Answers' };
 
 let ASK_INDEX = null;
 function buildAskIndex(){
@@ -3334,7 +3717,8 @@ function buildAskIndex(){
   });
 
   /* Lesson sections, chapter by chapter */
-  [['phylesson',PHY_LESSONS],['chemlesson',CHEM_LESSONS],['emath',EMATH],['amath',AMATH],['history',HISTORY]]
+  [['phylesson',PHY_LESSONS],['chemlesson',CHEM_LESSONS],['emath',EMATH],['amath',AMATH],
+   ['history',HISTORY],['histskills',HIST_SKILLS]]
   .forEach(([key,S])=>{
     (S.chapters||[]).forEach(ch=>{
       (ch.sections||[]).forEach(sec=>{
@@ -3781,8 +4165,8 @@ function saveLog(a){ localStorage.setItem('osp-log', JSON.stringify(a)); }
    APP LOGIC
    ============================================================ */
 const DATA = { physics:PHYSICS, chemistry:CHEMISTRY, history:HISTORY, emath:EMATH, amath:AMATH,
-               phylesson:PHY_LESSONS, chemlesson:CHEM_LESSONS };
-const SYLLABUS_SUBJECTS = ['history','emath','amath','phylesson','chemlesson'];
+               phylesson:PHY_LESSONS, chemlesson:CHEM_LESSONS, histskills:HIST_SKILLS };
+const SYLLABUS_SUBJECTS = ['history','emath','amath','phylesson','chemlesson','histskills'];
 const app = document.getElementById('app');
 let state = {
   subject:'plan',
