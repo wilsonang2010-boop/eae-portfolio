@@ -56,7 +56,10 @@ in **Settings → Your programme**, so any day can be reassigned.
   offer **Undo**. Rest length can be **overridden per exercise**.
 - **Auto-progression** — hit every rep at the same weight last time and a chip offers the
   next jump (+2.5 kg upper, +5 kg lower), applied to all working sets in one tap.
-  "Repeat last" refills an exercise from your previous session.
+  Exercises can carry a **rep range** (`8–12`) instead of a fixed target: you add reps
+  week to week, and the weight jump is only offered once every set reaches the top of
+  the range, dropping you back to the bottom. "Repeat last" refills an exercise from
+  your previous session.
 - **Exercise detail** — tap any exercise name for its full history, volume and estimated
   1RM trend charts, its PR, and **every note you've written against it**.
 - **Your programme** — the weekly split is editable (tap any day to cycle
@@ -128,6 +131,29 @@ all data lives in `localStorage` on the device. It asks the browser for persiste
 and prompts for a backup every 10 workouts. There's no backend, so use
 **Settings → Export backup** (JSON or CSV) to move data between devices. Installable to
 the home screen via the web app manifest.
+
+Backups carry `app` and `format` fields and are **validated on import** — a truncated
+download, another app's JSON, or a file from a newer build is refused with a specific
+reason rather than silently replacing your log.
+
+If a write ever fails — storage full, or private browsing — a red banner says so and
+offers an immediate export. Failing silently would be the worst outcome for a training
+log: the app would keep working and none of it would survive a reload.
+
+When a new version has downloaded, a banner offers a reload. The service worker no
+longer calls `skipWaiting()` on install, so an update never takes over mid-session; it
+waits for you to accept it.
+
+**A note on volume:** working sets only. Warm-ups used to be counted, which inflated
+total volume, weekly volume and muscle-group balance — expect those numbers to read
+lower, and more accurately, than they used to.
+
+## Accessibility
+
+Every control has an accessible name, including the icon-only steppers, calendar arrows
+and programme editor buttons. Focus rings are drawn with `:focus-visible` (so they stay
+out of the way of touch and mouse), and `prefers-reduced-motion` disables the pop, ring
+and slide animations.
 
 ## Files
 

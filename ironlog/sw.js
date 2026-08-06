@@ -1,7 +1,7 @@
 /* IronLog — offline service worker.
    The app is fully self-contained (single index.html + icons). We cache the
    shell and assets so the app works with no network. Bump CACHE on release. */
-const CACHE = "ironlog-v9";
+const CACHE = "ironlog-v10";
 const ASSETS = [
   "./",
   "./index.html",
@@ -14,8 +14,11 @@ const ASSETS = [
   "./favicon-32.png"
 ];
 
+/* No skipWaiting here on purpose. A new worker taking over mid-session would
+   leave the open page running old JS against a new cache; instead we wait, the
+   page notices us and offers a reload, and only then do we take over. */
 self.addEventListener("install", e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
 });
 
 self.addEventListener("activate", e => {
@@ -37,6 +40,7 @@ function clearRestAlarm(){ if (restAlarm){ clearTimeout(restAlarm); restAlarm = 
 
 self.addEventListener("message", e => {
   const d = e.data || {};
+  if (d.type === "skip-waiting"){ self.skipWaiting(); return; }
   if (d.type === "cancel-rest"){ clearRestAlarm(); return; }
   if (d.type !== "schedule-rest") return;
   clearRestAlarm();
