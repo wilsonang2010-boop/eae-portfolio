@@ -885,6 +885,10 @@ body.resting.timer-mini .app{
    ============================================================ */
 
 /* ---------- Constants ---------- */
+/* Kept in step with the service worker cache name, so Settings can show which
+   build is actually running — updates now wait for you to accept them, and
+   "did the fix land?" is otherwise unanswerable from the phone. */
+const APP_BUILD = "v15";
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 // Indexed by Date.getDay(): Sun..Sat
 const SCHEDULE = ["Legs","Push","Pull","Legs","Push","Pull","Rest"];
@@ -3103,6 +3107,7 @@ function renderSettings(){
       <div class="set-row" id="exportRow"><div><div class="lab">Export backup</div><div class="desc">Save all data as a file</div></div><div class="ctl"><span class="link">Export</span></div></div>
       <div class="set-row" id="csvRow"><div><div class="lab">Export CSV</div><div class="desc">Every set, for a spreadsheet</div></div><div class="ctl"><span class="link">CSV</span></div></div>
       <div class="set-row" id="importRow"><div><div class="lab">Import backup</div><div class="desc">Restore from a file</div></div><div class="ctl"><span class="link">Import</span></div></div>
+      <div class="set-row" id="verRow"><div><div class="lab">Version</div><div class="desc">Tap to check for an update</div></div><div class="ctl"><span class="link">${APP_BUILD}</span></div></div>
       <div class="set-row" id="resetRow"><div><div class="lab" style="color:var(--danger)">Reset all data</div><div class="desc">Delete history &amp; settings</div></div><div class="ctl"><span class="link" style="color:var(--danger)">Reset</span></div></div>
     </div>
 
@@ -3171,6 +3176,15 @@ function renderSettings(){
   $("#csvRow").onclick = exportCSV;
   $("#importRow").onclick = ()=> $("#importFile").click();
   $("#importFile").onchange = importData;
+  $("#verRow").onclick = async ()=>{
+    if (!("serviceWorker" in navigator)){ toast(`Running ${APP_BUILD}`); return; }
+    try{
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (!reg){ toast(`Running ${APP_BUILD}`); return; }
+      await reg.update();
+      toast(reg.waiting ? "Update ready — reload to apply" : `${APP_BUILD} is the latest`);
+    }catch(e){ toast(`Running ${APP_BUILD}`); }
+  };
   $("#resetRow").onclick = ()=>{
     openSheet(`<h3 class="sh-title">Reset everything?</h3><p class="sh-sub">This permanently deletes your workout history and settings on this device.</p>
       <button class="btn" style="background:var(--danger);border-color:var(--danger);color:#fff;margin-bottom:10px" id="resetYes">Delete all data</button>
@@ -3427,6 +3441,46 @@ $("#updateReload").onclick = ()=>{
   else location.reload();
 };
 $("#storageExport").onclick = exportData;
+
+/* Double-tap zoom, the reliable way.
+   `touch-action: manipulation` is the standards answer and it's set on
+   everything — but iOS doesn't consistently honour it, so the zoom still
+   fires. Handle the second tap ourselves: the default action for that tap
+   *is* the zoom, so cancelling it stops the zoom. Cancelling also suppresses
+   the synthesised click, so re-issue that or the control stops responding.
+
+   Deliberately narrow: only a second tap that lands quickly, in nearly the
+   same place, with no finger movement between, and not on a form control
+   (those need the browser's own focus handling) or during a pinch. */
+let dtLast = 0, dtX = -99, dtY = -99, dtMoved = false, dtStartX = 0, dtStartY = 0;
+document.addEventListener("touchstart", e=>{
+  const t = e.touches[0];
+  if (t){ dtStartX = t.clientX; dtStartY = t.clientY; dtMoved = false; }
+}, { passive:true });
+document.addEventListener("touchmove", e=>{
+  const t = e.touches[0];
+  if (t && (Math.abs(t.clientX-dtStartX) > 10 || Math.abs(t.clientY-dtStartY) > 10)) dtMoved = true;
+}, { passive:true });
+document.addEventListener("touchend", e=>{
+  if (e.touches.length) return;                     // fingers still down — a pinch
+  const t = e.changedTouches[0];
+  if (!t) return;
+  const now = Date.now();
+  const quick = now - dtLast < 350;
+  const near  = Math.abs(t.clientX - dtX) < 40 && Math.abs(t.clientY - dtY) < 40;
+  const wasDrag = dtMoved;
+  dtLast = now; dtX = t.clientX; dtY = t.clientY;
+  if (!quick || !near || wasDrag) return;
+  const el = document.elementFromPoint(t.clientX, t.clientY);
+  if (!el) return;
+  if (el.closest("input,select,textarea")) return;         // let these focus normally
+  // The point often lands on an inner <svg>/<path>, and SVG elements have no
+  // click() — walk up to the nearest node that does, or the tap is swallowed.
+  let target = el;
+  while (target && typeof target.click !== "function") target = target.parentElement;
+  e.preventDefault();
+  if (target) target.click();
+}, { passive:false });
 
 /* Bottom chrome vs. the viewport.
    `position:fixed` anchors to the *layout* viewport. iOS can move the visible

@@ -180,9 +180,16 @@ zoom) the chrome follows what you can actually see. It's a no-op when they agree
 the lift is capped at half a screen so a bad reading can't push the nav out of sight.
 
 Dropping `maximum-scale` also re-enabled **double-tap to zoom**, which fires constantly
-in an app you tap this much. `touch-action: manipulation` disables it while leaving
-panning and pinch alone — so pinch-zoom stays available for anyone who needs it, and a
-quick second tap on a checkbox just registers as two taps.
+in an app you tap this much. `touch-action: manipulation` is the standards answer and is
+set on everything, but iOS doesn't reliably honour it — so a `touchend` guard handles the
+second tap directly: cancel its default action (which *is* the zoom) and re-issue the
+click so the control still responds. It's deliberately narrow — only a second tap that
+lands within 350 ms, within 40 px, with no finger movement between, outside a form
+control, and not mid-pinch. Pinch-zoom is untouched.
+
+**Settings → Version** shows the running build and taps to check for an update. Since
+updates now wait to be accepted, "am I actually on the new build?" is otherwise
+unanswerable from the phone.
 
 ## Accessibility
 
