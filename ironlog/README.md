@@ -45,6 +45,8 @@ in **Settings → Your programme**, so any day can be reassigned.
   The finish alarm is queued on the audio clock up front, so it **still sounds with the
   app backgrounded or the phone locked** — see
   [Alarm when the app isn't in front](#alarm-when-the-app-isnt-in-front).
+  Open a sheet or the keypad and the panel **condenses to a pill in the top corner**
+  rather than covering it; tap the pill to bring the controls back.
 - **Summary** — sets completed, duration, completion %, and a calorie estimate.
 - **History** — a session joins the log the moment you tick your first set, so the
   calendar, stats and streak stay live mid-workout and an unfinished day is never lost.

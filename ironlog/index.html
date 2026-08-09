@@ -438,6 +438,51 @@ input{font-family:inherit}
 }
 .rt-btns .skip{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 
+/* ---------- Condensed timer ----------
+   The full panel sits above the sheet overlay so it stays visible mid-session,
+   which meant it covered whatever you'd just opened. When a sheet or the
+   keypad is up it shrinks to a pill in the top corner: still counting, out of
+   the way, and tappable to bring the controls back. */
+.rest-timer.mini{
+  left:auto; right:10px; bottom:auto;
+  top:calc(var(--safe-t) + 8px);
+  z-index:98;                       /* above the keypad too, but it's tiny and cornered */
+  transform:translateY(0);
+  transition:top .28s cubic-bezier(.22,1,.36,1), right .28s cubic-bezier(.22,1,.36,1);
+}
+.rest-timer.mini .rest-timer-inner{
+  display:flex;align-items:center;gap:9px;
+  max-width:none;width:auto;padding:7px 13px 7px 8px;
+  border-radius:99px;
+  background:var(--panel-2);border:1px solid var(--accent-line);
+  box-shadow:0 8px 24px -8px var(--shadow-strong);
+}
+.rest-timer.mini .rt-top{margin:0;gap:9px}
+.rest-timer.mini .rt-ring{width:30px;height:30px}
+.rest-timer.mini .rt-ring svg{width:30px;height:30px}
+.rest-timer.mini .rt-ring .time{font-size:0}          /* the ring alone reads as progress */
+.rt-mini-time{display:none}
+.rest-timer.mini .rt-mini-time{
+  display:block;font-size:14.5px;font-weight:800;
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em;white-space:nowrap;
+}
+.rest-timer.mini .rt-label,
+.rest-timer.mini .rt-sub{display:none}
+.rest-timer.mini .rt-adjust,
+.rest-timer.mini .rt-btns{display:none}
+.rest-timer.mini .rest-timer-inner:active{border-color:var(--accent)}
+/* Only the mini pill is a tap target; the full panel's own buttons stay live. */
+.rest-timer.mini .rest-timer-inner{cursor:pointer}
+
+/* While a rest is running, let content scroll clear of the panel instead of
+   ending underneath it. */
+body.resting .app{
+  padding-bottom:calc(var(--nav-h) + var(--safe-b) + 172px);
+}
+body.resting.timer-mini .app{
+  padding-bottom:calc(var(--nav-h) + var(--safe-b) + 8px);
+}
+
 /* ---------- Bottom nav ---------- */
 .nav{
   position:fixed;left:0;right:0;bottom:var(--vv-bottom,0px);z-index:50;
@@ -765,6 +810,7 @@ input{font-family:inherit}
       <div>
         <div class="rt-label" id="rtTitle">Rest</div>
         <div class="rt-sub" id="rtSub">Recovering…</div>
+        <span class="rt-mini-time" id="rtMiniTime">2:30</span>
       </div>
       <div class="rt-adjust">
         <button id="rtMinus" aria-label="Take 15 seconds off the rest">−15</button>
@@ -1905,6 +1951,7 @@ function openKeypad(opts){
   $("#kpGrid").querySelectorAll("button").forEach(b=> b.onclick = ()=> kpKey(b.dataset.k));
   kpRender();
   $("#kpOverlay").classList.add("show");
+  syncTimerMini();
 }
 function kpRender(){
   const v = kp.buf === "" ? "0" : kp.buf;
@@ -1953,6 +2000,7 @@ function closeKeypad(commit){
   }
   kp = null;
   $("#kpOverlay").classList.remove("show");
+  syncTimerMini();
 }
 $("#kpDone").onclick = ()=> closeKeypad(true);
 $("#kpOverlay").addEventListener("click", e=>{ if (e.target.id === "kpOverlay") closeKeypad(true); });
@@ -1990,6 +2038,8 @@ function startRest(exerciseName){
   $("#rtTitle").textContent = "Rest";
   $("#rtSub").textContent = exerciseName ? `After ${exerciseName}` : "Recovering…";
   $("#restTimer").classList.add("show");
+  document.body.classList.add("resting");
+  syncTimerMini();
   $("#rtPause").textContent = "Pause";
   tickRender();
   startLoop();
@@ -2071,6 +2121,7 @@ function restoreTimer(){
     timer.endAt = s.endAt; timer.remaining = rem; timer.running = true;
     $("#rtPause").textContent = "Pause";
     $("#restTimer").classList.add("show");
+    document.body.classList.add("resting"); syncTimerMini();
     tickRender(); startLoop(); acquireWake();
     persistTimer();                     // re-arms the background alarm too
   } else {
@@ -2079,6 +2130,7 @@ function restoreTimer(){
     timer.running = false;
     $("#rtPause").textContent = "Resume";
     $("#restTimer").classList.add("show");
+    document.body.classList.add("resting"); syncTimerMini();
     tickRender();
   }
 }
@@ -2095,6 +2147,7 @@ function missedRest(endAt){
     : `Rest finished ${Math.round(ago/60)} min ago`;
   $("#rtTitle").textContent = "Rest done";
   $("#restTimer").classList.add("show");
+  document.body.classList.add("resting"); syncTimerMini();
   tickRender();
   cancelRestAlarm();
   setTimeout(()=>{ if (timer.finished) hideRest(); }, 4000);
@@ -2149,9 +2202,28 @@ function tick(){
   }
   if (rem <= 0) finishRest();
 }
+/* The full panel deliberately floats above the sheet overlay so a rest stays
+   visible while you edit — but that meant it sat on top of whatever you'd just
+   opened. Condense it to a corner pill instead of hiding it: still counting,
+   still tappable, no longer in the way. */
+let timerMiniPinned = false;      // user tapped the pill open while a sheet is up
+function setTimerMini(on){
+  if (on) timerMiniPinned = false;         // a newly opened surface re-condenses it
+  else if (timerMiniPinned) return;
+  document.getElementById("restTimer").classList.toggle("mini", !!on);
+  document.body.classList.toggle("timer-mini", !!on);
+}
+function anySurfaceOpen(){
+  const ov = $("#overlay"), kp = $("#kpOverlay");
+  return !!(ov && ov.classList.contains("show")) || !!(kp && kp.classList.contains("show"));
+}
+function syncTimerMini(){ setTimerMini(anySurfaceOpen()); }
+
 function tickRender(){
   const m = Math.floor(timer.remaining/60), s = timer.remaining%60;
-  $("#rtTime").textContent = `${m}:${String(s).padStart(2,"0")}`;
+  const txt = `${m}:${String(s).padStart(2,"0")}`;
+  $("#rtTime").textContent = txt;
+  $("#rtMiniTime").textContent = txt;
   const frac = timer.total ? timer.remaining/timer.total : 0;
   $("#rtArc").style.strokeDashoffset = (RT_CIRC * (1 - frac)).toFixed(1);
 }
@@ -2176,6 +2248,9 @@ function finishRest(){
 }
 function hideRest(){
   $("#restTimer").classList.remove("show");
+  $("#restTimer").classList.remove("mini");
+  document.body.classList.remove("resting","timer-mini");
+  timerMiniPinned = false;
   stopLoop();
   timer.running = false;
   timer.remaining = 0;
@@ -2226,6 +2301,15 @@ document.addEventListener("visibilitychange", ()=>{
   if (timer.running){ tick(); startLoop(); acquireWake(); }
 });
 window.addEventListener("pagehide", persistTimer);
+/* Tapping the pill restores the full controls. It stays open until the next
+   surface opens, so you can hit Skip or ±15 without dismissing your sheet. */
+$("#restTimer").addEventListener("click", e=>{
+  if (!$("#restTimer").classList.contains("mini")) return;
+  e.stopPropagation();
+  timerMiniPinned = true;
+  $("#restTimer").classList.remove("mini");
+  document.body.classList.remove("timer-mini");
+});
 $("#rtPause").onclick = pauseRest;
 $("#rtSkip").onclick = hideRest;
 $("#rtRestart").onclick = restartRest;
@@ -3261,8 +3345,9 @@ function openSheet(html, big){
   $("#sheet").innerHTML = html;
   $("#sheet").style.maxHeight = big ? "88vh" : "";
   $("#overlay").classList.add("show");
+  syncTimerMini();
 }
-function closeSheet(){ $("#overlay").classList.remove("show"); }
+function closeSheet(){ $("#overlay").classList.remove("show"); syncTimerMini(); }
 $("#overlay").addEventListener("click", e=>{ if(e.target.id==="overlay") closeSheet(); });
 
 /* Toast — optionally with an Undo action for destructive changes. */
