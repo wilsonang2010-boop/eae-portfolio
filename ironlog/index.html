@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -101,7 +101,7 @@ input{font-family:inherit}
   position:sticky;top:0;z-index:40;
   padding:calc(var(--safe-t) + 14px) 20px 12px;
   background:linear-gradient(180deg,var(--bg) 72%,transparent);
-  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
 }
 .brand{display:flex;align-items:center;gap:10px}
 .brand .logo{
@@ -258,7 +258,7 @@ input{font-family:inherit}
 
 /* ---------- Numeric keypad ---------- */
 .kp-overlay{
-  position:fixed;inset:0;z-index:96;background:rgba(0,0,0,.74);backdrop-filter:blur(6px);
+  position:fixed;inset:0;z-index:96;background:rgba(0,0,0,.74);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
   display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .24s;
 }
 .kp-overlay.show{opacity:1;pointer-events:auto}
@@ -337,7 +337,11 @@ input{font-family:inherit}
 .wnote-btn.has{border-style:solid;color:var(--text);background:var(--panel-2)}
 .sheet-input{
   width:100%;background:var(--panel-2);border:1px solid var(--border);border-radius:13px;
-  padding:13px 14px;color:var(--text);font-size:15px;outline:none;
+  padding:13px 14px;color:var(--text);outline:none;
+  /* Never below 16px: iOS auto-zooms the whole page when you focus a smaller
+     control, and that zoom is what leaves the nav and rest timer stranded
+     partway up the screen. */
+  font-size:16px;
 }
 .sheet-input:focus{border-color:var(--accent)}
 
@@ -404,7 +408,8 @@ input{font-family:inherit}
 /* Sits just above the bottom nav rather than over it, so tabs stay reachable
    during a 2:30 rest. */
 .rest-timer{
-  position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + var(--safe-b));z-index:85;
+  position:fixed;left:0;right:0;z-index:85;
+  bottom:calc(var(--nav-h) + var(--safe-b) + var(--vv-bottom,0px));
   transform:translateY(140%);transition:transform .38s cubic-bezier(.22,1,.36,1);
   pointer-events:none;
 }
@@ -435,9 +440,9 @@ input{font-family:inherit}
 
 /* ---------- Bottom nav ---------- */
 .nav{
-  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  position:fixed;left:0;right:0;bottom:var(--vv-bottom,0px);z-index:50;
   height:calc(var(--nav-h) + var(--safe-b));padding-bottom:var(--safe-b);
-  background:var(--chrome);backdrop-filter:blur(18px);
+  background:var(--chrome);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
   border-top:1px solid var(--border);
   display:flex;max-width:520px;margin:0 auto;
 }
@@ -605,7 +610,7 @@ input{font-family:inherit}
 
 /* ---------- Modal ---------- */
 .overlay{
-  position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.74);backdrop-filter:blur(6px);
+  position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.74);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
   display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .28s;
 }
 .overlay.show{opacity:1;pointer-events:auto}
@@ -644,7 +649,7 @@ input{font-family:inherit}
 .search-row{display:flex;align-items:center;gap:8px;margin:0 2px 10px;position:relative}
 .search-in{
   flex:1;background:var(--panel);border:1px solid var(--border);border-radius:13px;
-  padding:12px 14px;color:var(--text);font-size:15px;outline:none;
+  padding:12px 14px;color:var(--text);font-size:16px;outline:none;   /* see .sheet-input */
 }
 .search-in:focus{border-color:var(--accent)}
 .search-clear{
@@ -3226,9 +3231,39 @@ $("#updateReload").onclick = ()=>{
 };
 $("#storageExport").onclick = exportData;
 
+/* Bottom chrome vs. the viewport.
+   `position:fixed` anchors to the *layout* viewport. iOS can move the visible
+   (visual) viewport away from it — the keyboard shrinks it and doesn't always
+   restore, and any page zoom detaches it outright — which leaves the nav and
+   the rest timer stranded partway up the screen with content still drawn
+   below them. Pinning inputs at 16px stops iOS zooming on focus in the first
+   place; this is the recovery for when the two drift apart anyway. */
+function syncChrome(){
+  const vv = window.visualViewport;
+  if (!vv) return;
+  const layout = document.documentElement.clientHeight;
+  const gap = layout - (vv.height + vv.offsetTop);
+  // Sub-pixel noise is not a drift. And a bad reading should leave the chrome
+  // slightly off rather than shoved off-screen, so cap the lift at half a screen.
+  const pin = Math.abs(gap) < 2 ? 0 : Math.max(0, Math.min(gap, layout * 0.5));
+  document.documentElement.style.setProperty("--vv-bottom", Math.round(pin) + "px");
+}
+if (window.visualViewport){
+  window.visualViewport.addEventListener("resize", syncChrome);
+  window.visualViewport.addEventListener("scroll", syncChrome);
+}
+window.addEventListener("orientationchange", ()=> setTimeout(syncChrome, 300));
+/* Dismissing the keyboard can leave iOS on a shrunken viewport until something
+   forces it to recalculate. */
+document.addEventListener("focusout", ()=> setTimeout(()=>{
+  window.scrollTo(0, window.scrollY);
+  syncChrome();
+}, 150));
+
 /* ---------- Boot ---------- */
 function boot(){
   applyTheme();
+  syncChrome();
   renderHeader();
   // If a stored "current" is stale (different day), file any work it holds into
   // the log before dropping it, then let today rebuild.
