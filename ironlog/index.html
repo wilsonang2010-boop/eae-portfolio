@@ -64,6 +64,19 @@
 }
 :root[data-theme="light"][data-amoled="1"]{ --panel:#ffffff; --panel-2:#f0eef0; --panel-3:#e4e1e5; --border:#dcd8dd; }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* Kill double-tap-to-zoom without killing pinch-zoom. `manipulation` keeps
+   panning and pinch — the accessibility gestures — and drops the non-standard
+   ones, of which double-tap zoom is the only one we'd ever hit. Dropping
+   maximum-scale=1 (which iOS ignored anyway, while Android used it to block
+   pinch entirely) is what let double-tap through, so this is its replacement.
+   Applied to everything rather than just controls: the spec intersects
+   touch-action up the ancestor chain, but older WebKit consults only the
+   touched element, and `manipulation` differs from `auto` in nothing but the
+   gestures we're dropping — panning and pinch are untouched. */
+*{touch-action:manipulation}
+/* A quick second tap on a control shouldn't select its label either. Text the
+   user might actually want to copy — notes, numbers, headings — is left alone. */
+button,.nav,.set-label,.rt-label,.tab{-webkit-user-select:none;user-select:none}
 /* An author `display` rule beats the UA stylesheet's [hidden], so anything
    given display:flex/grid stays on screen while "hidden". Put it back. */
 [hidden]{display:none!important}

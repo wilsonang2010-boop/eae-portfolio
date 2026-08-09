@@ -179,6 +179,11 @@ As a backstop, `syncChrome()` pins the bottom chrome to `window.visualViewport` 
 zoom) the chrome follows what you can actually see. It's a no-op when they agree, and
 the lift is capped at half a screen so a bad reading can't push the nav out of sight.
 
+Dropping `maximum-scale` also re-enabled **double-tap to zoom**, which fires constantly
+in an app you tap this much. `touch-action: manipulation` disables it while leaving
+panning and pinch alone — so pinch-zoom stays available for anyone who needs it, and a
+quick second tap on a checkbox just registers as two taps.
+
 ## Accessibility
 
 Every control has an accessible name, including the icon-only steppers, calendar arrows
