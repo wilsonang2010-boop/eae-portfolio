@@ -872,6 +872,9 @@ const DEFAULT_SETTINGS = {
   reminders: false, sound: true, vibrate: true, bodyKg: 70,
   // Which kinds of set auto-start the rest timer. Working sets always do.
   restAfterPlyo: true, restAfterWarmup: false,
+  // Hold an inaudible audio loop during a rest so the finish alarm still
+  // sounds with the app in the background or the phone locked.
+  bgAlarm: true,
   // Per-exercise rest overrides, keyed by exercise name: { "Pec Fly": 90 }
   exRest: {},
   barKg: 20, plates: [20,15,10,5,2.5,1.25], showPlates: true,
@@ -2014,9 +2017,16 @@ function persistTimer(){
   } else {
     try{ localStorage.removeItem(K_TIMER); }catch(e){}
   }
-  // Every timer state change routes through here, so the background alarm
-  // below stays in step with start / pause / adjust / restart / skip.
-  if (timer.running) scheduleRestAlarm(); else cancelRestAlarm();
+  // Every timer state change routes through here, so both background alarms
+  // stay in step with start / pause / adjust / restart / skip.
+  if (timer.running){
+    scheduleRestAlarm();
+    scheduleAlarm((timer.endAt - Date.now())/1000);
+  } else {
+    cancelRestAlarm();
+    cancelAlarm();
+    stopKeepAlive();
+  }
 }
 
 /* Our own setInterval/setTimeout get throttled — and on a locked phone frozen
@@ -2150,9 +2160,12 @@ function finishRest(){
   timer.running = false;
   timer.finished = true;
   timer.remaining = 0;
+  // If the alarm was armed, its tones have already sounded off the audio clock
+  // — this handler is just catching up. Beeping again would double it.
+  const alarmSounded = alarmArmed;
   tickRender();
   persistTimer();
-  beep();
+  if (!alarmSounded) beep();
   if (settings.vibrate && navigator.vibrate) navigator.vibrate([120,80,120,80,200]);
   // If you're looking at the app you've already had the beep — make sure the
   // background alarm doesn't leave a banner behind for a rest you watched end.
@@ -2223,12 +2236,87 @@ $("#manualTimer").onclick = ()=> startRest("");
 
 /* Beep via WebAudio (no asset needed). */
 let audioCtx = null;
+function ensureCtx(){
+  audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+
+/* ---------- Background alarm ----------
+   The finish sound used to be played when JS noticed the countdown had hit
+   zero — which is precisely what stops happening once the app isn't in front.
+   Instead the whole alarm is scheduled on the audio clock the moment the rest
+   starts. Web Audio renders on its own thread and keeps that schedule while
+   the page is throttled or frozen, so the beep lands on time with the phone
+   locked or another app open.
+
+   Two things make that hold on iOS: the context has to be created from a tap
+   (startRest always is), and something has to be audibly playing or iOS
+   suspends the context and the schedule with it — hence the near-silent
+   keep-alive loop below. */
+let alarmNodes = [];
+let keepAlive = null;
+let alarmArmed = false;
+
+function startKeepAlive(){
+  if (keepAlive) return;
+  const ctx = ensureCtx();
+  // A digitally-silent buffer reads as "nothing playing" and gets suspended,
+  // so this is inaudible rather than silent.
+  const buf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+  const ch = buf.getChannelData(0);
+  for (let i=0; i<ch.length; i++) ch[i] = (i & 1 ? 1 : -1) * 1e-4;
+  const src = ctx.createBufferSource(), g = ctx.createGain();
+  src.buffer = buf; src.loop = true;
+  g.gain.value = 0.0015;
+  src.connect(g); g.connect(ctx.destination);
+  try{ src.start(); }catch(e){}
+  keepAlive = { src, g };
+}
+function stopKeepAlive(){
+  if (!keepAlive) return;
+  try{ keepAlive.src.stop(); }catch(e){}
+  try{ keepAlive.src.disconnect(); keepAlive.g.disconnect(); }catch(e){}
+  keepAlive = null;
+}
+function cancelAlarm(){
+  const now = audioCtx ? audioCtx.currentTime : Infinity;
+  alarmNodes.forEach(n=>{
+    // Never cut off a tone that's already sounding — only unschedule future ones.
+    if (n._at > now){ try{ n.stop(); n.disconnect(); }catch(e){} }
+  });
+  alarmNodes = [];
+  alarmArmed = false;
+}
+/* Schedule the finish tones `secs` from now, on the audio clock. */
+function scheduleAlarm(secs){
+  cancelAlarm();
+  if (!settings.sound || !settings.bgAlarm || !(secs > 0)) return;
+  try{
+    const ctx = ensureCtx();
+    startKeepAlive();
+    const at = ctx.currentTime + secs;
+    [880, 1174, 1568, 1174, 1568].forEach((f,i)=>{
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = "sine"; o.frequency.value = f;
+      const t0 = at + i*0.18;
+      g.gain.setValueAtTime(0, t0);
+      g.gain.linearRampToValueAtTime(0.35, t0+0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, t0+0.26);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(t0); o.stop(t0+0.28);
+      o._at = t0;
+      alarmNodes.push(o);
+    });
+    alarmArmed = true;
+  }catch(e){ alarmArmed = false; }
+}
+
 // Single short tick for the 3-2-1 countdown.
 function cue(){
   if (!settings.sound) return;
   try{
-    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
-    if (audioCtx.state==="suspended") audioCtx.resume();
+    ensureCtx();
     const t0 = audioCtx.currentTime;
     const o = audioCtx.createOscillator(), g = audioCtx.createGain();
     o.type="sine"; o.frequency.value=660;
@@ -2242,8 +2330,7 @@ function cue(){
 function beep(){
   if (!settings.sound) return;
   try{
-    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
-    if (audioCtx.state==="suspended") audioCtx.resume();
+    ensureCtx();
     const now = audioCtx.currentTime;
     [880, 1174, 1568].forEach((f,i)=>{
       const o = audioCtx.createOscillator(), g = audioCtx.createGain();
@@ -2899,6 +2986,13 @@ function renderSettings(){
         <div class="ctl"><button class="switch${settings.sound?" on":""}" id="soundSw" role="switch"></button></div>
       </div>
       <div class="set-row">
+        <div><div class="lab">Alarm when app is closed</div>
+             <div class="desc">Keeps an inaudible audio channel open during a rest so the
+             beep still fires with the phone locked. Costs a little battery, and may take
+             over from music you're playing.</div></div>
+        <div class="ctl"><button class="switch${settings.bgAlarm?" on":""}" id="bgSw" role="switch" aria-checked="${!!settings.bgAlarm}"></button></div>
+      </div>
+      <div class="set-row">
         <div><div class="lab">Vibration</div><div class="desc">Haptic feedback</div></div>
         <div class="ctl"><button class="switch${settings.vibrate?" on":""}" id="vibSw" role="switch"></button></div>
       </div>
@@ -2968,6 +3062,11 @@ function renderSettings(){
   // Switches
   $("#amoledSw").onclick = ()=>{ settings.amoled=!settings.amoled; saveSettings(); applyTheme(); renderSettings(); };
   $("#soundSw").onclick  = ()=>{ settings.sound=!settings.sound; saveSettings(); renderSettings(); if(settings.sound) beep(); };
+  $("#bgSw").onclick     = ()=>{
+    settings.bgAlarm = !settings.bgAlarm; saveSettings(); renderSettings();
+    if (!settings.bgAlarm){ cancelAlarm(); stopKeepAlive(); }
+    else if (timer.running) scheduleAlarm((timer.endAt - Date.now())/1000);
+  };
   $("#vibSw").onclick    = ()=>{ settings.vibrate=!settings.vibrate; saveSettings(); renderSettings(); if(settings.vibrate&&navigator.vibrate)navigator.vibrate(40); };
   $("#remSw").onclick    = toggleReminders;
   // Data

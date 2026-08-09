@@ -42,8 +42,9 @@ in **Settings → Your programme**, so any day can be reassigned.
   reopening picks it up at the right second, and tells you if it ran out while you were
   away. It holds a screen wake lock while running. Working sets always trigger it;
   plyometrics (on by default) and warm-ups (off by default) are toggleable in Settings.
-  See [Background notifications](#background-notifications) for what does and doesn't
-  reach you when the app isn't in front.
+  The finish alarm is queued on the audio clock up front, so it **still sounds with the
+  app backgrounded or the phone locked** — see
+  [Alarm when the app isn't in front](#alarm-when-the-app-isnt-in-front).
 - **Summary** — sets completed, duration, completion %, and a calorie estimate.
 - **History** — a session joins the log the moment you tick your first set, so the
   calendar, stats and streak stay live mid-workout and an unfinished day is never lost.
@@ -104,25 +105,36 @@ headless Chromium against a year of training (313 sessions, 421 KB of history):
 | Render history | 32.4 ms | **11.0 ms** |
 | localStorage writes per 30 taps | 30 | **1** |
 
-## Background notifications
+## Alarm when the app isn't in front
 
-Whether the rest timer can reach you depends on how far into the background the app is,
-and the honest answer is "usually, but not guaranteed":
+The finish sound used to be played at the moment JS noticed the countdown had hit zero
+— which is exactly what stops happening once the app isn't in front. Backgrounded, the
+beep simply never came.
+
+The whole alarm is now scheduled on the **audio clock** when the rest *starts*. Web Audio
+renders on its own thread and keeps that schedule while the page is throttled or frozen,
+so the tones land on time with the phone locked or another app open. Two things make it
+hold: the context is created from the tap that starts the rest, and an inaudible
+keep-alive loop runs for the duration, because iOS suspends a context with nothing
+playing — and the pending schedule with it.
 
 | situation | what you get |
 |---|---|
 | App in front | Beep, vibration, 3-2-1 countdown cue |
-| Switched tabs / app backgrounded but alive | Notification, raised by the service worker |
-| Phone locked, app frozen by the OS | Best-effort — the worker raises it if the OS kept it alive |
-| App fully closed / evicted | No notification, but reopening says *"Rest finished N min ago"* |
+| Backgrounded, or phone locked | **Alarm sounds on time** (audio clock), plus a notification |
+| App force-quit (swiped away) | Nothing — the process is gone. Reopening says *"Rest finished N min ago"* |
 
-The countdown deadline is handed to the service worker so the alarm doesn't depend on the
-page staying awake — the page's own `setTimeout` is throttled, and on a locked phone
-frozen outright. The OS can still evict the worker, and iOS reliably does, so a genuinely
-closed PWA can't be woken without a push server. IronLog has no backend by design, so
-instead of pretending, it catches up on reopen and tells you the rest already ended.
+Toggle it under **Settings → Alarm when app is closed**. It costs a little battery and
+can take over the audio session from music you're playing, which is why it's a switch
+rather than unconditional.
 
-Permission is requested the first time you actually start a rest — never on load.
+A notification banner is still best-effort: the deadline is handed to the service worker
+too, but the OS can evict the worker, and a genuinely closed PWA can't be woken without
+a push server. The audio alarm is what makes the timer dependable — it doesn't depend on
+our code running at the right moment, only on the sound already being queued.
+
+Notification permission is requested the first time you actually start a rest — never on
+load.
 
 ## Offline & data
 
