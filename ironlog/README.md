@@ -148,6 +148,23 @@ waits for you to accept it.
 total volume, weekly volume and muscle-group balance — expect those numbers to read
 lower, and more accurately, than they used to.
 
+## iOS viewport
+
+`position:fixed` anchors to the *layout* viewport, and iOS can move the visible
+viewport away from it — which strands the bottom nav and rest timer partway up the
+screen with page content still drawn below them.
+
+The main trigger was our own: focusable controls were `15px`, and iOS auto-zooms the
+page whenever you focus something under `16px`. That zoom detaches the viewport and
+persists after the keyboard closes. `maximum-scale=1` is supposed to prevent it but
+iOS has ignored that since iOS 10 — while Android honours it, which just blocks
+legitimate pinch-zoom. So every control is now `16px` and `maximum-scale` is gone.
+
+As a backstop, `syncChrome()` pins the bottom chrome to `window.visualViewport` via a
+`--vv-bottom` variable, so if the two viewports drift apart anyway (keyboard, manual
+zoom) the chrome follows what you can actually see. It's a no-op when they agree, and
+the lift is capped at half a screen so a bad reading can't push the nav out of sight.
+
 ## Accessibility
 
 Every control has an accessible name, including the icon-only steppers, calendar arrows
