@@ -80,8 +80,22 @@ button,.nav,.set-label,.rt-label,.tab{-webkit-user-select:none;user-select:none}
 /* An author `display` rule beats the UA stylesheet's [hidden], so anything
    given display:flex/grid stays on screen while "hidden". Put it back. */
 [hidden]{display:none!important}
-html,body{margin:0;height:100%}
+html{margin:0;height:100%}
+/* App shell. The bottom chrome used to be position:fixed, which anchors to the
+   layout viewport — and iOS moves the visible viewport away from that (stale
+   post-keyboard values, zoom), stranding the nav and timer mid-screen with
+   content still drawn below them. Patching that with viewport maths made it
+   worse. Here the shell is exactly one screen tall, the content scrolls inside
+   it, and the nav is the last flex item: there is no arrangement in which page
+   content can appear below the nav. */
 body{
+  margin:0;
+  height:100vh;
+  height:100dvh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  position:relative;
   background:var(--bg);
   color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -105,8 +119,12 @@ input{font-family:inherit}
 }
 ::selection{background:var(--accent-ghost)}
 .app{
-  max-width:520px;margin:0 auto;min-height:100%;
-  padding-bottom:calc(var(--nav-h) + var(--safe-b) + 8px);
+  flex:1 1 auto;min-height:0;                 /* the scroll region */
+  width:100%;max-width:520px;margin:0 auto;
+  overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+  padding-bottom:8px;
 }
 
 /* ---------- Top bar ---------- */
@@ -427,7 +445,7 @@ input{font-family:inherit}
 /* Sits just above the bottom nav rather than over it, so tabs stay reachable
    during a 2:30 rest. */
 .rest-timer{
-  position:fixed;left:0;right:0;z-index:85;
+  position:absolute;left:0;right:0;z-index:85;
   bottom:calc(var(--nav-h) + var(--safe-b) + var(--vv-bottom,0px));
   transform:translateY(140%);transition:transform .38s cubic-bezier(.22,1,.36,1);
   pointer-events:none;
@@ -495,16 +513,12 @@ input{font-family:inherit}
 
 /* While a rest is running, let content scroll clear of the panel instead of
    ending underneath it. */
-body.resting .app{
-  padding-bottom:calc(var(--nav-h) + var(--safe-b) + 172px);
-}
-body.resting.timer-mini .app{
-  padding-bottom:calc(var(--nav-h) + var(--safe-b) + 8px);
-}
+body.resting .app{ padding-bottom:180px }
+body.resting.timer-mini .app{ padding-bottom:8px }
 
 /* ---------- Bottom nav ---------- */
 .nav{
-  position:fixed;left:0;right:0;bottom:var(--vv-bottom,0px);z-index:50;
+  flex:0 0 auto;z-index:50;width:100%;
   height:calc(var(--nav-h) + var(--safe-b));padding-bottom:var(--safe-b);
   background:var(--chrome);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
   border-top:1px solid var(--border);
@@ -699,7 +713,7 @@ body.resting.timer-mini .app{
 
 /* ---------- Toast ---------- */
 .toast{
-  position:fixed;left:50%;bottom:calc(var(--nav-h) + var(--safe-b) + 18px);transform:translate(-50%,20px);
+  position:absolute;left:50%;bottom:calc(var(--nav-h) + var(--safe-b) + 18px);transform:translate(-50%,20px);
   background:var(--panel-3);border:1px solid var(--border);color:var(--text);
   padding:12px 18px;border-radius:14px;font-size:14px;font-weight:600;z-index:90;
   opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 12px 40px -12px rgba(0,0,0,.7);
@@ -894,7 +908,7 @@ body.resting.timer-mini .app{
 /* Kept in step with the service worker cache name, so Settings can show which
    build is actually running — updates now wait for you to accept them, and
    "did the fix land?" is otherwise unanswerable from the phone. */
-const APP_BUILD = "v16";
+const APP_BUILD = "v17";
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 // Indexed by Date.getDay(): Sun..Sat
 const SCHEDULE = ["Legs","Push","Pull","Legs","Push","Pull","Rest"];
@@ -3541,7 +3555,7 @@ function go(tab){
   document.querySelectorAll(".view").forEach(v=> v.hidden = true);
   $("#view-"+tab).hidden = false;
   document.querySelectorAll(".nav button").forEach(b=> b.classList.toggle("active", b.dataset.tab===tab));
-  window.scrollTo(0,0);
+  const sc = $(".app"); if (sc) sc.scrollTop = 0;
   if (tab!=="today"){ clearInterval(clockIv); clockIv=null; renderHeader(); }
   if (tab==="today") renderToday();
   else if (tab==="history") renderHistory();
@@ -3674,12 +3688,20 @@ document.addEventListener("touchend", e=>{
    place; this is the recovery for when the two drift apart anyway. */
 function syncChrome(){
   const vv = window.visualViewport;
-  if (!vv) return;
+  const el = document.activeElement;
+  const typing = !!(vv && el && el.matches && el.matches("input,textarea,select"));
+  /* Only lift the timer while a field is actually focused — that is the one
+     case where something really is covering the bottom of the screen. iOS
+     keeps reporting a shrunken visual viewport long after the keyboard has
+     gone, and trusting that unconditionally is what pushed the chrome into
+     the middle of the screen. Anything else pins it back to the bottom. */
+  if (!typing){
+    document.documentElement.style.setProperty("--vv-bottom", "0px");
+    return;
+  }
   const layout = document.documentElement.clientHeight;
   const gap = layout - (vv.height + vv.offsetTop);
-  // Sub-pixel noise is not a drift. And a bad reading should leave the chrome
-  // slightly off rather than shoved off-screen, so cap the lift at half a screen.
-  const pin = Math.abs(gap) < 2 ? 0 : Math.max(0, Math.min(gap, layout * 0.5));
+  const pin = gap > 2 ? Math.min(gap, layout * 0.5) : 0;
   document.documentElement.style.setProperty("--vv-bottom", Math.round(pin) + "px");
 }
 if (window.visualViewport){
@@ -3689,10 +3711,8 @@ if (window.visualViewport){
 window.addEventListener("orientationchange", ()=> setTimeout(syncChrome, 300));
 /* Dismissing the keyboard can leave iOS on a shrunken viewport until something
    forces it to recalculate. */
-document.addEventListener("focusout", ()=> setTimeout(()=>{
-  window.scrollTo(0, window.scrollY);
-  syncChrome();
-}, 150));
+document.addEventListener("focusout", ()=> setTimeout(syncChrome, 150));
+document.addEventListener("focusin", ()=> setTimeout(syncChrome, 150));
 
 /* ---------- Boot ---------- */
 function boot(){
