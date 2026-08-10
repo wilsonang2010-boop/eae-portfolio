@@ -52,7 +52,9 @@ in **Settings → Your programme**, so any day can be reassigned.
   calendar, stats and streak stay live mid-workout and an unfinished day is never lost.
   Month calendar with completed days, a recent list, **search and Push/Pull/Legs
   filters**, and tap-to-view/edit past sessions.
-- **Session flexibility** — add or remove sets, add a warm-up, skip an exercise when a
+- **Session flexibility** — **add an exercise to today's session** (pick from everything
+  you've logged before, or define a new one), optionally keeping it in that day's
+  programme. Add or remove sets, add a warm-up, skip an exercise when a
   machine is taken, and swap today's split (do Push on a Tuesday, or train on a rest day).
   Tapped Finish by mistake? **Resume** from the summary sheet or the banner on Today —
   the clock and Finish button come back and the log entry stays put. Destructive actions
@@ -129,6 +131,15 @@ playing — and the pending schedule with it.
 Toggle it under **Settings → Alarm when app is closed**. It costs a little battery and
 can take over the audio session from music you're playing, which is why it's a switch
 rather than unconditional.
+
+Audio can only be unlocked by a genuine user gesture, and the app no longer cares *which*
+one: any trusted tap unlocks the context and re-arms a running rest whose alarm failed to
+arm. That makes every interaction a repair. `alarmArmed` now reflects whether the context
+is actually running, so a suspended context can't masquerade as a live alarm and silence
+the fallback beep too.
+
+**Settings → Test the alarm** shows the live audio and notification state and fires a
+3-second alarm, so it's verifiable on the device in seconds rather than mid-workout.
 
 A notification banner is still best-effort: the deadline is handed to the service worker
 too, but the OS can evict the worker, and a genuinely closed PWA can't be woken without
