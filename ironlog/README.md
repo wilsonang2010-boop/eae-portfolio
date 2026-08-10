@@ -173,34 +173,44 @@ waits for you to accept it.
 total volume, weekly volume and muscle-group balance — expect those numbers to read
 lower, and more accurately, than they used to.
 
-## iOS viewport
+## Layout: why the nav isn't `position: fixed`
 
-`position:fixed` anchors to the *layout* viewport, and iOS can move the visible
-viewport away from it — which strands the bottom nav and rest timer partway up the
-screen with page content still drawn below them.
+The bottom nav and rest timer were `position: fixed`, which anchors to the *layout*
+viewport. iOS routinely moves the visible viewport away from that — it keeps reporting a
+shrunken visual viewport long after the keyboard has gone, and any page zoom detaches it
+outright. The chrome then rendered partway up the screen with workout content still drawn
+below it. Trying to correct for it with `visualViewport` maths made it worse: a stale
+reading was taken at face value and the nav was *actively* lifted into the middle.
 
-The main trigger was our own: focusable controls were `15px`, and iOS auto-zooms the
-page whenever you focus something under `16px`. That zoom detaches the viewport and
-persists after the keyboard closes. `maximum-scale=1` is supposed to prevent it but
-iOS has ignored that since iOS 10 — while Android honours it, which just blocks
-legitimate pinch-zoom. So every control is now `16px` and `maximum-scale` is gone.
+So the layout no longer allows it. `body` is a flex column exactly one screen tall
+(`100dvh`, `overflow:hidden`), `.app` is the scroll region inside it, and the nav is the
+last flex item in normal flow. There is no arrangement in which page content can appear
+below the nav, whatever the viewport reports. The rest timer is `position:absolute`
+against the shell rather than the viewport.
 
-As a backstop, `syncChrome()` pins the bottom chrome to `window.visualViewport` via a
-`--vv-bottom` variable, so if the two viewports drift apart anyway (keyboard, manual
-zoom) the chrome follows what you can actually see. It's a no-op when they agree, and
-the lift is capped at half a screen so a bad reading can't push the nav out of sight.
+`--vv-bottom` still lifts the timer, but only while a field is genuinely focused — the
+one case where something really is covering the bottom of the screen. It's released the
+moment focus leaves.
 
-Dropping `maximum-scale` also re-enabled **double-tap to zoom**, which fires constantly
-in an app you tap this much. `touch-action: manipulation` is the standards answer and is
-set on everything, but iOS doesn't reliably honour it — so a `touchend` guard handles the
-second tap directly: cancel its default action (which *is* the zoom) and re-issue the
-click so the control still responds. It's deliberately narrow — only a second tap that
-lands within 350 ms, within 40 px, with no finger movement between, outside a form
-control, and not mid-pinch. Pinch-zoom is untouched.
+`shell.js` asserts 23 invariants around this, including under an injected stale viewport
+of the kind that caused the original reports: the nav flush with the screen bottom, and
+nothing rendered below it, on every tab, scrolled, and mid-rest.
+
+Focusable controls are all `16px` — iOS auto-zooms the page when you focus anything
+smaller, which was one way the viewport got detached in the first place. `maximum-scale`
+is gone (iOS ignored it; Android used it to block pinch-zoom), and double-tap zoom is
+handled separately — see below.
+
+Dropping `maximum-scale` re-enabled **double-tap to zoom**, which fires constantly in an
+app you tap this much. `touch-action: manipulation` is set on everything, but iOS doesn't
+reliably honour it, so a `touchend` guard handles the second tap directly: cancel its
+default action (the zoom) and re-issue the click so the control still responds. Narrow by
+design — only a second tap within 350 ms, within 40 px, with no finger movement between,
+outside a form control, and not mid-pinch.
 
 **Settings → Version** shows the running build and taps to check for an update. Since
-updates now wait to be accepted, "am I actually on the new build?" is otherwise
-unanswerable from the phone.
+updates wait to be accepted, "am I actually on the new build?" is otherwise unanswerable
+from the phone.
 
 ## Accessibility
 
