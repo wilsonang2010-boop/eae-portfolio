@@ -385,6 +385,12 @@ input{font-family:inherit}
 .btn.ghost{background:transparent}
 .btn.small{width:auto;padding:11px 16px;font-size:14px;border-radius:13px}
 .finish-wrap{margin:22px 2px 6px}
+.add-ex-btn{
+  display:block;width:calc(100% - 4px);margin:4px 2px 0;padding:14px;
+  border-radius:var(--radius-sm);border:1px dashed var(--border);
+  background:transparent;color:var(--muted);font-size:14.5px;font-weight:700;
+}
+.add-ex-btn:active{border-color:var(--accent);color:var(--accent)}
 
 /* ---------- Rest / empty states ---------- */
 .rest-card{
@@ -888,7 +894,7 @@ body.resting.timer-mini .app{
 /* Kept in step with the service worker cache name, so Settings can show which
    build is actually running — updates now wait for you to accept them, and
    "did the fix land?" is otherwise unanswerable from the phone. */
-const APP_BUILD = "v15";
+const APP_BUILD = "v16";
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 // Indexed by Date.getDay(): Sun..Sat
 const SCHEDULE = ["Legs","Push","Pull","Legs","Push","Pull","Rest"];
@@ -1456,6 +1462,7 @@ function renderToday(){
       <div class="bar"><span id="progBar" style="width:${t.pct}%"></span></div>
     </div>
     <div id="exList"></div>
+    <button class="add-ex-btn" id="addExBtn">+ Add an exercise</button>
     <div class="finish-wrap">
       <button class="btn primary ${t.done===t.total && t.total>0 ? "ready":""}" id="finishBtn">
         ${finished ? "View Summary" : "Finish Workout"}
@@ -1468,6 +1475,7 @@ function renderToday(){
   $("#wNoteBtn").onclick = ()=> editWorkoutNote(w);
   const res = $("#resumeBtn");
   if (res) res.onclick = ()=> resumeWorkout(w);
+  $("#addExBtn").onclick = ()=> addExerciseToSession(w);
   startSessionClock(w);
 }
 
@@ -1490,6 +1498,108 @@ function resumeWorkout(w){
     settings.workoutsSinceBackup = (settings.workoutsSinceBackup||0) + 1;
     saveSettings(); saveCurrentOrHistory(w); renderToday();
   });
+}
+
+/* Add a movement to the session you're in the middle of.
+   The programme editor changes the template for every future workout, which is
+   the wrong tool when a machine is free today or you just fancy some extra
+   volume. This adds it to today only, with the option to keep it. Anything
+   you've already logged is untouched — the exercise is appended. */
+function addExerciseToSession(w){
+  // Everything you've ever logged, minus what's already in today's session.
+  const inSession = new Set(w.exercises.map(e=> e.name.toLowerCase()));
+  const known = new Map();
+  Object.values(history).forEach(h=> h.exercises.forEach(e=>{
+    if (!inSession.has(e.name.toLowerCase())) known.set(e.name, e.group);
+  }));
+  WORKOUT_TYPES.filter(t=>t!=="Rest").forEach(t=> templateFor(t).forEach(e=>{
+    if (!inSession.has(e.name.toLowerCase())) known.set(e.name, e.group);
+  }));
+  const recent = [...known.keys()].sort().slice(0, 40);
+
+  openSheet(`
+    <h3 class="sh-title">Add an exercise</h3>
+    <p class="sh-sub">Goes into today's ${esc(w.type)} session</p>
+    ${recent.length ? `
+      <div class="eff-label">From your library</div>
+      <div class="chips" id="addExLib">
+        ${recent.map(n=>`<button class="chip" data-n="${esc(n)}" data-g="${esc(known.get(n))}">${esc(n)}</button>`).join("")}
+      </div>
+      <div class="eff-label" style="margin-top:16px">Or something new</div>` : ""}
+    <input class="sheet-input" id="axName" placeholder="Exercise name" maxlength="40">
+    <div class="plan-add">
+      <select class="sheet-input" id="axGroup" aria-label="Muscle group">
+        ${EX_GROUPS.map(g=>`<option value="${g}">${g}</option>`).join("")}
+      </select>
+      <input class="sheet-input" id="axSets" type="number" min="1" max="10" value="3" aria-label="Number of sets">
+      <input class="sheet-input" id="axReps" type="number" min="1" max="50" value="8" aria-label="Reps, or the bottom of the rep range">
+      <input class="sheet-input" id="axRepsMax" type="number" min="1" max="50" placeholder="to" aria-label="Top of the rep range, optional">
+    </div>
+    <div class="plan-hint">sets · reps · optional top of range</div>
+    <div class="plan-flags">
+      <button class="chip" id="axWarm">Warm-up set</button>
+      <button class="chip" id="axBar">Barbell</button>
+      <button class="chip" id="axKeep">Keep in ${esc(w.type)} day</button>
+    </div>
+    <button class="btn primary" id="axAdd" style="margin:14px 0 10px">Add to today</button>
+    <button class="btn ghost" id="axCancel">Cancel</button>`, true);
+
+  const flags = { warmup:false, bar:false, keep:false };
+  const bind = (id,k)=>{ $(id).onclick = ()=>{ flags[k]=!flags[k]; $(id).classList.toggle("on", flags[k]); }; };
+  bind("#axWarm","warmup"); bind("#axBar","bar"); bind("#axKeep","keep");
+
+  const lib = $("#addExLib");
+  if (lib) lib.querySelectorAll(".chip").forEach(b=> b.onclick = ()=>{
+    $("#axName").value = b.dataset.n;
+    const sel = $("#axGroup");
+    if ([...sel.options].some(o=> o.value === b.dataset.g)) sel.value = b.dataset.g;
+    lib.querySelectorAll(".chip").forEach(x=> x.classList.toggle("on", x===b));
+  });
+
+  $("#axAdd").onclick = ()=>{
+    const name = $("#axName").value.trim();
+    if (!name){ toast("Give it a name first"); return; }
+    if (inSession.has(name.toLowerCase())){ toast("Already in today's session"); return; }
+    const reps = Math.max(1, Math.min(50, +$("#axReps").value || 8));
+    const rawMax = +$("#axRepsMax").value;
+    const spec = {
+      group: $("#axGroup").value, name, warmup: flags.warmup,
+      sets: Math.max(1, Math.min(10, +$("#axSets").value || 3)),
+      reps, repMax: (rawMax && rawMax > reps) ? Math.min(50, rawMax) : null,
+      bar: flags.bar, plyo: false,
+    };
+
+    const sets = [];
+    if (spec.warmup) sets.push({ kind:"warmup", done:false, weightKg:null, reps:spec.reps, note:"" });
+    for (let i=0; i<spec.sets; i++) sets.push({ kind:"working", done:false, weightKg:null, reps:spec.reps, note:"" });
+    const ex = { id: Date.now(), name:spec.name, group:spec.group, plyo:false, bar:spec.bar,
+                 reps:spec.reps, repMax:spec.repMax, sets, added:true };
+    // Carry last session's weights over, same as a templated exercise would.
+    const last = lastSessionFor(spec.name, w.date);
+    if (last) ex.sets.forEach((st,i)=>{ const ps = last.ex.sets[i]; if (ps && ps.weightKg!=null) st.weightKg = ps.weightKg; });
+
+    w.exercises.push(ex);
+    if (flags.keep){ editablePlan(w.type).push(spec); saveSettings(); }
+    saveCurrentOrHistory(w);
+    closeSheet();
+    renderToday();
+    toast(flags.keep ? `Added ${name} to today and to ${w.type} day` : `Added ${name} to today`, ()=>{
+      const i = w.exercises.indexOf(ex);
+      if (i > -1) w.exercises.splice(i,1);
+      if (flags.keep){
+        const pl = editablePlan(w.type);
+        const j = pl.findIndex(x=> x.name === spec.name);
+        if (j > -1) pl.splice(j,1);
+        saveSettings();
+      }
+      saveCurrentOrHistory(w); renderToday();
+    });
+    setTimeout(()=>{
+      const cards = document.querySelectorAll("#exList .ex-card");
+      if (cards.length) cards[cards.length-1].scrollIntoView({ block:"center", behavior:"smooth" });
+    }, 60);
+  };
+  $("#axCancel").onclick = closeSheet;
 }
 
 /* Session-level note — "slept badly", "gym packed", etc. */
@@ -2118,11 +2228,23 @@ function cancelRestAlarm(){ swPost({ type:"cancel-rest" }); }
    the rest timer was silently unable to notify at all. Ask the first time a
    rest actually runs; startRest is always reached from a tap, which is what
    iOS requires. */
+/* The "asked" flag used to be set before the request resolved. A prompt needs
+   user activation, so any call that didn't have it — notably the synthetic
+   click the double-tap guard issues — was rejected, and the flag stuck anyway.
+   One failed attempt permanently disabled notifications. Only record it once
+   the browser has actually answered. */
 function ensureNotifyPermission(){
   if (!("Notification" in window)) return;
   if (Notification.permission !== "default" || settings.askedNotify) return;
-  settings.askedNotify = true; saveSettings();
-  try{ const r = Notification.requestPermission(); if (r && r.catch) r.catch(()=>{}); }catch(e){}
+  try{
+    const r = Notification.requestPermission();
+    if (r && typeof r.then === "function"){
+      r.then(()=>{ settings.askedNotify = true; saveSettings(); })
+       .catch(()=>{});                       // no activation — leave it retryable
+    } else {
+      settings.askedNotify = true; saveSettings();   // legacy callback form
+    }
+  }catch(e){}
 }
 function restoreTimer(){
   const s = LS.get(K_TIMER, null);
@@ -2395,6 +2517,10 @@ function scheduleAlarm(secs){
   if (!settings.sound || !settings.bgAlarm || !(secs > 0)) return;
   try{
     const ctx = ensureCtx();
+    // Nodes scheduled on a suspended context never get a clock, so they never
+    // sound. Reporting "armed" there is worse than not arming: finishRest()
+    // trusts the flag and skips the fallback beep, losing the alert entirely.
+    if (ctx.state !== "running") return;
     startKeepAlive();
     const at = ctx.currentTime + secs;
     [880, 1174, 1568, 1174, 1568].forEach((f,i)=>{
@@ -2412,6 +2538,34 @@ function scheduleAlarm(secs){
     alarmArmed = true;
   }catch(e){ alarmArmed = false; }
 }
+
+/* Audio can only be unlocked by a genuine user gesture — and it must not
+   matter *which* one. Tying the unlock to the tap that starts a rest meant any
+   path without user activation left the context suspended and the alarm
+   silent; the double-tap guard's synthetic click did exactly that. Unlock on
+   every trusted interaction instead. resume() on a running context is a no-op,
+   so this stays cheap, and it re-unlocks if iOS suspends us after a call or
+   another app takes the audio session. */
+function unlockAudio(){
+  let ctx;
+  try{ ctx = ensureCtx(); }catch(e){ return; }
+  if (!ctx) return;
+  /* Driven by "is the alarm actually armed?", not by the context state.
+     ensureCtx() resumes as a side effect, so a state check here can read
+     "running" and skip the repair that was the whole point. Anything
+     scheduled while suspended never got a clock, so re-arm whenever a rest is
+     running without a live alarm — which makes any trusted tap a recovery. */
+  const settle = ()=>{
+    if (!timer.running) return;
+    if (!alarmArmed) scheduleAlarm((timer.endAt - Date.now())/1000);
+    ensureNotifyPermission();
+  };
+  if (ctx.state === "running"){ settle(); return; }
+  try{ const r = ctx.resume(); if (r && r.then) r.then(settle).catch(()=>{}); else settle(); }
+  catch(e){ }
+}
+["pointerdown","touchend","click","keydown"].forEach(t=>
+  document.addEventListener(t, e=>{ if (e.isTrusted) unlockAudio(); }, { capture:true, passive:true }));
 
 // Single short tick for the 3-2-1 countdown.
 function cue(){
@@ -3107,6 +3261,10 @@ function renderSettings(){
       <div class="set-row" id="exportRow"><div><div class="lab">Export backup</div><div class="desc">Save all data as a file</div></div><div class="ctl"><span class="link">Export</span></div></div>
       <div class="set-row" id="csvRow"><div><div class="lab">Export CSV</div><div class="desc">Every set, for a spreadsheet</div></div><div class="ctl"><span class="link">CSV</span></div></div>
       <div class="set-row" id="importRow"><div><div class="lab">Import backup</div><div class="desc">Restore from a file</div></div><div class="ctl"><span class="link">Import</span></div></div>
+      <div class="set-row" id="alarmTestRow">
+        <div><div class="lab">Test the alarm</div><div class="desc" id="alarmDiag">—</div></div>
+        <div class="ctl"><span class="link">Test</span></div>
+      </div>
       <div class="set-row" id="verRow"><div><div class="lab">Version</div><div class="desc">Tap to check for an update</div></div><div class="ctl"><span class="link">${APP_BUILD}</span></div></div>
       <div class="set-row" id="resetRow"><div><div class="lab" style="color:var(--danger)">Reset all data</div><div class="desc">Delete history &amp; settings</div></div><div class="ctl"><span class="link" style="color:var(--danger)">Reset</span></div></div>
     </div>
@@ -3176,6 +3334,31 @@ function renderSettings(){
   $("#csvRow").onclick = exportCSV;
   $("#importRow").onclick = ()=> $("#importFile").click();
   $("#importFile").onchange = importData;
+  /* An on-device self-check. The alarm depends on browser state we can't see
+     from here — audio unlocked, permission granted — and the only other way to
+     find out is to be let down mid-workout. */
+  const diag = $("#alarmDiag");
+  const paintDiag = ()=>{
+    if (!diag) return;
+    const ctxState = audioCtx ? audioCtx.state : "not started";
+    const perm = ("Notification" in window) ? Notification.permission : "unsupported";
+    const ok = ctxState === "running";
+    diag.textContent = `Sound ${settings.sound?"on":"off"} · audio ${ctxState}` +
+                       (ok ? "" : " (taps to unlock)") + ` · notifications ${perm}`;
+    diag.style.color = ok ? "" : "var(--amber)";
+  };
+  paintDiag();
+  $("#alarmTestRow").onclick = ()=>{
+    unlockAudio();
+    ensureNotifyPermission();
+    setTimeout(()=>{
+      paintDiag();
+      if (!settings.sound){ toast("Turn timer sound on first"); return; }
+      if (!audioCtx || audioCtx.state !== "running"){ toast("Audio still locked — tap again"); return; }
+      scheduleAlarm(3);
+      toast(alarmArmed ? "Alarm in 3s — lock the phone to test it" : "Could not arm the alarm");
+    }, 120);
+  };
   $("#verRow").onclick = async ()=>{
     if (!("serviceWorker" in navigator)){ toast(`Running ${APP_BUILD}`); return; }
     try{
