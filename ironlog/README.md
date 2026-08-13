@@ -111,43 +111,54 @@ headless Chromium against a year of training (313 sessions, 421 KB of history):
 
 ## Alarm when the app isn't in front
 
-The finish sound used to be played at the moment JS noticed the countdown had hit zero
-— which is exactly what stops happening once the app isn't in front. Backgrounded, the
-beep simply never came.
+### What was actually wrong
 
-The whole alarm is now scheduled on the **audio clock** when the rest *starts*. Web Audio
-renders on its own thread and keeps that schedule while the page is throttled or frozen,
-so the tones land on time with the phone locked or another app open. Two things make it
-hold: the context is created from the tap that starts the rest, and an inaudible
-keep-alive loop runs for the duration, because iOS suspends a context with nothing
-playing — and the pending schedule with it.
+The keep-alive that holds the app awake during a rest was a Web Audio
+`BufferSourceNode`. Chromium keeps a Web Audio graph running in a backgrounded tab, so
+every test passed — **but iOS does not**. Safari suspends a page's `AudioContext` on
+backgrounding unless a *media element* is playing, and a suspended context takes the
+scheduled alarm down with it.
+
+So the background alarm was never working on iOS. The tests were measuring Chromium's
+behaviour and reporting it as a pass, which is why it was "fixed" three times and kept
+coming back. Real bugs were found and fixed each round — a permanently-stuck permission
+flag, an alarm that reported itself armed on a suspended context — but none of them were
+this.
+
+### How it works now
+
+A near-silent looping `<audio>` element plays for the duration of the rest. iOS honours a
+playing media element: it establishes a media session, which keeps the **page itself**
+alive. So the countdown, the alarm, the notification and the beep all simply keep
+running, rather than being resurrected afterwards.
+
+- The hold is taken whenever a rest is running, independently of whether the Web Audio
+  schedule succeeded — that conditional was the bug.
+- The alarm is still queued on the audio clock as well, so it lands precisely.
+- The lock-screen media card reads "IronLog — Rest timer", and pausing from there ends
+  the rest rather than silently stranding it.
+- An interruption (a call, another app taking the session) is detectable, and the next
+  tap re-takes the hold.
 
 | situation | what you get |
 |---|---|
 | App in front | Beep, vibration, 3-2-1 countdown cue |
-| Backgrounded, or phone locked | **Alarm sounds on time** (audio clock), plus a notification |
+| Backgrounded, or phone locked | **Alarm sounds on time**, plus a notification |
 | App force-quit (swiped away) | Nothing — the process is gone. Reopening says *"Rest finished N min ago"* |
 
 Toggle it under **Settings → Alarm when app is closed**. It costs a little battery and
-can take over the audio session from music you're playing, which is why it's a switch
-rather than unconditional.
+holds the audio session, which can interrupt music — hence a switch rather than
+unconditional.
 
-Audio can only be unlocked by a genuine user gesture, and the app no longer cares *which*
-one: any trusted tap unlocks the context and re-arms a running rest whose alarm failed to
-arm. That makes every interaction a repair. `alarmArmed` now reflects whether the context
-is actually running, so a suspended context can't masquerade as a live alarm and silence
-the fallback beep too.
+**Settings → Test the alarm** reports the live audio state, whether the background hold
+is actually active, and the notification permission, then fires a 3-second alarm. The
+"background hold" line is the load-bearing one: it's the thing iOS actually requires, and
+the thing the old diagnostics never checked.
 
-**Settings → Test the alarm** shows the live audio and notification state and fires a
-3-second alarm, so it's verifiable on the device in seconds rather than mid-workout.
-
-A notification banner is still best-effort: the deadline is handed to the service worker
-too, but the OS can evict the worker, and a genuinely closed PWA can't be woken without
-a push server. The audio alarm is what makes the timer dependable — it doesn't depend on
-our code running at the right moment, only on the sound already being queued.
-
-Notification permission is requested the first time you actually start a rest — never on
-load.
+`bghold.js` asserts 19 invariants about the media hold specifically — that it starts with
+a rest, survives Web Audio being unavailable entirely, is released on pause, skip and
+natural finish, is re-taken on resume, honours the setting, and recovers from an
+interruption on the next tap.
 
 ## Offline & data
 
