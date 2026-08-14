@@ -1,0 +1,14 @@
+# Render Blueprint — deploys the O-Level HQ study app.
+# Uses a lightweight Node.js server to serve static files with proper cache headers.
+# Service worker and HTML must be revalidated on every load so stale copies aren't served
+# after a deploy. Icons are content-addressed and can be cached long-term.
+services:
+  - type: web
+    name: o-level-hq
+    runtime: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+    pullRequestPreviewsEnabled: false

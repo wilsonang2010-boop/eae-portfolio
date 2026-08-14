@@ -1,0 +1,21 @@
+{
+  "id": "./",
+  "name": "O-Level HQ · 2026",
+  "short_name": "O-Level HQ",
+  "description": "Study planner, full Physics and Chemistry lessons, definitions, practice questions, Elective History content and answer technique for the 2026 Singapore O-Levels.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "categories": ["education", "productivity"],
+  "lang": "en-SG",
+  "dir": "ltr",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
