@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="robots" content="noindex">
+<title>IronLog has moved</title>
+<!-- IronLog now lives at ../apps/ironlog/. This stub stays behind because the
+     old path is bookmarked and installed to at least one home screen, and a
+     service worker is still registered against this scope — without it, that
+     worker keeps serving a cached 404 forever. -->
+<style>
+  :root{ color-scheme:dark }
+  html,body{margin:0;height:100%}
+  body{
+    background:#000;color:#f6f4f6;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    display:grid;place-items:center;padding:24px;text-align:center;line-height:1.5;
+  }
+  .logo{width:56px;height:56px;border-radius:16px;background:#101013;border:1px solid #2a2a33;
+        display:grid;place-items:center;margin:0 auto 18px}
+  h1{font-size:22px;font-weight:800;letter-spacing:-.02em;margin:0 0 8px}
+  p{color:#9a919b;font-size:14.5px;margin:0 auto 18px;max-width:32ch}
+  a.btn{display:inline-block;background:#ec4899;color:#1a0410;text-decoration:none;
+        border-radius:12px;padding:13px 22px;font-weight:800;font-size:15px}
+  .small{font-size:12.5px;color:#6a626e;margin-top:20px}
+</style>
+</head>
+<body>
+  <main>
+    <span class="logo">
+      <svg viewBox="0 0 24 24" width="30" height="30" fill="none">
+        <path d="M4 9v6M6.5 7.5v9M17.5 7.5v9M20 9v6M6.5 12h11" stroke="#ec4899" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <h1>IronLog has moved</h1>
+    <p>It now lives at <b>apps/ironlog</b>. Taking you there&nbsp;…</p>
+    <a class="btn" id="go" href="../apps/ironlog/">Open IronLog</a>
+    <p class="small">
+      Your training log is safe — it's stored per site, not per folder, so
+      nothing was lost in the move.<br>
+      If you added IronLog to your home screen, remove the old icon and add it
+      again from the new page.
+    </p>
+  </main>
+<script>
+(async () => {
+  const dest = new URL("../apps/ironlog/", location.href).href;
+  document.getElementById("go").href = dest;
+  // Tear down the worker registered against this old scope. It is network-first
+  // for the shell, so once this path started 404ing it cached the 404 and kept
+  // serving it — clearing it is what stops the dead page coming back.
+  try {
+    if (navigator.serviceWorker) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs
+        .filter(r => r.scope.includes("/ironlog/") && !r.scope.includes("/apps/"))
+        .map(r => r.unregister().catch(() => {})));
+    }
+  } catch (e) {}
+  try {
+    if (window.caches) {
+      const keys = await caches.keys();
+      // Only the old shell caches; the app re-fills its own on next load.
+      await Promise.all(keys.filter(k => k.startsWith("ironlog-")).map(k => caches.delete(k).catch(() => {})));
+    }
+  } catch (e) {}
+  location.replace(dest);
+})();
+</script>
+</body>
+</html>
