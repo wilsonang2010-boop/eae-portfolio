@@ -649,6 +649,7 @@ body.resting.timer-mini .app{ padding-bottom:8px }
 .split-row .dt.push{color:var(--accent)}
 .split-row .dt.pull{color:var(--info)}
 .split-row .dt.legs{color:var(--amber)}
+.split-row .dt.dunk{color:#4ade80}
 .split-row .dt.rest{color:var(--muted-2)}
 .plan-row{display:flex;align-items:center;gap:10px;background:var(--panel-2);border:1px solid var(--border);border-radius:13px;padding:10px 12px;margin-bottom:8px}
 .plan-row .pr-main{flex:1;min-width:0}
@@ -913,7 +914,7 @@ body.resting.timer-mini .app{ padding-bottom:8px }
 /* Kept in step with the service worker cache name, so Settings can show which
    build is actually running — updates now wait for you to accept them, and
    "did the fix land?" is otherwise unanswerable from the phone. */
-const APP_BUILD = "v18";
+const APP_BUILD = "v19";
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 // Indexed by Date.getDay(): Sun..Sat
 const SCHEDULE = ["Legs","Push","Pull","Legs","Push","Pull","Rest"];
@@ -933,6 +934,18 @@ const TEMPLATES = {
     { group:"Back",   name:"Seated Row",       warmup:false, sets:3, reps:8 },
     { group:"Biceps", name:"Bicep Curl",       warmup:true,  sets:3, reps:8 },
     { group:"Biceps", name:"Hammer Curl",      warmup:false, sets:3, reps:8 },
+  ],
+  Dunk: [
+    { group:"Plyometrics", name:"Pogo Jump",             warmup:false, sets:3, reps:12, plyo:true },
+    { group:"Plyometrics", name:"Approach Jump",         warmup:false, sets:5, reps:3,  plyo:true },
+    { group:"Plyometrics", name:"Depth Jump",            warmup:false, sets:4, reps:3,  plyo:true },
+    { group:"Plyometrics", name:"Single-Leg Bound",      warmup:false, sets:3, reps:4,  plyo:true },
+    { group:"Weights",     name:"Trap Bar Jump",         warmup:true,  sets:5, reps:3,  bar:true },
+    { group:"Weights",     name:"Back Squat",            warmup:true,  sets:4, reps:5,  bar:true },
+    { group:"Weights",     name:"Romanian Deadlift",     warmup:false, sets:3, reps:6,  bar:true },
+    { group:"Weights",     name:"Bulgarian Split Squat", warmup:false, sets:3, reps:8 },
+    { group:"Weights",     name:"Standing Calf Raise",   warmup:false, sets:4, reps:12 },
+    { group:"Core",        name:"Hanging Leg Raise",     warmup:false, sets:3, reps:10 },
   ],
   Legs: [
     { group:"Plyometrics", name:"Seated Box Jump",          warmup:false, sets:2, reps:5, plyo:true },
@@ -1020,7 +1033,7 @@ function todayISO(){ return isoDate(new Date()); }
 /* The split and the exercise lists both start from the built-in constants and
    are overridden once edited, so an untouched install behaves exactly as
    before and a customised one never falls back mid-session. */
-const WORKOUT_TYPES = ["Push","Pull","Legs","Rest"];
+const WORKOUT_TYPES = ["Push","Pull","Legs","Dunk","Rest"];
 function scheduleFor(dow){
   const s = settings.schedule;
   return (Array.isArray(s) && WORKOUT_TYPES.includes(s[dow])) ? s[dow] : SCHEDULE[dow];
@@ -1408,7 +1421,7 @@ function chooseWorkout(){
   openSheet(`
     <h3 class="sh-title">Train something else</h3>
     <p class="sh-sub">Today is scheduled as <b>${scheduled}</b>. Pick any session — useful if you missed a day.</p>
-    ${["Push","Pull","Legs"].map(t=>`<button class="btn${t===cur?" primary":""}" data-t="${t}" style="margin-bottom:10px">${t} Day</button>`).join("")}
+    ${["Push","Pull","Legs","Dunk"].map(t=>`<button class="btn${t===cur?" primary":""}" data-t="${t}" style="margin-bottom:10px">${t} Day</button>`).join("")}
     ${cur!=="Rest" ? `<button class="btn" id="mkRest" style="margin-bottom:10px">Make it a rest day</button>` : ""}
     <button class="btn ghost" id="pickClose">Cancel</button>`);
   $("#sheet").querySelectorAll("button[data-t]").forEach(b=> b.onclick = ()=>{
@@ -2702,7 +2715,7 @@ function renderHistory(){
       ${histQuery ? `<button class="search-clear" id="histClear" aria-label="Clear search">✕</button>` : ""}
     </div>
     <div class="chips" id="histChips">
-      ${["All","Push","Pull","Legs"].map(t=>`<button class="chip${histFilter===t?" on":""}" data-f="${t}">${t}</button>`).join("")}
+      ${["All","Push","Pull","Legs","Dunk"].map(t=>`<button class="chip${histFilter===t?" on":""}" data-f="${t}">${t}</button>`).join("")}
     </div>
     <div class="section-title" id="histTitle">Recent workouts</div>
     <div id="histList"></div>`;
@@ -2779,6 +2792,8 @@ function histRow(w){
 function typeIcon(type){
   const path = type==="Push" ? '<path d="M4 9v6M6.5 7.5v9M17.5 7.5v9M20 9v6M6.5 12h11" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/>'
     : type==="Pull" ? '<path d="M12 3v10m0 0 4-4m-4 4-4-4M6 20h12" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>'
+    // Dunk: a ball arcing up to a rim.
+    : type==="Dunk" ? '<path d="M5 19h14M7 19V9m10 10V9M7 9h10" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="4.5" r="2.5" stroke="var(--accent)" stroke-width="2.2"/>'
     : '<path d="M7 4v16M17 4v16M7 9h10M7 15h10" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/>';
   return `<svg viewBox="0 0 24 24" fill="none">${path}</svg>`;
 }
@@ -3230,7 +3245,7 @@ function renderSettings(){
              <div class="desc">Tap a day to change it${settings.schedule ? " · customised" : ""}</div></div>
         <div class="ctl">${settings.schedule ? `<span class="link">Reset</span>` : `<span class="desc">Default</span>`}</div>
       </div>
-      ${["Push","Pull","Legs"].map(t=>`
+      ${["Push","Pull","Legs","Dunk"].map(t=>`
         <div class="set-row exed-row" data-t="${t}">
           <div><div class="lab">${t} exercises</div>
                <div class="desc">${templateFor(t).length} exercises${planIsCustom(t)?" · edited":""}</div></div>

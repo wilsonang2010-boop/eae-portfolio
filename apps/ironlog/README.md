@@ -22,6 +22,34 @@ The app opens straight to **today's** workout based on the current day. Saturday
 _"Rest Day 💪 Recovery is part of progress."_ This is the default — the split is editable
 in **Settings → Your programme**, so any day can be reassigned.
 
+### Dunk day
+
+A fifth workout type sits alongside Push / Pull / Legs, built for one goal: getting off
+the floor. **Legs is untouched** — Dunk is an alternative, not a replacement. Switch
+between them with the ⇄ button on Today for a single session, or reassign a weekday in
+**Settings → Your programme** to make it permanent.
+
+| # | Exercise | Sets × Reps | Why |
+|---|---|---|---|
+| 1 | Pogo Jump | 3 × 12 | Ankle stiffness — the cheapest centimetres there are |
+| 2 | Approach Jump | 5 × 3 | The actual skill: penultimate step, arm swing, max intent |
+| 3 | Depth Jump | 4 × 3 | Reactive strength, the shortest ground contact you can manage |
+| 4 | Single-Leg Bound | 3 × 4 | A running dunk takes off from one leg |
+| 5 | Trap Bar Jump | 5 × 3 | Rate of force development under load |
+| 6 | Back Squat | 4 × 5 | Maximal strength — the base everything else scales from |
+| 7 | Romanian Deadlift | 3 × 6 | Hamstrings and hips, where extension power comes from |
+| 8 | Bulgarian Split Squat | 3 × 8 | Single-leg strength, matching the takeoff |
+| 9 | Standing Calf Raise | 4 × 12 | Plantarflexion, and landing resilience |
+| 10 | Hanging Leg Raise | 3 × 10 | Trunk stiffness, so force reaches the floor |
+
+The order is deliberate: skill and reactive work first while the nervous system is fresh,
+then power, then strength, then the accessories. Jumps are tagged plyometric so the rest
+timer treats them correctly, and the three barbell lifts drive the plate calculator.
+
+Quality beats volume here — every jump is a maximal attempt, and a jump you're too tired
+to do well is training the wrong thing. Two dunk sessions a week is plenty alongside the
+rest of the split.
+
 ## Features
 
 - **Workout tracking** — muscle-group sections, warm-up + working sets, a big tap
