@@ -50,4 +50,3 @@ start the `portfolio` server from `.claude/launch.json` (serves on port 8126).
 ## Pending content (add when the user provides it)
 
 - Class Chairperson photo — `journey-2023-chairperson.jpg` and `exp-chairperson.jpg`.
-- MUN certificate image — `cert-mun.jpg`.
