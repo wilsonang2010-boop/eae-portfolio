@@ -124,6 +124,7 @@ header{
 .tab .dot{width:8px; height:8px; border-radius:50%;}
 .tab-plan .dot{background:#FF4D8D;}
 .tab-log .dot{background:#FBBF24;}
+.tab-mem .dot{background:#F472B6;}
 .tab-ask .dot{background:#FFF0F5;}
 .tab-emath .dot{background:#D8B4FE;}
 .tab-amath .dot{background:#C084FC;}
@@ -451,6 +452,112 @@ header{
 .tl-item.passed .tl-date,.tl-item.passed .tl-text{opacity:.45;}
 .tl-item.target:before{background:var(--blue-bright);}
 
+/* ── Memorise: spaced repetition ───────────────────────────── */
+.tab-badge{
+  display:inline-grid; place-items:center; min-width:18px; height:18px; padding:0 5px;
+  border-radius:9px; background:var(--blue); color:#fff;
+  font-size:10.5px; font-weight:700; font-variant-numeric:tabular-nums;
+}
+.tab.active .tab-badge{background:var(--blue-bright); color:#2A0011;}
+
+/* The call to action when something is due — the one thing that should
+   pull the eye when the tab opens. */
+.mem-call{
+  margin-top:22px; padding:22px 24px; border-radius:14px;
+  background:linear-gradient(180deg, rgba(255,77,141,.10), rgba(255,77,141,.03));
+  border:1px solid var(--border-strong);
+  display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+}
+.mem-call h3{font-family:var(--font-display); color:var(--white); font-size:1.2rem; font-weight:600;}
+.mem-call p{color:var(--slate-300); font-size:14px; margin-top:4px; line-height:1.55;}
+.mem-call .grow{flex:1; min-width:220px;}
+.mem-rest{
+  margin-top:22px; padding:20px 22px; border-radius:14px;
+  background:var(--card); border:1px solid var(--border); color:var(--slate-300); font-size:14.5px; line-height:1.6;
+}
+.mem-rest b{color:var(--white);}
+
+/* Review session */
+.mem-session{margin-top:22px;}
+.mem-progress{display:flex; align-items:center; gap:12px; margin-bottom:14px;}
+.mem-progress .meter{flex:1; margin-top:0;}
+.mem-count{font-size:12.5px; color:var(--slate-400); font-variant-numeric:tabular-nums; white-space:nowrap;}
+.mem-stage{
+  background:var(--card); border:1px solid var(--border-strong); border-radius:16px;
+  padding:34px 28px; text-align:center; min-height:230px;
+  display:flex; flex-direction:column; justify-content:center; gap:16px;
+}
+.mem-stage .ms-label{font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--slate-500); font-weight:700;}
+.mem-stage .ms-front{font-family:var(--font-display); color:var(--white); font-size:1.5rem; font-weight:600; line-height:1.35;}
+.mem-stage .ms-back{
+  color:var(--slate-100); font-size:1.05rem; line-height:1.65; text-align:left;
+  border-top:1px solid var(--border); padding-top:18px; white-space:pre-wrap;
+}
+.mem-stage .ms-own{
+  text-align:left; font-size:13.5px; color:var(--slate-400); background:var(--bg);
+  border:1px solid var(--border); border-left:3px solid var(--blue); border-radius:9px; padding:11px 14px; white-space:pre-wrap;
+}
+.mem-reveal{
+  align-self:center; font-size:14px; font-weight:600; padding:12px 26px; border-radius:10px;
+  border:1px solid var(--border-strong); color:var(--white); transition:.2s var(--ease);
+}
+.mem-reveal:hover{background:var(--blue-soft);}
+.mem-rate{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:4px;}
+.mem-rate button{font-size:14px; font-weight:600; padding:12px 24px; border-radius:10px; border:1px solid var(--border); transition:.2s var(--ease);}
+.rate-got{color:#86EFAC; border-color:rgba(74,222,128,.45) !important;}
+.rate-got:hover{background:var(--green-soft);}
+.rate-miss{color:#FDE68A; border-color:rgba(251,191,36,.45) !important;}
+.rate-miss:hover{background:rgba(251,191,36,.12);}
+.mem-skip{display:block; margin:14px auto 0; font-size:12.5px; color:var(--slate-500); text-decoration:underline; text-underline-offset:3px;}
+.mem-skip:hover{color:var(--slate-300);}
+
+/* Tips */
+.mem-tips{margin-top:18px; display:grid; gap:10px;}
+.mem-tip{background:var(--bg); border:1px solid var(--border); border-left:3px solid var(--blue); border-radius:10px; padding:13px 16px; text-align:left;}
+.mem-tip .mt-tag{font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--blue-bright); font-weight:700;}
+.mem-tip .mt-title{color:var(--white); font-size:14.5px; font-weight:600; margin-top:4px;}
+.mem-tip .mt-body{color:var(--slate-300); font-size:13.5px; line-height:1.6; margin-top:5px;}
+.mem-tip .mt-body b{color:var(--slate-100);}
+.mem-tip code{font-family:var(--font-mono); font-size:12.5px; background:var(--card); padding:2px 6px; border-radius:5px; color:var(--blue-bright);}
+
+/* Add form live preview */
+.mem-preview{margin-top:4px;}
+.mem-preview-head{font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--slate-500); font-weight:700; margin-bottom:8px;}
+
+/* Card list */
+.mem-list{margin-top:14px; display:grid; gap:11px;}
+.mem-card{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:15px 17px;}
+.mem-card.is-due{border-color:rgba(251,191,36,.5);}
+.mem-card.is-done{opacity:.62;}
+.mem-card-top{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px;}
+.mem-front{font-family:var(--font-display); color:var(--white); font-weight:600; font-size:1.02rem;}
+.mem-back{color:var(--slate-300); font-size:13.5px; line-height:1.55; margin-top:5px; white-space:pre-wrap;}
+.mem-meta{display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin-top:10px; font-size:12px; color:var(--slate-500);}
+.mem-pips{display:inline-flex; gap:4px;}
+.pip{width:8px; height:8px; border-radius:50%; background:var(--bg); border:1px solid var(--border-strong);}
+.pip.on{background:var(--green); border-color:var(--green);}
+.pip.miss{background:var(--amber); border-color:var(--amber);}
+.chip-done{background:rgba(74,222,128,.14); color:#86EFAC; border-color:rgba(74,222,128,.4);}
+.chip-gone{background:rgba(148,163,184,.10); color:var(--slate-500); border-color:var(--border);}
+.mem-group-head{
+  margin-top:30px; font-size:11px; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--slate-500); font-weight:700; display:flex; align-items:center; gap:9px;
+}
+.mem-group-head:after{content:""; flex:1; height:1px; background:var(--border);}
+
+/* Technique reference */
+.mem-ref{margin-top:14px; display:grid; gap:11px;}
+@media(min-width:760px){.mem-ref{grid-template-columns:1fr 1fr;}}
+.mem-ref-item{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:15px 17px;}
+.mem-ref-item h5{font-family:var(--font-display); color:var(--white); font-size:14.5px; font-weight:600;}
+.mem-ref-item p{color:var(--slate-300); font-size:13.5px; line-height:1.6; margin-top:5px;}
+.mem-toggle{
+  display:flex; align-items:center; gap:10px; margin-top:14px;
+  font-size:13.5px; color:var(--slate-300); cursor:pointer;
+}
+.mem-toggle input{width:16px; height:16px; accent-color:var(--blue); cursor:pointer;}
+.mem-actions{display:flex; gap:9px; flex-wrap:wrap; margin-top:16px; align-items:center;}
+
 .hidden{display:none !important;}
 .reset-btn{font-size:12px; color:var(--slate-500); text-decoration:underline; text-underline-offset:3px;}
 .reset-btn:hover{color:var(--slate-300);}
@@ -476,6 +583,7 @@ header{
       <button class="tab tab-plan active" data-subject="plan"><span class="dot"></span>Plan</button>
       <button class="tab tab-ask" data-subject="ask"><span class="dot"></span>Ask</button>
       <button class="tab tab-log" data-subject="log"><span class="dot"></span>Error Log</button>
+      <button class="tab tab-mem" data-subject="memorise"><span class="dot"></span>Memorise<span class="tab-badge hidden" id="memBadge">0</span></button>
       <button class="tab tab-emath" data-subject="emath"><span class="dot"></span>E-Math</button>
       <button class="tab tab-amath" data-subject="amath"><span class="dot"></span>A-Math</button>
       <button class="tab tab-phys" data-subject="physics"><span class="dot"></span>Physics</button>
@@ -5346,6 +5454,7 @@ let state = {
   weekOffset:0,       // weeks from the current week
   logFilter:'all',
   askQuery:'',
+  mem:{ session:null, idx:0, revealed:false, got:0 },
 };
 let cdTimer = null;
 
@@ -5380,6 +5489,7 @@ function render(){
   if(cdTimer){ clearInterval(cdTimer); cdTimer = null; }
   if(state.subject==='plan'){ renderPlan(); return; }
   if(state.subject==='log'){ renderLog(); return; }
+  if(state.subject==='memorise'){ renderMemorise(); updateMemBadge(); return; }
   if(state.subject==='ask'){ renderAsk(); return; }
   if(SYLLABUS_SUBJECTS.includes(state.subject)){ renderSyllabus(DATA[state.subject], state.subject); return; }
   renderDeck(DATA[state.subject]);
@@ -5643,6 +5753,561 @@ function renderLog(){
       if(!confirm('Delete this entry?')) return;
       saveLog(getLog().filter(x=>x.id!==b.dataset.del)); renderLog();
     });
+  });
+}
+
+/* ============================================================
+   MEMORISE — spaced repetition
+
+   The schedule is deliberately fixed and short, because that is what was
+   asked for: a card is revised 2, 4 and 6 days after it is added, and one
+   week after it was added it drops out of the rotation for good. Three
+   spaced retrievals inside a week is the classic "expanding-ish" pattern
+   that moves something from "I just read it" to "I can produce it cold".
+
+   Everything is derived from `added` + the number of reviews recorded, so
+   there is no scheduler state to drift out of sync, and a missed day just
+   leaves the card overdue rather than silently shifting the whole plan.
+   ============================================================ */
+const MEM_KEY   = 'osp-mem';
+const MEM_STEPS = [2, 4, 6];   // days after adding, in order
+const MEM_WEEK  = 7;           // retires this many days after adding
+
+function getMem(){ try{ return JSON.parse(localStorage.getItem(MEM_KEY)||'[]'); }catch(e){ return []; } }
+function saveMem(a){ localStorage.setItem(MEM_KEY, JSON.stringify(a)); }
+
+/* A card's whole lifecycle in one place.
+   done      → reviews completed (0–3)
+   'due'     → today is on or past its next review date
+   'expired' → the week is up; it never appears in the queue again
+   'mastered'→ all three reviews done before the week ran out */
+function memStatus(c, today){
+  const added    = parseYmd(c.added);
+  const retireOn = addDays(added, MEM_WEEK);
+  const done     = (c.reviews||[]).length;
+  if(done >= MEM_STEPS.length) return { state:'mastered', done, retireOn };
+  if(today >= retireOn)        return { state:'expired',  done, retireOn };
+  const due = addDays(added, MEM_STEPS[done]);
+  return { state: today >= due ? 'due' : 'scheduled', done, retireOn, due };
+}
+function memDue(cards, today){
+  return cards.filter(c=> memStatus(c, today).state === 'due');
+}
+
+/* ---- Memory-technique engine -------------------------------
+   No network, no model — just a look at the shape of what you typed,
+   matched to the technique that actually suits that shape. A list wants an
+   acronym; a date wants chunking; a pair of look-alikes wants a contrast
+   table. Generic advice is worse than no advice, so each tip names the
+   thing you typed. ---------------------------------------- */
+function memSplitList(s){
+  const t = String(s||'').trim();
+  if(!t) return [];
+  const lines = t.split(/\r?\n/).map(x=>x.replace(/^\s*(?:\d+[.)]|[-–—•*])\s*/,'').trim()).filter(Boolean);
+  if(lines.length >= 3) return lines;
+  const semis = t.split(';').map(x=>x.trim()).filter(Boolean);
+  if(semis.length >= 3) return semis;
+  const commas = t.replace(/,?\s+and\s+/gi, ', ').split(',').map(x=>x.trim()).filter(Boolean);
+  if(commas.length >= 3) return commas;
+  return [];
+}
+function memFirstLetter(s){
+  const w = String(s).replace(/^\s*(?:the|a|an)\s+/i,'').trim();
+  const m = w.match(/[A-Za-z0-9]/);
+  return m ? m[0].toUpperCase() : '';
+}
+function memWordCount(s){ return String(s||'').trim().split(/\s+/).filter(Boolean).length; }
+
+function memTips(front, back, own){
+  const f = String(front||'').trim();
+  const b = String(back||'').trim();
+  const both = f + '\n' + b;
+  const tips = [];
+  if(!f && !b) return tips;
+
+  /* A list is the single most acronym-able shape there is. */
+  const items = memSplitList(b);
+  if(items.length >= 3){
+    const letters = items.map(memFirstLetter).filter(Boolean);
+    const acro = letters.join('');
+    const sayable = /[AEIOUY]/.test(acro) && acro.length <= 8;
+    tips.push({
+      tag:'Acronym',
+      title: sayable ? `Say it as one word: “${esc(acro)}”` : `Chain the letters: ${esc(letters.join(' · '))}`,
+      body: sayable
+        ? `Your answer is a list of ${items.length}. First letters give <b>${esc(acro)}</b> — short enough to hold as a single sound. Learn the word first, then use each letter to pull back its item. Recovering ${items.length} items from ${letters.length} letters is far less work than recovering ${items.length} sentences.`
+        : `Your answer is a list of ${items.length}, and the first letters (<b>${esc(letters.join('') )}</b>) do not make a word. Make a sentence instead — one word per letter, in order, the more ridiculous the better. Absurd sentences survive exam stress; sensible ones blur into the rest of your notes.`
+    });
+  }
+
+  /* Numbers survive as rhythm and reference points, not as digits. */
+  const nums = both.match(/\d[\d.,]*/g);
+  if(nums && nums.length){
+    const longest = nums.slice().sort((a,b)=>b.replace(/\D/g,'').length - a.replace(/\D/g,'').length)[0];
+    const digits = longest.replace(/\D/g,'');
+    if(digits.length >= 3){
+      const chunked = digits.replace(/(\d{1,3})(?=(\d{3})+$)/g,'$1 ').trim();
+      tips.push({
+        tag:'Chunking',
+        title:`Break ${esc(longest)} into beats`,
+        body:`Long numbers fail because working memory holds about four items, not nine digits. Read it as <code>${esc(chunked)}</code> and say it aloud in that rhythm. If any chunk matches something you already know — a year, a house number, a bus route — pin it to that. A number attached to something real is remembered; a floating number is not.`
+      });
+    } else {
+      tips.push({
+        tag:'Numbers',
+        title:'Anchor the figure to something you already know',
+        body:`Isolated values slide out fast. Tie <b>${esc(longest)}</b> to a number you cannot forget — your age, a date, a score — or to its physical meaning (is it big? small? per what?). Recalling <i>roughly</i> the right size also lets you catch a wrong answer in the exam.`
+      });
+    }
+  }
+
+  /* Ordered procedures are what a memory palace is actually for. */
+  /* `\d+[.)]\s` and not just `\d+[.)]`, or a decimal like "3.00" reads as
+     a numbered step and every value on the card claims to be a sequence. */
+  if(/\b(first|then|next|after that|finally|step\s*\d|begin by|start by)\b/i.test(b) || /^\s*\d+[.)]\s/m.test(b)){
+    tips.push({
+      tag:'Memory palace',
+      title:'Walk the steps through a room you know',
+      body:`This is a sequence, and sequences are what the method of loci does best. Pick a route you could walk blind — your front door, hallway, kitchen, your desk — and drop one step at each spot as a picture, not as words. To recall it, walk the route. Order comes free, because the route has an order.`
+    });
+  }
+
+  /* Look-alike pairs are lost to interference, not to weak memory. */
+  if(/\b(vs\.?|versus|whereas|unlike|compared (?:to|with)|difference between|but not|rather than|instead of)\b/i.test(both)){
+    tips.push({
+      tag:'Contrast',
+      title:'Learn the difference, not the two definitions',
+      body:`Pairs like this are not forgotten — they are <i>confused</i>. Write the two side by side and highlight only the words that differ, then memorise that difference as a single sentence ("one is per unit charge, the other is per unit mass"). Then invent one cue that points to the right side, and drill picking between them rather than reciting both.`
+    });
+  }
+
+  /* Formulae are sentences that happen to be written in symbols. Match real
+     operators only — a solidus in a unit like "m/s" is not a relationship. */
+  if(/[=×÷√∝Δ]/.test(b)){
+    tips.push({
+      tag:'Formula',
+      title:'Say it as a sentence, then check it breaks correctly',
+      body:`Read the relationship out loud in words — "the bigger the X, the smaller the Y" — because that is what survives, and the symbols can be reconstructed from it. Then sanity-check by pushing a quantity to zero or to huge: if the formula still says something sensible, you have written it the right way up. That check catches a flipped fraction in seconds.`
+    });
+  }
+
+  /* Long prose needs to be cut down before it can be learned. */
+  if(memWordCount(b) >= 28 && items.length < 3){
+    tips.push({
+      tag:'Compress',
+      title:'Cut it to the marking words first',
+      body:`This runs to about ${memWordCount(b)} words, which is more than you need to hold. Underline only the words an examiner must see to award the mark — usually four or five — and memorise those as your skeleton. Rebuild the full sentence around them when you write. Learning the skeleton is a fraction of the work and scores the same.`
+    });
+  }
+
+  /* Their own mnemonic beats anything generated — say so, and protect it. */
+  if(String(own||'').trim()){
+    tips.push({
+      tag:'Your cue',
+      title:'Use your own hook every single time',
+      body:`You wrote your own cue, which outperforms any suggestion here — self-generated links are recalled far better than given ones. Use exactly that cue at every review, without rewording it, so the path from cue to answer gets worn in rather than re-invented.`
+    });
+  }
+
+  /* The universal one, and the reason this tab exists at all. */
+  tips.push({
+    tag:'Active recall',
+    title:'Answer out loud before you reveal',
+    body:`Every review, say the full answer aloud <i>before</i> tapping reveal — even when you are sure, and especially when you are not. The effort of pulling it out is what builds the memory; reading the answer again feels productive and does almost nothing. A miss you struggled over is worth more than a hit you glanced at.`
+  });
+
+  return tips.slice(0, 5);
+}
+
+function memTipsHTML(tips){
+  if(!tips.length) return '';
+  return `<div class="mem-tips">${tips.map(t=>`
+    <div class="mem-tip">
+      <div class="mt-tag">${esc(t.tag)}</div>
+      <div class="mt-title">${t.title}</div>
+      <div class="mt-body">${t.body}</div>
+    </div>`).join('')}</div>`;
+}
+
+/* ---- Calendar export ---------------------------------------
+   A browser cannot wake itself up to nag you, so the reminders that
+   actually fire when the app is shut are the ones in your own calendar.
+   One event per review date, listing everything due that day. ---- */
+function icsEsc(s){ return String(s).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n'); }
+function icsFold(line){
+  if(line.length <= 73) return line;
+  let out = line.slice(0,73), rest = line.slice(73);
+  while(rest.length > 72){ out += '\r\n ' + rest.slice(0,72); rest = rest.slice(72); }
+  if(rest) out += '\r\n ' + rest;
+  return out;
+}
+function memBuildIcs(){
+  const today = midnight(new Date());
+  const byDate = new Map();
+  getMem().forEach(c=>{
+    const st = memStatus(c, today);
+    if(st.state === 'mastered' || st.state === 'expired') return;
+    const added = parseYmd(c.added);
+    for(let i = st.done; i < MEM_STEPS.length; i++){
+      const d = addDays(added, MEM_STEPS[i]);
+      if(d < today) continue;
+      const k = ymd(d);
+      if(!byDate.has(k)) byDate.set(k, []);
+      byDate.get(k).push(c.front);
+    }
+  });
+  if(!byDate.size) return null;
+
+  const stamp = new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+  const lines = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//O-Level HQ//Memorise//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
+  [...byDate.keys()].sort().forEach(k=>{
+    const fronts = byDate.get(k);
+    const day = k.replace(/-/g,'');
+    const n = fronts.length;
+    lines.push('BEGIN:VEVENT');
+    lines.push(`UID:olevelhq-mem-${day}@olevel-hq.local`);
+    lines.push(`DTSTAMP:${stamp}`);
+    lines.push(`DTSTART:${day}T190000`);
+    lines.push(`DTEND:${day}T192000`);
+    lines.push(icsFold(`SUMMARY:Revise ${n} item${n>1?'s':''} — O-Level HQ`));
+    lines.push(icsFold('DESCRIPTION:' + icsEsc(fronts.map(x=>'• '+x).join('\n') + '\n\nOpen the Memorise tab and answer each one out loud before revealing.')));
+    lines.push('BEGIN:VALARM','TRIGGER:-PT10M','ACTION:DISPLAY',icsFold(`DESCRIPTION:Revise ${n} item${n>1?'s':''}`),'END:VALARM');
+    lines.push('END:VEVENT');
+  });
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n');
+}
+
+/* ---- Optional browser reminder ------------------------------
+   Fires at most once a day, and only while the app is actually open —
+   which the UI says plainly rather than implying background nagging. */
+function memNotifyOn(){ return localStorage.getItem('osp-mem-notify') === '1'; }
+function memMaybeNotify(dueCount){
+  if(!dueCount || !memNotifyOn()) return;
+  if(typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+  const today = ymd(midnight(new Date()));
+  if(localStorage.getItem('osp-mem-notified') === today) return;
+  localStorage.setItem('osp-mem-notified', today);
+  try{
+    new Notification('Revision due — O-Level HQ', {
+      body: `${dueCount} item${dueCount>1?'s':''} to revise today.`,
+      icon: 'icons/icon-192.png', tag: 'olevel-mem',
+    });
+  }catch(e){ /* some browsers block the constructor outside a SW */ }
+}
+
+/* Due count on the tab, so it is visible from any other tab. */
+function updateMemBadge(){
+  const el = document.getElementById('memBadge');
+  if(!el) return;
+  const n = memDue(getMem(), midnight(new Date())).length;
+  el.textContent = n;
+  el.classList.toggle('hidden', n === 0);
+}
+
+/* ---- Views ---- */
+function renderMemorise(){
+  const today = midnight(new Date());
+  const cards = getMem();
+  const due   = memDue(cards, today);
+
+  if(state.mem.session){ renderMemSession(); return; }
+
+  const active   = cards.filter(c=>{ const s=memStatus(c,today).state; return s==='due'||s==='scheduled'; });
+  const finished = cards.filter(c=>{ const s=memStatus(c,today).state; return s==='mastered'||s==='expired'; });
+  const allRev   = cards.flatMap(c=>c.reviews||[]);
+  const hits     = allRev.filter(r=>r.got).length;
+  const acc      = allRev.length ? Math.round(hits/allRev.length*100) : null;
+
+  const banner = due.length
+    ? `<div class="mem-call">
+         <div class="grow">
+           <h3>${due.length} item${due.length>1?'s':''} due today</h3>
+           <p>Answer each one out loud before you reveal it. It should feel like effort — that is the part that works.</p>
+         </div>
+         <button class="btn-solid" id="mem-start">Start review</button>
+       </div>`
+    : active.length
+      ? `<div class="mem-rest">Nothing due today. <b>${active.length}</b> item${active.length>1?'s are':' is'} still in rotation — the next one comes back ${(()=>{
+           const next = active.map(c=>memStatus(c,today).due).sort((a,b)=>a-b)[0];
+           return next ? `<b>${fmtShort(next)}</b>` : 'soon';
+         })()}. Resting between reviews is not wasted time; the gap is what makes the next recall stick.</div>`
+      : finished.length
+        ? `<div class="mem-rest">Rotation empty — ${finished.length>1?`all <b>${finished.length}</b> items have finished their week`:`the one item has finished its week`}. Anything you still feel shaky on can go back in from the Retired list below; otherwise add something new.</div>`
+        : `<div class="mem-rest">Nothing in rotation yet. Add the first thing you need to memorise below — a definition, a list, a date, a formula — and it will come back in <b>2 days</b>, then <b>4</b>, then <b>6</b>, and retire after a week.</div>`;
+
+  app.innerHTML = `
+  <section class="subject-hero">
+    <span class="eyebrow">Spaced repetition · 2 · 4 · 6 days</span>
+    <h2>Memorise</h2>
+    <p>Add anything you need to hold in your head. Each item comes back as a flashcard <b>every 2 days for one week</b> — three spaced attempts at pulling it out of memory — and then retires for good. Every item also gets a technique matched to its shape, because <i>how</i> you encode it decides whether the reviews have anything to find.</p>
+  </section>
+
+  ${banner}
+
+  <div class="stat-row" style="margin-top:22px;">
+    <div class="tile">
+      <div class="t-label">Due today</div>
+      <div class="t-value">${due.length}</div>
+      <div class="t-sub">${due.length ? 'Waiting on you' : 'All clear'}</div>
+    </div>
+    <div class="tile">
+      <div class="t-label">In rotation</div>
+      <div class="t-value">${active.length}</div>
+      <div class="t-sub">${finished.length} retired</div>
+    </div>
+    <div class="tile">
+      <div class="t-label">Recall accuracy</div>
+      <div class="t-value">${acc===null?'—':acc+'%'}</div>
+      <div class="t-sub">${allRev.length ? `${hits} of ${allRev.length} recalled cold` : 'No reviews yet'}</div>
+      ${acc===null?'':`<div class="meter"><div class="meter-fill ${acc>=80?'hit':''}" style="width:${acc}%"></div></div>`}
+    </div>
+  </div>
+
+  <form class="log-form" id="mem-form">
+    <div class="fld-row">
+      <div class="fld">
+        <label for="m-subject">Subject</label>
+        <select id="m-subject">${['E-Math','A-Math','Physics','Chemistry','English','History','Other'].map(s=>`<option>${s}</option>`).join('')}</select>
+      </div>
+      <div class="fld">
+        <label for="m-front">Prompt — what you'll be asked</label>
+        <input id="m-front" type="text" placeholder="e.g. Define specific heat capacity" required />
+      </div>
+    </div>
+    <div class="fld">
+      <label for="m-back">Answer — what you must be able to produce</label>
+      <textarea id="m-back" placeholder="e.g. The energy needed to raise the temperature of 1 kg of a substance by 1 °C" required></textarea>
+    </div>
+    <div class="fld">
+      <label for="m-own">Your own hook <span style="text-transform:none;letter-spacing:0;font-weight:400;">(optional — a mnemonic, image or story of your own)</span></label>
+      <input id="m-own" type="text" placeholder="e.g. “She Heats Cocoa” — Specific Heat Capacity" />
+    </div>
+    <div class="mem-preview" id="mem-preview"></div>
+    <button class="btn-solid" type="submit" style="margin-top:14px;">Add to rotation</button>
+  </form>
+
+  <div class="mem-actions">
+    <button class="mini-btn" id="mem-ics">↓ Add reminders to my calendar</button>
+    <label class="mem-toggle" style="margin-top:0;">
+      <input type="checkbox" id="mem-notify" ${memNotifyOn()?'checked':''} />
+      Notify me when the app is open
+    </label>
+  </div>
+
+  ${active.length ? `<div class="mem-group-head">In rotation</div><div class="mem-list">${
+    active.slice().sort((a,b)=>{
+      const sa=memStatus(a,today), sb=memStatus(b,today);
+      if((sa.state==='due') !== (sb.state==='due')) return sa.state==='due' ? -1 : 1;
+      return (sa.due||0) - (sb.due||0);
+    }).map(c=>memCardHTML(c, today)).join('')
+  }</div>` : ''}
+
+  ${finished.length ? `<div class="mem-group-head">Retired</div><div class="mem-list">${
+    finished.slice().reverse().map(c=>memCardHTML(c, today)).join('')
+  }</div>` : ''}
+
+  <div class="mem-group-head">How to make things stick</div>
+  <div class="mem-ref">
+    <div class="mem-ref-item"><h5>Recall, don't review</h5><p>Re-reading a note feels like learning and mostly isn't. Covering it and trying to produce the answer is harder, feels worse, and is what actually moves it into long-term memory. Every card here is built to force that.</p></div>
+    <div class="mem-ref-item"><h5>Struggle is the mechanism</h5><p>The moment where you almost have it is when the memory is being strengthened. Give yourself a few seconds before revealing — an answer you fought for is worth several you glanced at.</p></div>
+    <div class="mem-ref-item"><h5>Space it out</h5><p>Three attempts spread across a week beat ten in one night. Forgetting a little between attempts is not failure — the re-retrieval after a gap is exactly what makes it durable.</p></div>
+    <div class="mem-ref-item"><h5>Make it absurd</h5><p>Bizarre, vivid, moving images are remembered; tidy abstract ones are not. If your mnemonic is slightly embarrassing, it is probably working.</p></div>
+    <div class="mem-ref-item"><h5>Explain it to nobody</h5><p>Say the answer out loud as if teaching it, in your own words. The exact point where you go vague is the part you have not learned — go back to that clause only.</p></div>
+    <div class="mem-ref-item"><h5>Mix subjects up</h5><p>Reviewing Physics, then Chemistry, then History in one sitting feels messier than blocking them, and produces better recall. The queue here already interleaves whatever is due.</p></div>
+  </div>
+  ` + footerHTML();
+
+  /* live tips as they type — the technique should arrive while they are
+     still deciding how to word the answer, not after */
+  const fEl = document.getElementById('m-front');
+  const bEl = document.getElementById('m-back');
+  const oEl = document.getElementById('m-own');
+  const pEl = document.getElementById('mem-preview');
+  const paint = ()=>{
+    const tips = memTips(fEl.value, bEl.value, oEl.value);
+    pEl.innerHTML = (bEl.value.trim() || fEl.value.trim())
+      ? `<div class="mem-preview-head">How to remember this</div>${memTipsHTML(tips)}`
+      : '';
+  };
+  [fEl,bEl,oEl].forEach(el=> el.addEventListener('input', paint));
+
+  document.getElementById('mem-form').addEventListener('submit', ev=>{
+    ev.preventDefault();
+    const arr = getMem();
+    arr.push({
+      id:'m'+Date.now(),
+      subject: document.getElementById('m-subject').value,
+      front: fEl.value.trim(),
+      back:  bEl.value.trim(),
+      own:   oEl.value.trim(),
+      added: ymd(midnight(new Date())),
+      reviews: [],
+    });
+    saveMem(arr); renderMemorise(); updateMemBadge();
+  });
+
+  const start = document.getElementById('mem-start');
+  if(start) start.addEventListener('click', ()=>{
+    state.mem.session = memDue(getMem(), midnight(new Date())).map(c=>c.id);
+    state.mem.idx = 0; state.mem.revealed = false; state.mem.got = 0;
+    renderMemorise();
+  });
+
+  document.getElementById('mem-ics').addEventListener('click', ()=>{
+    const ics = memBuildIcs();
+    if(!ics){ alert('Nothing scheduled yet — add something to the rotation first.'); return; }
+    const blob = new Blob([ics], {type:'text/calendar;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'olevel-revision.ics';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  });
+
+  document.getElementById('mem-notify').addEventListener('change', async ev=>{
+    if(!ev.target.checked){ localStorage.setItem('osp-mem-notify','0'); return; }
+    if(typeof Notification === 'undefined'){
+      alert('This browser does not support notifications.');
+      ev.target.checked = false; return;
+    }
+    let p = Notification.permission;
+    if(p === 'default') p = await Notification.requestPermission();
+    if(p !== 'granted'){
+      alert('Notifications are blocked for this site. The count on the Memorise tab will still show what is due.');
+      ev.target.checked = false; localStorage.setItem('osp-mem-notify','0'); return;
+    }
+    localStorage.setItem('osp-mem-notify','1');
+    memMaybeNotify(memDue(getMem(), midnight(new Date())).length);
+  });
+
+  app.querySelectorAll('[data-mem-del]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      if(!confirm('Remove this from the rotation?')) return;
+      saveMem(getMem().filter(x=>x.id!==b.dataset.memDel));
+      renderMemorise(); updateMemBadge();
+    });
+  });
+  app.querySelectorAll('[data-mem-again]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const arr = getMem(); const c = arr.find(x=>x.id===b.dataset.memAgain);
+      if(!c) return;
+      arr.push({ id:'m'+Date.now(), subject:c.subject, front:c.front, back:c.back, own:c.own,
+                 added: ymd(midnight(new Date())), reviews: [] });
+      saveMem(arr); renderMemorise(); updateMemBadge();
+    });
+  });
+
+  memMaybeNotify(due.length);
+}
+
+function memCardHTML(c, today){
+  const st = memStatus(c, today);
+  const revs = c.reviews||[];
+  const pips = MEM_STEPS.map((_,i)=>{
+    const r = revs[i];
+    return `<span class="pip ${r ? (r.got?'on':'miss') : ''}"></span>`;
+  }).join('');
+  const chip =
+    st.state==='due'      ? `<span class="chip chip-due">↻ Due now</span>` :
+    st.state==='scheduled'? `<span class="chip chip-sched">↻ ${fmtShort(st.due)}</span>` :
+    st.state==='mastered' ? `<span class="chip chip-done">✓ Memorised</span>` :
+                            `<span class="chip chip-gone">Week over</span>`;
+  const gone = st.state==='mastered' || st.state==='expired';
+  return `<div class="mem-card ${st.state==='due'?'is-due':''} ${gone?'is-done':''}">
+    <div class="mem-card-top">
+      <span class="sess-subj ${subjClass(c.subject)}">${esc(c.subject)}</span>
+      ${chip}
+      <span class="mem-pips" title="${revs.length} of ${MEM_STEPS.length} reviews done">${pips}</span>
+    </div>
+    <div class="mem-front">${esc(c.front)}</div>
+    <div class="mem-back">${esc(c.back)}</div>
+    ${c.own ? `<div class="mem-meta">Your hook: <span style="color:var(--slate-300)">${esc(c.own)}</span></div>` : ''}
+    <div class="entry-actions">
+      ${gone ? `<button class="mini-btn" data-mem-again="${c.id}">Put back in rotation</button>` : ''}
+      <button class="mini-btn danger" data-mem-del="${c.id}">Delete</button>
+    </div>
+  </div>`;
+}
+
+function renderMemSession(){
+  const today = midnight(new Date());
+  const all = getMem();
+  const queue = state.mem.session.map(id=>all.find(c=>c.id===id)).filter(Boolean);
+  const i = state.mem.idx;
+
+  if(i >= queue.length){
+    const n = queue.length, got = state.mem.got||0;
+    app.innerHTML = `
+    <section class="subject-hero">
+      <span class="eyebrow">Session complete</span>
+      <h2>${got} of ${n} recalled</h2>
+      <p>${got === n
+          ? 'Everything came back cold. Those will return in two days — the gap is doing the work now, so leave them alone until then.'
+          : got === 0
+            ? 'None of them came back yet, which is normal on a first pass. The attempt itself is what plants it; the next review is where you will feel the difference.'
+            : n-got === 1
+              ? `The one you missed is worth re-reading tonight — but read it <i>once</i>, then close the notes and try to say it again from memory.`
+              : `The ${n-got} you missed are the ones worth re-reading tonight — but read them <i>once</i>, then close the notes and try to say them again from memory.`}</p>
+    </section>
+    <div class="mem-actions"><button class="btn-solid" id="mem-back">Back to Memorise</button></div>
+    ` + footerHTML();
+    document.getElementById('mem-back').addEventListener('click', ()=>{
+      state.mem.session = null; renderMemorise(); updateMemBadge();
+    });
+    window.scrollTo({top:0, behavior:'instant'});
+    return;
+  }
+
+  const c = queue[i];
+  const st = memStatus(c, today);
+  const revealed = state.mem.revealed;
+  const pct = Math.round(i / queue.length * 100);
+
+  app.innerHTML = `
+  <section class="mem-session">
+    <div class="mem-progress">
+      <div class="meter"><div class="meter-fill" style="width:${pct}%"></div></div>
+      <span class="mem-count">${i+1} / ${queue.length}</span>
+    </div>
+    <div class="mem-stage">
+      <div class="ms-label">${esc(c.subject)} · review ${st.done+1} of ${MEM_STEPS.length}</div>
+      <div class="ms-front">${esc(c.front)}</div>
+      ${revealed ? `
+        <div class="ms-back">${esc(c.back)}</div>
+        ${c.own ? `<div class="ms-own"><b>Your hook:</b> ${esc(c.own)}</div>` : ''}
+        <div class="mem-rate">
+          <button class="mini-btn rate-got"  data-got="1">I had it</button>
+          <button class="mini-btn rate-miss" data-got="0">I missed it</button>
+        </div>`
+      : `<button class="mem-reveal" id="mem-show">Say it out loud, then reveal</button>`}
+    </div>
+    ${revealed ? memTipsHTML(memTips(c.front, c.back, c.own)) : ''}
+    <a href="#" class="mem-skip" id="mem-quit">Leave the session</a>
+  </section>
+  ` + footerHTML();
+
+  const show = document.getElementById('mem-show');
+  if(show) show.addEventListener('click', ()=>{ state.mem.revealed = true; renderMemSession(); });
+
+  app.querySelectorAll('[data-got]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const got = b.dataset.got === '1';
+      const arr = getMem(); const card = arr.find(x=>x.id===c.id);
+      if(card){
+        card.reviews = card.reviews||[];
+        card.reviews.push({ on: ymd(today), got });
+        saveMem(arr);
+      }
+      if(got) state.mem.got = (state.mem.got||0) + 1;
+      state.mem.idx++; state.mem.revealed = false;
+      renderMemSession(); updateMemBadge();
+    });
+  });
+
+  document.getElementById('mem-quit').addEventListener('click', e=>{
+    e.preventDefault();
+    state.mem.session = null; renderMemorise(); updateMemBadge();
   });
 }
 
@@ -7052,12 +7717,13 @@ function footerHTML(){
       <b>Check before you trust it:</b> Definitions follow the Singapore O-Level 2026 syllabuses (Pure Physics 6091, Pure Chemistry 6092, Elective History — Express) and are phrased the way examiners award marks — but cross-check them against your own school notes and the official SEAB syllabus.
       <div style="margin-top:9px;">The exam dates here were taken from your brief, not from an official source. <b>Confirm every date against the official SEAB / MOE examination timetable</b> before planning around it.</div>
     </div>
-    <p style="margin-top:22px;">Personal study tool · Plan · Error log · Physics · Chemistry · History</p>
-    <p>Your schedule, error log and "learnt" progress are saved in this browser only — clearing site data will erase them.</p>
+    <p style="margin-top:22px;">Personal study tool · Plan · Error log · Memorise · Physics · Chemistry · History</p>
+    <p>Your schedule, error log, memorise rotation and "learnt" progress are saved in this browser only — clearing site data will erase them.</p>
   </div>`;
 }
 
 render();
+updateMemBadge();
 
 /* ============================================================
    Installable app: register the service worker so the deck works
