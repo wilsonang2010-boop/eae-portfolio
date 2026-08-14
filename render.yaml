@@ -1,0 +1,23 @@
+# Render Blueprint — deploys the O-Level HQ study app as a static site.
+# The app is plain HTML with no build step, so Render just publishes ./study.
+# Connect this repo as a Blueprint at https://dashboard.render.com/blueprints
+# and every push to main redeploys it.
+services:
+  - type: web
+    name: o-level-hq
+    runtime: static
+    staticPublishPath: ./study
+    pullRequestPreviewsEnabled: false
+    headers:
+      # The service worker and the page itself must be revalidated on every
+      # load, otherwise a stale copy keeps serving after a deploy.
+      - path: /sw.js
+        name: Cache-Control
+        value: no-cache, max-age=0, must-revalidate
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache, max-age=0, must-revalidate
+      # Icons are content-addressed by name and change rarely.
+      - path: /icons/*
+        name: Cache-Control
+        value: public, max-age=604800
