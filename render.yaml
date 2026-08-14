@@ -6,6 +6,7 @@ services:
   - type: web
     name: o-level-hq
     runtime: node
+    rootDir: apps
     buildCommand: npm install
     startCommand: node server.js
     envVars:

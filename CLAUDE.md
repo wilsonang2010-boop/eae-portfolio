@@ -18,7 +18,8 @@ Single-file website. Everything lives in `index.html` (HTML + CSS + JS in one fi
 - `index.html` — the entire site: `<style>` block, markup, and a `<script>` block at the end.
 - `images/` — all photos and certificates. Referenced by filename from `index.html`.
 - `.claude/launch.json` + `.claude/serve.py` — local dev server (Python, port 8126).
-- `no-hesi-r8/` — unrelated; not part of the portfolio. Leave it alone unless asked.
+- `apps/` — unrelated side projects (study app, ironlog, mission-control), each deployed
+  separately via Render. Not part of the portfolio; leave alone unless asked.
 
 Sections in `index.html` (by `<section id>`): `home`, `about`, `journey`, `experience`,
 `leadership`, `achievements`, `certificates`, `gallery`, `skills`, `why`, `goals`,
