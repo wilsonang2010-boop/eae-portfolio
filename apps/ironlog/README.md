@@ -4,7 +4,7 @@ A personal, mobile-first workout tracker built around a **Push / Pull / Legs** w
 split. True-black theme with pink accents, an automatic rest timer, history, and stats —
 inspired by apps like Strong and Hevy but tailored to one routine.
 
-**Live:** https://wilsonang2010-boop.github.io/eae-portfolio/ironlog/
+**Live:** https://wilsonang2010-boop.github.io/eae-portfolio/apps/ironlog/
 
 ## Weekly schedule
 
