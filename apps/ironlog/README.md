@@ -168,36 +168,38 @@ and shows the rest timer as a track on the lock screen. There is no flag that bu
 without the other — so the hold is now opt-in, and the default path never touches the
 audio session.
 
-**By default** the app declares itself mixable via the Audio Session API
-(`navigator.audioSession.type`), preferring `transient` — the notification-chime category
-— and falling back to `ambient`. Both duck other audio for the moment a beep sounds and
-let it carry on; neither claims Now Playing. The alarm is still queued on the audio clock
-so it lands precisely, and a backgrounded rest is covered by the notification, which
-sounds *over* music rather than stopping it.
+**The hold runs for every rest either way** — it is what keeps the *page* alive, and the
+page is what fires the alarm and the notification. Removing it to protect the user's music
+was the wrong fix: it traded one broken thing for another, because the service-worker
+fallback is exactly what iOS evicts. What the setting changes is the **audio session** the
+loop runs under, declared through `navigator.audioSession`:
 
-- The mixable session is claimed before anything can play, and re-asserted when the app
-  returns to the foreground — an interruption hands the session back in whatever state
-  the OS chose.
-- Assigning an unsupported session type is either ignored or throws, so each candidate is
-  written and read back rather than trusted. Browsers without the API are left alone.
-- With the hold **on**, the old behaviour returns in full: playback session, keep-alive
-  loop, a lock-screen card reading "IronLog — Rest timer" whose pause button ends the
-  rest, and recovery of the hold on the next tap after an interruption. Turning it off
-  mid-rest releases the session immediately without disturbing the countdown.
+- **Default** — `ambient`: mixable, so your music is untouched, and no Now Playing card is
+  claimed. Ambient rather than `transient` because transient *ducks* other audio and this
+  loop plays for the whole rest. One-off beeps outside a rest use `transient`, the
+  notification-chime category.
+- **Take over audio during rest** — `playback`: the only category iOS guarantees
+  background audio for, and the only one that stops your music. Off unless asked for.
 
-| situation | default (mixable) | hold audio on |
+Assigning an unsupported session type is either ignored or throws, so each candidate is
+written and read back rather than trusted; browsers without the API are left alone. The
+session is claimed before anything can play and re-asserted on return to the foreground,
+since an interruption hands it back in whatever state the OS chose.
+
+| situation | default (mixable hold) | take over audio |
 |---|---|---|
-| App in front | Beep, vibration, 3-2-1 cue — music ducks briefly | same, but music is paused for the rest |
-| Backgrounded, or phone locked | Notification, and the alarm if the page survived | **Alarm sounds on time**, plus a notification |
-| Music playing | Untouched | **Paused** |
+| App in front | Beep, vibration, 3-2-1 cue | same |
+| Backgrounded, or phone locked | Alarm + notification, as far as iOS lets an ambient session hold the page | **Alarm sounds on time**, plus a notification |
+| Music playing | Untouched | **Paused for every rest** |
 | App force-quit (swiped away) | Nothing — the process is gone. Reopening says *"Rest finished N min ago"* | same |
 
 Two switches, under **Settings**:
 
 - **Alarm when app is closed** — schedules the beep ahead of time and sends a
   notification. Mixes; nothing is paused.
-- **Hold audio during rest** — off by default. The most reliable option with the phone
-  locked, and the only one that interrupts your music.
+- **Take over audio during rest** — off by default. Turn it on only if alarms are still
+  being missed with the phone locked; it is the most reliable setting and the only one
+  that interrupts your music.
 
 **Settings → Test the alarm** reports the live audio state, the notification permission,
 and either the active session type (`mixing (transient)`) or whether the background hold
@@ -207,11 +209,27 @@ correct state rather than a fault, and the diagnostics say so.
 `bghold.js` asserts 19 invariants about the media hold specifically — that it starts with
 a rest, survives Web Audio being unavailable entirely, is released on pause, skip and
 natural finish, is re-taken on resume, honours the setting, and recovers from an
-interruption on the next tap. `mix.js` asserts the 23 that matter for not disturbing
-other audio, against a stubbed `navigator.audioSession` that records every type the page
-asks for: a default install never requests `playback`, never plays the keep-alive and
-never publishes Now Playing metadata, while opting in does all three and releases them
-again afterwards.
+interruption on the next tap. `mix.js` asserts the 23 that matter for not disturbing other
+audio, against a stubbed `navigator.audioSession` that records every type the page asks
+for: a default install never requests `playback` and never publishes Now Playing metadata,
+while opting in does both and releases them again afterwards.
+
+`iosnotify.js` asserts 21 invariants **under iOS's rules rather than Chromium's** — see
+below.
+
+### The Notification constructor does not exist on iOS
+
+`new Notification(...)` throws `TypeError: Illegal constructor` in a Home Screen web app.
+Only `ServiceWorkerRegistration.showNotification()` exists. Chromium implements the
+constructor happily, which is why this survived every test: two of the three call sites
+used it directly, and the one in `toggleReminders()` was unguarded inside an `async`
+function — so turning on **Workout reminders** saved the setting, threw, and surfaced as
+the app falling over with nothing delivered.
+
+Everything now goes through one `notify()` helper: worker first, constructor only as a
+fallback for browsers with no worker, and it can neither throw nor reject. `iosnotify.js`
+runs the app against a stubbed `Notification` whose constructor throws exactly as iOS's
+does, and asserts that the app never reaches for it.
 
 ## Offline & data
 

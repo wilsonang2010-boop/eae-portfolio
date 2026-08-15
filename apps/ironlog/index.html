@@ -914,7 +914,7 @@ body.resting.timer-mini .app{ padding-bottom:8px }
 /* Kept in step with the service worker cache name, so Settings can show which
    build is actually running — updates now wait for you to accept them, and
    "did the fix land?" is otherwise unanswerable from the phone. */
-const APP_BUILD = "v21";
+const APP_BUILD = "v22";
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 // Indexed by Date.getDay(): Sun..Sat
 const SCHEDULE = ["Legs","Push","Pull","Legs","Push","Pull","Rest"];
@@ -2236,9 +2236,11 @@ function persistTimer(){
     // Hold the page awake first and independently. Keeping it alive is what
     // makes the countdown, the alarm and the notification all keep working;
     // it must not be conditional on the Web Audio schedule succeeding, which
-    // is exactly the mistake that left backgrounded rests silent. It does stop
-    // the user's music, though, so it only runs when asked for.
-    if (settings.bgAlarm && settings.holdAudio) startKeepAlive();
+    // is exactly the mistake that left backgrounded rests silent. Whether it
+    // takes the audio session exclusively is settings.holdAudio's business, not
+    // this call's — gating the hold itself on that flag is what stopped
+    // backgrounded rests notifying at all.
+    if (settings.bgAlarm) startKeepAlive();
     scheduleRestAlarm();
     scheduleAlarm((timer.endAt - Date.now())/1000);
   } else {
@@ -2346,18 +2348,41 @@ async function acquireWake(){
 }
 function releaseWake(){ try{ if (wakeLock) wakeLock.release(); }catch(e){} wakeLock = null; }
 
-function notifyRestDone(){
-  if (!("Notification" in window) || Notification.permission !== "granted") return;
-  const body = timer.exercise ? `Rest done after ${timer.exercise} — next set 💥` : "Rest complete — next set 💥";
+/* Every notification in the app goes through here.
+
+   iOS does not implement the Notification *constructor* for web apps: on a
+   Home Screen app — which is where this actually runs — `new Notification(…)`
+   throws "Illegal constructor". Only the service worker's showNotification()
+   exists. Two of the three call sites used the constructor directly, and one of
+   those was unguarded inside an async function, so turning on Workout reminders
+   threw halfway through: the setting was saved, the confirmation never arrived,
+   and the rejection surfaced as the app falling over.
+
+   So there is now one path. The worker is tried first because it is the only
+   one iOS supports; the constructor is a fallback for browsers with no worker,
+   and it can no longer take anything down with it. Never throws, never
+   rejects — callers can ignore the result. */
+function notify(body, opts){
+  if (!("Notification" in window)) return Promise.resolve(false);
+  let perm;
+  try{ perm = Notification.permission; }catch(e){ return Promise.resolve(false); }
+  if (perm !== "granted") return Promise.resolve(false);
+  const options = Object.assign({ body, icon:"icon-192.png", badge:"icon-192.png" }, opts||{});
+  const viaConstructor = ()=>{
+    try{ new Notification("IronLog", options); return true; }catch(e){ return false; }
+  };
   try{
     if (navigator.serviceWorker && navigator.serviceWorker.ready){
-      navigator.serviceWorker.ready
-        .then(reg => reg.showNotification("IronLog", { body, icon:"icon-192.png", badge:"icon-192.png", tag:"ironlog-rest", renotify:true, vibrate:[120,80,120] }))
-        .catch(()=>{ try{ new Notification("IronLog", { body, icon:"icon-192.png" }); }catch(e){} });
-    } else {
-      new Notification("IronLog", { body, icon:"icon-192.png" });
+      return navigator.serviceWorker.ready
+        .then(reg => reg.showNotification("IronLog", options))
+        .then(()=> true, ()=> viaConstructor());
     }
   }catch(e){}
+  return Promise.resolve(viaConstructor());
+}
+function notifyRestDone(){
+  notify(timer.exercise ? `Rest done after ${timer.exercise} — next set 💥` : "Rest complete — next set 💥",
+         { tag:"ironlog-rest", renotify:true, vibrate:[120,80,120] });
 }
 function clearRestNotification(){
   try{
@@ -2574,26 +2599,38 @@ let alarmArmed = false;
    alarm, the notification and the beep all keep working, rather than being
    resurrected afterwards.
 
-   The cost only became clear in use: background audio privilege requires the
-   playback session, playback is the non-mixable category, and so holding the
-   page awake this way necessarily stops the user's music and shows the timer
-   as a track. There is no flag that buys one without the other. So this is now
-   behind settings.holdAudio and off by default — every caller checks first,
-   and the default path leaves the audio session mixable and lets the
-   notification carry a backgrounded rest. */
+   Which is also why removing the hold outright was the wrong fix for "it pauses
+   my music": the hold is what keeps the *page* alive, and the page is what
+   fires the notification. Dropping it silently traded one broken thing for
+   another — music played, and a rest that ended in the background alerted
+   nothing, because the service-worker fallback is exactly the thing iOS evicts.
+
+   So the loop still runs for every rest. What settings.holdAudio changes is the
+   audio session it runs under:
+
+   - off (default): a mixable ambient session. Your music is untouched, and if
+     iOS lets the element keep the page alive we still get the alarm and the
+     notification. Ambient rather than transient because transient *ducks* other
+     audio, and this loop plays for the whole rest.
+   - on: the exclusive playback session. The only category iOS guarantees
+     background audio for, and the only one that stops your music. */
 function startKeepAlive(){
   if (keepAlive) return;
   const el = document.getElementById("keepAliveEl");
   if (!el) return;
-  setAudioSession(["playback"]);
+  const exclusive = !!settings.holdAudio;
+  setAudioSession(exclusive ? ["playback"] : ["ambient", "transient"]);
   try{
     el.currentTime = 0;
     const pr = el.play();
     if (pr && pr.catch) pr.catch(()=>{});
   }catch(e){}
-  // Give the lock screen something honest rather than a blank media card.
+  /* Only an exclusive hold gets a lock-screen card. A mixable one must not
+     claim Now Playing: that slot belongs to whatever the user is actually
+     listening to, and taking it is what made the rest timer look like a song
+     and steal the headphone play/pause button. */
   try{
-    if ("mediaSession" in navigator){
+    if (exclusive && "mediaSession" in navigator){
       navigator.mediaSession.metadata = new MediaMetadata({
         title: "Rest timer", artist: "IronLog",
       });
@@ -2665,7 +2702,7 @@ function scheduleAlarm(secs){
     // sound. Reporting "armed" there is worse than not arming: finishRest()
     // trusts the flag and skips the fallback beep, losing the alert entirely.
     if (ctx.state !== "running") return;
-    if (settings.holdAudio) startKeepAlive();
+    startKeepAlive();
     const at = ctx.currentTime + secs;
     [880, 1174, 1568, 1174, 1568].forEach((f,i)=>{
       const o = ctx.createOscillator(), g = ctx.createGain();
@@ -2704,7 +2741,7 @@ function unlockAudio(){
     // The media element can be stopped by an interruption (a call, another app
     // taking the session) without anything telling us. Any trusted tap is a
     // chance to get the page held awake again.
-    if (settings.bgAlarm && settings.holdAudio && !keepAliveLive()){ keepAlive = null; startKeepAlive(); }
+    if (settings.bgAlarm && !keepAliveLive()){ keepAlive = null; startKeepAlive(); }
     if (!alarmArmed) scheduleAlarm((timer.endAt - Date.now())/1000);
     ensureNotifyPermission();
   };
@@ -3398,10 +3435,11 @@ function renderSettings(){
         <div class="ctl"><button class="switch${settings.bgAlarm?" on":""}" id="bgSw" role="switch" aria-checked="${!!settings.bgAlarm}"></button></div>
       </div>
       <div class="set-row">
-        <div><div class="lab">Hold audio during rest</div>
-             <div class="desc">Most reliable with the phone locked, but it takes the audio
-             session: <b>your music pauses</b> and the timer shows up as a track on the lock
-             screen. Leave off if you train to music.</div></div>
+        <div><div class="lab">Take over audio during rest</div>
+             <div class="desc">Only turn this on if alarms are still being missed with the
+             phone locked. It's the most reliable setting, and the cost is real:
+             <b>your music pauses</b> for every rest and the timer shows up as a track on
+             the lock screen.</div></div>
         <div class="ctl"><button class="switch${settings.holdAudio?" on":""}" id="holdSw" role="switch" aria-checked="${!!settings.holdAudio}"></button></div>
       </div>
       <div class="set-row">
@@ -3486,10 +3524,12 @@ function renderSettings(){
   };
   $("#holdSw").onclick   = ()=>{
     settings.holdAudio = !settings.holdAudio; saveSettings(); renderSettings();
-    // Take effect on the rest that's already running rather than the next one.
-    if (!settings.holdAudio) stopKeepAlive();
-    else if (timer.running && settings.bgAlarm) startKeepAlive();
-    if (settings.holdAudio) toast("Rests will now pause your music");
+    /* Re-take the hold under the new session rather than dropping it — the loop
+       is wanted either way, only its category changes. */
+    if (timer.running && settings.bgAlarm){ stopKeepAlive(); startKeepAlive(); }
+    else stopKeepAlive();
+    toast(settings.holdAudio ? "Rests will now pause your music"
+                             : "Rests will leave your music alone");
   };
   $("#vibSw").onclick    = ()=>{ settings.vibrate=!settings.vibrate; saveSettings(); renderSettings(); if(settings.vibrate&&navigator.vibrate)navigator.vibrate(40); };
   $("#remSw").onclick    = toggleReminders;
@@ -3509,15 +3549,16 @@ function renderSettings(){
     // Media playback is the load-bearing signal on iOS — it's what keeps the
     // page alive in the background. Report it, not just the Web Audio state.
     const held = keepAliveLive();
-    // With the hold off, "not active" is the correct state, not a fault — the
-    // thing to report is that we're sharing the audio session, and that the
-    // notification is what covers a backgrounded rest.
-    const mode = settings.holdAudio
-      ? `background hold ${held ? "active" : (timer.running ? "NOT active" : "idle")}`
-      : `mixing${audioSessionType() ? ` (${audioSessionType()})` : ""}`;
+    // The hold runs either way; what changes is whether it took the session
+    // exclusively. Report both, since "held but mixing" is the normal state and
+    // used to be indistinguishable from "not held at all".
+    const t = audioSessionType();
+    const share = settings.holdAudio ? "exclusive" : "mixing";
     const ok = ctxState === "running";
-    diag.textContent = `audio ${ctxState} · ${mode} · notifications ${perm}`;
-    diag.style.color = (ok && (!settings.holdAudio || held || !timer.running)) ? "" : "var(--amber)";
+    diag.textContent = `audio ${ctxState} · background hold ` +
+      `${held ? "active" : (timer.running ? "NOT active" : "idle")}` +
+      ` · ${share}${t ? ` (${t})` : ""} · notifications ${perm}`;
+    diag.style.color = (ok && (held || !timer.running)) ? "" : "var(--amber)";
   };
   paintDiag();
   $("#alarmTestRow").onclick = ()=>{
@@ -3527,14 +3568,14 @@ function renderSettings(){
       paintDiag();
       if (!settings.sound){ toast("Turn timer sound on first"); return; }
       if (!audioCtx || audioCtx.state !== "running"){ toast("Audio still locked — tap again"); return; }
-      // Exercise whichever path is actually configured, not a fixed one.
-      if (settings.holdAudio) startKeepAlive();
+      // Hold the page awake for the test too, so this exercises the real path.
+      startKeepAlive();
       scheduleAlarm(3);
       setTimeout(()=>{ paintDiag(); if (!timer.running) stopKeepAlive(); }, 5000);
       toast(!alarmArmed ? "Could not arm the alarm"
-        : settings.holdAudio
-          ? (keepAliveLive() ? "Alarm in 3s — lock the phone now" : "Alarm in 3s, but background hold failed")
-          : "Alarm in 3s — plays over your music");
+        : !keepAliveLive() ? "Alarm in 3s, but the background hold failed"
+        : settings.holdAudio ? "Alarm in 3s — lock the phone now"
+        : "Alarm in 3s — lock the phone now, music keeps playing");
     }, 120);
   };
   $("#verRow").onclick = async ()=>{
@@ -3562,12 +3603,19 @@ async function toggleReminders(){
   if (settings.reminders){ settings.reminders=false; saveSettings(); renderSettings(); return; }
   if (!("Notification" in window)){ toast("Notifications not supported"); return; }
   let perm = Notification.permission;
-  if (perm==="default") perm = await Notification.requestPermission();
+  // A rejected request (no user activation, or a browser that refuses outright)
+  // must read as "not granted", not as an unhandled rejection out of an async
+  // click handler.
+  if (perm==="default"){
+    try{ perm = await Notification.requestPermission(); }catch(e){ perm = Notification.permission; }
+  }
   if (perm!=="granted"){ toast("Notification permission denied"); renderSettings(); return; }
   settings.reminders = true; saveSettings(); renderSettings();
   scheduleReminder();
   const type = todayType();
-  new Notification("IronLog", { body: type==="Rest" ? "Rest day — recovery is part of progress. 💪" : `Today is ${type} day. Let's train. 💪`, icon:"icon-192.png" });
+  await notify(type==="Rest" ? "Rest day — recovery is part of progress. 💪"
+                             : `Today is ${type} day. Let's train. 💪`,
+               { tag:"ironlog-reminder", renotify:true });
 }
 let reminderTimer = null;
 function scheduleReminder(){
@@ -3579,7 +3627,9 @@ function scheduleReminder(){
   if (next <= now) next.setDate(next.getDate()+1);
   reminderTimer = setTimeout(()=>{
     const type = todayType();
-    try{ new Notification("IronLog", { body: type==="Rest"?"Rest day — recover well. 💪":`Today is ${type} day. Time to train. 💪`, icon:"icon-192.png" }); }catch(e){}
+    notify(type==="Rest" ? "Rest day — recover well. 💪"
+                         : `Today is ${type} day. Time to train. 💪`,
+           { tag:"ironlog-reminder", renotify:true });
     scheduleReminder();
   }, Math.min(next-now, 2147483000));
 }
