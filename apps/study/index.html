@@ -133,6 +133,7 @@ header{
 .tab-chem .dot{background:#4ADE80;}
 .tab-hist .dot{background:#FFA6C6;}
 .tab-histskills .dot{background:#FBBF24;}
+.tab-engskills .dot{background:#FCA5A5;}
 .tab-phylesson .dot{background:#67E8F9;}
 .tab-chemlesson .dot{background:#86EFAC;}
 
@@ -263,6 +264,27 @@ header{
 .step-list li:before{content:counter(step); position:absolute; left:0; top:-1px; width:24px; height:24px; border-radius:50%; background:var(--blue-soft); color:var(--blue-bright); font-size:11.5px; font-weight:700; display:grid; place-items:center;}
 .example-ans{margin-top:15px; padding:11px 15px; border-radius:8px; background:rgba(74,222,128,.07); border:1px solid rgba(74,222,128,.28); color:var(--white); font-size:14px; font-weight:600; line-height:1.55;}
 .example-ans b{color:#86EFAC;}
+
+/* ── Practice questions that hide their answer until you ask ──── */
+.prac{display:flex; flex-direction:column; gap:11px;}
+.prac details{background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:15px 18px;}
+.prac details[open]{border-color:var(--border-strong);}
+.prac summary{cursor:pointer; list-style:none; display:flex; gap:12px; align-items:flex-start;
+  color:var(--white); font-size:14.5px; font-weight:500; line-height:1.6; font-family:var(--font-display);}
+.prac summary::-webkit-details-marker{display:none;}
+.prac summary .pn{flex:none; width:23px; height:23px; border-radius:7px; margin-top:1px;
+  background:var(--blue-soft); color:var(--blue-bright); font-size:11.5px; font-weight:700; display:grid; place-items:center;}
+.prac summary .ptxt{flex:1;}
+.prac summary .pgo{flex:none; align-self:center; font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--slate-400); border:1px solid var(--border); border-radius:999px; padding:4px 11px; white-space:nowrap;}
+.prac details[open] summary .pgo{color:var(--blue-bright); border-color:var(--border-strong);}
+.prac details[open] summary .pgo:after{content:'ide';}
+.prac summary .pgo:before{content:'Show';}
+.prac details[open] summary .pgo:before{content:'H';}
+.prac .pa{margin-top:14px; padding-top:14px; border-top:1px solid var(--border);}
+.prac .pa .lab{font-size:10.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--blue-bright); margin-bottom:5px;}
+.prac .pa p{color:var(--slate-100); font-size:14px; line-height:1.62;}
+.prac .pa p + .lab{margin-top:14px;}
 
 /* ── Diagrams (SVG, generated at render time) ────────────────── */
 .diagram-wrap{margin:16px 0; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:16px; text-align:center; overflow-x:auto;}
@@ -632,6 +654,7 @@ header{
       <button class="tab tab-chemlesson" data-subject="chemlesson"><span class="dot"></span>Chem Lessons</button>
       <button class="tab tab-hist" data-subject="history"><span class="dot"></span>History</button>
       <button class="tab tab-histskills" data-subject="histskills"><span class="dot"></span>Hist Answers</button>
+      <button class="tab tab-engskills" data-subject="engskills"><span class="dot"></span>Eng Answers</button>
     </nav>
   </div>
 </header>
@@ -5006,6 +5029,323 @@ const HIST_SKILLS = {
   ]
 };
 
+const ENG_SKILLS = {
+  eyebrow:"English Language · Paper 2 Comprehension · Answering technique",
+  title:"English — Comprehension Answering Technique",
+  intro:"The sentence stems that score for every comprehension question type, the word banks that lift a plain answer into a precise one, and the six reasons an expression counts as unusual. Comprehension is not about having better ideas than everyone else — it is about proving, in a fixed shape, that you understood the words on the page.",
+  cards:[
+    { h:"The shape never changes", p:"Almost every language question is answered with the same three moves: quote it, explain it literally, then say what it suggests. Miss the third move and you cap yourself, no matter how good the quotation was." },
+    { h:"Literal first, always", p:"Explaining what a phrase means literally is not a waste of a sentence — it is the mark. Jumping straight to the effect reads as a guess, because you never showed you understood the words." },
+    { h:"Match the number of marks", p:"A 3-mark language question wants three separate phrases, each fully explained. Two brilliant phrases cannot score three marks." },
+  ],
+  chapters:[
+    { n:1, title:"Language-based questions — the three-phrase formula", q:"Pick three phrases. Explain each one twice.",
+      sections:[
+        { h:"What the question looks like", type:"text", body:[
+          "These questions ask you to <b>explain how language is used</b> to bring out something — the charm of a place, the fear of a character, the chaos of a scene — and they tell you how many details to use and which lines to use them from.",
+          "The instruction “support your answer with <b>three</b> details” is not a suggestion. Three details, three marks. Pick three <b>separate</b> phrases; two halves of the same phrase count as one.",
+        ]},
+        { h:"The stem you write every time", type:"formulas", body:[
+          { f:"The phrase ‘…………’ means …", d:"A literal explanation. Say what the words actually mean, in plain English, as if to someone who did not know them." },
+          { f:"… suggesting that / and it suggests that …", d:"Now the effect. Use a precise synonym and link it back to what the question asked about." },
+        ]},
+        { h:"Worked example", type:"examples", body:[
+          { level:"Model answer",
+            q:"<b>Question:</b> Explain how language is used to highlight the charm of Princeton. Support your answer with three details from lines 1–3. <b>[3m]</b>",
+            steps:[
+              "The phrase ‘<b>tranquil greenness of the many trees</b>’ means that the place was calm and soothing, immersed in nature, suggesting that it was <b>appealing</b>.",
+              "The phrase ‘<b>the clean streets and stately homes</b>’ means that the place was spotless and elegant, suggesting that it was <b>desirable</b>.",
+              "The phrase ‘<b>the quiet, abiding air of earned grace</b>’ means that the place was peaceful and heavenly, suggesting that it was <b>captivating</b>.",
+              "<b>A fourth, if you want a spare:</b> The phrase ‘the delicately overpriced shops’ means that the shops sold expensive things, suggesting that the neighbourhood had a taste for higher quality products.",
+            ],
+            ans:"Every line follows the identical shape — quote, literal meaning, then a single precise word for the effect. Notice that none of the three explanations reuses the word “charming”; each finds a different synonym, which is what proves the vocabulary." },
+        ]},
+        { h:"What caps your marks", type:"bullets", body:[
+          "<b>Quoting without explaining.</b> A phrase on its own scores nothing — it shows you can copy.",
+          "<b>Explaining literally and stopping.</b> The “suggests” half is where the mark lives.",
+          "<b>Repeating the question word.</b> If the question says “charm”, answering “this suggests it was charming” is circular. Find a synonym.",
+          "<b>Overlapping phrases.</b> Three details from the same clause is one detail written three ways.",
+        ]},
+      ]},
+    { n:2, title:"Word banks — stop writing the plain word", q:"The synonym is the mark.",
+      sections:[
+        { h:"How to use these", type:"text", body:[
+          "The “suggests that…” half of your answer is where examiners see your vocabulary. Writing “this suggests he was sad” when the passage has spent a paragraph building grief is the difference between a mark and half a mark.",
+          "Learn these in the direction you will need them: from the <b>plain word you would naturally reach for</b>, to the <b>precise word that scores</b>. Push any of these into <b>Memorise</b> or <b>My Cards</b> to drill them.",
+        ]},
+        { h:"Describing people — emotions and character", type:"diagram", body:{ type:"table",
+          caption:"Left column is what you would write by default. Right column is what to write instead.",
+          head:["Plain word","Use instead"],
+          rows:[
+            ["Sick","ill · not feeling well · nauseous"],
+            ["Tired","worn out · exhausted · fatigued"],
+            ["Active","energetic · vigorous · sporty"],
+            ["Happy","delighted · elated · joyful"],
+            ["Sad","disappointed · unhappy · sorrowful"],
+            ["Amazed","surprised · bewildered · startled"],
+            ["Disgust","sicken · nauseating · repulsing"],
+            ["Considerate","thoughtful · mindful · caring"],
+            ["Contented","satisfied · pleased · at ease"],
+            ["Amused","funny · hilarious · entertaining"],
+            ["Hatred","dislike · detest · loathe · resent"],
+            ["Bold","brave · daring · courageous · fearless · extroverted"],
+            ["Shy","introverted · timid · reserved · withdrawn"],
+            ["Cautious","careful · wary · watchful"],
+            ["Dirty","stained · filthy · soiled · unwashed"],
+            ["Optimistic","positive · cheerful · hopeful · full of hope"],
+            ["Ugly","horrendous · hideous · unattractive"],
+            ["Reluctant","unwilling · not enthusiastic · resistant"],
+            ["Comfortable","relaxed · cosy · pleasant"],
+            ["Proud","boastful · likes to show off · bragged"],
+          ] } },
+        { h:"Describing places and atmosphere", type:"diagram", body:{ type:"table",
+          caption:"Setting questions come up constantly — this is the table to know cold.",
+          head:["Plain word","Use instead"],
+          rows:[
+            ["Messy","not neat · not arranged in order · chaotic"],
+            ["Quiet","silent · serene · peaceful"],
+            ["Noisy","chaos · making too much sound · cacophony · shrieking"],
+            ["Calm","tranquil · peaceful · serene · still"],
+            ["Charming","attractive · appealing · lovely"],
+            ["Did not fit in","was not aligned · stood out · jutted out"],
+            ["Dangerous","fatal · deadly · could cause injuries"],
+            ["Crowded","packed like sardines · crammed · congested"],
+            ["Ancient","old · historical · prehistoric · not modern"],
+            ["Wonderful","lovely · marvellous · glorious · magnificent"],
+            ["Eerie","spooky · sinister · scary"],
+            ["Polluted","dirty · contaminated · foul"],
+            ["Clean","pristine · spotless · unblemished"],
+            ["Uneven ground","obstacles · bumpy · rutted"],
+            ["Picturesque","scenic · lovely scenery · pleasant"],
+          ] } },
+      ]},
+    { n:3, title:"Effect vs effective — two different questions", q:"One is about the reader. One is about the writer.",
+      sections:[
+        { h:"The distinction students lose marks on", type:"text", body:[
+          "These two words look interchangeable and are not. Reading the question wrongly here means writing a competent answer to a question nobody asked.",
+          "<b>Effect</b> = the <b>impact on the reader</b>. What it makes the reader feel.",
+          "<b>Effective</b> = the <b>writer's intended mode of communication</b>. Why this was a good way to say it.",
+        ]},
+        { h:"Stems for each", type:"formulas", body:[
+          { f:"EFFECT  —  “It evokes in the reader a feeling of …”", d:"Also: “It makes the reader feel…” or “It suggests that the reader is…”. You are describing an emotion produced in the reader." },
+          { f:"EFFECTIVE  —  “It is effective as it emphasises / conveys / illustrates that …”", d:"You are describing what the writer succeeded in getting across, and why that phrasing did it." },
+        ]},
+        { h:"Reading the question correctly", type:"bullets", body:[
+          "“What is the <b>effect</b> of…?” → the reader feels something. Name the feeling.",
+          "“Why is the phrase <b>effective</b>?” → the writer achieved something. Name what it emphasises.",
+          "If the question says “effective <b>and</b> unusual”, you owe <b>two</b> separate sentences — see Chapter 6.",
+        ]},
+      ]},
+    { n:4, title:"Evidence questions", q:"Two versions — know which one you have been asked.",
+      sections:[
+        { h:"4a — Evidence and explain", type:"formulas", body:[
+          { f:"The evidence ‘…………’ means …", d:"Quote the sentence or phrase, then give the literal paraphrase." },
+          { f:"This shows …", d:"Now paraphrase the key word from the question. This half is the explanation the mark scheme is looking for." },
+        ]},
+        { h:"4b — Evidence only", type:"text", body:[
+          "If the question asks for <b>evidence</b> and nothing else, do not decorate it. Write: <i>The evidence is ‘…………’</i> — quoted <b>directly</b> from the passage, word for word.",
+          "Adding explanation to an evidence-only question wastes time you need elsewhere, and a misquotation can lose the mark outright. Copy it exactly.",
+        ]},
+      ]},
+    { n:5, title:"“What does the word or expression mean?”", q:"Literal explanation plus the story around it.",
+      sections:[
+        { h:"The two halves", type:"text", body:[
+          "This is the simplest question type and the one most often half-answered. It needs <b>two</b> things:",
+          "<b>1.</b> Explain the words in the expression <b>literally</b> — what do these words mean in ordinary English?",
+          "<b>2.</b> <b>Link it to the context</b> — what is actually happening in the story at that moment. Without this, you have written a dictionary entry, not an answer.",
+        ]},
+      ]},
+    { n:6, title:"Unusual expressions — the six reasons", q:"Explain each word separately, then name the reason.",
+      sections:[
+        { h:"The method", type:"text", body:[
+          "When a question asks what is <b>unusual</b> about an expression, you split it. Explain the two key words <b>separately and literally</b>, then say why putting them together is strange — choosing one of six reasons.",
+        ]},
+        { h:"The stem", type:"formulas", body:[
+          { f:"The word ‘xxx’ means ………… while the word ‘yyy’ means ………… .", d:"Two literal meanings, given separately. Do not merge them into one explanation." },
+          { f:"They are unusual as …", d:"Now pick exactly one reason from the six below and state it." },
+        ]},
+        { h:"The six reasons", type:"diagram", body:{ type:"table",
+          caption:"One of these will fit. Learn them as a list — it turns a hard question into a lookup.",
+          head:["","The expression is unusual because…"],
+          rows:[
+            ["a","Both words <b>contrast</b> each other"],
+            ["b","The writer compares a <b>plant or animal</b> characteristic to a <b>human being</b>"],
+            ["c","The writer compares a <b>living</b> thing to a <b>non-living</b> thing"],
+            ["d","The writer uses <b>colour</b> to describe an emotion or feeling"],
+            ["e","The writer compares <b>height, distance or speed</b>"],
+            ["f","The writer compares an action or occurrence that happens at <b>different times of the day</b>"],
+          ] } },
+        { h:"Worked examples", type:"examples", body:[
+          { level:"Model answer",
+            q:"<b>Am I talking to a wall?</b>",
+            steps:[
+              "The word ‘<b>talking</b>’ means the way a person speaks, while the word ‘<b>wall</b>’ means a physical, non-living structure.",
+              "It is unusual as no one would communicate with a non-living structure. <i>(reason c)</i>",
+            ],
+            ans:"Each word is defined on its own before the two are put together. That separation is the whole technique." },
+          { level:"Model answer",
+            q:"<b>This is another fine mess you have got us into.</b>",
+            steps:[
+              "The word ‘<b>fine</b>’ means a situation that is in order, while the word ‘<b>mess</b>’ means something that is disorganised.",
+              "It is unusual as both words contrast each other. <i>(reason a)</i>",
+            ],
+            ans:"A straight contrast — the commonest of the six, and always worth checking first." },
+          { level:"Model answer",
+            q:"<b>Joe's personal trainer whipped him back into shape within 3 months.</b> — What is unusual and effective about this expression?",
+            steps:[
+              "<b>Unusual:</b> The word ‘whipped’ means to strike repeatedly with a lash, while ‘back into shape’ means to restore physical fitness. It is unusual as a violent physical action is used to describe a training programme. <i>(reason c)</i>",
+              "<b>Effective:</b> It is effective as it emphasises how the personal trainer's exercise regime was so tough that he was able to get Joe fit again within a short period of time.",
+            ],
+            ans:"When the question asks <b>both</b>, write two labelled sentences. The “effective” half always links back to the context — here, the severity of the regime and the speed of the result." },
+        ]},
+      ]},
+    { n:7, title:"Practice — unusual and effective", q:"Try each one before you reveal it.",
+      sections:[
+        { h:"How to use this set", type:"text", body:[
+          "Write your answer out in full before tapping <b>Show</b>. Use the stem from Chapter 6: define each word separately, name the reason, then a separate sentence for the effect.",
+          "<span style=\"color:var(--slate-400)\">These model answers were written to follow the handout's own formula — the handout leaves these blanks for you to fill. Your teacher's wording always wins.</span>",
+        ]},
+        { h:"Nine to work through", type:"html", body:`<div class="prac">
+          <details><summary><span class="pn">1</span><span class="ptxt">It had begun to rain heavily as we rowed into the deep sea. Suddenly, a <b>grey wall</b> appeared in front of us.</span><span class="pgo"></span></summary>
+            <div class="pa">
+              <div class="lab">Unusual</div><p>The word ‘grey’ means a dull, colourless shade, while the word ‘wall’ means a solid, man-made vertical structure. It is unusual as the writer compares a living, moving thing — a huge wave of water — to a non-living structure. <i>(reason c)</i></p>
+              <div class="lab">Effective</div><p>It is effective as it emphasises how enormous and solid the oncoming wave appeared, conveying that it was an impassable barrier the rowers had no hope of getting through.</p>
+            </div></details>
+          <details><summary><span class="pn">2</span><span class="ptxt">Several mountaineers fell to their deaths when they were <b>caught in an avalanche</b> while climbing Mount Everest.</span><span class="pgo"></span></summary>
+            <div class="pa">
+              <div class="lab">Unusual</div><p>The word ‘caught’ means to be seized or trapped by someone, while the word ‘avalanche’ means a mass of snow sliding down a mountain. It is unusual as the writer gives a non-living thing the human ability to seize and trap a person. <i>(reason c)</i></p>
+              <div class="lab">Effective</div><p>It is effective as it emphasises how sudden and inescapable the avalanche was, conveying that the climbers were powerless, as though they were being hunted down.</p>
+            </div></details>
+          <details><summary><span class="pn">3</span><span class="ptxt">You are going to <b>have to</b> use proofreading services, it is your only <b>choice</b>.</span><span class="pgo"></span></summary>
+            <div class="pa">
+              <div class="lab">Unusual</div><p>The words ‘have to’ mean something is compulsory and unavoidable, while the word ‘choice’ means the freedom to pick between options. It is unusual as both words contrast each other. <i>(reason a)</i></p>
+              <div class="lab">Effective</div><p>It is effective as it emphasises that there is in fact no choice at all, stressing how urgently the work needs to be corrected.</p>
+            </div></details>
+          <details><summary><span class="pn">4</span><span class="ptxt">Wow! This ice cream is <b>disgustingly delicious</b>.</span><span class="pgo"></span></summary>
+            <div class="pa">
+              <div class="lab">Unusual</div><p>The word ‘disgustingly’ means something that causes revulsion, while the word ‘delicious’ means something that tastes extremely pleasant. It is unusual as both words contrast each other. <i>(reason a)</i></p>
+              <div class="lab">Effective</div><p>It is effective as it emphasises how intensely rich and enjoyable the ice cream was — so indulgent that it felt almost sinful to eat — conveying the speaker's delight.</p>
+            </div></details>
+          <details><summary><span class="pn">5</span><span class="ptxt">It's an <b>open secret</b> that they have been having an affair for the past six months.</span><span class="pgo"></span></summary>
+            <div class="pa">
+              <div class="lab">Unusual</div><p>The word ‘open’ means something visible and known to everyone, while the word ‘secret’ means something deliberately hidden. It is unusual as both words contrast each other. <i>(reason a)</i></p>
+              <div class="lab">Effective</div><p>It is effective as it emphasises how everybody already knows about the affair, even though the couple continue to behave as though it were concealed.</p>
+            </div></details>
+          <details><summary><span class="pn">6</span><span class="ptxt">He was drawn to the casino <b>like a moth to a flame</b>.</span><span class="pgo"></span></summary>
+            <div class="pa">
+              <div class="lab">Unusual</div><p>The word ‘moth’ means a small winged insect, while the word ‘flame’ means burning fire that would destroy it. It is unusual as the writer compares an animal's characteristic to a human being. <i>(reason b)</i></p>
+              <div class="lab">Effective</div><p>It is effective as it emphasises how helplessly and irresistibly he was attracted to gambling, conveying that the very thing drawing him in would eventually destroy him.</p>
+            </div></details>
+          <details><summary><span class="pn">7</span><span class="ptxt">The guard <b>mercilessly whipped</b> the errant prisoner's back. <span style="color:var(--slate-400)">(effective only)</span></span><span class="pgo"></span></summary>
+            <div class="pa">
+              <div class="lab">Effective</div><p>It is effective as it emphasises how cruel and unrestrained the guard was, stressing that he showed no pity whatsoever for the prisoner despite the wrongdoing that had been committed.</p>
+            </div></details>
+          <details><summary><span class="pn">8</span><span class="ptxt">Suddenly the room filled with a <b>deafening silence</b>.</span><span class="pgo"></span></summary>
+            <div class="pa">
+              <div class="lab">Unusual</div><p>The word ‘deafening’ means a sound so loud that it makes a person unable to hear, while the word ‘silence’ means the complete absence of sound. It is unusual as both words contrast each other. <i>(reason a)</i></p>
+              <div class="lab">Effective</div><p>It is effective as it emphasises how total and oppressive the silence was, conveying that it was so heavy it became impossible to ignore.</p>
+            </div></details>
+          <details><summary><span class="pn">9</span><span class="ptxt">Izzy gave a <b>silent scream</b>, and gesticulated wildly when the bookshelf tilted towards the child.</span><span class="pgo"></span></summary>
+            <div class="pa">
+              <div class="lab">Unusual</div><p>The word ‘silent’ means without any sound, while the word ‘scream’ means a loud, piercing cry. It is unusual as both words contrast each other. <i>(reason a)</i></p>
+              <div class="lab">Effective</div><p>It is effective as it emphasises how horrified Izzy was at the danger to the child, conveying that she was so paralysed by shock that no sound would come out.</p>
+            </div></details>
+        </div>` },
+      ]},
+    { n:8, title:"Effective — refer to the context", q:"Emphasise how extremely …",
+      sections:[
+        { h:"The stem", type:"formulas", body:[
+          { f:"It is effective as it emphasises how extremely …", d:"Then finish with the space, the emotion or the situation the passage is actually describing. The word “extremely” is a reminder that you are describing an intensity, not just restating the phrase." },
+        ]},
+        { h:"Worked example", type:"examples", body:[
+          { level:"Model answer",
+            q:"<b>The moment he set eyes on him, it was a living nightmare.</b><br><br><b>Context:</b> The man lives a life of pretence as an astrologer. He feels guilty as he had supposedly killed a man by pushing him into a well twenty years ago. One evening, he meets that man, who demands to have his astrology read.",
+            steps:[
+              "<b>Effective:</b> It is effective as it stresses how the person he was looking at instilled fear in him.",
+              "<b>Why this works:</b> The answer reaches for the situation — the guilt and the sudden reappearance — rather than repeating the words “living nightmare” back at the examiner.",
+            ],
+            ans:"Effectiveness answers are always anchored in the context. If your sentence would still make sense attached to a completely different passage, it is too vague." },
+        ]},
+      ]},
+    { n:9, title:"“How does the writer achieve his purpose?”", q:"This is a techniques question.",
+      sections:[
+        { h:"What is being asked", type:"text", body:[
+          "When a question asks <b>how</b> the writer achieves his purpose, it is asking you to name <b>techniques</b>. Open with “<b>The writer uses…</b>” and then take your pick from the three families below.",
+          "Naming a technique is never enough on its own — every one of these must be followed by <b>what it does</b> and a <b>link back to the context</b>.",
+        ]},
+        { h:"i. Punctuation", type:"diagram", body:{ type:"table",
+          caption:"Name the mark, explain its function, then link it back to the passage.",
+          head:["Mark","What it does"],
+          rows:[
+            ["Exclamation mark <b>!</b>","Expresses astonishment or shock"],
+            ["Ellipses <b>…</b>","Shows something unending or repeating, leaving the rest to the reader's imagination"],
+            ["Dash <b>—</b>","Indicates a short pause"],
+            ["Colon <b>:</b>","Introduces a list of things"],
+            ["Semi-colon <b>;</b>","Shows contrast"],
+          ] } },
+        { h:"ii. Length of sentences", type:"formulas", body:[
+          { f:"The long sentence provides detailed description on …", d:"Then link back to the context — what is being described in such detail, and why that matters." },
+          { f:"The short sentence provided is sudden and abrupt, showing how …", d:"Then give the outcome or link back to the context. Short sentences almost always mark a shock, a decision, or an ending." },
+        ]},
+        { h:"iii. Choice of words", type:"bullets", body:[
+          "<b>Imperatives</b> — action words giving instructions: <i>please join us, take this, wait, close…</i>",
+          "<b>Personal pronouns</b> — <i>you, we, our</i> — draw the reader in and make it feel addressed to them personally.",
+          "<b>Adverbs</b> — intensify how an action was performed.",
+          "<b>Repetition</b> — hammers a point until the reader cannot miss it.",
+          "<b>Alliteration</b> — makes a phrase stick in the memory.",
+          "<b>Similes</b> and <b>metaphors</b> — compare one thing to another to make it vivid.",
+          "<b>Personification</b> — gives human qualities to something non-human.",
+          "<b>Colloquialism</b> — everyday, localised language that makes the writing feel familiar and informal.",
+          "<b>Formal or informal language</b> — signals the relationship between writer and reader.",
+        ]},
+      ]},
+    { n:10, title:"Irony — actual versus expected", q:"What was expected, and what actually happened.",
+      sections:[
+        { h:"The stem", type:"formulas", body:[
+          { f:"The writer expected … However, in reality …", d:"Irony is always a gap between the two. Name both sides explicitly — the expectation first, then what actually occurred." },
+        ]},
+        { h:"Getting it right", type:"bullets", body:[
+          "If you cannot name <b>both</b> halves, it is not irony — it is just something unfortunate.",
+          "The expectation is often never stated in the passage. It is what a reasonable person <b>would have assumed</b> given the situation.",
+        ]},
+      ]},
+    { n:11, title:"Tone and attitude word banks", q:"Tone is how it is said. Attitude is how they behave.",
+      sections:[
+        { h:"The difference", type:"text", body:[
+          "<b>Tone</b> relates to how the writer or character <b>speaks</b> — the voice on the page.",
+          "<b>Attitude</b> relates to how they <b>behave</b> — the stance they take towards a person or situation.",
+          "Both questions are answered with a <b>precise adjective</b>, so these banks are worth memorising outright rather than reasoning from scratch under time pressure.",
+        ]},
+        { h:"Tone — how it is said", type:"diagram", body:{ type:"table",
+          head:["","Words"],
+          rows:[
+            ["Negative","caustic · critical · accusatory · annoyed · antagonistic · anxious · audacious (bold) · arrogant · baffled · bewildered · bitter · candid · demanding · condescending · condemnation · outspoken"],
+            ["Positive","affectionate · amused · animated · appreciative · approving · celebratory · cheerful · colloquial (localised language) · comforting · complimentary · lighthearted · cautious"],
+          ] } },
+        { h:"Attitude — how they behave", type:"diagram", body:{ type:"table",
+          head:["","Words"],
+          rows:[
+            ["Negative","callous (rough) · belligerent · aggressive · pessimistic · cynical · childish · audacious · quarrelsome"],
+            ["Positive","confident · empathetic · friendly · optimistic · relaxed · calm · tired"],
+          ] } },
+      ]},
+    { n:12, title:"A checklist before you hand in", q:"The five questions that recover marks.",
+      sections:[
+        { h:"Run through these", type:"bullets", body:[
+          "Did every language answer contain <b>both</b> halves — the literal meaning <b>and</b> what it suggests?",
+          "Did you give as many details as the question asked for — <b>three</b> details for three marks?",
+          "Did you check whether the question said <b>effect</b> or <b>effective</b>, and answer that one?",
+          "For unusual expressions, did you define <b>each word separately</b> before naming the reason?",
+          "Did any answer just repeat the question's own word back at it? Replace it with a synonym from Chapter 2.",
+          "Are all quotations copied <b>exactly</b> from the passage?",
+        ]},
+        { h:"A note on this guide", type:"text", body:[
+          "This chapter set was built from your own Answering Technique handout — the stems, the six reasons for unusual expressions, the synonym banks and the tone and attitude lists are taken from it directly. The model answers in Chapter 7 were written to that handout's formula, since the handout leaves those blanks for you to complete, and the practice items are there to be attempted before revealing. Where your teacher's phrasing differs from anything here, follow your teacher.",
+        ]},
+      ]},
+  ]
+};
+
 /* ============================================================
    ASK — offline tutor.
    Answers come only from this app's own syllabus content, so it
@@ -5015,7 +5355,7 @@ function stripTags(s){ return String(s).replace(/<[^>]*>/g,' ').replace(/\s+/g,'
 
 const TAB_LABELS = { physics:'Physics', chemistry:'Chemistry', phylesson:'Phy Lessons',
                      chemlesson:'Chem Lessons', emath:'E-Math', amath:'A-Math',
-                     history:'History', histskills:'Hist Answers' };
+                     history:'History', histskills:'Hist Answers', engskills:'Eng Answers' };
 
 let ASK_INDEX = null;
 function buildAskIndex(){
@@ -5036,7 +5376,7 @@ function buildAskIndex(){
 
   /* Lesson sections, chapter by chapter */
   [['phylesson',PHY_LESSONS],['chemlesson',CHEM_LESSONS],['emath',EMATH],['amath',AMATH],
-   ['history',HISTORY],['histskills',HIST_SKILLS]]
+   ['history',HISTORY],['histskills',HIST_SKILLS],['engskills',ENG_SKILLS]]
   .forEach(([key,S])=>{
     (S.chapters||[]).forEach(ch=>{
       (ch.sections||[]).forEach(sec=>{
@@ -5483,8 +5823,9 @@ function saveLog(a){ localStorage.setItem('osp-log', JSON.stringify(a)); }
    APP LOGIC
    ============================================================ */
 const DATA = { physics:PHYSICS, chemistry:CHEMISTRY, history:HISTORY, emath:EMATH, amath:AMATH,
-               phylesson:PHY_LESSONS, chemlesson:CHEM_LESSONS, histskills:HIST_SKILLS };
-const SYLLABUS_SUBJECTS = ['history','emath','amath','phylesson','chemlesson','histskills'];
+               phylesson:PHY_LESSONS, chemlesson:CHEM_LESSONS, histskills:HIST_SKILLS,
+               engskills:ENG_SKILLS };
+const SYLLABUS_SUBJECTS = ['history','emath','amath','phylesson','chemlesson','histskills','engskills'];
 const app = document.getElementById('app');
 let state = {
   subject:'plan',
@@ -8104,7 +8445,7 @@ function footerHTML(){
       <b>Check before you trust it:</b> Definitions follow the Singapore O-Level 2026 syllabuses (Pure Physics 6091, Pure Chemistry 6092, Elective History — Express) and are phrased the way examiners award marks — but cross-check them against your own school notes and the official SEAB syllabus.
       <div style="margin-top:9px;">The exam dates here were taken from your brief, not from an official source. <b>Confirm every date against the official SEAB / MOE examination timetable</b> before planning around it.</div>
     </div>
-    <p style="margin-top:22px;">Personal study tool · Plan · Error log · Memorise · My Cards · Physics · Chemistry · History</p>
+    <p style="margin-top:22px;">Personal study tool · Plan · Error log · Memorise · My Cards · Physics · Chemistry · History · English</p>
     <p>Your schedule, error log, memorise rotation, your own decks and "learnt" progress are saved in this browser only — clearing site data will erase them. Export your decks from <b>My Cards</b> to keep a copy.</p>
   </div>`;
 }
