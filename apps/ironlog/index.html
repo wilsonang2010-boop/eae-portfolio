@@ -914,7 +914,7 @@ body.resting.timer-mini .app{ padding-bottom:8px }
 /* Kept in step with the service worker cache name, so Settings can show which
    build is actually running — updates now wait for you to accept them, and
    "did the fix land?" is otherwise unanswerable from the phone. */
-const APP_BUILD = "v19";
+const APP_BUILD = "v21";
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 // Indexed by Date.getDay(): Sun..Sat
 const SCHEDULE = ["Legs","Push","Pull","Legs","Push","Pull","Rest"];
@@ -973,6 +973,13 @@ const DEFAULT_SETTINGS = {
   // Hold an inaudible audio loop during a rest so the finish alarm still
   // sounds with the app in the background or the phone locked.
   bgAlarm: true,
+  /* Hold a silent audio channel open for the length of a rest. It is the most
+     reliable way to make the beep survive a locked phone — and it is also the
+     one thing here that takes the audio session away from whatever else is
+     playing, so it stays off until it's explicitly asked for. Without it the
+     background alert is the notification, which sounds over music rather than
+     stopping it. */
+  holdAudio: false,
   // Per-exercise rest overrides, keyed by exercise name: { "Pec Fly": 90 }
   exRest: {},
   barKg: 20, plates: [20,15,10,5,2.5,1.25], showPlates: true,
@@ -2229,8 +2236,9 @@ function persistTimer(){
     // Hold the page awake first and independently. Keeping it alive is what
     // makes the countdown, the alarm and the notification all keep working;
     // it must not be conditional on the Web Audio schedule succeeding, which
-    // is exactly the mistake that left backgrounded rests silent.
-    if (settings.bgAlarm) startKeepAlive();
+    // is exactly the mistake that left backgrounded rests silent. It does stop
+    // the user's music, though, so it only runs when asked for.
+    if (settings.bgAlarm && settings.holdAudio) startKeepAlive();
     scheduleRestAlarm();
     scheduleAlarm((timer.endAt - Date.now())/1000);
   } else {
@@ -2491,6 +2499,43 @@ $("#rtMinus").onclick = ()=>adjustRest(-15);
 // Start a rest any time, regardless of which set you just finished.
 $("#manualTimer").onclick = ()=> startRest("");
 
+/* ---------- Audio session ----------
+   iOS hands a web page the "playback" audio session by default, and a playback
+   session is not mixable: the instant this app makes a sound, the OS interrupts
+   whatever else is playing. That is why the rest timer started behaving like a
+   song — it paused your music and took over the lock screen's Now Playing card
+   for a countdown.
+
+   The Audio Session API lets us declare what this audio actually is.
+   "transient" is the notification-chime category: it ducks other audio for the
+   moment a beep sounds and lets it carry straight on afterwards. "ambient" is
+   the fallback — also mixable, though the ringer switch silences it. Neither
+   claims Now Playing. Browsers without the API are left alone, and since
+   assigning an unsupported value is either ignored or throws, each candidate is
+   written and then read back rather than trusted. */
+const MIX_SESSION = ["transient", "ambient"];
+function audioSessionType(){
+  try{ return (navigator.audioSession && navigator.audioSession.type) || null; }
+  catch(e){ return null; }
+}
+function setAudioSession(types){
+  let s;
+  try{ s = navigator.audioSession; }catch(e){ return null; }
+  if (!s) return null;
+  for (const t of types){
+    try{ s.type = t; if (s.type === t) return t; }catch(e){}
+  }
+  return audioSessionType();
+}
+function mixWithOtherAudio(){ return setAudioSession(MIX_SESSION); }
+/* Claim it before anything can play, and re-assert on the way back in: an
+   interruption (a call, another app) hands the session back in whatever state
+   the OS chose, which is how a mixable page quietly becomes an exclusive one. */
+mixWithOtherAudio();
+document.addEventListener("visibilitychange", ()=>{
+  if (!document.hidden && !(settings.holdAudio && keepAlive)) mixWithOtherAudio();
+});
+
 /* Beep via WebAudio (no asset needed). */
 let audioCtx = null;
 function ensureCtx(){
@@ -2527,11 +2572,20 @@ let alarmArmed = false;
    A playing <audio> element is what iOS actually honours. It establishes a
    media session, which keeps the page itself alive — so the countdown, the
    alarm, the notification and the beep all keep working, rather than being
-   resurrected afterwards. */
+   resurrected afterwards.
+
+   The cost only became clear in use: background audio privilege requires the
+   playback session, playback is the non-mixable category, and so holding the
+   page awake this way necessarily stops the user's music and shows the timer
+   as a track. There is no flag that buys one without the other. So this is now
+   behind settings.holdAudio and off by default — every caller checks first,
+   and the default path leaves the audio session mixable and lets the
+   notification carry a backgrounded rest. */
 function startKeepAlive(){
   if (keepAlive) return;
   const el = document.getElementById("keepAliveEl");
   if (!el) return;
+  setAudioSession(["playback"]);
   try{
     el.currentTime = 0;
     const pr = el.play();
@@ -2575,11 +2629,15 @@ function stopKeepAlive(){
   }
   try{
     if ("mediaSession" in navigator){
+      navigator.mediaSession.metadata = null;
       navigator.mediaSession.playbackState = "none";
       navigator.mediaSession.setActionHandler("pause", null);
       navigator.mediaSession.setActionHandler("stop", null);
     }
   }catch(e){}
+  // Give the session straight back as something mixable, so the rest of the
+  // app's sounds don't keep the exclusive category the hold needed.
+  mixWithOtherAudio();
   keepAlive = null;
 }
 /* Is the page genuinely being held awake right now? Media element playing is
@@ -2607,7 +2665,7 @@ function scheduleAlarm(secs){
     // sound. Reporting "armed" there is worse than not arming: finishRest()
     // trusts the flag and skips the fallback beep, losing the alert entirely.
     if (ctx.state !== "running") return;
-    startKeepAlive();
+    if (settings.holdAudio) startKeepAlive();
     const at = ctx.currentTime + secs;
     [880, 1174, 1568, 1174, 1568].forEach((f,i)=>{
       const o = ctx.createOscillator(), g = ctx.createGain();
@@ -2646,7 +2704,7 @@ function unlockAudio(){
     // The media element can be stopped by an interruption (a call, another app
     // taking the session) without anything telling us. Any trusted tap is a
     // chance to get the page held awake again.
-    if (settings.bgAlarm && !keepAliveLive()){ keepAlive = null; startKeepAlive(); }
+    if (settings.bgAlarm && settings.holdAudio && !keepAliveLive()){ keepAlive = null; startKeepAlive(); }
     if (!alarmArmed) scheduleAlarm((timer.endAt - Date.now())/1000);
     ensureNotifyPermission();
   };
@@ -3334,10 +3392,17 @@ function renderSettings(){
       </div>
       <div class="set-row">
         <div><div class="lab">Alarm when app is closed</div>
-             <div class="desc">Keeps an inaudible audio channel open during a rest so the
-             beep still fires with the phone locked. Costs a little battery, and may take
-             over from music you're playing.</div></div>
+             <div class="desc">Schedules the beep ahead of time so it still fires with the
+             app in the background, and sends a notification. Mixes with your music —
+             nothing gets paused.</div></div>
         <div class="ctl"><button class="switch${settings.bgAlarm?" on":""}" id="bgSw" role="switch" aria-checked="${!!settings.bgAlarm}"></button></div>
+      </div>
+      <div class="set-row">
+        <div><div class="lab">Hold audio during rest</div>
+             <div class="desc">Most reliable with the phone locked, but it takes the audio
+             session: <b>your music pauses</b> and the timer shows up as a track on the lock
+             screen. Leave off if you train to music.</div></div>
+        <div class="ctl"><button class="switch${settings.holdAudio?" on":""}" id="holdSw" role="switch" aria-checked="${!!settings.holdAudio}"></button></div>
       </div>
       <div class="set-row">
         <div><div class="lab">Vibration</div><div class="desc">Haptic feedback</div></div>
@@ -3419,6 +3484,13 @@ function renderSettings(){
     if (!settings.bgAlarm){ cancelAlarm(); stopKeepAlive(); }
     else if (timer.running) scheduleAlarm((timer.endAt - Date.now())/1000);
   };
+  $("#holdSw").onclick   = ()=>{
+    settings.holdAudio = !settings.holdAudio; saveSettings(); renderSettings();
+    // Take effect on the rest that's already running rather than the next one.
+    if (!settings.holdAudio) stopKeepAlive();
+    else if (timer.running && settings.bgAlarm) startKeepAlive();
+    if (settings.holdAudio) toast("Rests will now pause your music");
+  };
   $("#vibSw").onclick    = ()=>{ settings.vibrate=!settings.vibrate; saveSettings(); renderSettings(); if(settings.vibrate&&navigator.vibrate)navigator.vibrate(40); };
   $("#remSw").onclick    = toggleReminders;
   // Data
@@ -3437,10 +3509,15 @@ function renderSettings(){
     // Media playback is the load-bearing signal on iOS — it's what keeps the
     // page alive in the background. Report it, not just the Web Audio state.
     const held = keepAliveLive();
+    // With the hold off, "not active" is the correct state, not a fault — the
+    // thing to report is that we're sharing the audio session, and that the
+    // notification is what covers a backgrounded rest.
+    const mode = settings.holdAudio
+      ? `background hold ${held ? "active" : (timer.running ? "NOT active" : "idle")}`
+      : `mixing${audioSessionType() ? ` (${audioSessionType()})` : ""}`;
     const ok = ctxState === "running";
-    diag.textContent = `audio ${ctxState} · background hold ${held ? "active" : (timer.running ? "NOT active" : "idle")}` +
-                       ` · notifications ${perm}`;
-    diag.style.color = (ok && (held || !timer.running)) ? "" : "var(--amber)";
+    diag.textContent = `audio ${ctxState} · ${mode} · notifications ${perm}`;
+    diag.style.color = (ok && (!settings.holdAudio || held || !timer.running)) ? "" : "var(--amber)";
   };
   paintDiag();
   $("#alarmTestRow").onclick = ()=>{
@@ -3450,13 +3527,14 @@ function renderSettings(){
       paintDiag();
       if (!settings.sound){ toast("Turn timer sound on first"); return; }
       if (!audioCtx || audioCtx.state !== "running"){ toast("Audio still locked — tap again"); return; }
-      // Hold the page awake for the test too, so this exercises the real path.
-      startKeepAlive();
+      // Exercise whichever path is actually configured, not a fixed one.
+      if (settings.holdAudio) startKeepAlive();
       scheduleAlarm(3);
       setTimeout(()=>{ paintDiag(); if (!timer.running) stopKeepAlive(); }, 5000);
-      toast(alarmArmed
-        ? (keepAliveLive() ? "Alarm in 3s — lock the phone now" : "Alarm in 3s, but background hold failed")
-        : "Could not arm the alarm");
+      toast(!alarmArmed ? "Could not arm the alarm"
+        : settings.holdAudio
+          ? (keepAliveLive() ? "Alarm in 3s — lock the phone now" : "Alarm in 3s, but background hold failed")
+          : "Alarm in 3s — plays over your music");
     }, 120);
   };
   $("#verRow").onclick = async ()=>{

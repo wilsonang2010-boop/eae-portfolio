@@ -1,7 +1,7 @@
 /* IronLog — offline service worker.
    The app is fully self-contained (single index.html + icons). We cache the
    shell and assets so the app works with no network. Bump CACHE on release. */
-const CACHE = "ironlog-v20";
+const CACHE = "ironlog-v21";
 const ASSETS = [
   "./",
   "./index.html",

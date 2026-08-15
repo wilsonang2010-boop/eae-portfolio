@@ -70,8 +70,9 @@ rest of the split.
   reopening picks it up at the right second, and tells you if it ran out while you were
   away. It holds a screen wake lock while running. Working sets always trigger it;
   plyometrics (on by default) and warm-ups (off by default) are toggleable in Settings.
-  The finish alarm is queued on the audio clock up front, so it **still sounds with the
-  app backgrounded or the phone locked** — see
+  The finish alarm is queued on the audio clock up front and backed by a notification, so
+  it **still reaches you with the app backgrounded or the phone locked** — and it **never
+  pauses your music** unless you ask it to. See
   [Alarm when the app isn't in front](#alarm-when-the-app-isnt-in-front).
   Open a sheet or the keypad and the panel **condenses to a pill in the top corner**
   rather than covering it; tap the pill to bring the controls back.
@@ -155,38 +156,62 @@ this.
 
 ### How it works now
 
-A near-silent looping `<audio>` element plays for the duration of the rest. iOS honours a
-playing media element: it establishes a media session, which keeps the **page itself**
-alive. So the countdown, the alarm, the notification and the beep all simply keep
-running, rather than being resurrected afterwards.
+A near-silent looping `<audio>` element can be played for the duration of the rest. iOS
+honours a playing media element: it establishes a media session, which keeps the **page
+itself** alive. So the countdown, the alarm, the notification and the beep all simply
+keep running, rather than being resurrected afterwards.
 
-- The hold is taken whenever a rest is running, independently of whether the Web Audio
-  schedule succeeded — that conditional was the bug.
-- The alarm is still queued on the audio clock as well, so it lands precisely.
-- The lock-screen media card reads "IronLog — Rest timer", and pausing from there ends
-  the rest rather than silently stranding it.
-- An interruption (a call, another app taking the session) is detectable, and the next
-  tap re-takes the hold.
+That hold works, and it has a price that only showed up in use: background audio
+privilege requires the **playback** audio session, playback is the *non-mixable*
+category, and so holding the page awake this way necessarily **pauses the user's music**
+and shows the rest timer as a track on the lock screen. There is no flag that buys one
+without the other — so the hold is now opt-in, and the default path never touches the
+audio session.
 
-| situation | what you get |
-|---|---|
-| App in front | Beep, vibration, 3-2-1 countdown cue |
-| Backgrounded, or phone locked | **Alarm sounds on time**, plus a notification |
-| App force-quit (swiped away) | Nothing — the process is gone. Reopening says *"Rest finished N min ago"* |
+**By default** the app declares itself mixable via the Audio Session API
+(`navigator.audioSession.type`), preferring `transient` — the notification-chime category
+— and falling back to `ambient`. Both duck other audio for the moment a beep sounds and
+let it carry on; neither claims Now Playing. The alarm is still queued on the audio clock
+so it lands precisely, and a backgrounded rest is covered by the notification, which
+sounds *over* music rather than stopping it.
 
-Toggle it under **Settings → Alarm when app is closed**. It costs a little battery and
-holds the audio session, which can interrupt music — hence a switch rather than
-unconditional.
+- The mixable session is claimed before anything can play, and re-asserted when the app
+  returns to the foreground — an interruption hands the session back in whatever state
+  the OS chose.
+- Assigning an unsupported session type is either ignored or throws, so each candidate is
+  written and read back rather than trusted. Browsers without the API are left alone.
+- With the hold **on**, the old behaviour returns in full: playback session, keep-alive
+  loop, a lock-screen card reading "IronLog — Rest timer" whose pause button ends the
+  rest, and recovery of the hold on the next tap after an interruption. Turning it off
+  mid-rest releases the session immediately without disturbing the countdown.
 
-**Settings → Test the alarm** reports the live audio state, whether the background hold
-is actually active, and the notification permission, then fires a 3-second alarm. The
-"background hold" line is the load-bearing one: it's the thing iOS actually requires, and
-the thing the old diagnostics never checked.
+| situation | default (mixable) | hold audio on |
+|---|---|---|
+| App in front | Beep, vibration, 3-2-1 cue — music ducks briefly | same, but music is paused for the rest |
+| Backgrounded, or phone locked | Notification, and the alarm if the page survived | **Alarm sounds on time**, plus a notification |
+| Music playing | Untouched | **Paused** |
+| App force-quit (swiped away) | Nothing — the process is gone. Reopening says *"Rest finished N min ago"* | same |
+
+Two switches, under **Settings**:
+
+- **Alarm when app is closed** — schedules the beep ahead of time and sends a
+  notification. Mixes; nothing is paused.
+- **Hold audio during rest** — off by default. The most reliable option with the phone
+  locked, and the only one that interrupts your music.
+
+**Settings → Test the alarm** reports the live audio state, the notification permission,
+and either the active session type (`mixing (transient)`) or whether the background hold
+is actually active, then fires a 3-second alarm. With the hold off, "not active" is the
+correct state rather than a fault, and the diagnostics say so.
 
 `bghold.js` asserts 19 invariants about the media hold specifically — that it starts with
 a rest, survives Web Audio being unavailable entirely, is released on pause, skip and
 natural finish, is re-taken on resume, honours the setting, and recovers from an
-interruption on the next tap.
+interruption on the next tap. `mix.js` asserts the 23 that matter for not disturbing
+other audio, against a stubbed `navigator.audioSession` that records every type the page
+asks for: a default install never requests `playback`, never plays the keep-alive and
+never publishes Now Playing metadata, while opting in does all three and releases them
+again afterwards.
 
 ## Offline & data
 
