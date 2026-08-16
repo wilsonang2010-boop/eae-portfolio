@@ -117,6 +117,30 @@ rest of the split.
   plate calculator and bar weight, timer sound, vibration, daily reminders,
   bodyweight, and JSON or CSV export / JSON import.
 
+## Running it on a Mac
+
+The app installs to the dock as a standalone macOS app — no wrapper, no build, no
+developer account. It gets its own window, its own icon, its own storage, and works
+offline like any other app.
+
+- **Safari** (macOS Sonoma or later) — open the app, then **File → Add to Dock**.
+- **Chrome / Edge** — open the app, then the **install icon** in the address bar
+  (or ⋮ → *Cast, save and share* → *Install page as app*).
+
+### It's a separate app from your phone
+
+Same site, different device, so a Mac install starts with an **empty training log** —
+storage doesn't travel. To bring your history across: **Settings → Export backup** on the
+phone, send yourself the file, then **Settings → Import backup** on the Mac. The two stay
+independent after that, so export again whenever you want them back in step.
+
+### Desktop layout
+
+Past 900px the shell turns on its side: the bottom tab bar becomes a **sidebar**, and the
+reading column centres in the space that's left. It is deliberately not wider than that —
+a set row stretched across a 1400px window is harder to use, not easier. Below 900px
+nothing changes, so the phone layout is exactly as it was.
+
 ## Theme
 
 Pure black background with pink accents by default, plus a **light theme** that can

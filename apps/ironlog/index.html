@@ -532,6 +532,43 @@ body.resting.timer-mini .app{ padding-bottom:8px }
 .nav button.active{color:var(--accent)}
 .nav button.active svg{transform:translateY(-1px)}
 
+/* ---------- Desktop ----------
+   Installed to the dock the app gets a real window, and a 520px column with a
+   phone tab bar pinned across the bottom of it reads as a phone emulator rather
+   than a Mac app. Past 900px the shell turns on its side: the tabs become a
+   sidebar — the desktop idiom, and permanently visible rather than a strip you
+   aim at — and the reading column centres in what's left. Deliberately not
+   wider than that: a set row stretched across a 1400px window is harder to use,
+   not easier. Nothing under 900px is touched, so the phone layout the app is
+   actually used on is exactly as it was. */
+@media (min-width:900px){
+  body{ flex-direction:row }
+  .nav{
+    order:-1;                                   /* sidebar leads, content follows */
+    flex:0 0 232px;width:232px;max-width:232px;height:100%;margin:0;
+    flex-direction:column;justify-content:flex-start;gap:4px;
+    padding:calc(var(--safe-t) + 18px) 12px 12px;
+    border-top:none;border-right:1px solid var(--border);
+  }
+  .nav button{
+    flex:0 0 auto;flex-direction:row;justify-content:flex-start;gap:12px;
+    width:100%;padding:11px 14px;border-radius:12px;
+    font-size:14px;letter-spacing:0;
+    transition:color .2s, background .2s;
+  }
+  .nav button svg{width:20px;height:20px}
+  .nav button.active{background:var(--accent-ghost)}
+  .nav button.active svg{transform:none}
+  .nav button:hover:not(.active){color:var(--text);background:var(--panel-2)}
+
+  .app{max-width:560px}                         /* margin:0 auto already centres it */
+
+  /* The panel was anchored above a bottom nav that isn't down there any more. */
+  .rest-timer{left:232px;bottom:0}
+  .rest-timer-inner{max-width:560px}
+  .rest-timer.mini{left:auto;right:16px;top:16px}
+}
+
 /* ---------- Stats ---------- */
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 2px}
 .stat{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px}
@@ -914,7 +951,7 @@ body.resting.timer-mini .app{ padding-bottom:8px }
 /* Kept in step with the service worker cache name, so Settings can show which
    build is actually running — updates now wait for you to accept them, and
    "did the fix land?" is otherwise unanswerable from the phone. */
-const APP_BUILD = "v22";
+const APP_BUILD = "v23";
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 // Indexed by Date.getDay(): Sun..Sat
 const SCHEDULE = ["Legs","Push","Pull","Legs","Push","Pull","Rest"];
