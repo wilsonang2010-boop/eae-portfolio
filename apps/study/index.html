@@ -134,6 +134,7 @@ header{
 .tab-hist .dot{background:#FFA6C6;}
 .tab-histskills .dot{background:#FBBF24;}
 .tab-engskills .dot{background:#FCA5A5;}
+.tab-study .dot{background:#A5B4FC;}
 .tab-phylesson .dot{background:#67E8F9;}
 .tab-chemlesson .dot{background:#86EFAC;}
 
@@ -336,6 +337,14 @@ header{
 .dtable .dt-key{color:var(--white); font-weight:600; white-space:nowrap;}
 .dtable td b{color:var(--white);}
 .dg-table .diagram-cap{padding:11px 13px 13px; text-align:left; margin-top:0; border-top:1px solid var(--border);}
+/* On a phone a nowrap key column forces the whole table off-screen, so let it
+   wrap and keep the table inside the viewport rather than sideways-scrolling. */
+@media(max-width:640px){
+  .dtable{font-size:13px;}
+  .dtable th,.dtable td{padding:9px 11px; overflow-wrap:break-word;}
+  .dtable th{white-space:normal;}
+  .dtable .dt-key{white-space:normal;}
+}
 
 /* ── Matrix multiplication visual ─────────────────────────────── */
 .mvz{display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; margin:18px 0; font-family:var(--font-mono);}
@@ -646,6 +655,7 @@ header{
       <button class="tab tab-log" data-subject="log"><span class="dot"></span>Error Log</button>
       <button class="tab tab-mem" data-subject="memorise"><span class="dot"></span>Memorise<span class="tab-badge hidden" id="memBadge">0</span></button>
       <button class="tab tab-cards" data-subject="custom"><span class="dot"></span>My Cards</button>
+      <button class="tab tab-study" data-subject="studyskills"><span class="dot"></span>Study Method</button>
       <button class="tab tab-emath" data-subject="emath"><span class="dot"></span>E-Math</button>
       <button class="tab tab-amath" data-subject="amath"><span class="dot"></span>A-Math</button>
       <button class="tab tab-phys" data-subject="physics"><span class="dot"></span>Physics</button>
@@ -5346,6 +5356,337 @@ const ENG_SKILLS = {
   ]
 };
 
+const STUDY_SKILLS = {
+  eyebrow:"Study method · How to revise so it actually sticks",
+  title:"Study Techniques — And How to Use Them in Each Subject",
+  intro:"The handful of study methods that research consistently finds work, why the popular ones mostly do not, and then a chapter each on exactly how to run them for Physics, Chemistry and English. Method beats hours. Two focused hours done the right way will outscore a whole Saturday of highlighting.",
+  cards:[
+    { h:"Testing beats reading", p:"Trying to recall something from an empty page is what builds the memory. Looking at the answer only feels like it does. This one swap is the largest single upgrade available to you." },
+    { h:"Difficulty is the point", p:"If revision feels smooth and comfortable, it is probably not working. The effort of struggling to remember is the mechanism, not a sign you are doing it wrong." },
+    { h:"Little and often", p:"Four thirty-minute sessions spread across a week beat one two-hour block, even though the total time is identical. The gaps are doing the work." },
+  ],
+  chapters:[
+    { n:1, title:"Why most revision fails", q:"The comfortable methods are the ineffective ones.",
+      sections:[
+        { h:"The fluency illusion", type:"text", body:[
+          "Read a page of notes three times and it starts to feel familiar. Your brain reads that familiarity as <b>“I know this”</b> — but familiarity is recognition, and exams demand <b>recall</b>. Recognising the answer when you see it and producing it on a blank page are completely different skills, and only one of them is tested.",
+          "This is why students walk out of an exam genuinely shocked. The revision felt good. It just trained the wrong thing.",
+          "Everything in this chapter set is designed to break that illusion — by making revision harder in the moment, so that the exam is easier.",
+        ]},
+        { h:"What feels productive versus what is productive", type:"diagram", body:{ type:"table",
+          caption:"The left column is not worthless — it is just preparation for the right column, not a substitute for it.",
+          head:["Feels like learning","Actually is learning"],
+          rows:[
+            ["Re-reading the textbook","Closing it and writing what you remember"],
+            ["Highlighting in four colours","Answering a past paper question cold"],
+            ["Copying notes out neatly","Explaining the topic aloud without notes"],
+            ["Watching a video explanation","Pausing it and predicting the next step yourself"],
+            ["Reviewing the answers you got right","Reworking the ones you got wrong"],
+            ["Studying one topic until it feels solid","Mixing it with three other topics"],
+          ] } },
+        { h:"Two myths worth dropping", type:"bullets", body:[
+          "<b>“I'm a visual learner.”</b> The idea that matching material to a personal learning style improves results has been tested repeatedly and does not hold up. What matters is matching the method to the <b>material</b> — a circuit needs a diagram, a definition needs recall, regardless of who you are.",
+          "<b>“I work better under pressure.”</b> Cramming does produce a short-lived spike, which is why it feels like it works. What it does not produce is retention past about a week — which is a problem when the papers are spread over a month.",
+        ]},
+      ]},
+    { n:2, title:"Retrieval practice — the highest-return habit", q:"Shut the book and produce the answer.",
+      sections:[
+        { h:"What it is", type:"text", body:[
+          "<b>Retrieval practice</b> means trying to pull information out of your head <b>before</b> checking whether you were right. Not re-reading it. Not looking at it and nodding. Producing it, from nothing.",
+          "In the large review by Dunlosky and colleagues of ten common study techniques, <b>practice testing</b> came out as one of only two rated high utility across subjects, ages and materials. It is also the one students use least, because it is the least pleasant.",
+          "The key detail: <b>the struggle is the mechanism</b>. A retrieval attempt that is difficult, and even one that fails, strengthens the memory more than a smooth one — provided you then check the correct answer.",
+        ]},
+        { h:"The loop", type:"formulas", body:[
+          { f:"1. CLOSE  —  everything shut, blank page in front of you", d:"Notes closed, phone away. If you can see any of the material, you are not retrieving it." },
+          { f:"2. PRODUCE  —  write or say the answer in full", d:"Full sentences, not a keyword. Half-remembered fragments score half marks in the exam too." },
+          { f:"3. CHECK  —  compare against the real answer", d:"Immediately. Mark yourself honestly — “close enough” is how wrong definitions survive to November." },
+          { f:"4. REPAIR  —  rewrite only what you got wrong", d:"Then re-test that piece later the same day, not straight away. Instantly repeating an answer you just read is copying." },
+        ]},
+        { h:"Running it in this app", type:"bullets", body:[
+          "<b>Quiz mode</b> in any subject deck hides the answer by default — that is retrieval. <b>Flashcard mode</b> shows both sides, which is review. Use quiz mode as the default and flashcard mode only for a first read of new material.",
+          "<b>Memorise</b> schedules the retrieval for you across days 2, 4 and 6. Add anything you have got wrong twice.",
+          "<b>My Cards</b> is where to put things in your own words — writing the card is itself an act of elaboration.",
+          "<b>Brain dump:</b> the zero-setup version. Blank page, topic name at the top, ten minutes, write everything you can recall. Then open the notes and mark the gaps in a different colour. Those gaps are your revision list for that topic.",
+        ]},
+        { h:"Worked session", type:"examples", body:[
+          { level:"Model answer",
+            q:"<b>Twenty-five minutes on Physics — Pressure.</b> How a retrieval session actually runs, versus how most students spend the same time.",
+            steps:[
+              "<b>0–10 min — brain dump.</b> Blank page, heading “Pressure”. Write every definition, formula, unit and application you can recall. No notes open. Expect it to feel uncomfortable and produce less than you hoped — that is the honest picture of what you know.",
+              "<b>10–15 min — mark it.</b> Open the Phy Lessons chapter. Tick what you got, and in red write in what you missed or stated loosely. You will usually find the formula was there but the <i>definition</i> was vague.",
+              "<b>15–22 min — attack the gaps only.</b> Do not re-read the whole chapter. Read only the three or four things you missed, then close it and write those three or four again from memory.",
+              "<b>22–25 min — bank it.</b> Add the ones you missed to <b>Memorise</b>, and log any question you actually got wrong in the <b>Error Log</b>. Tomorrow they come back to you automatically.",
+            ],
+            ans:"The whole session contains about five minutes of reading and twenty minutes of producing. Most students invert that ratio — twenty minutes of reading, five minutes of self-testing — and then wonder why the exam felt unfamiliar." },
+        ]},
+      ]},
+    { n:3, title:"Spacing — why the gaps do the work", q:"Same total hours, spread out, far better result.",
+      sections:[
+        { h:"The forgetting curve", type:"text", body:[
+          "Memory for something learnt once decays steeply and then levels off. Every time you successfully retrieve it, the curve resets and decays <b>more slowly</b> than before. So the goal is not to avoid forgetting — it is to catch each item <b>just as it starts to fade</b>.",
+          "<b>Distributed practice</b> is the other technique Dunlosky's review rated high utility. Crucially, it costs no extra time. Four thirty-minute sessions across a week and one two-hour block are the same two hours; the spread version simply retains far more.",
+          "This is exactly what the <b>Memorise</b> tab automates: an item you add today comes back on day 2, day 4 and day 6, then retires. You do not have to plan it.",
+        ]},
+        { h:"How to space it", type:"diagram", body:{ type:"table",
+          caption:"The gap should be long enough that recall is a bit of a struggle. If it comes back instantly, stretch the gap.",
+          head:["When","What to do"],
+          rows:[
+            ["Same day","A quick self-test at the end of the session — five minutes, closed book."],
+            ["Next day","Brain dump the topic name only. Two minutes. Just check it is still there."],
+            ["3–4 days later","Full quiz-mode run of that topic's deck."],
+            ["1 week later","Mixed with other topics — see interleaving, next chapter."],
+            ["Before the exam","Past paper questions on it, under time."],
+          ] } },
+        { h:"Rules that make it work", type:"bullets", body:[
+          "<b>Never revise a topic on consecutive days by re-reading.</b> If you revisit tomorrow, revisit by <b>testing</b>, not by reading.",
+          "<b>Short and frequent beats long and rare.</b> Fifteen honest minutes daily outperforms three hours on Sunday.",
+          "<b>Start earlier than feels necessary.</b> Spacing only exists if there is time to space things across. Two weeks before the paper, spacing is no longer available to you.",
+          "<b>Let the difficulty be the signal.</b> If recall was easy, leave that item longer. If it was a struggle but you got there, that was the perfect gap.",
+        ]},
+      ]},
+    { n:4, title:"Interleaving — mix, don't block", q:"Practise choosing the method, not just applying it.",
+      sections:[
+        { h:"Why blocked practice flatters you", type:"text", body:[
+          "Do twenty moles questions in a row and by question five you are not deciding anything — you already know it is a moles question. You are practising the <b>arithmetic</b>, not the <b>diagnosis</b>.",
+          "In the exam nothing is labelled. The hardest part of most science and maths questions is working out <b>which</b> approach the question wants. Blocked practice never rehearses that, which is why students who did every exercise in the chapter still freeze on a mixed paper.",
+          "<b>Interleaving</b> means deliberately mixing question types within a session so that every question begins with the real exam decision: <i>what kind of problem is this?</i>",
+        ]},
+        { h:"Blocked versus interleaved", type:"diagram", body:{ type:"table",
+          caption:"Interleaved practice feels worse while you do it and produces better results afterwards. Expect that, and do not read it as failure.",
+          head:["Blocked","Interleaved"],
+          rows:[
+            ["20 × moles, then 20 × electrolysis","5 mixed questions drawn from both, then 5 more"],
+            ["Feels smooth, accuracy looks high","Feels clumsy, accuracy looks lower"],
+            ["Trains execution","Trains execution <b>and</b> selection"],
+            ["Performance drops on a mixed paper","Performance holds on a mixed paper"],
+          ] } },
+        { h:"How to do it without overcomplicating", type:"bullets", body:[
+          "<b>Set the topic filter to “all”.</b> In any deck in this app, quizzing across all topics rather than one is interleaving, for free.",
+          "<b>Three topics per session, rotating.</b> Not three subjects necessarily — three <i>topics</i>. Twenty minutes each, or alternate question by question.",
+          "<b>Use whole past papers, not exercise sets.</b> A past paper is interleaved by construction, which is a large part of why it is such good practice.",
+          "<b>Do not interleave brand-new material.</b> Learn a topic blocked first, until you can do it at all. Interleave from the second session onwards.",
+        ]},
+      ]},
+    { n:5, title:"Elaboration and the Feynman technique", q:"If you cannot explain it simply, you do not have it.",
+      sections:[
+        { h:"Elaborative interrogation", type:"text", body:[
+          "<b>Elaboration</b> means asking <i>why</i> and <i>how</i> until a fact connects to something you already know. An isolated fact is fragile; a connected one has several routes back to it.",
+          "The practical version is to interrogate everything you revise with a small set of questions. It converts memorising into understanding, and understanding survives pressure far better.",
+        ]},
+        { h:"The questions to ask of everything", type:"bullets", body:[
+          "<b>Why is this true?</b> What is the underlying reason, not just the statement?",
+          "<b>How does this connect to what I learnt last week?</b> Explicitly name the link.",
+          "<b>What would happen if this were not true?</b> Or if I changed one condition?",
+          "<b>What is this similar to, and how does it differ?</b> Contrast is how you stop confusing two topics.",
+          "<b>Where would an examiner hide this?</b> What does a question testing this look like?",
+        ]},
+        { h:"The Feynman technique", type:"formulas", body:[
+          { f:"1. Write the topic name at the top of a blank page", d:"One topic. Something specific enough to finish — “electromagnetic induction”, not “Physics”." },
+          { f:"2. Explain it as if to a Secondary 1 student", d:"Plain words, no jargon, full sentences, no notes. Out loud is better than written." },
+          { f:"3. Find where you stalled or reached for jargon", d:"Every stumble marks a gap. Jargon is usually a place where you memorised a phrase without understanding it." },
+          { f:"4. Go back to the source, then re-explain", d:"Only for the parts that broke. Then explain the whole thing again, cleanly." },
+        ]},
+        { h:"Why it is uncomfortable and worth it", type:"text", body:[
+          "Explaining aloud removes every prop. You cannot skim, you cannot half-recognise a phrase and move on, and you cannot hide behind a diagram you have not really read. It exposes gaps within about ninety seconds — far faster than re-reading a chapter would.",
+          "It also happens to be exactly what extended-response questions demand: a clear chain of reasoning in your own words, in order.",
+        ]},
+      ]},
+    { n:6, title:"Dual coding — words plus pictures", q:"Two routes to the same memory.",
+      sections:[
+        { h:"The idea", type:"text", body:[
+          "Verbal information and visual information are processed through partly separate channels. Encoding something <b>both</b> ways gives you two independent routes to recall it, and in the sciences the diagram is frequently what the question is actually about.",
+          "This is not the discredited learning-styles claim. The point is not that you are a visual person — it is that <b>everyone</b> benefits from pairing a diagram with words, because the two encode different aspects of the same thing.",
+        ]},
+        { h:"How to use it properly", type:"bullets", body:[
+          "<b>Draw it from memory, then compare.</b> Copying a diagram out of a book is transcription. Drawing it closed-book is retrieval with a visual channel attached.",
+          "<b>Label everything, in words.</b> An unlabelled sketch is decoration. The labels are where the marks are.",
+          "<b>Convert prose into a diagram and back.</b> Turn a paragraph of explanation into a flow chart, then a week later turn the flow chart back into prose.",
+          "<b>Build comparison tables yourself.</b> The act of deciding the column headings is the learning; reading someone else's table is not.",
+          "<b>Diagrams in this app are worth redrawing.</b> Look at one in Phy Lessons or Chem Lessons, close the tab, reproduce it, then check.",
+        ]},
+      ]},
+    { n:7, title:"Past papers and the error log", q:"Rehearsal, then repair.",
+      sections:[
+        { h:"Past papers are not a test — they are the training", type:"text", body:[
+          "Most students save past papers for the end, treating them as a final check. That wastes the single most useful resource available. Start them <b>as soon as a topic is covered</b>, even if you can only do three questions.",
+          "A past paper trains four things a textbook cannot: reading exam phrasing, choosing an approach without being told, writing to a mark allocation, and working under time.",
+        ]},
+        { h:"The three-pass method", type:"formulas", body:[
+          { f:"Pass 1 — closed book, timed", d:"Real conditions. Leave gaps rather than looking anything up. What you cannot do under time is the actual finding." },
+          { f:"Pass 2 — different pen, notes open", d:"Now attempt everything you left. This separates “did not know it” from “could not retrieve it under pressure” — two different problems with two different fixes." },
+          { f:"Pass 3 — mark scheme, ruthlessly", d:"Award only what the mark scheme awards. Where you lost a mark, write <b>why</b> in one line: knowledge, method, or reading the question." },
+        ]},
+        { h:"The error log is where the marks come from", type:"bullets", body:[
+          "<b>Log every mistake with its cause</b>, not just the question. The <b>Error Log</b> tab takes the topic and what went wrong — that second field is the one that matters.",
+          "<b>Sort by cause and you will find a pattern.</b> Most students have three or four recurring errors that account for the bulk of lost marks — sign errors, missing units, misreading the command word, forgetting state symbols.",
+          "<b>Re-do logged questions cold, a week later.</b> A mistake you have re-done correctly under time is fixed. A mistake you merely read the solution to is not.",
+          "<b>Anything logged twice goes into Memorise.</b> Twice is no longer carelessness — it is a gap.",
+        ]},
+      ]},
+    { n:8, title:"Building a study week", q:"A structure you can actually keep to.",
+      sections:[
+        { h:"Principles before timetables", type:"text", body:[
+          "A timetable you abandon in four days is worse than none, because it also costs you the guilt. Build one you can keep on a <b>bad</b> week, not an ideal one.",
+          "Work in focused blocks of roughly 25–45 minutes with real breaks between them — off the chair, away from the screen. Two blocks done properly beat four hours of sitting near your books with a phone in reach.",
+        ]},
+        { h:"A workable weekday shape", type:"diagram", body:{ type:"table",
+          caption:"Two blocks on a school night is a realistic target. Three subjects touched per day, none of them for long.",
+          head:["Block","Content"],
+          rows:[
+            ["Warm-up · 5 min","<b>Memorise</b> — whatever is due. Non-negotiable, and it is genuinely five minutes."],
+            ["Block 1 · 30 min","One topic, retrieval first: brain dump, mark, repair the gaps."],
+            ["Break · 10 min","Away from the desk. Not the phone — that is not a break, it is a different screen."],
+            ["Block 2 · 30 min","<b>Mixed</b> past paper questions across older topics. Mark them the same evening."],
+            ["Close · 5 min","Log any errors. Add anything missed twice to Memorise."],
+          ] } },
+        { h:"Across the week", type:"bullets", body:[
+          "<b>Every subject gets touched weekly</b>, even if only for fifteen minutes. Long silences are where subjects quietly rot.",
+          "<b>Weight by weakness, not by preference.</b> The subject you enjoy least is the one you have been avoiding, and avoidance is why it is your weakest.",
+          "<b>One longer session at the weekend</b> for a full timed paper. Full paper, no pausing, phone in another room.",
+          "<b>Book one evening off completely.</b> Planned rest is what makes the other six sustainable.",
+          "<b>Plan the week on Sunday, in the Plan tab.</b> Deciding what to study at the moment you sit down burns willpower you need for the studying.",
+        ]},
+      ]},
+    { n:9, title:"Physics — applying all of this", q:"Definitions verbatim, method visible, units always.",
+      sections:[
+        { h:"What Physics actually rewards", type:"text", body:[
+          "Pure Physics (6091) marks split into three quite different demands: <b>word-perfect definitions</b>, <b>structured calculations</b>, and <b>chains of explanation</b>. They need three different study methods, and treating them all as “read the chapter” is why marks scatter.",
+          "The formula list is provided in the exam. So memorising formulas is close to worthless — what you must own is <b>which formula the situation calls for</b>, which is a selection skill, and therefore an interleaving problem.",
+        ]},
+        { h:"Method by question type", type:"diagram", body:{ type:"table",
+          caption:"Match the technique to what the marks are actually for.",
+          head:["Demand","Technique to use"],
+          rows:[
+            ["Definitions (moment, pressure, density…)","<b>Retrieval + Memorise.</b> These must be verbatim — examiners mark specific words. Quiz mode, never flashcard mode."],
+            ["Choosing the right formula","<b>Interleaving.</b> Mixed question sets with the topic filter on “all”. Never twenty of the same type."],
+            ["Calculations","<b>The three-line habit</b>, below. Drill the layout until it is automatic."],
+            ["Explanation chains","<b>Feynman.</b> Explain the mechanism aloud, cause to effect, no jargon."],
+            ["Diagrams (circuits, rays, field lines)","<b>Dual coding.</b> Redraw closed-book, then compare against Phy Lessons."],
+            ["Practical planning","<b>Past papers only.</b> Paper 3 skills are not learnable from notes."],
+          ] } },
+        { h:"The three-line habit for every calculation", type:"formulas", body:[
+          { f:"Line 1 — the formula, in symbols", d:"Written out before any numbers appear. This alone is often a mark, and it is the one most commonly thrown away." },
+          { f:"Line 2 — substitution, with units", d:"Numbers in, units attached, everything converted to SI first. Most lost calculation marks are conversion errors, not physics errors." },
+          { f:"Line 3 — answer, unit, sensible significant figures", d:"Then read it back and ask whether the magnitude is physically plausible. A 4000 m/s car is a lost mark you could have caught." },
+        ]},
+        { h:"Where Physics marks actually leak", type:"bullets", body:[
+          "<b>Loose definitions.</b> “Moment is force times distance” drops the mark — it is force × <b>perpendicular</b> distance <b>from the pivot</b>. Put every definition you state loosely into <b>Memorise</b> the same day.",
+          "<b>Unit conversion.</b> cm to m, g to kg, kPa to Pa, minutes to seconds. Convert everything at line 2, before calculating, every single time.",
+          "<b>Vector versus scalar.</b> Distance and displacement, speed and velocity, mass and weight. Build the comparison table yourself rather than reading one.",
+          "<b>Explanations that state instead of explain.</b> “It gets hotter” is not an explanation. The chain is: cause → what the particles or field do → observable effect. Three links, in order.",
+          "<b>Graph questions.</b> Always know what the <b>gradient</b> and the <b>area</b> physically represent for that particular graph. That is usually the whole question.",
+        ]},
+        { h:"A concrete weekly routine for Physics", type:"bullets", body:[
+          "<b>Daily, 5 min:</b> Memorise due items — this is where definitions live.",
+          "<b>Twice weekly, 30 min:</b> One topic brain dump, then repair gaps from Phy Lessons.",
+          "<b>Twice weekly, 30 min:</b> Mixed calculation questions across all topics covered so far, three-line habit enforced.",
+          "<b>Weekly:</b> Redraw two diagrams closed-book. Log every error with its cause.",
+        ]},
+      ]},
+    { n:10, title:"Chemistry — applying all of this", q:"Three levels at once, and the recall tables.",
+      sections:[
+        { h:"What makes Chemistry different", type:"text", body:[
+          "Pure Chemistry (6092) asks you to think at <b>three levels simultaneously</b>: the <b>macroscopic</b> (what you observe — a colour change, a gas), the <b>particle</b> level (what ions and molecules are doing), and the <b>symbolic</b> (the balanced equation). Most confusion in Chemistry is a level confusion.",
+          "It also contains more <b>pure recall</b> than Physics — qualitative analysis results, solubility rules, reactivity order, colours of precipitates. That content is exactly what spaced retrieval is built for, and there is no way around learning it cold.",
+        ]},
+        { h:"Method by content type", type:"diagram", body:{ type:"table",
+          caption:"Chemistry splits cleanly into recall and reasoning. Study each accordingly.",
+          head:["Content","Technique to use"],
+          rows:[
+            ["QA tables, precipitate colours, gas tests","<b>Memorise, relentlessly.</b> Pure recall. There is no understanding shortcut — drill it."],
+            ["Solubility rules, reactivity series","<b>Memorise + self-made table.</b> Build the table yourself, then quiz it closed-book."],
+            ["Mole calculations","<b>Interleaved past paper questions</b> with the mol → ratio → mol route written out every time."],
+            ["Bonding, structure, properties","<b>Dual coding + Feynman.</b> Draw the structure, then explain why it gives those properties."],
+            ["Organic reactions","<b>Elaboration.</b> Functional group → reaction type → conditions. Ask why the conditions matter."],
+            ["Practical observations","<b>Past papers.</b> Observation and inference must be written as a matched pair."],
+          ] } },
+        { h:"The calculation route that never changes", type:"formulas", body:[
+          { f:"1. Given quantity → moles", d:"Whatever you were handed — mass, volume of gas, concentration × volume — turn it into moles first. Always." },
+          { f:"2. Moles → moles, via the balanced equation", d:"Use the ratio from the equation. If the equation is not balanced, everything after this is wrong, so balance it before anything else." },
+          { f:"3. Moles → the quantity asked for", d:"Convert back out to mass, volume or concentration. Read the question again to check which one it wanted." },
+          { f:"4. State symbols and units", d:"Then check limiting reagent if two reactant amounts were given — a very common place to be quietly wrong." },
+        ]},
+        { h:"Where Chemistry marks actually leak", type:"bullets", body:[
+          "<b>Missing state symbols.</b> Free marks, routinely dropped. Make writing them reflexive — every equation, every time, including in rough work.",
+          "<b>Unbalanced equations.</b> Check by counting atoms on both sides before you use the equation for anything.",
+          "<b>“Strong” confused with “concentrated”.</b> Strong is about dissociation; concentrated is about amount per volume. Same for weak and dilute.",
+          "<b>Observation without inference.</b> “A white precipitate formed” is half the answer. What ion does that indicate? Pair them every time.",
+          "<b>Vague particle-level explanations.</b> Name the actual particles and what they do — “the ions are free to move and carry charge”, not “it conducts because it is ionic”.",
+          "<b>Describing at the wrong level.</b> If the question asks what you would <b>see</b>, do not answer with an equation.",
+        ]},
+        { h:"A concrete weekly routine for Chemistry", type:"bullets", body:[
+          "<b>Daily, 5 min:</b> Memorise — QA results, colours, gas tests. This is the highest-yield five minutes in the subject.",
+          "<b>Twice weekly, 30 min:</b> Mole calculations, mixed across topics, full four-step route written out.",
+          "<b>Weekly, 30 min:</b> One bonding or structure topic explained aloud, Feynman style, with the structure drawn from memory first.",
+          "<b>Weekly:</b> Rebuild one table from memory — solubility, reactivity, or the QA table — then check it against Chem Lessons.",
+        ]},
+      ]},
+    { n:11, title:"English — applying all of this", q:"Vocabulary is recall. Everything else is a rehearsed shape.",
+      sections:[
+        { h:"Why English feels un-revisable, and is not", type:"text", body:[
+          "Students treat English as a subject you either have or do not, because there is no obvious content to memorise. That is a misreading. English has plenty that is drillable — the <b>answer stems</b>, the <b>synonym banks</b>, the <b>six reasons</b> an expression is unusual — and all of it responds to exactly the same retrieval and spacing methods as Physics definitions.",
+          "What cannot be crammed is <b>vocabulary range</b>, which is why it needs to start earliest and be fed in small daily doses.",
+        ]},
+        { h:"Method by paper component", type:"diagram", body:{ type:"table",
+          caption:"The Eng Answers tab holds the stems; this is how to get them into your head.",
+          head:["Component","Technique to use"],
+          rows:[
+            ["Comprehension answer stems","<b>Retrieval.</b> Cover the stem, write it from memory, check against Eng Answers. They must be automatic."],
+            ["Synonym banks (emotions, places)","<b>Memorise + My Cards.</b> Plain word on the front, precise synonyms on the back."],
+            ["The six reasons for unusual expressions","<b>Memorise.</b> Six items. Learn them as a list so the question becomes a lookup."],
+            ["Unusual / effective questions","<b>Interleaved practice.</b> The nine-item practice set in Eng Answers, answers hidden."],
+            ["Summary writing","<b>Timed past papers.</b> Point-per-mark discipline, nothing else builds it."],
+            ["Composition","<b>Timed writing + self-marking</b> against the same criteria the examiner uses."],
+          ] } },
+        { h:"The daily vocabulary habit", type:"formulas", body:[
+          { f:"1. Read one substantial article a day", d:"A broadsheet feature, a long-form piece — something written above your current level. Ten minutes." },
+          { f:"2. Harvest exactly three phrases", d:"Three, not thirty. A vivid verb, a precise adjective, a well-built sentence. More than three and you keep none." },
+          { f:"3. Card them, with the sentence they came from", d:"Front: the plain word you would have used. Back: the better phrase plus its original sentence. Context is what makes it usable." },
+          { f:"4. Use each one in writing within the week", d:"A word you have recognised is not yet a word you own. Owning it means having produced it." },
+        ]},
+        { h:"Where English marks actually leak", type:"bullets", body:[
+          "<b>Quoting without explaining.</b> The single commonest loss. Every quotation needs the literal meaning <b>and</b> what it suggests — see Eng Answers chapter 1.",
+          "<b>Repeating the question's own word.</b> “This suggests it was charming” answers a question about charm with nothing. The synonym <i>is</i> the mark.",
+          "<b>Answering “effect” when asked “effective”.</b> Read the command word twice. They are different questions with different stems.",
+          "<b>Too few details for the marks available.</b> Three marks means three separate phrases, fully explained.",
+          "<b>Summary answers that copy whole sentences.</b> Lift the point, compress it, put it in your own words.",
+          "<b>Running out of time on composition.</b> Almost always a planning failure. Five minutes planning saves fifteen.",
+        ]},
+        { h:"A concrete weekly routine for English", type:"bullets", body:[
+          "<b>Daily, 10 min:</b> One article, three phrases, carded into <b>My Cards</b>.",
+          "<b>Daily, 5 min:</b> Memorise — synonym banks and the six reasons.",
+          "<b>Twice weekly, 20 min:</b> Comprehension passage under time, then mark it against the stems in Eng Answers.",
+          "<b>Weekly, 45 min:</b> One full composition or summary, timed, then self-marked the following day — the gap makes you read it as a reader rather than as its author.",
+        ]},
+      ]},
+    { n:12, title:"The last three weeks", q:"Switch from learning to rehearsing.",
+      sections:[
+        { h:"What changes at the end", type:"text", body:[
+          "In the final stretch the job is no longer to <b>learn</b> content — it is to <b>rehearse retrieving</b> it under exam conditions. The mix should shift heavily towards full papers and error repair.",
+          "This is also the point at which spacing stops being available. If a topic has never been learnt, three weeks out is late but recoverable; three days out is not. Front-load anything genuinely unknown now.",
+        ]},
+        { h:"The final schedule", type:"diagram", body:{ type:"table",
+          head:["When","Focus"],
+          rows:[
+            ["3 weeks out","Full timed papers, one per subject per week. Mark them yourself, log every error by cause."],
+            ["2 weeks out","Error log becomes the syllabus. Re-do logged questions cold. Memorise runs daily."],
+            ["1 week out","Definitions, formulas, QA tables, answer stems. Short retrieval sessions only, several times a day."],
+            ["Night before","One light pass over Memorise. Nothing new. Sleep — it is worth more than the extra hour."],
+          ] } },
+        { h:"Things that cost marks in the room", type:"bullets", body:[
+          "<b>Not reading the command word.</b> State, describe, explain and evaluate want four different answers. Underline it before writing.",
+          "<b>Ignoring the mark allocation.</b> Four marks means four distinct points. One long paragraph making one point scores one mark however well written.",
+          "<b>Leaving blanks.</b> An attempted answer can earn method marks; a blank earns nothing, guaranteed.",
+          "<b>Spending too long on a hard question.</b> Mark it, move on, come back. The last question is often easier than the one you are stuck on.",
+          "<b>Not checking units and significant figures at the end.</b> Two minutes at the end of a science paper reliably recovers marks.",
+        ]},
+        { h:"A note on this chapter set", type:"text", body:[
+          "The techniques here — retrieval practice, distributed practice, interleaving, elaborative interrogation and dual coding — are the ones that come out well in reviews of learning research, notably Dunlosky and colleagues' comparison of ten common study techniques, which rated practice testing and distributed practice highest for general utility. The subject chapters apply those methods to the demands of the Singapore O-Level papers you are actually sitting. None of it replaces your teachers' guidance on what to study — it is about <b>how</b> to study it.",
+        ]},
+      ]},
+  ]
+};
+
 /* ============================================================
    ASK — offline tutor.
    Answers come only from this app's own syllabus content, so it
@@ -5355,7 +5696,8 @@ function stripTags(s){ return String(s).replace(/<[^>]*>/g,' ').replace(/\s+/g,'
 
 const TAB_LABELS = { physics:'Physics', chemistry:'Chemistry', phylesson:'Phy Lessons',
                      chemlesson:'Chem Lessons', emath:'E-Math', amath:'A-Math',
-                     history:'History', histskills:'Hist Answers', engskills:'Eng Answers' };
+                     history:'History', histskills:'Hist Answers', engskills:'Eng Answers',
+                     studyskills:'Study Method' };
 
 let ASK_INDEX = null;
 function buildAskIndex(){
@@ -5376,7 +5718,8 @@ function buildAskIndex(){
 
   /* Lesson sections, chapter by chapter */
   [['phylesson',PHY_LESSONS],['chemlesson',CHEM_LESSONS],['emath',EMATH],['amath',AMATH],
-   ['history',HISTORY],['histskills',HIST_SKILLS],['engskills',ENG_SKILLS]]
+   ['history',HISTORY],['histskills',HIST_SKILLS],['engskills',ENG_SKILLS],
+   ['studyskills',STUDY_SKILLS]]
   .forEach(([key,S])=>{
     (S.chapters||[]).forEach(ch=>{
       (ch.sections||[]).forEach(sec=>{
@@ -5824,8 +6167,9 @@ function saveLog(a){ localStorage.setItem('osp-log', JSON.stringify(a)); }
    ============================================================ */
 const DATA = { physics:PHYSICS, chemistry:CHEMISTRY, history:HISTORY, emath:EMATH, amath:AMATH,
                phylesson:PHY_LESSONS, chemlesson:CHEM_LESSONS, histskills:HIST_SKILLS,
-               engskills:ENG_SKILLS };
-const SYLLABUS_SUBJECTS = ['history','emath','amath','phylesson','chemlesson','histskills','engskills'];
+               engskills:ENG_SKILLS, studyskills:STUDY_SKILLS };
+const SYLLABUS_SUBJECTS = ['history','emath','amath','phylesson','chemlesson','histskills','engskills',
+                           'studyskills'];
 const app = document.getElementById('app');
 let state = {
   subject:'plan',
