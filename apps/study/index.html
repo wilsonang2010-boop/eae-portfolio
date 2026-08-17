@@ -40,6 +40,8 @@
   --font:'InstrumentSans',ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;
   --font-display:'InstrumentSans',ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;
   --font-mono:ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+  /* Equations read far better in a maths serif than in a code font. */
+  --font-math:'Cambria Math','STIX Two Math',ui-serif,Georgia,'Times New Roman',serif;
   --container:1080px;
   --radius:14px;
   --ease:cubic-bezier(.22,.61,.36,1);
@@ -99,48 +101,88 @@ header{
 @media(display-mode:standalone){ .home-link{display:none;} }
 .home-link:hover{color:var(--white); border-color:var(--border-strong);}
 
-/* Subject tabs */
-.tabs{display:flex; flex-wrap:wrap; gap:8px; padding:12px 0; border-bottom:1px solid var(--border);}
+/* ── Navigation: group rail, then the tabs inside that group ──── */
+.nav{padding:10px 0 0; border-bottom:1px solid var(--border);}
+.nav-groups{display:flex; gap:4px; overflow-x:auto; scrollbar-width:none;}
+.nav-groups::-webkit-scrollbar{display:none;}
+.ngroup{
+  position:relative; flex:none; font-size:13.5px; font-weight:600; letter-spacing:.005em;
+  padding:9px 15px 12px; color:var(--slate-500); white-space:nowrap;
+  transition:color .22s var(--ease);
+}
+.ngroup:hover{color:var(--slate-300);}
+.ngroup.on{color:var(--white);}
+.ngroup:after{
+  content:''; position:absolute; left:15px; right:15px; bottom:0; height:2px; border-radius:2px;
+  background:var(--blue); transform:scaleX(0); transform-origin:center;
+  transition:transform .28s var(--ease);
+}
+.ngroup.on:after{transform:scaleX(1);}
+.nav-tabs{display:flex; flex-wrap:wrap; gap:7px; padding:11px 0 13px;}
+.tab{
+  display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
+  font-size:13.5px; font-weight:500; padding:8px 15px; border-radius:9px;
+  color:var(--slate-400); border:1px solid transparent; background:transparent;
+  transition:color .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease);
+  animation:tabIn .3s var(--ease) both;
+}
+.tab:hover{color:var(--white); background:var(--card);}
+.tab.active{color:var(--white); background:var(--blue-soft); border-color:var(--border-strong);}
+.tab .dot{width:7px; height:7px; border-radius:50%; transition:transform .2s var(--ease);}
+.tab.active .dot{transform:scale(1.3);}
+@keyframes tabIn{from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:none;}}
 @media(max-width:560px){
-  /* Nine tabs wrap to several rows, so a sticky header would eat a third of
-     the screen. Let it scroll away instead — switching tabs already jumps to top. */
   header{position:static;}
-  .tabs{gap:6px; padding:10px 0;}
-  .tab{padding:7px 11px; font-size:12.5px; gap:6px;}
-  .tab .dot{width:7px; height:7px;}
+  .ngroup{font-size:12.5px; padding:8px 12px 11px;}
+  .ngroup:after{left:12px; right:12px;}
+  .nav-tabs{gap:6px; padding:9px 0 11px;}
+  .tab{padding:7px 12px; font-size:12.5px; gap:6px;}
   .head-inner{padding:12px 0;}
   .brand span{display:none;}
   .brand-mark{width:32px; height:32px; font-size:15px; border-radius:8px;}
   .brand h1{font-size:.95rem;}
   .home-link{padding:6px 10px; font-size:12px;}
 }
-.tab{
-  display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
-  font-size:14px; font-weight:500; padding:10px 18px; border-radius:10px;
-  color:var(--slate-400); border:1px solid transparent; transition:.25s var(--ease);
-}
-.tab:hover{color:var(--white); background:var(--card);}
-.tab.active{color:var(--white); background:var(--blue-soft); border-color:var(--border-strong);}
-.tab .dot{width:8px; height:8px; border-radius:50%;}
 .tab-plan .dot{background:#FF4D8D;}
 .tab-log .dot{background:#FBBF24;}
 .tab-mem .dot{background:#F472B6;}
 .tab-cards .dot{background:#FDE68A;}
 .tab-ask .dot{background:#FFF0F5;}
+.tab-study .dot{background:#A5B4FC;}
 .tab-emath .dot{background:#D8B4FE;}
 .tab-amath .dot{background:#C084FC;}
 .tab-phys .dot{background:#22D3EE;}
+.tab-phylesson .dot{background:#67E8F9;}
 .tab-chem .dot{background:#4ADE80;}
+.tab-chemlesson .dot{background:#86EFAC;}
 .tab-hist .dot{background:#FFA6C6;}
-.tab-histskills .dot{background:#FBBF24;}
-.tab-engskills .dot{background:#FCA5A5;}
-.tab-study .dot{background:#A5B4FC;}
 .tab-histcards .dot{background:#FCD34D;}
-.tab-engcards .dot{background:#FECACA;}
+.tab-histskills .dot{background:#FBBF24;}
 .tab-social .dot{background:#5EEAD4;}
 .tab-soccards .dot{background:#99F6E4;}
-.tab-phylesson .dot{background:#67E8F9;}
-.tab-chemlesson .dot{background:#86EFAC;}
+.tab-engskills .dot{background:#FCA5A5;}
+.tab-engcards .dot{background:#FECACA;}
+
+/* ── Motion ──────────────────────────────────────────────────── */
+@keyframes riseIn{from{opacity:0; transform:translateY(7px);} to{opacity:1; transform:none;}}
+@keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
+#app > *{animation:riseIn .4s var(--ease) both;}
+#app > *:nth-child(1){animation-delay:0ms;}
+#app > *:nth-child(2){animation-delay:45ms;}
+#app > *:nth-child(3){animation-delay:90ms;}
+#app > *:nth-child(n+4){animation-delay:130ms;}
+.card-grid .flash{animation:riseIn .34s var(--ease) both;}
+.card-grid .flash:nth-child(-n+8){animation-delay:calc(var(--n, 0) * 28ms);}
+.mini-card{transition:border-color .25s var(--ease), transform .25s var(--ease);}
+.mini-card:hover{border-color:var(--border-strong); transform:translateY(-2px);}
+.deck-tile{transition:border-color .25s var(--ease), transform .25s var(--ease), background .25s var(--ease);}
+.deck-tile:hover{transform:translateY(-2px);}
+.topic-pill{transition:color .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease);}
+/* Anyone who has asked the OS for less motion gets none of it. */
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation-duration:.001ms !important; animation-iteration-count:1 !important;
+                     transition-duration:.001ms !important; scroll-behavior:auto !important;}
+}
 
 /* Hero intro per subject */
 .subject-hero{padding:40px 0 8px;}
@@ -194,7 +236,8 @@ header{
 .flash .prompt{margin-top:10px; font-size:13px; color:var(--slate-500); font-style:italic;}
 .flash .def{margin-top:12px; color:var(--slate-300); font-size:15px; line-height:1.6;}
 .flash .def.hidden{display:none;}
-.flash .extra{margin-top:10px; font-size:13px; color:var(--slate-400); border-top:1px solid var(--border); padding-top:10px;}
+.flash .def:not(.hidden){animation:riseIn .28s var(--ease) both;}
+.flash .extra{margin-top:11px; font-size:13.5px; line-height:1.6; color:var(--slate-300); border-top:1px solid var(--border); padding-top:11px;}
 .flash .extra.hidden{display:none;}
 .flash .mark{
   position:absolute; top:14px; right:14px; width:26px; height:26px; border-radius:50%;
@@ -227,8 +270,15 @@ header{
 .chapter-head .ch-q{font-size:13px; color:var(--slate-500); margin-top:4px; font-style:italic;}
 .chapter-head .chev{flex-shrink:0; color:var(--slate-500); transition:transform .3s var(--ease); margin-top:8px;}
 .chapter.open .chev{transform:rotate(180deg);}
-.chapter-body{display:none; padding:0 22px 26px; border-top:1px solid var(--border);}
-.chapter.open .chapter-body{display:block;}
+.chapter-body{
+  display:grid; grid-template-rows:0fr; border-top:1px solid transparent;
+  transition:grid-template-rows .34s var(--ease), border-top-color .34s var(--ease);
+}
+.chapter-body > .cb-inner{overflow:hidden; min-height:0;}
+.chapter.open .chapter-body{grid-template-rows:1fr; border-top-color:var(--border);}
+.chapter.open .cb-inner > *{animation:riseIn .38s var(--ease) both;}
+.chapter{transition:border-color .25s var(--ease);}
+.chapter.open{border-color:var(--border-strong);}
 
 .ch-section{margin-top:24px;}
 .ch-section h4{font-size:1.02rem; color:var(--blue-bright); margin-bottom:10px; letter-spacing:.01em;}
@@ -250,10 +300,22 @@ header{
 .keyterm{font-size:12.5px; padding:6px 12px; border-radius:8px; background:var(--blue-soft); color:var(--slate-100); border:1px solid var(--border);}
 
 /* Formula blocks — E-Math / A-Math */
-.formula-list{display:flex; flex-direction:column; gap:10px; margin-top:4px;}
-.formula-row{background:var(--bg); border:1px solid var(--border); border-left:3px solid var(--blue); border-radius:8px; padding:12px 15px;}
-.f-expr{font-family:var(--font-mono); font-size:14.5px; color:var(--white); letter-spacing:.01em;}
-.f-desc{font-size:13px; color:var(--slate-400); margin-top:5px; line-height:1.5;}
+.formula-list{display:flex; flex-direction:column; gap:10px; margin-top:6px;}
+.formula-row{
+  background:var(--bg); border:1px solid var(--border); border-left:3px solid var(--blue);
+  border-radius:10px; padding:14px 17px; transition:border-color .22s var(--ease);
+}
+.formula-row:hover{border-left-color:var(--blue-bright); border-color:var(--border-strong);}
+.f-expr{color:var(--white);}
+/* A real equation: maths serif, larger, with figures that line up. */
+.f-math{
+  font-family:var(--font-math); font-size:18px; line-height:1.45;
+  font-variant-numeric:tabular-nums lining-nums; letter-spacing:.015em; word-spacing:.08em;
+}
+.f-math sub,.f-math sup{font-size:.68em;}
+/* A prose answer-stem: the display face, not a code font. */
+.f-stem{font-family:var(--font-display); font-size:15.5px; font-weight:600; line-height:1.5; letter-spacing:-.005em;}
+.f-desc{font-size:14px; color:var(--slate-300); margin-top:7px; line-height:1.6;}
 
 /* ── Worked examples (Easy / Medium / O-Level tiers) ─────────── */
 .example-set{display:flex; flex-direction:column; gap:14px; margin-top:6px;}
@@ -653,26 +715,9 @@ header{
         <a class="home-link" href="../index.html">← Portfolio</a>
       </div>
     </div>
-    <nav class="tabs" id="tabs">
-      <button class="tab tab-plan active" data-subject="plan"><span class="dot"></span>Plan</button>
-      <button class="tab tab-ask" data-subject="ask"><span class="dot"></span>Ask</button>
-      <button class="tab tab-log" data-subject="log"><span class="dot"></span>Error Log</button>
-      <button class="tab tab-mem" data-subject="memorise"><span class="dot"></span>Memorise<span class="tab-badge hidden" id="memBadge">0</span></button>
-      <button class="tab tab-cards" data-subject="custom"><span class="dot"></span>My Cards</button>
-      <button class="tab tab-study" data-subject="studyskills"><span class="dot"></span>Study Method</button>
-      <button class="tab tab-emath" data-subject="emath"><span class="dot"></span>E-Math</button>
-      <button class="tab tab-amath" data-subject="amath"><span class="dot"></span>A-Math</button>
-      <button class="tab tab-phys" data-subject="physics"><span class="dot"></span>Physics</button>
-      <button class="tab tab-phylesson" data-subject="phylesson"><span class="dot"></span>Phy Lessons</button>
-      <button class="tab tab-chem" data-subject="chemistry"><span class="dot"></span>Chemistry</button>
-      <button class="tab tab-chemlesson" data-subject="chemlesson"><span class="dot"></span>Chem Lessons</button>
-      <button class="tab tab-hist" data-subject="history"><span class="dot"></span>History</button>
-      <button class="tab tab-histcards" data-subject="histcards"><span class="dot"></span>Hist Cards</button>
-      <button class="tab tab-histskills" data-subject="histskills"><span class="dot"></span>Hist Answers</button>
-      <button class="tab tab-engskills" data-subject="engskills"><span class="dot"></span>Eng Answers</button>
-      <button class="tab tab-engcards" data-subject="engcards"><span class="dot"></span>Eng Cards</button>
-      <button class="tab tab-social" data-subject="social"><span class="dot"></span>Social Studies</button>
-      <button class="tab tab-soccards" data-subject="soccards"><span class="dot"></span>Soc Cards</button>
+    <nav class="nav" id="nav" aria-label="Sections">
+      <div class="nav-groups" id="navGroups" role="tablist"></div>
+      <div class="nav-tabs" id="navTabs"></div>
     </nav>
   </div>
 </header>
@@ -6127,7 +6172,7 @@ function buildAskIndex(){
         } else if(sec.type==='formulas'){
           text = sec.body.map(f=>stripTags(f.f+' '+f.d)).join(' ');
           html = `<div class="formula-list">${sec.body.map(f=>
-                   `<div class="formula-row"><div class="f-expr">${f.f}</div><div class="f-desc">${esc(f.d)}</div></div>`).join('')}</div>`;
+                   `<div class="formula-row">${fExprHTML(f)}<div class="f-desc">${esc(f.d)}</div></div>`).join('')}</div>`;
         } else if(sec.type==='terms'){
           text = sec.body.join(' ');
           html = `<div class="keyterms">${sec.body.map(t=>`<span class="keyterm">${esc(t)}</span>`).join('')}</div>`;
@@ -6357,7 +6402,7 @@ function renderAsk(){
       state.subject = tab;
       state.query = '';
       state.topic = (tab==='physics'||tab==='chemistry') ? topic : 'all';
-      document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.subject===tab));
+      navGroup = groupOf(tab); renderNav();
       render();
     });
   });
@@ -6590,14 +6635,70 @@ function toggleKnown(sub, id){
   setKnown(sub, arr); return arr.includes(id);
 }
 
-document.getElementById('tabs').addEventListener('click', e=>{
+/* ============================================================
+   NAVIGATION
+   Nineteen tabs in one flat row wrapped onto three lines. They are
+   grouped instead: pick a group, get that group's tabs. The group
+   follows whatever subject is active, so deep links still land right.
+   ============================================================ */
+const NAV_GROUPS = [
+  { g:'Study', items:[
+    ['plan','Plan','tab-plan'], ['ask','Ask','tab-ask'], ['log','Error Log','tab-log'],
+    ['memorise','Memorise','tab-mem'], ['custom','My Cards','tab-cards'],
+    ['studyskills','Study Method','tab-study'] ]},
+  { g:'Maths', items:[
+    ['emath','E-Math','tab-emath'], ['amath','A-Math','tab-amath'] ]},
+  { g:'Science', items:[
+    ['physics','Physics','tab-phys'], ['phylesson','Phy Lessons','tab-phylesson'],
+    ['chemistry','Chemistry','tab-chem'], ['chemlesson','Chem Lessons','tab-chemlesson'] ]},
+  { g:'Humanities', items:[
+    ['history','History','tab-hist'], ['histcards','Hist Cards','tab-histcards'],
+    ['histskills','Hist Answers','tab-histskills'], ['social','Social Studies','tab-social'],
+    ['soccards','Soc Cards','tab-soccards'] ]},
+  { g:'English', items:[
+    ['engskills','Eng Answers','tab-engskills'], ['engcards','Eng Cards','tab-engcards'] ]},
+];
+function groupOf(subject){
+  const i = NAV_GROUPS.findIndex(g => g.items.some(it => it[0]===subject));
+  return i < 0 ? 0 : i;
+}
+let navGroup = 0;
+
+function renderNav(){
+  const groups = document.getElementById('navGroups');
+  const tabs   = document.getElementById('navTabs');
+  groups.innerHTML = NAV_GROUPS.map((g,i)=>
+    `<button class="ngroup ${i===navGroup?'on':''}" data-group="${i}" role="tab"
+       aria-selected="${i===navGroup}">${esc(g.g)}</button>`).join('');
+  tabs.innerHTML = NAV_GROUPS[navGroup].items.map(([sub,label,cls])=>
+    `<button class="tab ${cls} ${state.subject===sub?'active':''}" data-subject="${sub}">
+       <span class="dot"></span>${esc(label)}${sub==='memorise'
+         ? '<span class="tab-badge hidden" id="memBadge">0</span>' : ''}</button>`).join('');
+  updateMemBadge();
+}
+
+document.getElementById('navGroups').addEventListener('click', e=>{
+  const b = e.target.closest('.ngroup'); if(!b) return;
+  navGroup = +b.dataset.group;
+  renderNav();
+});
+
+document.getElementById('navTabs').addEventListener('click', e=>{
   const btn = e.target.closest('.tab'); if(!btn) return;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  btn.classList.add('active');
   state.subject = btn.dataset.subject;
   state.topic = 'all'; state.query='';
+  navGroup = groupOf(state.subject);
+  renderNav();
   render();
 });
+
+/* Anything that switches subject in code (the Ask tab's jump links, the
+   Memorise call to action) still works — it sets state and calls this. */
+function goToSubject(sub){
+  state.subject = sub; state.topic='all'; state.query='';
+  navGroup = groupOf(sub);
+  renderNav(); render();
+}
 
 function esc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function matches(card, q){
@@ -7961,7 +8062,7 @@ function renderSyllabus(S, key){
         </div>
         <svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
       </div>
-      <div class="chapter-body">${ch.sections.map(renderSection).join('')}</div>
+      <div class="chapter-body"><div class="cb-inner">${ch.sections.map(renderSection).join('')}</div></div>
     </div>`;
   });
   html += `</div>`;
@@ -9140,6 +9241,21 @@ function renderDiagram(d){
   return `<div class="diagram-wrap">${fn(d)}${cap}</div>`;
 }
 
+/* An expression is treated as maths when it carries an operator and is short.
+   Prose answer-stems ("The phrase '…' means …") carry neither, and must not be
+   set in a maths face. */
+function isMathExpr(x){
+  const t = String(x).replace(/<[^>]*>/g,' ').trim();
+  if(!/[=×÷√∝≈≤≥±→]|[⁰¹²³⁴⁵⁶⁻]|½|\bΔ/.test(t)) return false;
+  // Answer-stems quote the phrasing they want you to write, so curly quotes
+  // are a reliable sign this is prose even when it contains an arrow.
+  if(/[“”]/.test(t)) return false;
+  return t.split(/\s+/).length <= 24;
+}
+function fExprHTML(f){
+  return `<div class="f-expr ${isMathExpr(f.f)?'f-math':'f-stem'}">${f.f}</div>`;
+}
+
 function renderSection(s){
   if(s.type==='text'){
     return `<div class="ch-section"><h4>${esc(s.h)}</h4>${s.body.map(p=>`<p>${p}</p>`).join('')}</div>`;
@@ -9149,7 +9265,7 @@ function renderSection(s){
   }
   if(s.type==='formulas'){
     return `<div class="ch-section"><h4>${esc(s.h)}</h4><div class="formula-list">${s.body.map(f=>
-      `<div class="formula-row"><div class="f-expr">${f.f}</div><div class="f-desc">${esc(f.d)}</div></div>`
+      `<div class="formula-row">${fExprHTML(f)}<div class="f-desc">${esc(f.d)}</div></div>`
     ).join('')}</div></div>`;
   }
   if(s.type==='terms'){
@@ -9190,6 +9306,8 @@ function footerHTML(){
   </div>`;
 }
 
+navGroup = groupOf(state.subject);
+renderNav();
 render();
 updateMemBadge();
 
