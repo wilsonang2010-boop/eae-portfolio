@@ -506,6 +506,19 @@ header{
 .mini-card h4{font-size:1rem; margin-bottom:6px;}
 .mini-card p{font-size:13px; color:var(--slate-400);}
 
+/* Part headings — group a run of chapters under the skill they all test.
+   Only subjects that set `part` on their chapters show these. */
+.ch-part{margin:38px 0 4px; padding-bottom:10px; border-bottom:1px solid var(--border);}
+.ch-part:first-child{margin-top:8px;}
+.ch-part .pt-label{
+  display:inline-block; font-family:var(--font-display); font-size:11px; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--blue-bright);
+  background:var(--blue-soft); border:1px solid var(--border-strong);
+  border-radius:999px; padding:4px 11px;
+}
+.ch-part h3{font-size:1.34rem; margin-top:11px;}
+.ch-part p{font-size:13.5px; color:var(--slate-400); margin-top:5px; max-width:62ch;}
+
 .chapter{background:var(--card); border:1px solid var(--border); border-radius:14px; margin-top:16px; overflow:hidden;}
 .chapter-head{display:flex; align-items:flex-start; gap:16px; padding:22px; cursor:pointer; transition:background .2s var(--ease);}
 .chapter-head:hover{background:var(--card-hover);}
@@ -980,7 +993,7 @@ header{
 /* Which build this file is. Declared first because the footer renders it long
    before the update machinery at the bottom of this script runs.
    Must match the BUILD constant in sw.js. */
-const BUILD = '2026-08-19a';
+const BUILD = '2026-08-20a';
 
 /* Flipped to true by build-standalone.py in the single-file download. That
    copy has no server behind it, so there is nothing to check for updates
@@ -5348,14 +5361,119 @@ const HIST_SKILLS = {
 const ENG_SKILLS = {
   eyebrow:"English Language · Paper 2 Comprehension · Answering technique",
   title:"English — Comprehension Answering Technique",
-  intro:"The sentence stems that score for every comprehension question type, the word banks that lift a plain answer into a precise one, and the six reasons an expression counts as unusual. Comprehension is not about having better ideas than everyone else — it is about proving, in a fixed shape, that you understood the words on the page.",
+  intro:"Sorted by the three kinds of comprehension question — literal, inferential, and language use. Each part holds the sentence stems that score for that kind, plus the word banks that lift a plain answer into a precise one and the six reasons an expression counts as unusual. Comprehension is not about having better ideas than everyone else — it is about spotting which of the three you have been asked, then proving in a fixed shape that you understood the words on the page.",
   cards:[
-    { h:"The shape never changes", p:"Almost every language question is answered with the same three moves: quote it, explain it literally, then say what it suggests. Miss the third move and you cap yourself, no matter how good the quotation was." },
-    { h:"Literal first, always", p:"Explaining what a phrase means literally is not a waste of a sentence — it is the mark. Jumping straight to the effect reads as a guess, because you never showed you understood the words." },
+    { h:"Sort it, then answer it", p:"Literal means find it and restate it. Inferential means work out what was never said. Language use means explain the writer's choice. Chapter 1 tells the three apart from the wording alone — do that before you write." },
+    { h:"Explain before you interpret", p:"Inside a language answer, saying what a phrase means literally is not a wasted sentence — it is the mark. Jumping straight to the effect reads as a guess, because you never showed you understood the words." },
     { h:"Match the number of marks", p:"A 3-mark language question wants three separate phrases, each fully explained. Two brilliant phrases cannot score three marks." },
   ],
   chapters:[
-    { n:1, title:"Language-based questions — the three-phrase formula", q:"Pick three phrases. Explain each one twice.",
+    { n:1, part:{k:'Start here', t:'Sort the question before you answer it', d:'Every comprehension question is one of three kinds, and the kind decides the shape of the answer. A well-written response to the wrong kind still scores badly.'},
+      title:"Which of the three question types is this?", q:"Literal, inferential, or language use — decide before you write.",
+      sections:[
+        { h:"The three kinds", type:"text", body:[
+          "<b>Literal.</b> The answer is on the page. You find it and restate it. Nothing is being asked of your judgement — accuracy of the lift or the paraphrase <i>is</i> the mark.",
+          "<b>Inferential.</b> The answer is not stated anywhere. You deduce it from what is there — a feeling, a motive, a tone, the gap between what was expected and what happened — and name it precisely.",
+          "<b>Language use.</b> The question is about the <b>writing</b>, not the events. Why these words, what they suggest, what technique the writer reached for. This is where most of the paper's marks sit.",
+        ]},
+        { h:"The wording → question type table", type:"diagram", body:{ type:"table",
+          caption:"Find the command phrase, read across, then follow that chapter.",
+          head:["If the question says…","It is testing","Go to"],
+          rows:[
+            ["“Give the <b>evidence</b> that…” / “Which phrase <b>shows</b>…?”","Literal","Chapter 2"],
+            ["“What does the word / expression ‘…’ <b>mean</b>?”","Literal","Chapter 3"],
+            ["“What is <b>ironic</b> about…?”","Inferential","Chapter 4"],
+            ["“What is the writer’s <b>tone</b> / <b>attitude</b>…?”","Inferential","Chapter 5"],
+            ["“What is the <b>effect</b> of…?”","Language use","Chapter 6"],
+            ["“Explain <b>how language is used</b> to… Support your answer with three details.”","Language use","Chapter 7"],
+            ["“What is <b>unusual</b> about this expression?”","Language use","Chapter 9"],
+            ["“Why is the phrase <b>effective</b>?”","Language use","Chapter 10"],
+            ["“<b>How</b> does the writer achieve his purpose?”","Language use","Chapter 12"],
+          ] } },
+        { h:"What the mark is actually for", type:"diagram", body:{ type:"table",
+          caption:"Three different jobs. Doing the wrong job well scores nothing.",
+          head:["Type","What earns the mark","What wastes the time"],
+          rows:[
+            ["Literal","Quoting or paraphrasing <b>exactly</b> what the passage says","Decorating it with an explanation nobody asked for"],
+            ["Inferential","One <b>precise</b> word for the feeling, tone or attitude — or both halves of the gap","A vague word like “sad” or “angry” that any passage could take"],
+            ["Language use","Quote → literal meaning → what it suggests, once per detail asked for","Quoting and stopping, or explaining literally and stopping"],
+          ] } },
+        { h:"Three habits that apply whichever type it is", type:"bullets", body:[
+          "<b>Underline the command phrase before you read the passage again.</b> Nearly every lost mark in comprehension is a good answer to a question that was not set.",
+          "<b>Let the marks tell you the count.</b> Three marks means three separate details. Two brilliant ones cannot score three.",
+          "<b>Copy quotations exactly.</b> A misquotation can lose a literal mark outright, and it undermines every language answer built on top of it.",
+        ]},
+      ]},
+    { n:2, part:{k:'Type A · Literal', t:'Literal — the answer is on the page', d:'The words you need are printed in front of you. The mark is for locating them and restating them accurately, not for having a view about them.'},
+      title:"Evidence questions", q:"Two versions — know which one you have been asked.",
+      sections:[
+        { h:"4a — Evidence and explain", type:"formulas", body:[
+          { f:"The evidence ‘…………’ means …", d:"Quote the sentence or phrase, then give the literal paraphrase." },
+          { f:"This shows …", d:"Now paraphrase the key word from the question. This half is the explanation the mark scheme is looking for." },
+        ]},
+        { h:"4b — Evidence only", type:"text", body:[
+          "If the question asks for <b>evidence</b> and nothing else, do not decorate it. Write: <i>The evidence is ‘…………’</i> — quoted <b>directly</b> from the passage, word for word.",
+          "Adding explanation to an evidence-only question wastes time you need elsewhere, and a misquotation can lose the mark outright. Copy it exactly.",
+        ]},
+      ]},
+    { n:3, title:"“What does the word or expression mean?”", q:"Literal explanation plus the story around it.",
+      sections:[
+        { h:"The two halves", type:"text", body:[
+          "This is the simplest question type and the one most often half-answered. It needs <b>two</b> things:",
+          "<b>1.</b> Explain the words in the expression <b>literally</b> — what do these words mean in ordinary English?",
+          "<b>2.</b> <b>Link it to the context</b> — what is actually happening in the story at that moment. Without this, you have written a dictionary entry, not an answer.",
+        ]},
+      ]},
+    { n:4, part:{k:'Type B · Inferential', t:'Inferential — the answer is between the lines', d:'The passage never says it outright. You work it out from what is there and name it in one precise word, or as the gap between two things.'},
+      title:"Irony — actual versus expected", q:"What was expected, and what actually happened.",
+      sections:[
+        { h:"The stem", type:"formulas", body:[
+          { f:"The writer expected … However, in reality …", d:"Irony is always a gap between the two. Name both sides explicitly — the expectation first, then what actually occurred." },
+        ]},
+        { h:"Getting it right", type:"bullets", body:[
+          "If you cannot name <b>both</b> halves, it is not irony — it is just something unfortunate.",
+          "The expectation is often never stated in the passage. It is what a reasonable person <b>would have assumed</b> given the situation.",
+        ]},
+      ]},
+    { n:5, title:"Tone and attitude word banks", q:"Tone is how it is said. Attitude is how they behave.",
+      sections:[
+        { h:"The difference", type:"text", body:[
+          "<b>Tone</b> relates to how the writer or character <b>speaks</b> — the voice on the page.",
+          "<b>Attitude</b> relates to how they <b>behave</b> — the stance they take towards a person or situation.",
+          "Both questions are answered with a <b>precise adjective</b>, so these banks are worth memorising outright rather than reasoning from scratch under time pressure.",
+        ]},
+        { h:"Tone — how it is said", type:"diagram", body:{ type:"table",
+          head:["","Words"],
+          rows:[
+            ["Negative","caustic · critical · accusatory · annoyed · antagonistic · anxious · audacious (bold) · arrogant · baffled · bewildered · bitter · candid · demanding · condescending · condemnation · outspoken"],
+            ["Positive","affectionate · amused · animated · appreciative · approving · celebratory · cheerful · colloquial (localised language) · comforting · complimentary · lighthearted · cautious"],
+          ] } },
+        { h:"Attitude — how they behave", type:"diagram", body:{ type:"table",
+          head:["","Words"],
+          rows:[
+            ["Negative","callous (rough) · belligerent · aggressive · pessimistic · cynical · childish · audacious · quarrelsome"],
+            ["Positive","confident · empathetic · friendly · optimistic · relaxed · calm · tired"],
+          ] } },
+      ]},
+    { n:6, part:{k:'Type C · Language use', t:'Language use — how the writer wrote it', d:'The bulk of the paper. Every answer is the same three moves: quote it, say what it means literally, then say what it suggests.'},
+      title:"Effect vs effective — two different questions", q:"One is about the reader. One is about the writer.",
+      sections:[
+        { h:"The distinction students lose marks on", type:"text", body:[
+          "These two words look interchangeable and are not. Reading the question wrongly here means writing a competent answer to a question nobody asked.",
+          "<b>Effect</b> = the <b>impact on the reader</b>. What it makes the reader feel.",
+          "<b>Effective</b> = the <b>writer's intended mode of communication</b>. Why this was a good way to say it.",
+        ]},
+        { h:"Stems for each", type:"formulas", body:[
+          { f:"EFFECT  —  “It evokes in the reader a feeling of …”", d:"Also: “It makes the reader feel…” or “It suggests that the reader is…”. You are describing an emotion produced in the reader." },
+          { f:"EFFECTIVE  —  “It is effective as it emphasises / conveys / illustrates that …”", d:"You are describing what the writer succeeded in getting across, and why that phrasing did it." },
+        ]},
+        { h:"Reading the question correctly", type:"bullets", body:[
+          "“What is the <b>effect</b> of…?” → the reader feels something. Name the feeling.",
+          "“Why is the phrase <b>effective</b>?” → the writer achieved something. Name what it emphasises.",
+          "If the question says “effective <b>and</b> unusual”, you owe <b>two</b> separate sentences — see Chapter 9.",
+        ]},
+      ]},
+    { n:7, title:"Language-based questions — the three-phrase formula", q:"Pick three phrases. Explain each one twice.",
       sections:[
         { h:"What the question looks like", type:"text", body:[
           "These questions ask you to <b>explain how language is used</b> to bring out something — the charm of a place, the fear of a character, the chaos of a scene — and they tell you how many details to use and which lines to use them from.",
@@ -5383,7 +5501,7 @@ const ENG_SKILLS = {
           "<b>Overlapping phrases.</b> Three details from the same clause is one detail written three ways.",
         ]},
       ]},
-    { n:2, title:"Word banks — stop writing the plain word", q:"The synonym is the mark.",
+    { n:8, title:"Word banks — stop writing the plain word", q:"The synonym is the mark.",
       sections:[
         { h:"How to use these", type:"text", body:[
           "The “suggests that…” half of your answer is where examiners see your vocabulary. Writing “this suggests he was sad” when the passage has spent a paragraph building grief is the difference between a mark and half a mark.",
@@ -5435,43 +5553,7 @@ const ENG_SKILLS = {
             ["Picturesque","scenic · lovely scenery · pleasant"],
           ] } },
       ]},
-    { n:3, title:"Effect vs effective — two different questions", q:"One is about the reader. One is about the writer.",
-      sections:[
-        { h:"The distinction students lose marks on", type:"text", body:[
-          "These two words look interchangeable and are not. Reading the question wrongly here means writing a competent answer to a question nobody asked.",
-          "<b>Effect</b> = the <b>impact on the reader</b>. What it makes the reader feel.",
-          "<b>Effective</b> = the <b>writer's intended mode of communication</b>. Why this was a good way to say it.",
-        ]},
-        { h:"Stems for each", type:"formulas", body:[
-          { f:"EFFECT  —  “It evokes in the reader a feeling of …”", d:"Also: “It makes the reader feel…” or “It suggests that the reader is…”. You are describing an emotion produced in the reader." },
-          { f:"EFFECTIVE  —  “It is effective as it emphasises / conveys / illustrates that …”", d:"You are describing what the writer succeeded in getting across, and why that phrasing did it." },
-        ]},
-        { h:"Reading the question correctly", type:"bullets", body:[
-          "“What is the <b>effect</b> of…?” → the reader feels something. Name the feeling.",
-          "“Why is the phrase <b>effective</b>?” → the writer achieved something. Name what it emphasises.",
-          "If the question says “effective <b>and</b> unusual”, you owe <b>two</b> separate sentences — see Chapter 6.",
-        ]},
-      ]},
-    { n:4, title:"Evidence questions", q:"Two versions — know which one you have been asked.",
-      sections:[
-        { h:"4a — Evidence and explain", type:"formulas", body:[
-          { f:"The evidence ‘…………’ means …", d:"Quote the sentence or phrase, then give the literal paraphrase." },
-          { f:"This shows …", d:"Now paraphrase the key word from the question. This half is the explanation the mark scheme is looking for." },
-        ]},
-        { h:"4b — Evidence only", type:"text", body:[
-          "If the question asks for <b>evidence</b> and nothing else, do not decorate it. Write: <i>The evidence is ‘…………’</i> — quoted <b>directly</b> from the passage, word for word.",
-          "Adding explanation to an evidence-only question wastes time you need elsewhere, and a misquotation can lose the mark outright. Copy it exactly.",
-        ]},
-      ]},
-    { n:5, title:"“What does the word or expression mean?”", q:"Literal explanation plus the story around it.",
-      sections:[
-        { h:"The two halves", type:"text", body:[
-          "This is the simplest question type and the one most often half-answered. It needs <b>two</b> things:",
-          "<b>1.</b> Explain the words in the expression <b>literally</b> — what do these words mean in ordinary English?",
-          "<b>2.</b> <b>Link it to the context</b> — what is actually happening in the story at that moment. Without this, you have written a dictionary entry, not an answer.",
-        ]},
-      ]},
-    { n:6, title:"Unusual expressions — the six reasons", q:"Explain each word separately, then name the reason.",
+    { n:9, title:"Unusual expressions — the six reasons", q:"Explain each word separately, then name the reason.",
       sections:[
         { h:"The method", type:"text", body:[
           "When a question asks what is <b>unusual</b> about an expression, you split it. Explain the two key words <b>separately and literally</b>, then say why putting them together is strange — choosing one of six reasons.",
@@ -5515,10 +5597,25 @@ const ENG_SKILLS = {
             ans:"When the question asks <b>both</b>, write two labelled sentences. The “effective” half always links back to the context — here, the severity of the regime and the speed of the result." },
         ]},
       ]},
-    { n:7, title:"Practice — unusual and effective", q:"Try each one before you reveal it.",
+    { n:10, title:"Effective — refer to the context", q:"Emphasise how extremely …",
+      sections:[
+        { h:"The stem", type:"formulas", body:[
+          { f:"It is effective as it emphasises how extremely …", d:"Then finish with the space, the emotion or the situation the passage is actually describing. The word “extremely” is a reminder that you are describing an intensity, not just restating the phrase." },
+        ]},
+        { h:"Worked example", type:"examples", body:[
+          { level:"Model answer",
+            q:"<b>The moment he set eyes on him, it was a living nightmare.</b><br><br><b>Context:</b> The man lives a life of pretence as an astrologer. He feels guilty as he had supposedly killed a man by pushing him into a well twenty years ago. One evening, he meets that man, who demands to have his astrology read.",
+            steps:[
+              "<b>Effective:</b> It is effective as it stresses how the person he was looking at instilled fear in him.",
+              "<b>Why this works:</b> The answer reaches for the situation — the guilt and the sudden reappearance — rather than repeating the words “living nightmare” back at the examiner.",
+            ],
+            ans:"Effectiveness answers are always anchored in the context. If your sentence would still make sense attached to a completely different passage, it is too vague." },
+        ]},
+      ]},
+    { n:11, title:"Practice — unusual and effective", q:"Try each one before you reveal it.",
       sections:[
         { h:"How to use this set", type:"text", body:[
-          "Write your answer out in full before tapping <b>Show</b>. Use the stem from Chapter 6: define each word separately, name the reason, then a separate sentence for the effect.",
+          "Write your answer out in full before tapping <b>Show</b>. Use the stem from Chapter 9: define each word separately, name the reason, then a separate sentence for the effect.",
           "<span style=\"color:var(--slate-400)\">These model answers were written to follow the handout's own formula — the handout leaves these blanks for you to fill. Your teacher's wording always wins.</span>",
         ]},
         { h:"Nine to work through", type:"html", body:`<div class="prac">
@@ -5568,22 +5665,7 @@ const ENG_SKILLS = {
             </div></details>
         </div>` },
       ]},
-    { n:8, title:"Effective — refer to the context", q:"Emphasise how extremely …",
-      sections:[
-        { h:"The stem", type:"formulas", body:[
-          { f:"It is effective as it emphasises how extremely …", d:"Then finish with the space, the emotion or the situation the passage is actually describing. The word “extremely” is a reminder that you are describing an intensity, not just restating the phrase." },
-        ]},
-        { h:"Worked example", type:"examples", body:[
-          { level:"Model answer",
-            q:"<b>The moment he set eyes on him, it was a living nightmare.</b><br><br><b>Context:</b> The man lives a life of pretence as an astrologer. He feels guilty as he had supposedly killed a man by pushing him into a well twenty years ago. One evening, he meets that man, who demands to have his astrology read.",
-            steps:[
-              "<b>Effective:</b> It is effective as it stresses how the person he was looking at instilled fear in him.",
-              "<b>Why this works:</b> The answer reaches for the situation — the guilt and the sudden reappearance — rather than repeating the words “living nightmare” back at the examiner.",
-            ],
-            ans:"Effectiveness answers are always anchored in the context. If your sentence would still make sense attached to a completely different passage, it is too vague." },
-        ]},
-      ]},
-    { n:9, title:"“How does the writer achieve his purpose?”", q:"This is a techniques question.",
+    { n:12, title:"“How does the writer achieve his purpose?”", q:"This is a techniques question.",
       sections:[
         { h:"What is being asked", type:"text", body:[
           "When a question asks <b>how</b> the writer achieves his purpose, it is asking you to name <b>techniques</b>. Open with “<b>The writer uses…</b>” and then take your pick from the three families below.",
@@ -5615,48 +5697,20 @@ const ENG_SKILLS = {
           "<b>Formal or informal language</b> — signals the relationship between writer and reader.",
         ]},
       ]},
-    { n:10, title:"Irony — actual versus expected", q:"What was expected, and what actually happened.",
-      sections:[
-        { h:"The stem", type:"formulas", body:[
-          { f:"The writer expected … However, in reality …", d:"Irony is always a gap between the two. Name both sides explicitly — the expectation first, then what actually occurred." },
-        ]},
-        { h:"Getting it right", type:"bullets", body:[
-          "If you cannot name <b>both</b> halves, it is not irony — it is just something unfortunate.",
-          "The expectation is often never stated in the passage. It is what a reasonable person <b>would have assumed</b> given the situation.",
-        ]},
-      ]},
-    { n:11, title:"Tone and attitude word banks", q:"Tone is how it is said. Attitude is how they behave.",
-      sections:[
-        { h:"The difference", type:"text", body:[
-          "<b>Tone</b> relates to how the writer or character <b>speaks</b> — the voice on the page.",
-          "<b>Attitude</b> relates to how they <b>behave</b> — the stance they take towards a person or situation.",
-          "Both questions are answered with a <b>precise adjective</b>, so these banks are worth memorising outright rather than reasoning from scratch under time pressure.",
-        ]},
-        { h:"Tone — how it is said", type:"diagram", body:{ type:"table",
-          head:["","Words"],
-          rows:[
-            ["Negative","caustic · critical · accusatory · annoyed · antagonistic · anxious · audacious (bold) · arrogant · baffled · bewildered · bitter · candid · demanding · condescending · condemnation · outspoken"],
-            ["Positive","affectionate · amused · animated · appreciative · approving · celebratory · cheerful · colloquial (localised language) · comforting · complimentary · lighthearted · cautious"],
-          ] } },
-        { h:"Attitude — how they behave", type:"diagram", body:{ type:"table",
-          head:["","Words"],
-          rows:[
-            ["Negative","callous (rough) · belligerent · aggressive · pessimistic · cynical · childish · audacious · quarrelsome"],
-            ["Positive","confident · empathetic · friendly · optimistic · relaxed · calm · tired"],
-          ] } },
-      ]},
-    { n:12, title:"A checklist before you hand in", q:"The five questions that recover marks.",
+    { n:13, part:{k:'Check', t:'Before you hand in'},
+      title:"A checklist before you hand in", q:"The five questions that recover marks.",
       sections:[
         { h:"Run through these", type:"bullets", body:[
           "Did every language answer contain <b>both</b> halves — the literal meaning <b>and</b> what it suggests?",
           "Did you give as many details as the question asked for — <b>three</b> details for three marks?",
           "Did you check whether the question said <b>effect</b> or <b>effective</b>, and answer that one?",
           "For unusual expressions, did you define <b>each word separately</b> before naming the reason?",
-          "Did any answer just repeat the question's own word back at it? Replace it with a synonym from Chapter 2.",
+          "Did any answer just repeat the question's own word back at it? Replace it with a synonym from Chapter 8.",
           "Are all quotations copied <b>exactly</b> from the passage?",
         ]},
         { h:"A note on this guide", type:"text", body:[
-          "This chapter set was built from your own Answering Technique handout — the stems, the six reasons for unusual expressions, the synonym banks and the tone and attitude lists are taken from it directly. The model answers in Chapter 7 were written to that handout's formula, since the handout leaves those blanks for you to complete, and the practice items are there to be attempted before revealing. Where your teacher's phrasing differs from anything here, follow your teacher.",
+          "This chapter set was built from your own Answering Technique handout — the stems, the six reasons for unusual expressions, the synonym banks and the tone and attitude lists are taken from it directly. The model answers in Chapter 11 were written to that handout's formula, since the handout leaves those blanks for you to complete, and the practice items are there to be attempted before revealing. Where your teacher's phrasing differs from anything here, follow your teacher.",
+          "The <b>three-part sort</b> — literal, inferential, language use — is an ordering laid over that handout, not a heading taken from it. Nothing in the stems changed; the chapters were only regrouped so that the question type you are looking at is obvious from where you are standing. A few chapters sit close to a boundary: <b>effect</b> asks you to infer a feeling but is asked about a quoted phrase, so it lives with language use alongside <b>effective</b>, its twin.",
         ]},
       ]},
   ]
@@ -5951,7 +6005,7 @@ const STUDY_SKILLS = {
           { f:"4. Use each one in writing within the week", d:"A word you have recognised is not yet a word you own. Owning it means having produced it." },
         ]},
         { h:"Where English marks actually leak", type:"bullets", body:[
-          "<b>Quoting without explaining.</b> The single commonest loss. Every quotation needs the literal meaning <b>and</b> what it suggests — see Eng Answers chapter 1.",
+          "<b>Quoting without explaining.</b> The single commonest loss. Every quotation needs the literal meaning <b>and</b> what it suggests — see Eng Answers chapter 7.",
           "<b>Repeating the question's own word.</b> “This suggests it was charming” answers a question about charm with nothing. The synonym <i>is</i> the mark.",
           "<b>Answering “effect” when asked “effective”.</b> Read the command word twice. They are different questions with different stems.",
           "<b>Too few details for the marks available.</b> Three marks means three separate phrases, fully explained.",
@@ -8320,7 +8374,20 @@ function renderSyllabus(S, key){
 
   const openAt = state.openCh;
   state.openCh = null;
+  let part = null;
   S.chapters.forEach((ch, i)=>{
+    // A chapter may open a new part. The heading is emitted once, at the first
+    // chapter carrying that part name, so the sort is visible before you open
+    // anything — see ENG_SKILLS, which is grouped by question type.
+    if(ch.part && ch.part.t !== part){
+      part = ch.part.t;
+      html += `
+    <div class="ch-part">
+      <span class="pt-label">${esc(ch.part.k)}</span>
+      <h3>${esc(ch.part.t)}</h3>
+      ${ch.part.d ? `<p>${esc(ch.part.d)}</p>` : ''}
+    </div>`;
+    }
     html += `
     <div class="chapter ${i===(openAt===null?0:openAt)?'open':''}" data-ch="${i}">
       <div class="chapter-head">
