@@ -135,6 +135,10 @@ header{
 .tab-histskills .dot{background:#FBBF24;}
 .tab-engskills .dot{background:#FCA5A5;}
 .tab-study .dot{background:#A5B4FC;}
+.tab-histcards .dot{background:#FCD34D;}
+.tab-engcards .dot{background:#FECACA;}
+.tab-social .dot{background:#5EEAD4;}
+.tab-soccards .dot{background:#99F6E4;}
 .tab-phylesson .dot{background:#67E8F9;}
 .tab-chemlesson .dot{background:#86EFAC;}
 
@@ -663,8 +667,12 @@ header{
       <button class="tab tab-chem" data-subject="chemistry"><span class="dot"></span>Chemistry</button>
       <button class="tab tab-chemlesson" data-subject="chemlesson"><span class="dot"></span>Chem Lessons</button>
       <button class="tab tab-hist" data-subject="history"><span class="dot"></span>History</button>
+      <button class="tab tab-histcards" data-subject="histcards"><span class="dot"></span>Hist Cards</button>
       <button class="tab tab-histskills" data-subject="histskills"><span class="dot"></span>Hist Answers</button>
       <button class="tab tab-engskills" data-subject="engskills"><span class="dot"></span>Eng Answers</button>
+      <button class="tab tab-engcards" data-subject="engcards"><span class="dot"></span>Eng Cards</button>
+      <button class="tab tab-social" data-subject="social"><span class="dot"></span>Social Studies</button>
+      <button class="tab tab-soccards" data-subject="soccards"><span class="dot"></span>Soc Cards</button>
     </nav>
   </div>
 </header>
@@ -679,13 +687,13 @@ header{
    ============================================================ */
 
 const PHYSICS = {
-  intro: "Every definition and recall point in the Pure Physics 6091 (2026) syllabus, organised by the syllabus's own 20 topics. Nothing here is off-syllabus — anything the syllabus excludes has been removed.",
+  eyebrow:"Pure Physics · 6091", title:"Physics Definitions",
+  intro: "Every Pure Physics 6091 (2026) definition and recall point that can actually be asked as a question, organised by the syllabus's own topics. Anything you are handed in the exam — the formulas on the printed formula list — and pure drawing technique are deliberately not here, because neither can be asked as a recall question. Those are practised in Phy Lessons instead.",
   topics: [
     { name:"1. Physical Quantities, Units & Measurement", cards:[
       { t:"Scalar quantity", d:"A physical quantity that has magnitude only.", x:"e.g. distance, speed, mass, time, energy." },
       { t:"Vector quantity", d:"A physical quantity that has both magnitude and direction.", x:"e.g. displacement, velocity, acceleration, force. LO 1(g): add two vectors to find a resultant by a <b>graphical</b> method (tip-to-tail or parallelogram)." },
       { t:"SI base quantities", d:"The six base quantities and their units: mass (kg), length (m), time (s), current (A), temperature (K), amount of substance (mol).", x:"LO 1(b) — these six are named explicitly and must be recalled." },
-      { t:"SI prefixes", d:"nano (n) 10⁻⁹, micro (µ) 10⁻⁶, milli (m) 10⁻³, centi (c) 10⁻², deci (d) 10⁻¹, kilo (k) 10³, mega (M) 10⁶, giga (G) 10⁹, tera (T) 10¹².", x:"LO 1(c) — exactly these nine prefixes are listed in the syllabus." },
     ]},
     { name:"2. Kinematics", cards:[
       { t:"Speed", d:"The distance travelled per unit time.", x:"Average speed = distance travelled ÷ time taken." },
@@ -694,13 +702,11 @@ const PHYSICS = {
       { t:"Displacement–time graph", d:"The gradient gives the velocity. A horizontal line means the body is at rest; a straight slope means uniform velocity; a curve means non-uniform velocity.", x:"LO 2(f)." },
       { t:"Velocity–time graph", d:"The gradient gives the acceleration, and the area under the graph gives the displacement.", x:"LO 2(g),(h). Horizontal = uniform velocity; straight slope = uniform acceleration; curve = non-uniform acceleration." },
       { t:"Acceleration of free fall", d:"Constant for a body near the Earth and approximately 10 m/s².", x:"LO 2(i) — the syllabus value is <b>10 m/s²</b>, not 9.8." },
+      { t:"Contact and non-contact forces", d:"Contact forces act only by touching: friction, air resistance, tension, normal force. Non-contact forces act at a distance: gravitational, electrostatic and magnetic forces.", x:"LO 3(a)." },
     ]},
     { name:"3. Dynamics", cards:[
-      { t:"Contact and non-contact forces", d:"Contact forces act only by touching: friction, air resistance, tension, normal force. Non-contact forces act at a distance: gravitational, electrostatic and magnetic forces.", x:"LO 3(a)." },
       { t:"Balanced and unbalanced forces", d:"Balanced forces give zero resultant force, so a body stays at rest or keeps moving at constant velocity. Unbalanced forces give a resultant force, which accelerates the body in the direction of that force.", x:"LO 3(g)(i). This is what the syllabus asks for — reciting Newton's Laws is explicitly not required." },
-      { t:"Resultant force and acceleration", d:"Resultant force = mass × acceleration, and the acceleration acts in the direction of the resultant force.", x:"LO 3(j) — F = ma is the examinable relationship." },
       { t:"Action–reaction pairs", d:"When body A exerts a force on body B, body B exerts an equal and opposite force on body A. The two forces act on different bodies, which is why they never cancel each other out.", x:"LO 3(g)(iii) — identifying the pair is examinable." },
-      { t:"Free body diagram", d:"A diagram of a single body showing every force acting on it, drawn as labelled arrows.", x:"LO 3(h) — for forces in at most two dimensions." },
       { t:"Inertia", d:"The property of a body that resists a change in its motion. Mass is the measure of inertia.", x:"LO 3(k)." },
       { t:"Friction", d:"A force that opposes the relative motion, or the tendency to move, between two surfaces in contact.", x:"LO 3(l)." },
       { t:"Terminal velocity", d:"The constant maximum velocity of a falling body, reached when the upward air resistance has grown equal to its weight, so the resultant force and the acceleration are both zero.", x:"LO 3(m)." },
@@ -718,7 +724,6 @@ const PHYSICS = {
     { name:"5. Pressure", cards:[
       { t:"Pressure", d:"The force acting per unit area, applied perpendicular to the surface.", x:"p = F/A. SI unit: pascal (Pa) = N/m²." },
       { t:"Density", d:"The mass per unit volume of a substance.", x:"ρ = m/V. Units: kg/m³ or g/cm³." },
-      { t:"Pressure due to a liquid column", d:"Pressure = height of column × density of the liquid × gravitational field strength.", x:"p = hρg. It increases with depth and does not depend on the cross-sectional area." },
       { t:"Hydraulic press", d:"Pressure applied to an enclosed liquid is transmitted equally throughout it. A small force on a small piston therefore produces a much larger force on a large piston, because pressure is the same but area is greater.", x:"LO 5(c) — liquids are effectively incompressible." },
       { t:"Measuring atmospheric pressure", d:"A column of liquid (e.g. mercury in a barometer) is supported by atmospheric pressure; the vertical height of that column is a measure of the atmospheric pressure.", x:"LO 5(f)." },
       { t:"Manometer", d:"A U-tube of liquid used to measure a pressure difference. The difference in the liquid levels in the two arms gives the pressure difference.", x:"LO 5(g)." },
@@ -791,7 +796,6 @@ const PHYSICS = {
       { t:"Total internal reflection", d:"The complete reflection of light back inside the denser medium. It occurs when light travels from a denser to a less dense medium and the angle of incidence is greater than the critical angle.", x:"LO 12(f) — both conditions are needed." },
       { t:"Optical fibres", d:"Light is carried along a fibre by repeated total internal reflection. Used in telecommunications (large data capacity, low signal loss, no electrical interference) and in medicine, e.g. endoscopes to see inside the body.", x:"LO 12(g)." },
       { t:"Converging lens and focal length", d:"A thin converging lens brings a beam of light parallel to the principal axis to a point called the principal focus. The focal length is the distance between the optical centre of the lens and the principal focus.", x:"LO 12(h),(i)." },
-      { t:"Image characteristics (converging lens)", d:"Describe every image by three things: real or virtual, magnified or diminished, and upright or inverted. Beyond 2F the image is real, diminished and inverted; between F and 2F it is real, magnified and inverted; inside F it is virtual, magnified and upright (a magnifying glass).", x:"LO 12(j),(k) — you must be able to draw the ray diagrams too." },
     ]},
     { name:"14. Static Electricity", cards:[
       { t:"Electric charge", d:"There are positive and negative charges. Like charges repel and unlike charges attract. Charge is measured in coulombs (C).", x:"LO 13(a),(b)." },
@@ -816,13 +820,11 @@ const PHYSICS = {
       { t:"Potential difference in a series circuit", d:"The sum of the potential differences across the components equals the potential difference across the whole circuit.", x:"LO 15(c)." },
       { t:"Current in a parallel circuit", d:"The sum of the currents in the separate branches equals the current from the source.", x:"LO 15(d)." },
       { t:"Potential difference in a parallel circuit", d:"The potential difference across each separate branch of a parallel circuit is the same.", x:"LO 15(e)." },
-      { t:"Effective resistance", d:"In series, resistances add: R = R₁ + R₂. In parallel, the reciprocals add: 1/R = 1/R₁ + 1/R₂, so the combined resistance is always less than the smallest individual resistor.", x:"LO 15(f)." },
       { t:"Potential divider", d:"Two resistors in series across a supply share the p.d. in the ratio of their resistances. A variable potential divider (potentiometer) lets you tap off any fraction of the supply voltage.", x:"LO 15(h)." },
       { t:"Thermistor (NTC)", d:"A resistor whose resistance decreases as its temperature increases. Used as an input transducer in a potential divider to detect temperature, e.g. in a fire alarm or thermostat.", x:"LO 15(i)." },
       { t:"Light-dependent resistor (LDR)", d:"A resistor whose resistance decreases as the light intensity on it increases. Used as an input transducer in a potential divider to detect light, e.g. in automatic street lighting.", x:"LO 15(i)." },
     ]},
     { name:"17. Practical Electricity", cards:[
-      { t:"Electrical power and energy", d:"Power = potential difference × current, and energy transferred = potential difference × current × time.", x:"P = VI and E = VIt. Also P = I²R = V²/R." },
       { t:"The kilowatt-hour", d:"The energy transferred by a 1 kW appliance in 1 hour. Cost = power in kW × time in hours × cost per kW h.", x:"LO 16(c)." },
       { t:"Hazards of electricity", d:"Damaged insulation exposes live wires and risks electrocution. Overheating of cables, e.g. from too much current or coiled wires, risks fire. Damp conditions let current pass through water to a person, risking electrocution.", x:"LO 16(d)." },
       { t:"Fuse", d:"A thin wire that melts and breaks the circuit if the current exceeds its rating, protecting the appliance and cable from overheating. Its rating should be just above the appliance's normal operating current.", x:"LO 16(e)." },
@@ -851,7 +853,6 @@ const PHYSICS = {
       { t:"Factors affecting the induced e.m.f.", d:"The size of the induced e.m.f. increases with the speed of the relative movement, the number of turns on the coil, and the strength of the magnet.", x:"LO 19(a)(iii) — these three factors are what the syllabus asks for." },
       { t:"A.C. generator", d:"A coil rotates in a magnetic field (or a magnet rotates near a coil), so the magnetic field linking the coil changes continuously and induces an alternating e.m.f. Slip rings keep the coil connected to the external circuit.", x:"LO 19(b),(c) — the output is a sine curve, peaking when the coil is parallel to the field." },
       { t:"Transformer", d:"Two coils wound on a soft-iron core. Alternating current in the primary produces a continuously changing magnetic field in the core, which induces an alternating e.m.f. in the secondary.", x:"LO 19(d)." },
-      { t:"Transformer equations", d:"For an ideal transformer, the ratio of voltages equals the ratio of turns, and the input power equals the output power.", x:"Vₚ/Vₛ = Nₚ/Nₛ and VₚIₚ = VₛIₛ." },
       { t:"High-voltage transmission", d:"Power is transmitted at high voltage so that the current is small. Since power lost in the cables is I²R, a smaller current means far less energy wasted as heat.", x:"LO 19(f)." },
     ]},
     { name:"21. Radioactivity", cards:[
@@ -873,6 +874,7 @@ const PHYSICS = {
 };
 
 const CHEMISTRY = {
+  eyebrow:"Pure Chemistry · 6092", title:"Chemistry Definitions",
   intro: "Every definition and recall point in the Pure Chemistry 6092 (2026) syllabus, organised by the syllabus's own 12 topics. Anything the syllabus removed — including the old Sulfur topic and the Contact process — is gone from this deck.",
   topics: [
     { name:"1. Experimental Chemistry", cards:[
@@ -1075,18 +1077,15 @@ const HISTORY = {
         ]},
         { h:"Collective security and the League in the 1920s", type:"text", body:[
           "<b>Collective security</b> was the central idea of the post-war order: aggression against one member would be treated as aggression against all, so no state would dare attack. The League of Nations, set up in 1920, was its institution.",
-          "The syllabus asks for <b>successes and failures at peacekeeping in the 1920s</b> — so you need both, and the 1920s specifically. The League settled several smaller disputes successfully, notably the Aaland Islands (1921) between Sweden and Finland, and Greece's withdrawal from Bulgaria (1925). Its humanitarian agencies also worked effectively on refugees, health and labour conditions.",
-          "But its failures were structural. The <b>USA never joined</b>, despite the League being Wilson's idea, which robbed it of the world's strongest economy. Germany and the USSR were initially excluded. It had <b>no army</b>, decisions required unanimity, and when a major power was involved — as in Corfu (1923) — it proved unwilling to act against them.",
+          "The syllabus asks for <b>successes and failures at peacekeeping in the 1920s</b> — so you need both, and the 1920s specifically. The League did settle a number of smaller disputes between minor powers in the 1920s, and its humanitarian agencies worked effectively on refugees, health and labour conditions.",
+          "But its failures were structural. The <b>USA never joined</b>, despite the League being Wilson's idea, which robbed it of the world's strongest economy. Germany and the USSR were initially excluded. It had <b>no army</b> and decisions required unanimity, so whenever a major power was the aggressor the League proved unwilling to act against it.",
           "The 1920s therefore ended with the appearance of stability but no real enforcement mechanism, which is exactly what collapsed in the 1930s.",
         ]},
         { h:"Timeline", type:"timeline", body:[
           { d:"1919", t:"Paris Peace Conference; Treaty of Versailles signed." },
           { d:"1920", t:"League of Nations established; the US Senate refuses to join." },
-          { d:"1921", t:"League successfully settles the Aaland Islands dispute." },
-          { d:"1923", t:"Corfu incident — the League backs down against Italy, a major power." },
-          { d:"1925", t:"League secures Greek withdrawal from Bulgaria." },
         ]},
-        { h:"Key terms", type:"terms", body:["Collective security","Self-determination","Balance of power","Diktat","War Guilt Clause","Reparations","Demilitarisation","Mandates"] },
+        { h:"Key terms", type:"terms", body:["Collective security","Self-determination","Balance of power","Diktat","War Guilt Clause","Reparations","Demilitarisation"] },
       ]},
     { n:2, title:"Rise of Authoritarian Regimes ★ (Nazi Germany)", q:"Why Germans turned to Hitler, and how he made the state his own.",
       sections:[
@@ -1101,10 +1100,10 @@ const HISTORY = {
           "The syllabus groups the causes into three, and a strong essay uses all three and weighs them.",
           "<b>Weaknesses of the Weimar government.</b> The constitution itself was a problem: proportional representation meant no party ever won a majority, producing unstable coalitions that collapsed repeatedly. Article 48 let the President rule by decree, which normalised government without the Reichstag long before Hitler. The Republic was also unpopular by association — it had signed the armistice and accepted Versailles, earning its leaders the label 'November Criminals' and feeding the <i>stab-in-the-back</i> myth.",
           "<b>Appeal of Hitler and the Nazi Party.</b> The <b>role of Hitler</b> personally mattered: he was an exceptional public speaker who projected certainty when other politicians offered none. The <b>methods of the party</b> were equally important — Goebbels's propaganda tailored simple messages to each audience, the SA provided visible strength and intimidated opponents, and crucially the Nazis <b>participated in elections</b> rather than attempting another putsch, which made them look legitimate.",
-          "<b>Economic challenges.</b> Hyperinflation in 1923 destroyed savings and the middle class's faith in the Republic. Recovery under Stresemann depended on American loans, so when the <b>Great Depression</b> struck after 1929 those loans were withdrawn and unemployment reached around six million by 1932. Desperate voters abandoned the moderate parties: Nazi seats rose from 12 in 1928 to 230 in July 1932.",
+          "<b>Economic challenges.</b> Hyperinflation in 1923 destroyed savings and the middle class's faith in the Republic. Recovery under Stresemann depended on American loans, so when the <b>Great Depression</b> struck after 1929 those loans were withdrawn and unemployment reached around six million by 1932. Desperate voters abandoned the moderate parties, and the Nazis became the largest party in the Reichstag with 230 seats in July 1932.",
         ]},
         { h:"Consolidation of Nazi rule", type:"bullets", body:[
-          "<b>Establishing dictatorship and one-party rule.</b> Hitler was <i>appointed</i> Chancellor in January 1933 by Hindenburg, persuaded by von Papen who thought the Nazis could be controlled. The Reichstag Fire (Feb 1933) justified emergency decrees against communists; the <b>Enabling Act</b> (Mar 1933) let Hitler legislate without the Reichstag; other parties were banned; the Night of the Long Knives (1934) removed SA rivals; and on Hindenburg's death Hitler merged Chancellor and President as <b>Führer</b>.",
+          "<b>Establishing dictatorship and one-party rule.</b> Hitler was <i>appointed</i> Chancellor in January 1933 by Hindenburg — not elected to the post — by conservatives who believed they could control him. The Reichstag Fire (Feb 1933) justified emergency decrees against communists; the <b>Enabling Act</b> (Mar 1933) let Hitler legislate without the Reichstag; other parties were banned; the Night of the Long Knives (1934) removed SA rivals; and on Hindenburg's death Hitler merged Chancellor and President as <b>Führer</b>.",
           "<b>Economic policies.</b> Re-employment through public works such as the autobahns, and improvement of working conditions via schemes like Strength Through Joy — then an increasing <b>move towards a war economy</b> through rearmament, which itself absorbed labour.",
           "<b>Social policies — nationalism and persecution.</b> German nationalism was promoted through rallies, education and the Hitler Youth, while ethnic and minority groups were persecuted: the Nuremberg Laws (1935) stripped Jews of citizenship and Kristallnacht (1938) marked a violent escalation.",
           "<b>Control of, and responses by, German society.</b> The Gestapo and SS enforced conformity, the press and radio were censored, and opposition was suppressed. Responses varied — genuine enthusiasm, passive conformity out of fear or self-interest, and small pockets of resistance.",
@@ -1162,11 +1161,11 @@ const HISTORY = {
         ]},
         { h:"Ineffectiveness of the League of Nations in the 1930s", type:"text", body:[
           "The syllabus names two failures specifically. The <b>failure at disarmament in the 1930s</b>: the World Disarmament Conference collapsed because France would not disarm without security guarantees while Germany demanded equality, and Germany walked out of both the conference and the League in 1933.",
-          "The <b>Abyssinian Crisis (1935)</b> and its implications: Italy invaded Abyssinia, and although the League condemned it and imposed sanctions, the sanctions excluded oil and the Suez Canal stayed open. Britain and France were caught secretly planning to hand Abyssinia to Italy in the Hoare–Laval Pact. The implication was decisive — the League had again failed to stop a major power, it was exposed as unwilling to enforce collective security, and Mussolini was pushed towards Hitler.",
+          "The <b>Abyssinian Crisis (1935)</b> and its implications: Italy invaded Abyssinia, and although the League condemned the invasion and imposed sanctions, the sanctions were too limited to stop it. The implication was decisive — the League had again failed to stop a major power, it was exposed as unwilling to enforce collective security, and Mussolini was pushed towards Hitler.",
         ]},
         { h:"Germany's aggressive foreign policy — the sequence", type:"timeline", body:[
-          { d:"1935", t:"Plebiscite in the Saar region returns it to Germany — a legitimate vote that boosted Hitler's prestige. Germany also announces rearmament and conscription." },
-          { d:"1936", t:"Remilitarisation of the Rhineland, breaching Versailles and Locarno. France and Britain do not act." },
+          { d:"1935", t:"Germany announces rearmament and conscription, breaching Versailles." },
+          { d:"1936", t:"Remilitarisation of the Rhineland, breaching Versailles. France and Britain do not act." },
           { d:"1938", t:"Anschluss with Austria, forbidden by Versailles, achieved without resistance." },
           { d:"Sep 1938", t:"Munich Agreement — Britain and France hand Hitler the Sudetenland without Czech consent." },
           { d:"Mar 1939", t:"Invasion of the rest of Czechoslovakia — the first seizure of non-German territory, proving appeasement had failed." },
@@ -1174,11 +1173,11 @@ const HISTORY = {
           { d:"1 Sep 1939", t:"Invasion of Poland. Britain and France declare war on 3 September." },
         ]},
         { h:"The policy of appeasement", type:"text", body:[
-          "Appeasement means giving in to reasonable demands to avoid war. Chamberlain pursued it for reasons that seemed sound at the time: the memory of WWI casualties was raw, Britain was militarily unprepared and needed time to rearm, many believed Versailles had genuinely been too harsh so some German demands looked fair, the Dominions would not support a war, and a strong Germany was seen as a buffer against Soviet communism.",
+          "Appeasement means giving in to reasonable demands to avoid war. Chamberlain pursued it for reasons that seemed sound at the time: the memory of WWI casualties was raw, Britain was militarily unprepared and needed time to rearm, many believed Versailles had genuinely been too harsh so some German demands looked fair, and a strong Germany was seen as a buffer against Soviet communism.",
           "Its consequences are what essays turn on. Each concession strengthened Germany materially and convinced Hitler that Britain and France would never fight, so he escalated. Munich also destroyed Czechoslovakia's defences and handed Germany its arms industry, while the exclusion of the USSR from Munich helped push Stalin towards the pact with Hitler in 1939.",
           "A balanced answer notes the alternative view — that appeasement bought Britain a year to rearm, and that public opinion in 1938 overwhelmingly supported it.",
         ]},
-        { h:"Key terms", type:"terms", body:["Appeasement","Expansionism","Anschluss","Sudetenland","Munich Agreement","Nazi–Soviet Pact","Rearmament","Abyssinian Crisis","Hoare–Laval Pact","Lebensraum"] },
+        { h:"Key terms", type:"terms", body:["Appeasement","Expansionism","Anschluss","Sudetenland","Munich Agreement","Nazi–Soviet Pact","Rearmament","Abyssinian Crisis","Lebensraum"] },
       ]},
     { n:5, title:"War in the Asia-Pacific — outbreak of World War II", q:"Japanese expansion, worsening relations with the USA, and Pearl Harbor.",
       sections:[
@@ -1213,7 +1212,7 @@ const HISTORY = {
           "<b>Allied strategies — D-Day (1944).</b> The Normandy landings opened a second front in western Europe, forcing Germany to fight in the west while still engaged in the east.",
           "<b>Allied strategies — island hopping.</b> In the Pacific, US forces captured selected strategic islands and bypassed others, cutting Japanese supply lines and moving airbases steadily closer to Japan.",
           "<b>Allied strategies — the atomic bombs.</b> Hiroshima (6 Aug) and Nagasaki (9 Aug) 1945 brought Japan's surrender.",
-          "<b>Role of the Soviet Union.</b> The USSR absorbed and then broke the bulk of the German army on the Eastern Front — Stalingrad (1942–43) was the turning point — at enormous cost in lives. The Soviet declaration of war on Japan in August 1945 added further pressure at the very end.",
+          "<b>Role of the Soviet Union.</b> The USSR absorbed and then broke the bulk of the German army on the Eastern Front — Stalingrad (1942–43) was the turning point — at enormous cost in lives.",
         ]},
         { h:"Military weaknesses of Germany", type:"bullets", body:[
           "<b>Ineffective command structure.</b> Hitler increasingly overruled his generals and insisted on no-retreat orders, which turned recoverable situations into catastrophes, most famously at Stalingrad.",
@@ -1224,7 +1223,7 @@ const HISTORY = {
           "<b>Inability to access raw materials from the empire.</b> The empire was seized to supply oil and resources, but American submarines and air power destroyed Japanese merchant shipping, so those materials could not actually reach Japan. The empire's purpose was defeated even while it was still held.",
         ]},
         { h:"Timeline of turning points", type:"timeline", body:[
-          { d:"Jun 1942", t:"Battle of Midway — Japan loses four carriers; the Pacific initiative passes to the USA." },
+          { d:"Jun 1942", t:"Battle of Midway — the initiative in the Pacific passes to the USA." },
           { d:"1942–43", t:"Stalingrad — German Sixth Army destroyed; the Eastern Front turns." },
           { d:"Jun 1944", t:"D-Day opens the second front in western Europe." },
           { d:"May 1945", t:"Germany surrenders." },
@@ -1288,8 +1287,8 @@ const HISTORY = {
         ]},
         { h:"Outbreak and the role of key players", type:"bullets", body:[
           "<b>North Korea.</b> Invaded the South in June 1950 seeking reunification under communist rule, having sought and obtained Stalin's approval first.",
-          "<b>South Korea.</b> Poorly prepared and rapidly overrun, retaining only the Pusan perimeter before UN forces arrived.",
-          "<b>USA.</b> Interpreted the invasion through containment and the domino theory, and led the military response — the Inchon landing in September 1950 reversed the war.",
+          "<b>South Korea.</b> Poorly prepared and rapidly overrun, holding only the far south of the peninsula before UN forces arrived.",
+          "<b>USA.</b> Interpreted the invasion through containment and the domino theory, and led the military response, which reversed the North's early gains.",
           "<b>UN.</b> Authorised military action, which was possible only because the USSR was boycotting the Security Council and so did not veto it. The war was fought under the UN flag though overwhelmingly American in composition.",
           "<b>China.</b> Intervened in late 1950 when UN forces advanced towards the Yalu River, fearing an American army on its border. Chinese forces pushed the UN back to roughly the 38th parallel, producing stalemate.",
           "<b>USSR.</b> Avoided direct combat but supplied equipment, aircraft and pilots — the essence of a <b>proxy war</b>, in which superpowers fight through others rather than each other.",
@@ -1303,11 +1302,11 @@ const HISTORY = {
           { d:"1945", t:"Korea divided at the 38th parallel for occupation." },
           { d:"1948", t:"Two rival Korean states established." },
           { d:"1949", t:"Communist victory in China; USSR tests atomic bomb." },
-          { d:"1950", t:"Sino–Soviet Alliance; North invades in June; Inchon landing; Chinese intervention." },
+          { d:"1950", t:"Sino–Soviet Alliance; the North invades in June; Chinese intervention follows." },
           { d:"1953", t:"Korean Armistice Agreement; demilitarised zone created." },
           { d:"1955", t:"West Germany joins NATO; Warsaw Pact formed." },
         ]},
-        { h:"Key terms", type:"terms", body:["Proxy war","38th parallel","Domino theory","Inchon","Yalu River","Armistice","Demilitarised zone","Sino–Soviet Alliance"] },
+        { h:"Key terms", type:"terms", body:["Proxy war","38th parallel","Domino theory","Armistice","Demilitarised zone","Sino–Soviet Alliance"] },
       ]},
     { n:9, title:"The Cold War — Vietnam War, 1954–75", q:"Partition, insurgency, escalation and American withdrawal.",
       sections:[
@@ -1322,19 +1321,19 @@ const HISTORY = {
           "<b>Discontentment over the Geneva Accords.</b> Neither side was satisfied. The North regarded partition as an unjust interruption of a victory already won; many in the South resented terms negotiated largely by outside powers.",
           "<b>Failure to carry out national elections in 1956.</b> The elections were never held, because the South and the USA expected Ho Chi Minh to win. This removed any peaceful route to reunification and made armed struggle the only remaining option — the single most important cause of the war.",
           "<b>Consolidation of communist control in the North</b> proceeded through land reform and one-party rule, while the South saw persistent <b>instability</b>.",
-          "<b>Unpopularity of Ngo Dinh Diem's actions.</b> Diem's regime was corrupt and nepotistic, rigged elections, blocked land reform, and as a Catholic in a mostly Buddhist country persecuted Buddhists — provoking the protests and self-immolations that discredited his government internationally.",
+          "<b>Unpopularity of Ngo Dinh Diem's actions.</b> Diem's regime was corrupt and nepotistic, rigged elections, blocked land reform, and as a Catholic in a mostly Buddhist country persecuted Buddhists — provoking protests that discredited his government internationally.",
           "<b>Support from the North for the insurgency in the South.</b> The North supplied and directed the Viet Cong via the Ho Chi Minh Trail, turning southern discontent into an organised armed insurgency.",
         ]},
         { h:"Escalation and the role of key players", type:"bullets", body:[
           "<b>North Vietnam.</b> Committed to reunification under communist rule, and willing to absorb enormous casualties over a long war.",
           "<b>South Vietnam.</b> Dependent on American support, undermined by corruption and weak legitimacy; Diem was overthrown and killed in 1963.",
           "<b>USA.</b> Moved from advisers under Eisenhower and Kennedy to full combat commitment under Johnson after the Gulf of Tonkin incident in 1964, driven by containment and the domino theory. The <b>Tet Offensive (1968)</b> was the turning point — militarily costly for the communists but politically devastating for the USA, since it contradicted official claims that the war was being won and turned American opinion decisively against it.",
-          "<b>USSR and China.</b> Supplied the North with weapons, equipment and economic aid without committing their own troops — again a <b>proxy war</b>. Their rivalry after the Sino–Soviet split also encouraged each to compete in supporting Hanoi.",
+          "<b>USSR and China.</b> Supplied the North with weapons, equipment and economic aid without committing their own troops — again a <b>proxy war</b>.",
         ]},
         { h:"The end of the war and its immediate aftermath", type:"bullets", body:[
           "Nixon's policy of <b>Vietnamisation</b> transferred the fighting to South Vietnamese forces so American troops could withdraw. The Paris Peace Accords (1973) ended direct US involvement.",
           "<b>Reunification of Vietnam.</b> Saigon fell in 1975 and the country was reunified under communist rule in 1976 — a clear failure of American containment.",
-          "<b>Beginning of détente.</b> The war's cost and unpopularity pushed the USA towards easing tensions: Nixon visited China in 1972 and signed SALT I with the USSR, opening a period of reduced confrontation.",
+          "<b>Beginning of détente.</b> The war's cost and unpopularity pushed the USA towards easing tensions with the communist powers, opening a period of reduced confrontation.",
         ]},
         { h:"Timeline", type:"timeline", body:[
           { d:"1954", t:"Dien Bien Phu; Geneva Accords partition Vietnam at the 17th parallel." },
@@ -1356,7 +1355,7 @@ const HISTORY = {
         { h:"Decline of the USSR", type:"text", body:[
           "<b>Economic weakness</b> is the foundation of the answer. The command economy was rigid and inefficient: central planning could not respond to demand, agriculture repeatedly underperformed, consumer goods were scarce and shoddy, and quality lagged far behind the West. Living standards stagnated while Western prosperity became increasingly visible.",
           "The <b>cost of the arms race</b> was crushing. Matching American military spending consumed a share of Soviet output the economy could not sustain, and the burden grew heavier as the USA modernised its forces in the 1980s. The war in Afghanistan from 1979 added a further drain in money, lives and prestige.",
-          "The USSR also carried the cost of <b>subsidising its satellites</b> in eastern Europe, and faced falling oil revenues in the 1980s, removing the income that had masked the problems.",
+          "The USSR also carried the cost of <b>subsidising its satellites</b> in eastern Europe, a burden it could increasingly not afford.",
         ]},
         { h:"Gorbachev's reforms and the collapse", type:"bullets", body:[
           "<b>Glasnost (openness)</b> permitted criticism and public discussion. It allowed problems long hidden to be aired, which undermined the Party's authority and legitimacy rather than renewing it.",
@@ -5687,6 +5686,399 @@ const STUDY_SKILLS = {
   ]
 };
 
+const HIST_CARDS = {
+  eyebrow:"Humanities (History) · 2261 · Paper 2", title:"History Recall Cards",
+  intro: "Recall cards for the 2261 History paper — the key concepts, terms and turning points from each of the ten units. Cards test what you can be asked to define, name or state; the reasoning and the essay arguments live in the History tab. ★ marks the four units a source-based case study can be set on.",
+  topics: [
+    { name:"1. After World War I", cards:[
+      { t:"Collective security", d:"The idea that aggression against one member state would be treated as aggression against all, so that no state would dare attack.", x:"The founding principle of the League of Nations." },
+      { t:"Self-determination", d:"The principle that peoples should be able to govern themselves, used to redraw Europe's borders after WWI.", x:"Impossible to apply cleanly in mixed central Europe — every new border left minorities on the wrong side." },
+      { t:"Balance of power", d:"An arrangement in which no single state becomes strong enough to dominate the others.", x:"The pre-war European order the peace settlement tried, and failed, to rebuild." },
+      { t:"Diktat", d:"A dictated peace — the German term for the Treaty of Versailles, which Germany was not allowed to negotiate.", x:"Central to German resentment of the settlement." },
+      { t:"War Guilt Clause (Article 231)", d:"The clause forcing Germany to accept blame for causing the war.", x:"The legal basis for the reparations demand, and a lasting national humiliation." },
+      { t:"Reparations", d:"Payments Germany was required to make for war damage, set at £6.6 billion.", x:"Crippled an already damaged economy and fuelled resentment." },
+      { t:"Terms of the Treaty of Versailles", d:"War guilt, reparations, demilitarisation (army capped at 100,000; no air force, submarines or tanks; Rhineland demilitarised) and territorial losses including Alsace-Lorraine, the Polish Corridor and all overseas colonies.", x:"Learn these as four headings — guilt, money, army, land." },
+      { t:"Why the League of Nations was weak", d:"The USA never joined; Germany and the USSR were initially excluded; it had no army; and decisions required unanimity.", x:"So it could never enforce collective security against a major power." },
+    ]},
+    { name:"2. Nazi Germany ★", cards:[
+      { t:"Authoritarianism", d:"A system in which power is concentrated in a leader or small group, and opposition is not tolerated.", x:"★ Prescribed source-based case study topic." },
+      { t:"Weaknesses of the Weimar government", d:"Proportional representation produced unstable coalitions; Article 48 allowed rule by decree; and the Republic was blamed for signing the armistice and accepting Versailles.", x:"One of the three causes the syllabus names for the Nazi rise." },
+      { t:"Article 48", d:"The clause of the Weimar constitution allowing the President to rule by emergency decree without the Reichstag.", x:"Normalised government without parliament well before Hitler." },
+      { t:"Stab-in-the-back myth", d:"The false claim that the German army was never defeated in the field but was betrayed by politicians at home.", x:"Those politicians were labelled the 'November Criminals'." },
+      { t:"Appeal of Hitler and the Nazi Party", d:"Hitler's exceptional public speaking, Goebbels's targeted propaganda, the visible strength of the SA, and the decision to contest elections rather than seize power by force.", x:"The second of the three named causes." },
+      { t:"Economic causes of the Nazi rise", d:"Hyperinflation in 1923 destroyed savings, and the Great Depression after 1929 withdrew American loans and pushed unemployment to about six million by 1932.", x:"The Nazis became the largest Reichstag party with 230 seats in July 1932." },
+      { t:"Enabling Act (1933)", d:"The law allowing Hitler to legislate without the Reichstag, giving him dictatorial power by legal means.", x:"Passed after the Reichstag Fire was used to justify emergency decrees against communists." },
+      { t:"Night of the Long Knives (1934)", d:"The purge in which Hitler had the leadership of the SA killed, removing rivals within his own movement and securing army support.", x:"On Hindenburg's death Hitler merged Chancellor and President as Führer." },
+      { t:"Nazi economic policies", d:"Re-employment through public works such as the autobahns, improved working conditions through schemes like Strength Through Joy, and a growing move towards a war economy through rearmament.", x:"Rearmament itself absorbed labour, which is part of why unemployment fell." },
+      { t:"Nuremberg Laws (1935)", d:"Laws stripping German Jews of citizenship and prohibiting marriage between Jews and non-Jews.", x:"Kristallnacht (1938) marked a violent escalation of persecution." },
+      { t:"How the Nazis controlled society", d:"The Gestapo and SS enforced conformity, the press and radio were censored, and rallies, education and the Hitler Youth promoted nationalism.", x:"Responses ranged from genuine enthusiasm to passive conformity and small pockets of resistance." },
+    ]},
+    { name:"3. Militarist Japan", cards:[
+      { t:"Militarism", d:"The belief that a country should maintain strong armed forces and be prepared to use them to advance national interests.", x:"Examinable in Section B, but source-based case studies are not set on Japan." },
+      { t:"Ultranationalism", d:"Extreme nationalism holding that the nation is supreme and should expand, and that internal opposition should be swept aside.", x:"Ultranationalists argued expansion abroad would solve Japan's economic problems." },
+      { t:"Zaibatsu", d:"The large Japanese business conglomerates, widely believed to have corrupted the party governments of the 1920s.", x:"A major reason public confidence in parliamentary rule drained away." },
+      { t:"Weaknesses of Japan's democratic government", d:"Cabinets changed frequently and appeared corrupt and powerless, and the military was answerable to the Emperor rather than the Diet, so politicians could not restrain it.", x:"A constitutional weakness, not merely a political one." },
+      { t:"Economic causes of Japanese militarism", d:"Inflation, unemployment and rural landlord–tenant disputes through the 1920s, then the Great Depression, which collapsed the American market for Japanese silk and destituted rural families.", x:"Many army officers came from rural families, so hardship became military contempt for politicians." },
+      { t:"Manchurian Incident (1931)", d:"The Japanese army's seizure of Manchuria, carried out largely on its own initiative, which the government then had to accept.", x:"A military success that boosted the ultranationalists and exposed the League's weakness." },
+      { t:"Political assassination in Japan", d:"The killing of political opponents by ultranationalists, including Prime Minister Inukai in May 1932, which intimidated civilian politicians into compliance.", x:"After 1932 party cabinets effectively ended." },
+      { t:"How the militarists increased their influence", d:"Military-dominated cabinets, government control over industry directed to armaments, militarisation of education, and suppression of independent labour unions.", x:"The forces could bring down a cabinet by withdrawing their minister — an effective veto." },
+      { t:"Germany and Japan compared", d:"Both rose from economic crisis, discredited parliamentary government and ultranationalism. But Germany had a single charismatic leader and a mass party taking power through elections; Japan had no dictator and no mass party, with power shifting to the military as an institution.", x:"A very common Section B comparison." },
+    ]},
+    { name:"4. Outbreak of war in Europe ★", cards:[
+      { t:"Appeasement", d:"The policy of giving in to a country's demands in order to avoid war.", x:"★ Prescribed source-based case study topic." },
+      { t:"Why Britain appeased Germany", d:"The memory of WWI casualties, military unpreparedness and the need for time to rearm, a belief that Versailles had been too harsh so some German demands were fair, and a view of Germany as a buffer against Soviet communism.", x:"A balanced answer notes it bought Britain a year to rearm and had strong public support in 1938." },
+      { t:"Consequences of appeasement", d:"Each concession strengthened Germany materially and convinced Hitler that Britain and France would never fight, so he escalated.", x:"Munich also destroyed Czechoslovakia's defences and handed Germany its arms industry." },
+      { t:"Failure of disarmament in the 1930s", d:"The World Disarmament Conference collapsed because France would not disarm without security guarantees while Germany demanded equality — and Germany then left both the conference and the League in 1933.", x:"One of the two League failures the syllabus names." },
+      { t:"Abyssinian Crisis (1935)", d:"Italy's invasion of Abyssinia, which the League condemned and sanctioned, but too weakly to stop.", x:"Exposed the League as unwilling to enforce collective security against a major power, and pushed Mussolini towards Hitler." },
+      { t:"Anschluss (1938)", d:"The union of Germany and Austria, forbidden by the Treaty of Versailles, achieved without resistance.", x:"Part of the sequence of aggressive moves that went unopposed." },
+      { t:"Munich Agreement (1938)", d:"The agreement by which Britain and France handed Hitler the Sudetenland without Czech consent.", x:"The high point of appeasement; Hitler took the rest of Czechoslovakia six months later." },
+      { t:"Nazi–Soviet Non-Aggression Pact (1939)", d:"The agreement between Germany and the USSR not to attack each other, secretly dividing Poland between them.", x:"Removed the threat of a two-front war and cleared the way for the invasion of Poland." },
+      { t:"Lebensraum", d:"'Living space' — Hitler's aim of expanding German territory eastwards to provide land and resources for the German people.", x:"The underlying motive behind expansion into eastern Europe." },
+    ]},
+    { name:"5. Outbreak of war in the Asia-Pacific", cards:[
+      { t:"Why the League failed in Asia", d:"After Japan seized Manchuria in 1931 the League's Lytton Report condemned the action, but the League had no army and imposed no meaningful sanctions, so Japan simply left in 1933 and kept Manchuria.", x:"The lesson drawn worldwide was that aggression paid." },
+      { t:"Worsening US–Japan relations", d:"The USA objected to Japanese expansion in China and applied escalating economic pressure, culminating in the freezing of Japanese assets and an oil embargo in 1941.", x:"Decisive because Japan imported the overwhelming majority of its oil from the USA." },
+      { t:"Japan's choice in 1941", d:"Withdraw from China as the Americans demanded, which the militarists thought unthinkable, or seize the oil of Southeast Asia and accept war with the USA.", x:"Explains why Japan attacked rather than negotiated." },
+      { t:"Greater East Asia Co-Prosperity Sphere", d:"Japan's presentation of its empire as 'Asia for the Asians' and liberation from Western colonial rule — in practice a framework for Japanese domination and extraction of raw materials.", x:"Propaganda and policy at the same time." },
+      { t:"Pearl Harbor (7 December 1941)", d:"Japan's attack on the US Pacific Fleet, intended to cripple American naval power long enough to secure Southeast Asia's resources.", x:"Brought the USA into the war and turned separate conflicts into a global war." },
+    ]},
+    { name:"6. End of World War II", cards:[
+      { t:"Strengths of the Allies", d:"American entry bringing overwhelming economic resources and manpower; Allied strategies including D-Day, island hopping and the atomic bombs; and the Soviet role on the Eastern Front.", x:"The syllabus splits this topic into Allied strengths and Axis weaknesses — structure the essay that way." },
+      { t:"Second front", d:"The opening of a new theatre of war in western Europe by the D-Day landings in 1944, forcing Germany to fight west and east at once.", x:"Exactly what the Nazi–Soviet Pact had been designed to avoid." },
+      { t:"Island hopping", d:"The American strategy of capturing selected strategic islands and bypassing others, cutting Japanese supply lines and moving airbases closer to Japan.", x:"Detailed study of campaigns is not required — know the strategy and why it worked." },
+      { t:"Military weaknesses of Germany", d:"An ineffective command structure, with Hitler overruling his generals and issuing no-retreat orders, and a war on two fronts.", x:"Stalingrad (1942–43) is the standard example of both." },
+      { t:"Military weaknesses of Japan", d:"Overextension of a vast empire it lacked the ships, men and industry to defend, and an inability to actually move raw materials home once American submarines and air power destroyed its merchant shipping.", x:"The empire's purpose was defeated even while it was still held." },
+      { t:"Turning points of WWII", d:"Midway (Jun 1942) in the Pacific, Stalingrad (1942–43) on the Eastern Front, D-Day (Jun 1944) in western Europe, and the atomic bombs on Hiroshima and Nagasaki (Aug 1945).", x:"Germany surrendered May 1945; Japan surrendered August 1945." },
+    ]},
+    { name:"7. Origins of the Cold War ★", cards:[
+      { t:"Cold War", d:"The period of hostility, suspicion and competition between the USA and the USSR that stopped short of direct war between them.", x:"★ Prescribed source-based case study topic." },
+      { t:"Bipolarity", d:"A world organised around two dominant powers rather than a balance among several.", x:"The USA emerged economically dominant and with the atomic bomb; the USSR with the largest army in Europe." },
+      { t:"Containment", d:"The American policy of preventing the further spread of communism.", x:"Pursued politically (Truman Doctrine), economically (Marshall Plan) and militarily (NATO)." },
+      { t:"Ideological differences", d:"The USA stood for capitalism, private enterprise and multi-party democracy; the USSR for communism, a state-run command economy and one-party rule.", x:"Each genuinely believed the other's system threatened its survival." },
+      { t:"Command economy", d:"An economy in which the state owns the means of production and central planners decide what is produced.", x:"Contrast with a capitalist economy driven by private ownership and markets." },
+      { t:"Breakdown of the wartime alliance", d:"The alliance held only because of a shared enemy; at Yalta and Potsdam in 1945 disagreements surfaced over Poland's government and borders and over the future of Germany.", x:"Truman's harder line and the use of the atomic bomb without meaningful consultation deepened Soviet suspicion." },
+      { t:"Iron Curtain", d:"Churchill's term (1946) for the division separating Soviet-controlled eastern Europe from the west.", x:"The USSR saw its eastern bloc as a defensive buffer; the USA saw expansion." },
+      { t:"Truman Doctrine (1947)", d:"The American pledge to support free peoples resisting subjugation, committing the USA to contain communism rather than withdraw into isolation.", x:"The political arm of containment." },
+      { t:"Marshall Plan (1947)", d:"Massive American aid to rebuild western Europe, on the reasoning that prosperous countries would not turn communist.", x:"The USSR forbade its satellites from accepting it." },
+      { t:"Berlin Blockade and Airlift (1948–49)", d:"The Soviet closure of land routes to West Berlin, answered by an eleven-month Western operation supplying the city by air.", x:"Germany was divided into the FRG and GDR in 1949." },
+      { t:"NATO (1949)", d:"The North Atlantic Treaty Organisation, a military alliance binding the USA to the defence of western Europe.", x:"The military arm of containment." },
+      { t:"Cominform and Comecon", d:"Soviet responses to containment: Cominform (1947) coordinated communist parties and enforced Soviet control; Comecon (1949) tied eastern European economies to Moscow.", x:"The political and economic answers to the Truman Doctrine and Marshall Plan." },
+      { t:"Warsaw Pact (1955)", d:"The Soviet-led military alliance of eastern European communist states, formed in answer to NATO.", x:"Formed the same year West Germany joined NATO." },
+      { t:"Satellite state", d:"A country that is formally independent but in practice controlled by a more powerful state.", x:"Used of the eastern European states under Soviet domination." },
+    ]},
+    { name:"8. Korean War ★", cards:[
+      { t:"Proxy war", d:"A conflict in which rival powers support opposing sides rather than fighting each other directly.", x:"★ Prescribed source-based case study topic." },
+      { t:"Division of Korea", d:"On Japan's defeat, Korea was occupied by Soviet forces north of the 38th parallel and American forces south of it, as a temporary arrangement pending elections.", x:"By 1948 the line had hardened into two rival states." },
+      { t:"The two Korean states", d:"Kim Il Sung's communist North, backed by the USSR, and Syngman Rhee's anti-communist South, backed by the USA — each claiming to be the legitimate government of all Korea.", x:"Border clashes were frequent well before 1950, which is why it is properly a civil war the superpowers entered." },
+      { t:"Emergence of communist China", d:"The communist victory in the Chinese Civil War in 1949, which expanded the communist bloc by the world's most populous country.", x:"The Sino–Soviet Alliance of 1950 made the communist world look unified and formidable." },
+      { t:"Domino theory", d:"The belief that if one country fell to communism, neighbouring countries would follow one after another.", x:"Why the USA read Korea as part of a coordinated communist advance rather than a local conflict." },
+      { t:"Why the UN could act in Korea", d:"The Security Council authorised military action only because the USSR was boycotting it at the time and so did not use its veto.", x:"The war was fought under the UN flag though overwhelmingly American in composition." },
+      { t:"Chinese intervention (1950)", d:"China entered the war when UN forces advanced towards the Yalu River, fearing an American army on its border, and pushed the UN back to roughly the 38th parallel.", x:"Produced the stalemate that lasted until the armistice." },
+      { t:"Korean Armistice Agreement (1953)", d:"The agreement that ended the fighting near the original border with no victory for either side, creating a demilitarised zone that still divides Korea.", x:"No peace treaty was ever signed." },
+      { t:"Aftermath of the Korean War", d:"Containment was extended decisively into Asia, and NATO was strengthened — West Germany was rearmed and admitted in 1955, and the Warsaw Pact formed in response.", x:"A war in Asia therefore hardened the divide in Europe." },
+    ]},
+    { name:"9. Vietnam War", cards:[
+      { t:"Geneva Accords (1954)", d:"The agreement following the French defeat that divided Vietnam at the 17th parallel — Ho Chi Minh's communist North and a non-communist South — pending national elections in 1956.", x:"Intended as a temporary measure." },
+      { t:"Failure to hold the 1956 elections", d:"The elections were never held because the South and the USA expected Ho Chi Minh to win.", x:"Removed any peaceful route to reunification — the single most important cause of the war." },
+      { t:"Unpopularity of Ngo Dinh Diem", d:"Diem's regime was corrupt and nepotistic, rigged elections, blocked land reform, and as a Catholic in a mostly Buddhist country persecuted Buddhists.", x:"Diem was overthrown and killed in 1963." },
+      { t:"Viet Cong", d:"The communist insurgency in South Vietnam, supplied and directed by the North.", x:"Supported along the Ho Chi Minh Trail, turning southern discontent into organised armed insurgency." },
+      { t:"Gulf of Tonkin incident (1964)", d:"The reported attack on American ships that Johnson used to justify full US combat commitment.", x:"Marked the shift from advisers to a major American war." },
+      { t:"Tet Offensive (1968)", d:"The large communist offensive that was militarily costly for the North but politically devastating for the USA.", x:"The turning point — it contradicted official claims the war was being won and turned American opinion against it." },
+      { t:"Vietnamisation", d:"Nixon's policy of transferring the fighting to South Vietnamese forces so American troops could withdraw.", x:"The Paris Peace Accords (1973) ended direct US involvement." },
+      { t:"Outcome of the Vietnam War", d:"Saigon fell in 1975 and Vietnam was reunified under communist rule in 1976 — a clear failure of American containment.", x:"The war's cost and unpopularity pushed the USA towards easing tensions with the communist powers." },
+    ]},
+    { name:"10. End of the Cold War", cards:[
+      { t:"Economic weakness of the USSR", d:"The command economy was rigid and inefficient — central planning could not respond to demand, agriculture underperformed, and consumer goods were scarce and poor in quality.", x:"Living standards stagnated while Western prosperity became increasingly visible." },
+      { t:"Cost of the arms race", d:"Matching American military spending consumed a share of Soviet output the economy could not sustain, worsened by the war in Afghanistan from 1979.", x:"The USSR also carried the cost of subsidising its eastern European satellites." },
+      { t:"Glasnost", d:"Gorbachev's policy of 'openness', permitting criticism and public discussion.", x:"It aired problems long hidden, which undermined the Party's authority rather than renewing it." },
+      { t:"Perestroika", d:"Gorbachev's policy of 'restructuring', introducing limited market elements into the Soviet economy.", x:"It disrupted the planned system without producing a working alternative, so shortages worsened." },
+      { t:"Abandoning the Brezhnev Doctrine", d:"Gorbachev's decision that the USSR would no longer use force to prop up communist governments in eastern Europe.", x:"Decisive — when protests spread in 1989 those governments fell one after another." },
+      { t:"Solidarity", d:"The Polish independent trade union and popular movement whose electoral success in 1989 showed communist rule could be ended peacefully.", x:"Gave organised expression to widespread discontent." },
+      { t:"How the Cold War ended", d:"Revolutions swept eastern Europe in 1989 and the Berlin Wall fell in November; Germany was reunified in 1990; and after a failed hardline coup the USSR was dissolved in December 1991.", x:"Nationalist movements pulled the Soviet republics apart in the final phase." },
+    ]},
+  ],
+};
+
+const ENG_CARDS = {
+  eyebrow:"English Language · Comprehension", title:"English Recall Cards",
+  intro: "Recall cards for English comprehension — the answer stems, the six reasons an expression is unusual, the technique names, and the synonym and tone banks. These are the parts of English that are genuinely memorisable. The worked examples and the practice set live in the Eng Answers tab.",
+  topics: [
+    { name:"1. Answer stems", cards:[
+      { t:"Language question stem (3 details)", d:"The phrase '…' means (literal explanation) … suggesting that … (a precise synonym linked to the question).", x:"Quote, literal meaning, then effect. Three separate phrases for three marks." },
+      { t:"Effect stem", d:"It evokes in the reader a feeling of … / It makes the reader feel … / It suggests that the reader is …", x:"'Effect' asks about the impact on the READER." },
+      { t:"Effective stem", d:"It is effective as it emphasises / conveys / illustrates that …", x:"'Effective' asks what the WRITER succeeded in getting across." },
+      { t:"Evidence and explain stem", d:"The evidence '…' means (literal paraphrase). This shows … (paraphrase of the key word).", x:"Quote, literal meaning, then the explanation the mark scheme wants." },
+      { t:"Evidence only stem", d:"The evidence is '…' — quoted directly from the passage, word for word.", x:"Do not add explanation. A misquotation loses the mark outright." },
+      { t:"Unusual expression stem", d:"The word 'xxx' means … while the word 'yyy' means … . They are unusual as … (one of the six reasons).", x:"Explain each word separately and literally before joining them." },
+      { t:"Irony stem", d:"The writer expected … However, in reality …", x:"If you cannot name both halves, it is not irony." },
+      { t:"Effective-with-context stem", d:"It is effective as it emphasises how extremely … (the space, emotion or situation the passage describes).", x:"If your sentence would fit a different passage, it is too vague." },
+    ]},
+    { name:"2. The six reasons an expression is unusual", cards:[
+      { t:"Reason a — contrast", d:"Both words contrast each other.", x:"e.g. 'deafening silence', 'open secret', 'fine mess'. Check this one first — it is the commonest." },
+      { t:"Reason b — animal or plant to human", d:"The writer compares a plant or animal characteristic to a human being.", x:"e.g. 'drawn to the casino like a moth to a flame'." },
+      { t:"Reason c — living to non-living", d:"The writer compares a living thing to a non-living thing.", x:"e.g. 'Am I talking to a wall?'" },
+      { t:"Reason d — colour for emotion", d:"The writer uses colour to describe an emotion or feeling.", x:"e.g. feeling blue, seeing red, a black mood." },
+      { t:"Reason e — height, distance or speed", d:"The writer compares height, distance or speed.", x:"Look for physical measurement used for something abstract." },
+      { t:"Reason f — times of day", d:"The writer compares an action or occurrence that happens at different times of the day.", x:"The rarest of the six." },
+    ]},
+    { name:"3. Writer's techniques", cards:[
+      { t:"Exclamation mark", d:"Expresses astonishment or shock.", x:"Name the mark, explain its function, then link back to the context." },
+      { t:"Ellipses", d:"Show something unending or repeating, leaving the rest to the reader's imagination.", x:"Written as three dots." },
+      { t:"Dash", d:"Indicates a short pause.", x:"" },
+      { t:"Colon", d:"Introduces a list of things.", x:"" },
+      { t:"Semi-colon", d:"Shows contrast.", x:"" },
+      { t:"Long sentence", d:"Provides detailed description on something — then link back to the context.", x:"Say what is being described in such detail and why that matters." },
+      { t:"Short sentence", d:"Is sudden and abrupt, showing how something happened — then give the outcome.", x:"Short sentences almost always mark a shock, a decision or an ending." },
+      { t:"Imperatives", d:"Action words that give instructions, such as 'join us', 'take this', 'wait'.", x:"Draw the reader into doing something." },
+      { t:"Personal pronouns", d:"Words such as 'you', 'we' and 'our' that address the reader directly and make the writing feel personal.", x:"" },
+      { t:"Repetition", d:"Repeating a word or structure to hammer a point until the reader cannot miss it.", x:"" },
+      { t:"Alliteration", d:"Repetition of the same initial consonant sound in nearby words, making a phrase stick in the memory.", x:"" },
+      { t:"Simile", d:"A comparison of one thing to another using 'like' or 'as'.", x:"" },
+      { t:"Metaphor", d:"A comparison that states one thing IS another, without using 'like' or 'as'.", x:"" },
+      { t:"Personification", d:"Giving human qualities to something non-human.", x:"" },
+      { t:"Colloquialism", d:"Everyday, localised language that makes writing feel familiar and informal.", x:"" },
+    ]},
+    { name:"4. Synonym bank — people", cards:[
+      { t:"Happy", d:"delighted · elated · joyful", x:"" },
+      { t:"Sad", d:"disappointed · unhappy · sorrowful", x:"" },
+      { t:"Tired", d:"worn out · exhausted · fatigued", x:"" },
+      { t:"Amazed", d:"surprised · bewildered · startled", x:"" },
+      { t:"Considerate", d:"thoughtful · mindful · caring", x:"" },
+      { t:"Amused", d:"funny · hilarious · entertaining", x:"" },
+      { t:"Hatred", d:"dislike · detest · loathe · resent", x:"" },
+      { t:"Bold", d:"brave · daring · courageous · fearless · extroverted", x:"" },
+      { t:"Shy", d:"introverted · timid · reserved · withdrawn", x:"" },
+      { t:"Optimistic", d:"positive · cheerful · hopeful · full of hope", x:"" },
+      { t:"Reluctant", d:"unwilling · not enthusiastic · resistant", x:"" },
+      { t:"Proud", d:"boastful · likes to show off · bragged", x:"" },
+    ]},
+    { name:"5. Synonym bank — places", cards:[
+      { t:"Messy", d:"not neat · not arranged in order · chaotic", x:"" },
+      { t:"Quiet", d:"silent · serene · peaceful", x:"" },
+      { t:"Noisy", d:"chaos · making too much sound · cacophony · shrieking", x:"" },
+      { t:"Calm", d:"tranquil · peaceful · serene · still", x:"" },
+      { t:"Charming", d:"attractive · appealing · lovely", x:"" },
+      { t:"Crowded", d:"packed like sardines · crammed · congested", x:"" },
+      { t:"Dangerous", d:"fatal · deadly · could cause injuries", x:"" },
+      { t:"Ancient", d:"old · historical · prehistoric · not modern", x:"" },
+      { t:"Eerie", d:"spooky · sinister · scary", x:"" },
+      { t:"Polluted", d:"dirty · contaminated · foul", x:"" },
+      { t:"Clean", d:"pristine · spotless · unblemished", x:"" },
+      { t:"Picturesque", d:"scenic · lovely scenery · pleasant", x:"" },
+    ]},
+    { name:"6. Tone and attitude", cards:[
+      { t:"Tone", d:"How the writer or character SPEAKS — the voice on the page.", x:"Answered with a precise adjective." },
+      { t:"Attitude", d:"How the writer or character BEHAVES — the stance taken towards a person or situation.", x:"Also answered with a precise adjective." },
+      { t:"Negative tone words", d:"caustic · critical · accusatory · annoyed · antagonistic · anxious · arrogant · baffled · bitter · demanding · condescending · outspoken", x:"" },
+      { t:"Positive tone words", d:"affectionate · amused · animated · appreciative · approving · celebratory · cheerful · comforting · complimentary · lighthearted", x:"" },
+      { t:"Negative attitude words", d:"callous · belligerent · aggressive · pessimistic · cynical · childish · audacious · quarrelsome", x:"" },
+      { t:"Positive attitude words", d:"confident · empathetic · friendly · optimistic · relaxed · calm", x:"" },
+    ]},
+  ],
+};
+
+const SOCIAL = {
+  eyebrow:"Humanities (Social Studies) · Syllabus 2261 · Paper 1",
+  title:"Social Studies — The Three Issues",
+  intro:"Citizenship and governance, living in a diverse society, and being part of a globalised world — the three Issues of the Social Studies paper, with the concepts each one is built on and the question types that test them. Social Studies is the other half of your Humanities grade alongside History.",
+  cards:[
+    { h:"Your paper", p:"Paper 1 Social Studies is 50 marks in 1 h 45 min. Section A is a compulsory source-based case study worth 35 marks; Section B is structured-response questions worth 15 marks, where you answer one of the two set." },
+    { h:"It is an argument paper", p:"Social Studies rewards reasoned judgement, not memorised facts. Almost every question wants a stand, evidence for it, an acknowledged counter-view, and a conclusion that decides." },
+    { h:"Check against your own notes", p:"Chapter titles and emphasis vary between schools and syllabus editions. Use this as a structure and cross-check the details against your school's notes and the official SEAB syllabus." },
+  ],
+  chapters:[
+    { n:1, title:"The paper, and how it is marked", q:"Two sections, two very different demands.",
+      sections:[
+        { h:"The structure", type:"diagram", body:{ type:"table",
+          caption:"Roughly two minutes per mark. Section A carries more than twice the marks of Section B.",
+          head:["Section","What it is"],
+          rows:[
+            ["A — 35 marks","Source-based case study. A set of sources on one issue, with sub-questions testing inference, comparison, reliability, purpose and a final judgement question."],
+            ["B — 15 marks","Structured-response questions. Answer one of two. Usually an explain part and an evaluative 'how far do you agree' part."],
+          ] } },
+        { h:"The SBQ question types", type:"formulas", body:[
+          { f:"Inference  —  “What can you infer / learn from Source A?”", d:"State what the source suggests but does not say outright, support with a short quotation, then explain why those words carry that meaning." },
+          { f:"Comparison  —  “How similar / different are Sources A and B?”", d:"Compare the overall message or attitude, not surface details, and quote from BOTH sources. Find similarity and difference, then judge." },
+          { f:"Reliability  —  “How reliable is Source C?”", d:"Use who wrote it, when, for whom and why — plus your own knowledge. Reliability is never about whether you agree with it." },
+          { f:"Purpose  —  “Why was this source published at this time?”", d:"Say what the author wanted the audience to think, feel or do, anchored in what was happening at that moment." },
+          { f:"Judgement  —  “How far do the sources show that…?”", d:"Group the sources for and against, use every source, and end with an explicit verdict." },
+        ]},
+        { h:"The evaluative answer shape for Section B", type:"formulas", body:[
+          { f:"1. STAND  —  answer the question in the first sentence", d:"Do not build up to it. State how far you agree before any explanation." },
+          { f:"2. POINT + EVIDENCE + EXPLANATION", d:"Make the point, support it with a real example, then explain how the example proves the point. The explanation is the mark." },
+          { f:"3. COUNTER-ARGUMENT  —  “On the other hand…”", d:"Give the strongest opposing view fairly. An answer with no counter-view cannot reach the top band." },
+          { f:"4. JUDGEMENT  —  “Overall, … because …”", d:"Weigh the two sides and decide, giving a reason for the decision. Never fence-sit." },
+        ]},
+      ]},
+    { n:2, title:"Issue 1 — Exploring Citizenship and Governance", q:"Who belongs, who decides, and how.",
+      sections:[
+        { h:"What the Issue covers", type:"bullets", body:[
+          "<b>What it means to be a citizen</b> of the country — the legal status, and the sense of identity and belonging that goes with it.",
+          "<b>How decisions are made for the good of society</b>, and the principles that guide governance.",
+          "<b>How citizens can work for the good of society</b>, and how government and citizens share that responsibility.",
+        ]},
+        { h:"Citizenship — two senses of the word", type:"text", body:[
+          "<b>Legal citizenship</b> is a formal status: the rights, responsibilities and privileges a state grants, such as voting, holding a passport and access to public services.",
+          "<b>Citizenship as identity</b> is the sense of belonging — shared experiences, values and a stake in the country's future. The two do not automatically go together, which is why building identity is treated as something a society must actively work at.",
+          "The Singapore case is usually framed around a shared national identity built across ethnic and religious lines, supported by shared institutions such as schools, national service and public housing.",
+        ]},
+        { h:"Principles of governance", type:"diagram", body:{ type:"table",
+          caption:"Learn these as named principles — questions frequently ask you to apply one to a scenario.",
+          head:["Principle","What it means"],
+          rows:[
+            ["Leadership is key","Having honest, capable leaders with the foresight to plan for the long term and the integrity to be trusted."],
+            ["Anticipate change and stay relevant","Looking ahead at how the world is changing and adapting policy before problems arrive, rather than reacting after."],
+            ["Reward for work and work for reward","Encouraging self-reliance and effort, so that people are rewarded for contributing rather than becoming dependent on help."],
+            ["A stake for everyone, opportunities for all","Ensuring people feel they have a share in the country's success, and that opportunity is genuinely open to all groups."],
+          ] } },
+        { h:"How decisions get made for society", type:"bullets", body:[
+          "<b>Different groups want different things.</b> Any policy that helps one group may cost another, so government has to weigh competing needs rather than satisfy everyone.",
+          "<b>Trade-offs are unavoidable.</b> The usual tensions are between the needs of different groups, and between short-term costs and long-term benefits.",
+          "<b>Consultation matters.</b> Gathering views before deciding improves the decision and makes it more likely to be accepted, even by those who lose out.",
+          "<b>Working for the good of society is shared.</b> Government provides policy and resources; citizens contribute through volunteering, community organisations and civic participation.",
+        ]},
+        { h:"Key terms", type:"terms", body:["Citizenship","Governance","National identity","Common good","Trade-off","Consultation","Civic participation","Self-reliance","Meritocracy"] },
+      ]},
+    { n:3, title:"Issue 2 — Living in a Diverse Society", q:"What diversity brings, and what it costs.",
+      sections:[
+        { h:"What the Issue covers", type:"bullets", body:[
+          "<b>The experiences of living in a diverse society</b> — what diversity is, and where it comes from.",
+          "<b>The challenges</b> that arise from diversity, and why they arise.",
+          "<b>The responses</b> to those challenges, by government and by citizens.",
+        ]},
+        { h:"Kinds of diversity", type:"diagram", body:{ type:"table",
+          caption:"Questions usually name one kind. Answer about that one.",
+          head:["Kind","What differs"],
+          rows:[
+            ["Ethnic and cultural","Language, customs, festivals, food and ways of life."],
+            ["Religious","Beliefs, practices, places of worship and religious obligations."],
+            ["Socio-economic","Income, education, occupation and access to opportunity."],
+            ["Nationality","Citizens, permanent residents, foreign workers and new immigrants living in the same space."],
+          ] } },
+        { h:"The benefits, and then the challenges", type:"text", body:[
+          "Diversity brings real gains: a wider range of ideas and skills, richer cultural life, and stronger economic links to other societies. A good answer says so before turning to the problems.",
+          "The challenges arise because difference can become division. Competing demands on shared resources and space, misunderstanding and stereotyping between groups, and unequal outcomes between them can all erode trust — and where trust erodes, prejudice and discrimination become easier.",
+          "Socio-economic diversity carries its own risk: if income gaps widen and social mobility slows, groups may stop mixing and society divides along class lines rather than ethnic ones.",
+        ]},
+        { h:"Responses to diversity", type:"diagram", body:{ type:"table",
+          caption:"Assimilation and integration are a favourite comparison — know the difference precisely.",
+          head:["Approach","What it means"],
+          rows:[
+            ["Assimilation","Minority groups are expected to give up their distinct identity and adopt the dominant culture, producing one common identity."],
+            ["Integration","Groups keep their distinct identities while sharing a common space and a common national identity — difference is retained, not erased."],
+            ["Common space","Shared physical and social spaces — schools, housing, national service, workplaces — where people of different groups interact as a matter of course."],
+            ["Legislation and policy","Rules that protect harmony and ensure representation, backed by law where necessary."],
+          ] } },
+        { h:"How citizens respond", type:"bullets", body:[
+          "<b>Learning about other groups</b> reduces the misunderstanding that stereotyping grows from.",
+          "<b>Taking part in shared activities</b> across group lines builds the everyday familiarity that policy alone cannot create.",
+          "<b>Exercising restraint</b> on matters that are sensitive to other groups, particularly religion.",
+          "<b>Speaking up against discrimination</b> rather than treating it as someone else's problem.",
+        ]},
+        { h:"Key terms", type:"terms", body:["Diversity","Integration","Assimilation","Common space","Social cohesion","Prejudice","Discrimination","Stereotype","Social mobility","Harmony"] },
+      ]},
+    { n:4, title:"Issue 3 — Being Part of a Globalised World", q:"Three kinds of impact, each with a good and a bad side.",
+      sections:[
+        { h:"What globalisation means", type:"text", body:[
+          "<b>Globalisation</b> is the growing interconnectedness of countries through the movement of goods, capital, people, information and ideas across borders.",
+          "It is driven by improvements in transport and communications technology, and by the reduction of barriers to trade and investment.",
+          "The syllabus splits its effects into three: <b>economic</b>, <b>cultural</b> and <b>security</b>. Each has benefits and costs, and questions almost always want both sides before a judgement.",
+        ]},
+        { h:"Economic impacts", type:"diagram", body:{ type:"table",
+          head:["Benefit","Cost"],
+          rows:[
+            ["Access to larger markets and foreign investment, creating jobs and raising incomes.","Competition can close local businesses and cost jobs in industries that cannot compete."],
+            ["Wider choice of goods and services, often at lower prices.","Widening income gaps between those with in-demand skills and those without."],
+            ["Transfer of technology and skills into the economy.","Greater exposure to shocks elsewhere — a downturn abroad transmits quickly."],
+          ] } },
+        { h:"Cultural impacts", type:"bullets", body:[
+          "<b>Greater cultural diversity.</b> Exposure to other cultures widens choice in food, music, film and ideas, and can enrich local culture.",
+          "<b>Cultural hybridisation.</b> Local and foreign elements combine to produce something new rather than one simply replacing the other.",
+          "<b>Erosion of local culture.</b> Dominant global cultures can crowd out local traditions, languages and practices, especially among the young.",
+          "<b>Tension over values.</b> Imported values may conflict with local norms, creating friction between generations and communities.",
+        ]},
+        { h:"Security impacts", type:"bullets", body:[
+          "<b>Transnational terrorism.</b> Groups organise, recruit and fund across borders, so a threat originating elsewhere becomes a domestic one.",
+          "<b>Cyber threats.</b> Attacks on infrastructure, data and finance can be launched from anywhere, against targets that are increasingly connected.",
+          "<b>Pandemics.</b> Fast, high-volume international travel spreads disease quickly, as recent experience showed.",
+          "<b>Cooperation is the response.</b> Because none of these can be solved by one country alone, states share intelligence, coordinate responses and build regional and international agreements.",
+        ]},
+        { h:"How societies respond", type:"bullets", body:[
+          "<b>Economically</b> — investing in education and retraining so workers can move into growing industries, and supporting those displaced.",
+          "<b>Culturally</b> — actively promoting local heritage and language while remaining open to outside influence.",
+          "<b>On security</b> — international cooperation, community vigilance, and building the social trust that makes societies resilient after an attack.",
+        ]},
+        { h:"Key terms", type:"terms", body:["Globalisation","Interconnectedness","Foreign investment","Income inequality","Cultural hybridisation","Cultural erosion","Transnational terrorism","Cyber threat","Resilience","Interdependence"] },
+      ]},
+    { n:5, title:"Writing answers that score", q:"Stand, evidence, counter, verdict.",
+      sections:[
+        { h:"Where Social Studies marks leak", type:"bullets", body:[
+          "<b>No stand.</b> An answer that describes both sides and never decides cannot reach the top band. Say how far you agree in the first sentence.",
+          "<b>Assertion without evidence.</b> “Globalisation causes inequality” is an opinion until you attach an example and explain it.",
+          "<b>Evidence without explanation.</b> The example does not speak for itself — say how it proves your point.",
+          "<b>No counter-argument.</b> The mark scheme rewards weighing. Give the opposing view its strongest form, then answer it.",
+          "<b>A conclusion that contradicts the essay.</b> If you argued mostly one way, do not conclude the other.",
+          "<b>Quoting a source without explaining it</b> in Section A. Same rule as History — the explanation earns the mark.",
+        ]},
+        { h:"A note on this chapter set", type:"text", body:[
+          "Social Studies is examined by a Levels of Response mark scheme, which rewards the quality of reasoning rather than the number of points — one developed, explained and evidenced point beats three asserted ones. Chapter titles and the exact emphasis of each Issue vary between schools and syllabus editions, and the official SEAB syllabus could not be reached to check this against, so treat this as a structure to hang your own notes on rather than a replacement for them.",
+        ]},
+      ]},
+  ]
+};
+
+const SOC_CARDS = {
+  eyebrow:"Humanities (Social Studies) · 2261 · Paper 1", title:"Social Studies Recall Cards",
+  intro: "Recall cards for Social Studies — the concepts, named principles and paired terms the three Issues are built on. Social Studies is an argument paper, so these are the raw material for answers, not the answers themselves. The question shapes are in the Social Studies tab.",
+  topics: [
+    { name:"1. Citizenship and governance", cards:[
+      { t:"Citizenship (legal)", d:"The formal status granted by a state, carrying rights, responsibilities and privileges such as voting and holding a passport.", x:"Distinct from citizenship as a sense of identity." },
+      { t:"Citizenship (identity)", d:"The sense of belonging to a country — shared experiences, values and a stake in its future.", x:"Legal status and a sense of belonging do not automatically go together." },
+      { t:"Governance", d:"The way a society is managed and decisions are made for it, including who decides and by what principles.", x:"" },
+      { t:"National identity", d:"A shared sense of belonging to a nation that crosses ethnic, religious and social lines.", x:"Supported by shared institutions such as schools, national service and public housing." },
+      { t:"Common good", d:"What benefits society as a whole, rather than any one individual or group.", x:"Deciding it involves weighing competing needs." },
+      { t:"Trade-off", d:"Accepting a cost in one area in order to gain a benefit in another.", x:"The usual tensions are between different groups' needs, and between short-term costs and long-term benefits." },
+      { t:"Leadership is key", d:"The governance principle that a society needs honest, capable leaders with the foresight to plan long term and the integrity to be trusted.", x:"One of the four named principles of governance." },
+      { t:"Anticipate change and stay relevant", d:"The governance principle of looking ahead at how the world is changing and adapting policy before problems arrive.", x:"" },
+      { t:"Reward for work and work for reward", d:"The governance principle of encouraging effort and self-reliance, so that people are rewarded for contributing rather than becoming dependent on help.", x:"" },
+      { t:"A stake for everyone, opportunities for all", d:"The governance principle that people should feel they share in the country's success, and that opportunity should be genuinely open to all groups.", x:"" },
+      { t:"Consultation", d:"Gathering the views of affected groups before making a decision.", x:"Improves the decision and makes it more likely to be accepted by those who lose out." },
+      { t:"Civic participation", d:"Citizens contributing to society through volunteering, community organisations and involvement in public affairs.", x:"Working for the good of society is shared between government and citizens." },
+      { t:"Meritocracy", d:"A system in which people advance according to their ability and effort rather than their background.", x:"Its challenge is ensuring the starting line is genuinely equal." },
+    ]},
+    { name:"2. Diversity", cards:[
+      { t:"Diversity", d:"The presence of people of different ethnicities, religions, socio-economic backgrounds and nationalities within one society.", x:"" },
+      { t:"Ethnic and cultural diversity", d:"Differences in language, customs, festivals, food and ways of life.", x:"" },
+      { t:"Religious diversity", d:"Differences in beliefs, practices, places of worship and religious obligations.", x:"" },
+      { t:"Socio-economic diversity", d:"Differences in income, education, occupation and access to opportunity.", x:"Carries the risk that groups stop mixing and society divides along class lines." },
+      { t:"Benefits of diversity", d:"A wider range of ideas and skills, richer cultural life, and stronger economic links to other societies.", x:"Say this before turning to the challenges." },
+      { t:"Challenges of diversity", d:"Competing demands on shared resources and space, misunderstanding and stereotyping between groups, and unequal outcomes that erode trust.", x:"Where trust erodes, prejudice and discrimination become easier." },
+      { t:"Assimilation", d:"The approach in which minority groups are expected to give up their distinct identity and adopt the dominant culture.", x:"Produces one common identity by erasing difference." },
+      { t:"Integration", d:"The approach in which groups keep their distinct identities while sharing a common space and a common national identity.", x:"Difference is retained, not erased — the key contrast with assimilation." },
+      { t:"Common space", d:"Shared physical and social spaces — schools, housing, national service, workplaces — where different groups interact as a matter of course.", x:"Builds the everyday familiarity that policy alone cannot create." },
+      { t:"Social cohesion", d:"The strength of the bonds holding a society together, and the willingness of its groups to cooperate.", x:"" },
+      { t:"Prejudice", d:"A preconceived judgement about a person or group formed without adequate knowledge.", x:"An attitude — becomes discrimination when acted upon." },
+      { t:"Discrimination", d:"Treating a person or group unfairly because of their membership of that group.", x:"The action that follows prejudice." },
+      { t:"Stereotype", d:"A fixed, oversimplified belief about what members of a group are like.", x:"Reduced by learning about other groups." },
+      { t:"Social mobility", d:"The ability of people to move between socio-economic positions, typically through education and work.", x:"When it slows, socio-economic divisions harden." },
+    ]},
+    { name:"3. Globalisation", cards:[
+      { t:"Globalisation", d:"The growing interconnectedness of countries through the movement of goods, capital, people, information and ideas across borders.", x:"Driven by transport and communications technology and by falling trade barriers." },
+      { t:"Interdependence", d:"The condition in which countries rely on one another, so that what happens in one affects the others.", x:"" },
+      { t:"Economic benefits of globalisation", d:"Access to larger markets and foreign investment creating jobs, wider choice of goods at lower prices, and transfer of technology and skills.", x:"" },
+      { t:"Economic costs of globalisation", d:"Local businesses closing under foreign competition, widening income gaps between those with in-demand skills and those without, and greater exposure to shocks elsewhere.", x:"" },
+      { t:"Income inequality", d:"The gap in income between the highest and lowest earners in a society.", x:"Widened by globalisation because it rewards in-demand skills far more than others." },
+      { t:"Cultural hybridisation", d:"The combining of local and foreign cultural elements to produce something new, rather than one simply replacing the other.", x:"The middle position between enrichment and erosion." },
+      { t:"Cultural erosion", d:"The weakening or loss of local traditions, languages and practices as dominant global cultures crowd them out.", x:"Often most visible among the young." },
+      { t:"Transnational terrorism", d:"Terrorism organised, funded and recruited across national borders, so that a threat originating elsewhere becomes a domestic one.", x:"One of the three security impacts of globalisation." },
+      { t:"Cyber threats", d:"Attacks on infrastructure, data and finance launched from anywhere against increasingly connected targets.", x:"" },
+      { t:"Pandemics as a security impact", d:"Fast, high-volume international travel allows disease to spread across borders quickly.", x:"" },
+      { t:"Responding to globalisation", d:"Economically, investing in education and retraining; culturally, promoting local heritage while staying open; on security, international cooperation and building social resilience.", x:"None of the security threats can be solved by one country alone." },
+      { t:"Resilience", d:"The ability of a society to withstand a shock and recover from it, including the social trust that holds it together afterwards.", x:"" },
+    ]},
+  ],
+};
+
 /* ============================================================
    ASK — offline tutor.
    Answers come only from this app's own syllabus content, so it
@@ -5697,7 +6089,8 @@ function stripTags(s){ return String(s).replace(/<[^>]*>/g,' ').replace(/\s+/g,'
 const TAB_LABELS = { physics:'Physics', chemistry:'Chemistry', phylesson:'Phy Lessons',
                      chemlesson:'Chem Lessons', emath:'E-Math', amath:'A-Math',
                      history:'History', histskills:'Hist Answers', engskills:'Eng Answers',
-                     studyskills:'Study Method' };
+                     studyskills:'Study Method', histcards:'Hist Cards', engcards:'Eng Cards',
+                     social:'Social Studies', soccards:'Soc Cards' };
 
 let ASK_INDEX = null;
 function buildAskIndex(){
@@ -5706,7 +6099,8 @@ function buildAskIndex(){
   const add = e => { e.hay = (e.title + ' ' + e.body).toLowerCase(); idx.push(e); };
 
   /* Definitions from the two science decks */
-  [['physics',PHYSICS],['chemistry',CHEMISTRY]].forEach(([key,deck])=>{
+  [['physics',PHYSICS],['chemistry',CHEMISTRY],['histcards',HIST_CARDS],
+   ['engcards',ENG_CARDS],['soccards',SOC_CARDS]].forEach(([key,deck])=>{
     deck.topics.forEach(t=>{
       t.cards.forEach(c=>{
         add({ kind:'Definition', tab:key, topic:t.name, title:c.t,
@@ -5719,7 +6113,7 @@ function buildAskIndex(){
   /* Lesson sections, chapter by chapter */
   [['phylesson',PHY_LESSONS],['chemlesson',CHEM_LESSONS],['emath',EMATH],['amath',AMATH],
    ['history',HISTORY],['histskills',HIST_SKILLS],['engskills',ENG_SKILLS],
-   ['studyskills',STUDY_SKILLS]]
+   ['studyskills',STUDY_SKILLS],['social',SOCIAL]]
   .forEach(([key,S])=>{
     (S.chapters||[]).forEach(ch=>{
       (ch.sections||[]).forEach(sec=>{
@@ -6167,9 +6561,10 @@ function saveLog(a){ localStorage.setItem('osp-log', JSON.stringify(a)); }
    ============================================================ */
 const DATA = { physics:PHYSICS, chemistry:CHEMISTRY, history:HISTORY, emath:EMATH, amath:AMATH,
                phylesson:PHY_LESSONS, chemlesson:CHEM_LESSONS, histskills:HIST_SKILLS,
-               engskills:ENG_SKILLS, studyskills:STUDY_SKILLS };
+               engskills:ENG_SKILLS, studyskills:STUDY_SKILLS, histcards:HIST_CARDS,
+               engcards:ENG_CARDS, social:SOCIAL, soccards:SOC_CARDS };
 const SYLLABUS_SUBJECTS = ['history','emath','amath','phylesson','chemlesson','histskills','engskills',
-                           'studyskills'];
+                           'studyskills','social'];
 const app = document.getElementById('app');
 let state = {
   subject:'plan',
@@ -7392,8 +7787,8 @@ function renderDeck(subj){
 
   let html = `
   <section class="subject-hero">
-    <span class="eyebrow">${sub==='physics'?'Pure Physics · 6091':'Pure Chemistry · 6092'}</span>
-    <h2>${sub==='physics'?'Physics Definitions':'Chemistry Definitions'}</h2>
+    <span class="eyebrow">${esc(subj.eyebrow)}</span>
+    <h2>${esc(subj.title)}</h2>
     <p>${esc(subj.intro)}</p>
   </section>
 
@@ -7425,7 +7820,8 @@ function renderDeck(subj){
 const AUDIT_REMOVED = {
   physics: ["<b>Newton's First, Second and Third Laws</b> as statements — LO 3(g) says outright: “stating of Newton's Laws is not required”. Replaced with what <i>is</i> tested: balanced vs unbalanced forces, F = ma, and action–reaction pairs.",
             "<b>Faraday's Law</b> — not a named law in 6091, and “magnetic flux linkage” is A-Level. Replaced with the three factors affecting the size of the induced e.m.f.",
-            "<b>“Ohm's Law”</b> as a named law — the syllabus says “ohmic conductor” and tests the I–V characteristic graphs instead, so that's what the card now covers."],
+            "<b>“Ohm's Law”</b> as a named law — the syllabus says “ohmic conductor” and tests the I–V characteristic graphs instead, so that's what the card now covers.",
+            "<b>Formula-list entries and drawing techniques</b> — F = ma, p = hρg, P = VI, the resistance-combination and transformer equations, free-body diagrams and the image-description checklist. You are given the formulas in the exam and the rest are techniques, so none can be set as a recall question. They are all still taught in <b>Phy Lessons</b>."],
   chemistry:["<b>The Contact process</b> and the whole <b>Sulfur</b> topic — the 2026 syllabus has 12 topics and none is Sulfur. Sulfur now appears only as sulfur dioxide, an air pollutant in topic 12, and as a gas test.",
             "<b>Haber process conditions</b> (450 °C, 250 atm, iron) as recall — LO 5.3(c) gives you the industrial data to interpret. Le Chatelier's Principle is explicitly not required.",
             "<b>Aluminium and gold</b> from the reactivity series — they are not on the syllabus list. <b>Lead</b>, which was missing, has been added."],
@@ -8789,7 +9185,7 @@ function footerHTML(){
       <b>Check before you trust it:</b> Definitions follow the Singapore O-Level 2026 syllabuses (Pure Physics 6091, Pure Chemistry 6092, Elective History — Express) and are phrased the way examiners award marks — but cross-check them against your own school notes and the official SEAB syllabus.
       <div style="margin-top:9px;">The exam dates here were taken from your brief, not from an official source. <b>Confirm every date against the official SEAB / MOE examination timetable</b> before planning around it.</div>
     </div>
-    <p style="margin-top:22px;">Personal study tool · Plan · Error log · Memorise · My Cards · Physics · Chemistry · History · English</p>
+    <p style="margin-top:22px;">Personal study tool · Plan · Error log · Memorise · My Cards · Physics · Chemistry · History · Social Studies · English</p>
     <p>Your schedule, error log, memorise rotation, your own decks and "learnt" progress are saved in this browser only — clearing site data will erase them. Export your decks from <b>My Cards</b> to keep a copy.</p>
   </div>`;
 }
