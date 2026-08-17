@@ -4,7 +4,7 @@
    network is unavailable. Bump CACHE when the app changes so the old copy is
    evicted rather than served forever. */
 
-const CACHE = 'olevel-hq-v2026-08-17b';
+const CACHE = 'olevel-hq-v2026-08-17c';
 
 const CORE = [
   './',
