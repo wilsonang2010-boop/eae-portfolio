@@ -110,6 +110,29 @@ header{
 @media(display-mode:standalone){ .home-link{display:none;} }
 .home-link:hover{color:var(--white); border-color:var(--border-strong);}
 
+/* ── Update bar ────────────────────────────────────────────────
+   A deployed change used to arrive silently or not at all, with no way to
+   tell which copy you were looking at. This says so, and reloads on tap. */
+.update-bar{
+  display:none; align-items:center; gap:11px; flex-wrap:wrap;
+  padding:10px 20px; background:var(--blue); color:#fff; font-size:13.5px; font-weight:500;
+  position:sticky; top:0; z-index:60; animation:riseIn .3s var(--ease) both;
+}
+.update-bar.show{display:flex;}
+.update-bar .ub-dot{width:8px; height:8px; border-radius:50%; background:#fff; flex:none; animation:ubPulse 1.6s ease-in-out infinite;}
+@keyframes ubPulse{0%,100%{opacity:1;} 50%{opacity:.35;}}
+.update-bar .ub-text{flex:1; min-width:160px;}
+.update-bar .ub-btn{
+  flex:none; font-size:12.5px; font-weight:700; letter-spacing:.04em; cursor:pointer;
+  padding:6px 14px; border-radius:8px; color:var(--blue); background:#fff; transition:.2s var(--ease);
+}
+.update-bar .ub-btn:hover{transform:translateY(-1px);}
+/* Build stamp in the footer — the answer to "am I even on the new version?" */
+.build-line{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:18px; font-size:12px; color:var(--slate-500);}
+.build-id{font-family:var(--font-mono); color:var(--slate-400);}
+.build-line button{font-size:12px; color:var(--slate-400); border:1px solid var(--border); padding:5px 11px; border-radius:8px; cursor:pointer; transition:.2s var(--ease);}
+.build-line button:hover{color:var(--white); border-color:var(--border-strong);}
+
 /* ── Navigation: group rail, then the tabs inside that group ──── */
 .nav{padding:10px 0 0; border-bottom:1px solid var(--border);}
 .nav-groups{display:flex; gap:4px; overflow-x:auto; scrollbar-width:none;}
@@ -707,6 +730,11 @@ header{
 </style>
 </head>
 <body>
+<div class="update-bar" id="updateBar" role="status">
+  <span class="ub-dot"></span>
+  <span class="ub-text" id="updateText">A new version is ready.</span>
+  <button class="ub-btn" id="updateBtn" type="button">Reload</button>
+</div>
 <header>
   <div class="container">
     <div class="head-inner">
@@ -732,6 +760,11 @@ header{
 <main class="container" id="app"></main>
 
 <script>
+/* Which build this file is. Declared first because the footer renders it long
+   before the update machinery at the bottom of this script runs.
+   Must match the BUILD constant in sw.js. */
+const BUILD = '2026-08-18a';
+
 /* ============================================================
    DATA — Singapore O-Level (2026). Definitions written in the
    phrasing examiners look for. Verify against the official SEAB
@@ -9310,13 +9343,130 @@ function footerHTML(){
     </div>
     <p style="margin-top:22px;">Personal study tool · Plan · Error log · Memorise · My Cards · Physics · Chemistry · History · Social Studies · English</p>
     <p>Your schedule, error log, memorise rotation, your own decks and "learnt" progress are saved in this browser only — clearing site data will erase them. Export your decks from <b>My Cards</b> to keep a copy.</p>
+    <div class="build-line">
+      <span>Build <span class="build-id" id="buildId">${esc(BUILD)}</span></span>
+      <span id="buildState"></span>
+      <button type="button" data-act="check-update">Check for updates</button>
+      <button type="button" data-act="hard-reset">Clear offline copy</button>
+    </div>
   </div>`;
 }
+
+/* The footer is re-inserted on every render, so these are delegated once. */
+document.addEventListener('click', e=>{
+  const b = e.target.closest('[data-act]'); if(!b) return;
+  if(b.dataset.act === 'hard-reset'){ hardReset(); return; }
+  if(b.dataset.act === 'check-update'){
+    const out = document.getElementById('buildState');
+    if(out) out.textContent = '· checking…';
+    Promise.all([checkDeployedBuild(), workerBuild()]).then(([live, worker])=>{
+      if(!out) return;
+      if(!live)             out.textContent = '· could not reach the server';
+      else if(live !== BUILD) out.textContent = '· ' + live + ' is live — reload to get it';
+      else if(worker && worker !== BUILD) out.textContent = '· offline copy is stale (' + worker + ')';
+      else                  out.textContent = '· up to date';
+    });
+  }
+});
 
 navGroup = groupOf(state.subject);
 renderNav();
 render();
 updateMemBadge();
+
+/* ============================================================
+   STAYING UP TO DATE
+
+   The app is a single cached HTML file behind a service worker, on a host
+   that sleeps when idle. That combination used to fail silently: the cached
+   copy was served, nothing said so, and a deploy looked like it had never
+   happened. So the build is now stamped into the page, the worker reports the
+   build it actually installed, and the deployed sw.js is read straight off the
+   network to see what the server is really serving. Any mismatch is shown.
+
+   BUILD is declared at the top of this script and must match sw.js.
+   ============================================================ */
+
+function showUpdateBar(msg){
+  const bar = document.getElementById('updateBar');
+  const txt = document.getElementById('updateText');
+  if(!bar || bar.classList.contains('show')) return;
+  if(txt && msg) txt.textContent = msg;
+  bar.classList.add('show');
+}
+
+/* Tell a worker that is installed-but-waiting to take over now. The reload
+   comes from the controllerchange listener once it does. */
+async function applyUpdate(){
+  try{
+    const reg = await navigator.serviceWorker.getRegistration();
+    if(reg && reg.waiting) reg.waiting.postMessage('skip-waiting');
+  }catch(e){}
+  // If no worker was waiting, a plain reload still picks up the new HTML,
+  // because navigations go to the network first.
+  setTimeout(()=>location.reload(), 600);
+}
+
+function watchForUpdate(reg){
+  if(reg.waiting) showUpdateBar('A new version is ready.');
+  reg.addEventListener('updatefound', ()=>{
+    const sw = reg.installing;
+    if(!sw) return;
+    sw.addEventListener('statechange', ()=>{
+      // Only meaningful when something was already controlling the page —
+      // on a first-ever install there is nothing to update from.
+      if(sw.state === 'installed' && navigator.serviceWorker.controller){
+        showUpdateBar('A new version is ready.');
+      }
+    });
+  });
+}
+
+/* Ask the worker which build it installed. */
+function workerBuild(){
+  return new Promise(resolve=>{
+    const sw = navigator.serviceWorker && navigator.serviceWorker.controller;
+    if(!sw) return resolve(null);
+    const ch = new MessageChannel();
+    const t = setTimeout(()=>resolve(null), 1500);
+    ch.port1.onmessage = e=>{ clearTimeout(t); resolve((e.data||{}).build || null); };
+    try{ sw.postMessage({ type:'version' }, [ch.port2]); }catch(e){ clearTimeout(t); resolve(null); }
+  });
+}
+
+/* Read the BUILD out of the deployed sw.js, bypassing every cache. This is the
+   one check that still works when the worker is stuck, because it answers
+   "what is the server actually serving right now?" */
+async function deployedBuild(){
+  try{
+    const res = await fetch('sw.js?fresh=' + Date.now(), { cache:'no-store' });
+    if(!res.ok) return null;
+    const m = (await res.text()).match(/BUILD\s*=\s*'([^']+)'/);
+    return m ? m[1] : null;
+  }catch(e){ return null; }
+}
+
+async function checkDeployedBuild(){
+  const live = await deployedBuild();
+  if(live && live !== BUILD) showUpdateBar('Version ' + live + ' is live — you are on ' + BUILD + '.');
+  return live;
+}
+
+/* Last resort: tear out the worker and every cache, then reload clean. */
+async function hardReset(){
+  if(!confirm('Clear the offline copy and reload from the server?\n\nYour saved work (plan, error log, decks, progress) is not affected.')) return;
+  try{
+    const regs = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(regs.map(r=>r.unregister()));
+  }catch(e){}
+  try{
+    const keys = await caches.keys();
+    await Promise.all(keys.map(k=>caches.delete(k)));
+  }catch(e){}
+  location.replace(location.pathname + '?fresh=' + Date.now());
+}
+
+document.getElementById('updateBtn').addEventListener('click', applyUpdate);
 
 /* ============================================================
    Installable app: register the service worker so the deck works
@@ -9326,19 +9476,32 @@ updateMemBadge();
   // Only over http(s) — opening the file directly, or inside a sandboxed
   // frame, has no service worker and that is fine.
   const canRegister = 'serviceWorker' in navigator && location.protocol.startsWith('http');
+  // Independently of the worker, confirm once that the build in front of the
+  // user is the one the server is serving. Delayed so it never competes with
+  // first paint.
+  if(location.protocol.startsWith('http')) setTimeout(checkDeployedBuild, 2500);
   if(canRegister){
     window.addEventListener('load', ()=>{
-      navigator.serviceWorker.register('sw.js').then(reg=>{
-        // A new version was deployed while the old one is still controlling
-        // the page — let it take over on the next load rather than stalling.
-        reg.addEventListener('updatefound', ()=>{
-          const sw = reg.installing;
-          if(!sw) return;
-          sw.addEventListener('statechange', ()=>{
-            if(sw.state === 'installed' && navigator.serviceWorker.controller) sw.postMessage('skip-waiting');
-          });
+      // updateViaCache:'none' so the browser never answers the update check
+      // from its own HTTP cache — otherwise a cached sw.js hides every deploy.
+      navigator.serviceWorker.register('sw.js', { updateViaCache:'none' }).then(reg=>{
+        watchForUpdate(reg);
+        reg.update().catch(()=>{});
+        // A long-lived tab (or an installed app left open for days) never
+        // navigates, so nothing would ever trigger a check. Do it whenever the
+        // app comes back to the foreground.
+        document.addEventListener('visibilitychange', ()=>{
+          if(document.visibilityState === 'visible'){ reg.update().catch(()=>{}); checkDeployedBuild(); }
         });
       }).catch(()=>{ /* offline support is a bonus, never a hard failure */ });
+    });
+
+    // If a new worker takes control, the HTML in front of the user is the old
+    // one. Reload once so the page and the worker are the same build.
+    let reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', ()=>{
+      if(reloading) return; reloading = true;
+      location.reload();
     });
   }
 

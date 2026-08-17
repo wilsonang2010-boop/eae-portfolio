@@ -22,8 +22,12 @@ app.use(express.static(path.join(__dirname, 'study'), {
   }
 }));
 
-// Fallback for client-side routing (if needed in future)
+// Fallback for client-side routing (if needed in future).
+// express.static's setHeaders does not run for this path, so the no-cache
+// header has to be set here too — otherwise a deploy can be masked by a copy
+// held somewhere upstream.
 app.get('*', (req, res) => {
+  res.set('Cache-Control', 'no-cache, max-age=0, must-revalidate');
   res.sendFile(path.join(__dirname, 'study', 'index.html'));
 });
 
