@@ -56,6 +56,24 @@ Progress lives in `localStorage`, which is per-browser and does persist for `fil
 The footer's **Back up progress** / **Restore** buttons write and read every `osp-`/`osd-`/`osh-`
 key as one JSON file — that is the only way to move progress between devices.
 
+#### Card decks have two modes — `stack` and `browse`
+
+`state.mode` selects between them, and both the subject decks (`drawCards`) and My Cards
+(`renderDeckDetail`) share one implementation:
+
+- **`stack`** (the default) — one card at a time. `stackHTML` draws it, `wireStack` binds the
+  clicks and the keys, `stackReset` holds the position in `state.stack`.
+- **`browse`** — the full grid, answers visible. Editing, deleting and the per-topic diagrams
+  and practice questions live here only.
+
+Two things to keep in mind when touching this:
+
+- `state.stack.key` is a fingerprint of what is being studied (subject, topic, search, deck
+  order). When it changes the run restarts at card 1, so nothing is ever stranded at an index
+  that no longer exists. Add whatever else narrows the list to that key.
+- `wireStack` binds a document-level `keydown`. `render()` tears it down before drawing
+  anything, so a redraw never leaves a handler driving an off-screen view.
+
 ## Design principles
 
 - **Aesthetic:** Swiss / Apple minimalism — clean, restrained, lots of whitespace.
