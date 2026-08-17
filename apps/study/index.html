@@ -484,12 +484,12 @@ header{
 }
 .flash:hover{border-color:var(--border-strong); transform:translateY(-2px);}
 .flash.known{border-color:rgba(34,197,94,0.4); background:rgba(34,197,94,0.04);}
-.flash .term{font-family:var(--font-display); color:var(--white); font-size:1.12rem; font-weight:600; padding-right:34px;}
-.flash .prompt{margin-top:10px; font-size:13px; color:var(--slate-500); font-style:italic;}
-.flash .def{margin-top:12px; color:var(--slate-300); font-size:15px; line-height:1.6;}
+.flash .term{font-family:var(--font-display); color:var(--white); font-size:1.24rem; font-weight:600; padding-right:34px;}
+.flash .prompt{margin-top:10px; font-size:14px; color:var(--slate-500); font-style:italic;}
+.flash .def{margin-top:12px; color:var(--slate-300); font-size:16.5px; line-height:1.62;}
 .flash .def.hidden{display:none;}
 .flash .def:not(.hidden){animation:riseIn .28s var(--ease) both;}
-.flash .extra{margin-top:11px; font-size:13.5px; line-height:1.6; color:var(--slate-300); border-top:1px solid var(--border); padding-top:11px;}
+.flash .extra{margin-top:11px; font-size:15px; line-height:1.62; color:var(--slate-300); border-top:1px solid var(--border); padding-top:11px;}
 .flash .extra.hidden{display:none;}
 .flash .mark{
   position:absolute; top:14px; right:14px; width:26px; height:26px; border-radius:50%;
@@ -500,7 +500,94 @@ header{
 .flash.known .mark{background:var(--green); color:#04140a; border-color:var(--green);}
 
 /* Quiz mode reveal button */
-.reveal-hint{margin-top:14px; font-size:12px; color:var(--blue-bright); letter-spacing:.03em;}
+.reveal-hint{margin-top:14px; font-size:13px; color:var(--blue-bright); letter-spacing:.03em;}
+
+/* ── The stack ────────────────────────────────────────────────────────────
+   One card at a time: prompt, tap to reveal, then on to the next. Sized to
+   be read at arm's length, so every type here is deliberately large. */
+.stack-wrap{margin-top:26px; max-width:780px; margin-left:auto; margin-right:auto;}
+.stack-meta{display:flex; align-items:center; gap:14px; margin-bottom:12px; font-size:13.5px; color:var(--slate-500);}
+.stack-meta .st-topic{
+  flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  color:var(--slate-400); font-weight:600; letter-spacing:.02em;
+}
+.stack-meta .st-count{flex-shrink:0; font-variant-numeric:tabular-nums; color:var(--slate-400);}
+.stack-bar{height:4px; border-radius:999px; background:var(--border); overflow:hidden; margin-bottom:18px;}
+.stack-bar > i{display:block; height:100%; background:var(--blue-bright); border-radius:999px;
+  transition:width .3s var(--ease);}
+
+/* The card. min-height keeps the controls from jumping as answers change length. */
+.stack-card{
+  position:relative; background:var(--card); border:1px solid var(--border-strong);
+  border-radius:18px; padding:34px 30px; min-height:270px; cursor:pointer;
+  display:flex; flex-direction:column; justify-content:center;
+  transition:border-color .25s var(--ease), background .25s var(--ease);
+}
+.stack-card:hover{background:var(--card-hover);}
+.stack-card.known{border-color:rgba(34,197,94,.45); background:rgba(34,197,94,.04);}
+.stack-card.flip{animation:riseIn .3s var(--ease) both;}
+
+.stack-card .st-term{
+  font-family:var(--font-display); font-weight:600; color:var(--white);
+  font-size:1.92rem; line-height:1.28; letter-spacing:-.012em; text-align:center;
+}
+.stack-card.shown .st-term{font-size:1.5rem; text-align:left;}
+.stack-card .st-tap{
+  margin-top:20px; text-align:center; font-size:14px; letter-spacing:.03em;
+  color:var(--blue-bright);
+}
+.stack-card .st-def{
+  margin-top:20px; padding-top:20px; border-top:1px solid var(--border);
+  color:var(--slate-200); font-size:1.22rem; line-height:1.62;
+  animation:riseIn .3s var(--ease) both;
+}
+.stack-card .st-extra{
+  margin-top:15px; padding-top:14px; border-top:1px solid var(--border);
+  color:var(--slate-400); font-size:1.02rem; line-height:1.6;
+  animation:riseIn .34s var(--ease) both;
+}
+.stack-card .st-badge{
+  position:absolute; top:16px; right:18px; font-size:11px; font-weight:700;
+  letter-spacing:.11em; text-transform:uppercase; color:var(--green);
+}
+
+.stack-controls{display:flex; align-items:center; gap:10px; margin-top:18px;}
+.stack-controls .sp{flex:1;}
+.stack-btn{
+  border:1px solid var(--border-strong); background:var(--card); color:var(--slate-300);
+  border-radius:11px; padding:12px 20px; font-size:15px; font-weight:600;
+  transition:.2s var(--ease); cursor:pointer;
+}
+.stack-btn:hover{color:var(--white); border-color:var(--slate-400); background:var(--card-hover);}
+.stack-btn.primary{background:var(--blue-soft); border-color:var(--blue-bright); color:var(--blue-bright);}
+.stack-btn.primary:hover{background:var(--blue-bright); color:#0a0d14;}
+.stack-btn.on{background:var(--green); border-color:var(--green); color:#04140a;}
+.stack-btn[disabled]{opacity:.36; cursor:default;}
+.stack-btn[disabled]:hover{color:var(--slate-300); border-color:var(--border-strong); background:var(--card);}
+.stack-keys{margin-top:14px; text-align:center; font-size:12px; color:var(--slate-500);}
+.stack-keys kbd{
+  font-family:var(--font-mono, ui-monospace, monospace); font-size:11px;
+  border:1px solid var(--border-strong); border-radius:5px; padding:1px 6px;
+  color:var(--slate-400); margin:0 2px;
+}
+
+/* End of a run. */
+.stack-done{
+  background:var(--card); border:1px solid var(--border-strong); border-radius:18px;
+  padding:44px 30px; text-align:center;
+}
+.stack-done h3{font-size:1.5rem; margin-bottom:8px;}
+.stack-done p{color:var(--slate-400); font-size:15.5px; max-width:46ch; margin:0 auto 22px;}
+.stack-done .row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap;}
+
+@media(max-width:560px){
+  .stack-card{padding:26px 20px; min-height:230px;}
+  .stack-card .st-term{font-size:1.58rem;}
+  .stack-card.shown .st-term{font-size:1.3rem;}
+  .stack-card .st-def{font-size:1.1rem;}
+  .stack-btn{padding:11px 14px; font-size:14px;}
+  .stack-keys{display:none;}
+}
 
 /* History */
 .hist-intro{display:grid; gap:14px; grid-template-columns:1fr; margin-top:24px;}
@@ -998,7 +1085,7 @@ header{
 /* Which build this file is. Declared first because the footer renders it long
    before the update machinery at the bottom of this script runs.
    Must match the BUILD constant in sw.js. */
-const BUILD = '2026-08-20a';
+const BUILD = '2026-08-20b';
 
 /* Flipped to true by build-standalone.py in the single-file download. That
    copy has no server behind it, so there is nothing to check for updates
@@ -6935,7 +7022,8 @@ const SYLLABUS_SUBJECTS = ['history','emath','amath','phylesson','chemlesson','h
 const app = document.getElementById('app');
 let state = {
   subject:'plan',
-  mode:'flashcard',   // 'flashcard' | 'quiz'
+  mode:'stack',       // 'stack' — one card at a time | 'browse' — the whole grid
+  stack:{ i:0, rev:false, key:'' },  // position in the stack; key detects a changed filter
   topic:'all',
   query:'',
   weekOffset:0,       // weeks from the current week
@@ -7034,6 +7122,10 @@ function matches(card, q){
 
 function render(){
   if(cdTimer){ clearInterval(cdTimer); cdTimer = null; }
+  // Drop the stack's key bindings before drawing anything else, so Space and
+  // the arrows cannot drive a view that is no longer on screen. Whichever
+  // draw comes next rebinds them if it wants them.
+  if(window._stackKeys){ document.removeEventListener('keydown', window._stackKeys); window._stackKeys = null; }
   if(state.subject==='plan'){ renderPlan(); return; }
   if(state.subject==='log'){ renderLog(); return; }
   if(state.subject==='memorise'){ renderMemorise(); updateMemBadge(); return; }
@@ -8021,7 +8113,9 @@ function renderDeckDetail(deck){
     cards = cards.slice().sort((a,b)=>(pos.has(a.id)?pos.get(a.id):1e9)-(pos.has(b.id)?pos.get(b.id):1e9));
   }
 
-  const quiz = state.mode==='quiz';
+  const stacked = state.mode==='stack';
+  // Editing and deleting live on the grid cards, so Browse all is the way in
+  // to changing a card — the stack is for studying it.
   const grid = cards.length ? cards.map(c=>{
     const kid = deckCardId(deck.id, c.id);
     const isK = known.has(kid);
@@ -8033,14 +8127,22 @@ function renderDeckDetail(deck){
       </div>
       <button class="mark" data-mark="${c.id}" title="Mark as learnt">✓</button>
       <div class="term has-tools">${esc(c.t)}</div>
-      ${quiz?`<div class="prompt">Answer it — then tap to check.</div>`:``}
-      <div class="def ${quiz?'hidden':''}">${esc(c.d)}</div>
-      ${c.x?`<div class="extra ${quiz?'hidden':''}">${esc(c.x)}</div>`:``}
-      ${quiz?`<div class="reveal-hint">Tap to reveal ▾</div>`:``}
+      <div class="def">${esc(c.d)}</div>
+      ${c.x?`<div class="extra">${esc(c.x)}</div>`:``}
     </div>`;
   }).join('') : `<div class="empty">${deck.cards.length
       ? `No cards match “${esc(state.query)}”.`
       : 'No cards in this deck yet. Add the first one below.'}</div>`;
+
+  const stCards = cards.map(c=>({...c, _id:c.id, topic:deck.name,
+                                 _known:known.has(deckCardId(deck.id, c.id))}));
+  const st = stackReset(['deck', deck.id, state.query, (state.deckOrder||[]).join(',')].join(' '));
+  const stRun = stackNarrow(stCards, st);
+  const body = stacked
+    ? stackHTML(stRun, st, { empty: deck.cards.length
+        ? `No cards match “${esc(state.query)}”.`
+        : 'No cards in this deck yet. Add the first one below.' })
+    : `<div class="card-grid" style="margin-top:24px;">${grid}</div>`;
 
   app.innerHTML = `
   <div class="deck-head">
@@ -8061,14 +8163,14 @@ function renderDeckDetail(deck){
       <input id="deck-search" type="text" placeholder="Search this deck…" value="${esc(state.query)}"/>
     </label>
     <div class="seg" id="deck-mode">
-      <button class="${!quiz?'on':''}" data-dmode="flashcard">Flashcards</button>
-      <button class="${quiz?'on':''}" data-dmode="quiz">Quiz mode</button>
+      <button class="${stacked?'on':''}" data-dmode="stack">Stack</button>
+      <button class="${!stacked?'on':''}" data-dmode="browse">Browse all</button>
     </div>
     <button class="mini-btn" id="deck-shuffle">⤫ Shuffle</button>
     <span class="stat"><b>${learnt}</b> / ${deck.cards.length} learnt · <a href="#" class="reset-btn" id="deck-reset">reset</a></span>
   </div>` : ''}
 
-  <div class="card-grid" style="margin-top:24px;">${grid}</div>
+  ${body}
 
   <form class="log-form" id="card-form">
     <div class="form-head">
@@ -8123,15 +8225,11 @@ function renderDeckDetail(deck){
     renderCustom();
   });
 
-  /* Reveal in quiz mode — but never when a tool button was the target. */
-  app.querySelectorAll('.flash').forEach(el=>{
-    el.addEventListener('click', ev=>{
-      if(ev.target.closest('button')) return;
-      el.querySelectorAll('.def,.extra').forEach(n=>n.classList.toggle('hidden'));
-      const hint = el.querySelector('.reveal-hint');
-      if(hint) hint.classList.toggle('hidden');
-    });
-  });
+  if(stacked){
+    wireStack(app, stRun, st,
+      ()=> renderDeckDetail(getDecks().find(d=>d.id===deck.id)),
+      c=>{ toggleKnown('custom', deckCardId(deck.id, c.id)); renderCustom(); });
+  }
   app.querySelectorAll('[data-mark]').forEach(b=>{
     b.addEventListener('click', ()=>{
       toggleKnown('custom', deckCardId(deck.id, b.dataset.mark));
@@ -8211,6 +8309,7 @@ function renderDeck(subj){
   const allCards = subj.topics.flatMap((t,ti)=>t.cards.map((c,ci)=>({...c, id:sub+'-'+ti+'-'+ci, topic:t.name})));
   const total = allCards.length;
   const knownCount = getKnown(sub).filter(id=>allCards.some(c=>c.id===id)).length;
+  const stack = state.mode === 'stack';
 
   let html = `
   <section class="subject-hero">
@@ -8225,18 +8324,19 @@ function renderDeck(subj){
       <input id="search" type="text" placeholder="Search definitions…" value="${esc(state.query)}"/>
     </label>
     <div class="seg" id="modeSeg">
-      <button class="${state.mode==='flashcard'?'on':''}" data-mode="flashcard">Flashcards</button>
-      <button class="${state.mode==='quiz'?'on':''}" data-mode="quiz">Quiz mode</button>
+      <button class="${state.mode==='stack'?'on':''}" data-mode="stack">Stack</button>
+      <button class="${state.mode==='browse'?'on':''}" data-mode="browse">Browse all</button>
     </div>
     <span class="stat"><b>${knownCount}</b> / ${total} learnt · <a href="#" class="reset-btn" id="resetKnown">reset</a></span>
   </div>
-  ${auditHTML(sub, allCards)}
+  ${stack ? '' : auditHTML(sub, allCards)}
 
   <div class="topic-nav" id="topicNav">
     <button class="topic-pill ${state.topic==='all'?'active':''}" data-topic="all">All topics</button>
     ${subj.topics.map(t=>`<button class="topic-pill ${state.topic===t.name?'active':''}" data-topic="${esc(t.name)}">${esc(t.name)}</button>`).join('')}
   </div>
-  <div id="deck"></div>`;
+  <div id="deck"></div>
+  ${stack ? auditHTML(sub, allCards) : ''}`;
 
   app.innerHTML = html + footerHTML();
   wireDeck(subj, allCards);
@@ -8285,9 +8385,135 @@ function topicExtrasHTML(sub, topicName){
   return html ? `<div class="topic-extras">${html}</div>` : '';
 }
 
+/* ── The stack ──────────────────────────────────────────────────────────────
+   One card at a time. The prompt is shown alone; a tap reveals the answer;
+   Next moves on. Shared by the subject decks and by My Cards, so both behave
+   the same way — see stackHTML for the markup and wireStack for the keys.
+
+   Position lives in state.stack. `key` is a fingerprint of whatever is being
+   studied (subject, topic, search); when it changes the run restarts at the
+   first card rather than stranding you at an index that no longer exists. */
+function stackReset(key){
+  if(state.stack.key !== key) state.stack = { i:0, rev:false, key:key, ids:null };
+  return state.stack;
+}
+
+/* A second pass over "only the unmarked" narrows to a snapshot of ids taken
+   when the pass began. Snapshotting matters: if the run re-filtered on every
+   redraw, marking a card learnt would delete it from under the index and skip
+   the next one. */
+function stackNarrow(cards, st){
+  return st.ids ? cards.filter(c=>st.ids.indexOf(c._id) >= 0) : cards;
+}
+
+function stackHTML(cards, st, opts){
+  const o = opts || {};
+  if(!cards.length){
+    return `<div class="stack-wrap"><div class="empty">${o.empty || 'Nothing to study here yet.'}</div></div>`;
+  }
+  if(st.i >= cards.length){
+    const left = cards.filter(c=>!c._known).length;
+    return `<div class="stack-wrap"><div class="stack-done">
+      <h3>End of the stack</h3>
+      <p>${cards.length} card${cards.length===1?'':'s'} seen.
+         ${left ? `<b>${left}</b> ${left===1?'is':'are'} still unmarked — a second pass through only those is the fastest way to close them.`
+                : 'Every card in this run is marked as learnt.'}</p>
+      <div class="row">
+        <button class="stack-btn primary" data-st="restart">Go again</button>
+        ${left ? `<button class="stack-btn" data-st="unlearnt">Only the ${left} unmarked</button>` : ''}
+      </div>
+    </div></div>`;
+  }
+
+  const c = cards[st.i];
+  const pct = Math.round(((st.i) / cards.length) * 100);
+  return `<div class="stack-wrap">
+    <div class="stack-meta">
+      <span class="st-topic">${esc(c.topic || o.label || '')}</span>
+      <span class="st-count">${st.i + 1} / ${cards.length}</span>
+    </div>
+    <div class="stack-bar"><i style="width:${pct}%"></i></div>
+
+    <div class="stack-card ${st.rev?'shown':''} ${c._known?'known':''} flip" id="stCard" data-id="${esc(c._id)}">
+      ${c._known ? `<span class="st-badge">Learnt</span>` : ``}
+      <div class="st-term">${esc(c.t)}</div>
+      ${st.rev
+        ? `<div class="st-def">${esc(c.d)}</div>${c.x ? `<div class="st-extra">${o.rawExtra ? c.x : esc(c.x)}</div>` : ``}`
+        : `<div class="st-tap">Tap the card to reveal the answer ▾</div>`}
+    </div>
+
+    <div class="stack-controls">
+      <button class="stack-btn" data-st="prev" ${st.i===0?'disabled':''}>← Back</button>
+      <button class="stack-btn ${c._known?'on':''}" data-st="mark">${c._known?'✓ Learnt':'Mark learnt'}</button>
+      <span class="sp"></span>
+      ${st.rev
+        ? `<button class="stack-btn primary" data-st="next">Next →</button>`
+        : `<button class="stack-btn primary" data-st="reveal">Reveal</button>`}
+    </div>
+    <div class="stack-keys">
+      <kbd>Space</kbd> reveal, then next · <kbd>←</kbd> <kbd>→</kbd> move · <kbd>L</kbd> mark learnt
+    </div>
+  </div>`;
+}
+
+/* One click handler and one key handler for the whole stack. `redraw` is what
+   the caller does to put the new position on screen; `mark` toggles learnt. */
+function wireStack(root, cards, st, redraw, mark){
+  const go = act=>{
+    if(act==='reveal'){ st.rev = true; }
+    else if(act==='next'){ st.i++; st.rev = false; }
+    else if(act==='prev'){ if(st.i>0){ st.i--; st.rev = false; } }
+    else if(act==='restart'){ st.i = 0; st.rev = false; st.ids = null; }
+    else if(act==='unlearnt'){
+      st.ids = cards.filter(c=>!c._known).map(c=>c._id);
+      st.i = 0; st.rev = false;
+    }
+    else if(act==='mark'){ if(cards[st.i]) { mark(cards[st.i]); return; } }
+    redraw();
+  };
+
+  const card = root.querySelector('#stCard');
+  if(card) card.addEventListener('click', ()=> go(st.rev ? 'next' : 'reveal'));
+  root.querySelectorAll('[data-st]').forEach(b=>{
+    b.addEventListener('click', e=>{ e.stopPropagation(); go(b.dataset.st); });
+  });
+
+  // Keys are bound once per draw and torn down on the next, so they never stack up.
+  if(window._stackKeys) document.removeEventListener('keydown', window._stackKeys);
+  window._stackKeys = e=>{
+    if(e.target.matches('input, textarea')) return;
+    if(e.key===' ' || e.key==='Enter'){ e.preventDefault(); go(st.rev?'next':'reveal'); }
+    else if(e.key==='ArrowRight'){ e.preventDefault(); go(st.rev?'next':'reveal'); }
+    else if(e.key==='ArrowLeft'){ e.preventDefault(); go('prev'); }
+    else if(e.key==='l' || e.key==='L'){ e.preventDefault(); go('mark'); }
+  };
+  document.addEventListener('keydown', window._stackKeys);
+}
+
 function drawCards(subj, allCards){
   const sub = state.subject;
   const deck = document.getElementById('deck');
+
+  if(state.mode === 'stack'){
+    const cards = (state.topic==='all' ? subj.topics : subj.topics.filter(t=>t.name===state.topic))
+      .flatMap(t=>t.cards
+        .map((c,ci)=>({...c, _id:sub+'-'+subj.topics.indexOf(t)+'-'+ci, topic:t.name}))
+        .filter(c=>matches(c, state.query)))
+      .map(c=>({...c, _known:isKnown(sub, c._id)}));
+    const st = stackReset([sub, state.topic, state.query].join(' '));
+    const run = stackNarrow(cards, st);
+    // A card's `x` note carries markup in the subject decks, so the stack
+    // trusts it exactly as the grid already does.
+    deck.innerHTML = stackHTML(run, st, {
+      rawExtra: true,
+      empty: state.query ? `No definitions match "${esc(state.query)}".` : 'No definitions in this topic.',
+    });
+    wireStack(deck, run, st,
+      ()=> drawCards(subj, allCards),
+      c=>{ toggleKnown(sub, c._id); renderDeck(DATA[sub]); });
+    return;
+  }
+
   const topics = state.topic==='all' ? subj.topics : subj.topics.filter(t=>t.name===state.topic);
   let out = '';
   let shown = 0;
@@ -8300,15 +8526,12 @@ function drawCards(subj, allCards){
     out += `<div class="topic-block"><h3>${esc(t.name)}</h3><div class="topic-sub">${cards.length} definition${cards.length>1?'s':''}</div><div class="card-grid">`;
     cards.forEach(c=>{
       const known = isKnown(sub, c.id);
-      const quiz = state.mode==='quiz';
       out += `
       <div class="flash ${known?'known':''}" data-id="${c.id}">
         <button class="mark" data-mark="${c.id}" title="Mark as learnt">✓</button>
         <div class="term">${esc(c.t)}</div>
-        ${quiz ? `<div class="prompt">Define this — then tap to check.</div>` : ``}
-        <div class="def ${quiz?'hidden':''}">${esc(c.d)}</div>
-        ${c.x ? `<div class="extra ${quiz?'hidden':''}">${c.x}</div>` : ``}
-        ${quiz ? `<div class="reveal-hint">Tap to reveal ▾</div>` : ``}
+        <div class="def">${esc(c.d)}</div>
+        ${c.x ? `<div class="extra">${c.x}</div>` : ``}
       </div>`;
     });
     out += `</div>${topicExtrasHTML(sub, t.name)}</div>`;
