@@ -38,6 +38,24 @@ deployed `sw.js` to decide whether it is stale, shows an update bar when they di
 prints the build in the footer. If they drift apart, the app will claim to be out of date
 forever. `Clear offline copy` in the footer unregisters the worker and drops all caches.
 
+#### The standalone download — rebuild it after every change
+
+`apps/study/olevel-hq.html` is a generated single-file copy that runs with no server, by
+double-clicking it. **It is built, never hand-edited.** After changing `index.html`:
+
+```
+python3 apps/study/build-standalone.py
+```
+
+It flips `const STANDALONE = false` to `true` (which drops the update-check and
+service-worker controls), inlines the favicon, and strips the manifest, the icon links, the
+portfolio link and the install button. It fails loudly if the result still references any
+file that would not travel with a single downloaded copy.
+
+Progress lives in `localStorage`, which is per-browser and does persist for `file://` pages.
+The footer's **Back up progress** / **Restore** buttons write and read every `osp-`/`osd-`/`osh-`
+key as one JSON file — that is the only way to move progress between devices.
+
 ## Design principles
 
 - **Aesthetic:** Swiss / Apple minimalism — clean, restrained, lots of whitespace.
