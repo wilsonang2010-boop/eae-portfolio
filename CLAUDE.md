@@ -25,6 +25,19 @@ Sections in `index.html` (by `<section id>`): `home`, `about`, `journey`, `exper
 `leadership`, `achievements`, `certificates`, `gallery`, `skills`, `why`, `goals`,
 `testimonials`, `contact`.
 
+### Study app (`apps/study/`) — bump BUILD on every change
+
+The study app is a service-worker PWA on Render (`render.yaml` → `apps/server.js`).
+**Every change to `apps/study/index.html` must also bump `BUILD` in BOTH:**
+
+- `apps/study/index.html` — `const BUILD = 'YYYY-MM-DDx';` at the top of the `<script>` block
+- `apps/study/sw.js` — `const BUILD = 'YYYY-MM-DDx';` (names the cache)
+
+The two strings must be identical. The app compares its own `BUILD` against the one in the
+deployed `sw.js` to decide whether it is stale, shows an update bar when they differ, and
+prints the build in the footer. If they drift apart, the app will claim to be out of date
+forever. `Clear offline copy` in the footer unregisters the worker and drops all caches.
+
 ## Design principles
 
 - **Aesthetic:** Swiss / Apple minimalism — clean, restrained, lots of whitespace.

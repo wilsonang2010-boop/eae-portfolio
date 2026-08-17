@@ -110,6 +110,29 @@ header{
 @media(display-mode:standalone){ .home-link{display:none;} }
 .home-link:hover{color:var(--white); border-color:var(--border-strong);}
 
+/* ── Update bar ────────────────────────────────────────────────
+   A deployed change used to arrive silently or not at all, with no way to
+   tell which copy you were looking at. This says so, and reloads on tap. */
+.update-bar{
+  display:none; align-items:center; gap:11px; flex-wrap:wrap;
+  padding:10px 20px; background:var(--blue); color:#fff; font-size:13.5px; font-weight:500;
+  position:sticky; top:0; z-index:60; animation:riseIn .3s var(--ease) both;
+}
+.update-bar.show{display:flex;}
+.update-bar .ub-dot{width:8px; height:8px; border-radius:50%; background:#fff; flex:none; animation:ubPulse 1.6s ease-in-out infinite;}
+@keyframes ubPulse{0%,100%{opacity:1;} 50%{opacity:.35;}}
+.update-bar .ub-text{flex:1; min-width:160px;}
+.update-bar .ub-btn{
+  flex:none; font-size:12.5px; font-weight:700; letter-spacing:.04em; cursor:pointer;
+  padding:6px 14px; border-radius:8px; color:var(--blue); background:#fff; transition:.2s var(--ease);
+}
+.update-bar .ub-btn:hover{transform:translateY(-1px);}
+/* Build stamp in the footer — the answer to "am I even on the new version?" */
+.build-line{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:18px; font-size:12px; color:var(--slate-500);}
+.build-id{font-family:var(--font-mono); color:var(--slate-400);}
+.build-line button{font-size:12px; color:var(--slate-400); border:1px solid var(--border); padding:5px 11px; border-radius:8px; cursor:pointer; transition:.2s var(--ease);}
+.build-line button:hover{color:var(--white); border-color:var(--border-strong);}
+
 /* ── Navigation: group rail, then the tabs inside that group ──── */
 .nav{padding:10px 0 0; border-bottom:1px solid var(--border);}
 .nav-groups{display:flex; gap:4px; overflow-x:auto; scrollbar-width:none;}
@@ -169,6 +192,228 @@ header{
 .tab[data-g="2"].active{background:rgba(34,211,238,.13); border-color:rgba(34,211,238,.40);}
 .tab[data-g="3"].active{background:rgba(251,191,36,.13); border-color:rgba(251,191,36,.40);}
 .tab[data-g="4"].active{background:rgba(52,211,153,.13); border-color:rgba(52,211,153,.40);}
+
+/* ── History HQ ────────────────────────────────────────────────
+   A study-management surface: statuses, progress, priorities. Colour is
+   load-bearing here — it is the status, not decoration. */
+.hq-nav{display:flex; gap:6px; flex-wrap:wrap; margin-top:26px; border-bottom:1px solid var(--border); padding-bottom:12px;}
+.hq-tab{font-size:13px; font-weight:500; padding:8px 14px; border-radius:9px; color:var(--slate-400);
+        border:1px solid transparent; transition:.2s var(--ease); white-space:nowrap;}
+.hq-tab:hover{color:var(--white); background:var(--card);}
+.hq-tab.on{color:var(--white); background:var(--blue-soft); border-color:var(--border-strong);}
+.hq-body{margin-top:22px;}
+.hq-note{background:var(--card); border:1px solid var(--border); border-left:3px solid var(--g3);
+         border-radius:11px; padding:14px 17px; font-size:13.5px; line-height:1.6; color:var(--slate-300); margin-bottom:20px;}
+.hq-note b{color:var(--white);}
+.hq-empty{color:var(--slate-500); font-size:13.5px; padding:18px 2px; line-height:1.55;}
+.hq-empty.sm{padding:9px 2px; font-size:12.5px;}
+.hq-link{color:var(--blue-bright); font-size:inherit; text-decoration:underline; text-underline-offset:2px; cursor:pointer;}
+.hq-link:hover{color:var(--white);}
+.t-of{font-size:1rem; color:var(--slate-500); font-weight:600;}
+
+/* What to study now */
+.hq-now{background:var(--card); border:1px solid var(--border-strong); border-radius:14px; padding:20px 22px;}
+.hq-now-h{font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--blue-bright); font-weight:700; margin-bottom:14px;}
+.hq-task{display:flex; align-items:center; gap:14px; width:100%; text-align:left; padding:13px 14px; border-radius:11px;
+         border:1px solid var(--border); background:var(--bg); margin-bottom:9px; transition:.2s var(--ease); cursor:pointer;}
+.hq-task:last-child{margin-bottom:0;}
+.hq-task:hover{border-color:var(--border-strong); transform:translateX(2px);}
+.hq-task-n{flex:none; width:26px; height:26px; border-radius:8px; background:var(--blue); color:#fff;
+           font-size:12.5px; font-weight:700; display:grid; place-items:center;}
+.hq-task-b{flex:1; min-width:0; display:flex; flex-direction:column; gap:2px;}
+.hq-task-k{font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--blue-bright); font-weight:700;}
+.hq-task-t{font-family:var(--font-display); color:var(--white); font-weight:600; font-size:1rem;}
+.hq-task-w{font-size:12.5px; color:var(--slate-400); line-height:1.45;}
+.hq-task-go{flex:none; color:var(--slate-500); font-size:17px;}
+.hq-legend{display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:12px; font-size:12.5px; color:var(--slate-400);}
+.hq-due-list{margin-top:12px; display:flex; flex-direction:column; gap:7px;}
+.hq-due{display:flex; gap:10px; align-items:baseline; font-size:12.5px;}
+.hq-due > span{flex:none; width:62px; color:var(--slate-500); font-variant-numeric:tabular-nums;}
+.hq-due .is-late{color:var(--amber); font-weight:600;}
+
+.hq-split{display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px;}
+@media(min-width:760px){.hq-split{grid-template-columns:1fr 1fr;}}
+.hq-panel{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px;}
+.hq-panel h4{font-size:1rem; margin-bottom:10px;}
+.hq-row{display:flex; justify-content:space-between; align-items:center; gap:12px; width:100%; text-align:left;
+        padding:9px 11px; border-radius:9px; border:1px solid var(--border); background:var(--bg);
+        margin-bottom:7px; cursor:pointer; transition:.2s var(--ease);}
+.hq-row:hover{border-color:var(--border-strong);}
+.hq-row-t{color:var(--slate-100); font-size:13.5px;}
+.hq-row-m{color:var(--slate-500); font-size:12.5px; font-variant-numeric:tabular-nums; flex:none;}
+
+/* Topic cards */
+.hq-grid{display:grid; grid-template-columns:1fr; gap:13px;}
+@media(min-width:720px){.hq-grid{grid-template-columns:1fr 1fr;}}
+.hq-card{display:block; width:100%; text-align:left; background:var(--card); border:1px solid var(--border);
+         border-left:3px solid var(--slate-500); border-radius:13px; padding:17px 19px; cursor:pointer;
+         transition:.22s var(--ease);}
+.hq-card:hover{border-color:var(--border-strong); transform:translateY(-2px);}
+.hq-card.st-new{border-left-color:#F87171;}
+.hq-card.st-learn{border-left-color:var(--g3);}
+.hq-card.st-review{border-left-color:#FB923C;}
+.hq-card.st-master{border-left-color:var(--green);}
+.hq-card-top{display:flex; align-items:center; gap:11px;}
+.hq-num{flex:none; width:26px; height:26px; border-radius:8px; background:var(--blue-soft); color:var(--blue-bright);
+        font-size:12.5px; font-weight:700; display:grid; place-items:center;}
+.hq-card-title{flex:1; font-family:var(--font-display); color:var(--white); font-weight:600; font-size:1.02rem; line-height:1.3;}
+.hq-star{color:var(--g3); margin-left:5px;}
+.hq-pri{flex:none; font-size:13px;}
+.hq-card-q{font-size:12.5px; color:var(--slate-500); font-style:italic; margin:6px 0 10px;}
+.hq-card-meta{display:flex; flex-wrap:wrap; gap:5px 14px; font-size:12px; color:var(--slate-400); margin-bottom:11px;}
+.hq-status{white-space:nowrap;}
+
+/* Topic detail */
+.hq-back{font-size:12.5px; color:var(--slate-400); border:1px solid var(--border); padding:7px 13px;
+         border-radius:9px; cursor:pointer; transition:.2s var(--ease);}
+.hq-back:hover{color:var(--white); border-color:var(--border-strong);}
+.hq-detail-head{display:flex; justify-content:space-between; align-items:flex-start; gap:18px; flex-wrap:wrap; margin:20px 0 6px;}
+.hq-detail-head h3{font-size:1.4rem; line-height:1.25;}
+.hq-detail-q{font-size:13px; color:var(--slate-500); font-style:italic; margin-top:5px;}
+.hq-detail-stat{display:flex; flex-direction:column; gap:5px; font-size:12.5px; color:var(--slate-300); text-align:right;}
+.hq-sec{margin-top:30px;}
+.hq-sec h4{font-size:1.06rem; color:var(--blue-bright); margin-bottom:7px;}
+.hq-sec-note{font-size:13px; color:var(--slate-400); line-height:1.6; margin-bottom:14px; max-width:660px;}
+
+.hq-steps{display:flex; flex-direction:column; gap:8px;}
+.hq-step{display:flex; align-items:flex-start; gap:13px; width:100%; text-align:left; padding:12px 15px;
+         border-radius:11px; border:1px solid var(--border); background:var(--card); cursor:pointer; transition:.2s var(--ease);}
+.hq-step:hover{border-color:var(--border-strong);}
+.hq-step.on{background:rgba(52,211,153,.07); border-color:rgba(52,211,153,.32);}
+.hq-step-box{flex:none; width:22px; height:22px; border-radius:7px; border:1.5px solid var(--border-strong);
+             display:grid; place-items:center; font-size:12px; color:transparent; margin-top:1px; transition:.2s var(--ease);}
+.hq-step.on .hq-step-box,.hq-check.on .hq-step-box{background:var(--green); border-color:var(--green); color:#04140a;}
+.hq-step-b{flex:1; display:flex; flex-direction:column; gap:3px;}
+.hq-step-n{font-family:var(--font-display); color:var(--white); font-weight:600; font-size:14.5px;}
+.hq-step-d{font-size:13px; color:var(--slate-400); line-height:1.5;}
+.hq-jump{display:flex; gap:9px; flex-wrap:wrap; margin-top:14px;}
+
+.hq-recall{display:flex; gap:9px; flex-wrap:wrap;}
+.hq-rbtn{font-size:13.5px; padding:11px 17px; border-radius:10px; border:1px solid var(--border);
+         color:var(--slate-300); background:var(--card); cursor:pointer; transition:.2s var(--ease);}
+.hq-rbtn:hover{border-color:var(--border-strong); color:var(--white);}
+.hq-rbtn.on{background:var(--blue-soft); border-color:var(--border-strong); color:var(--white);}
+.hq-reps{display:flex; gap:7px; flex-wrap:wrap; margin-top:13px;}
+.hq-rep{font-size:11.5px; padding:4px 9px; border-radius:6px; font-variant-numeric:tabular-nums;}
+.hq-rep.ok{background:rgba(52,211,153,.13); color:#6EE7B7;}
+.hq-rep.no{background:rgba(248,113,113,.13); color:#FCA5A5;}
+
+/* Facets */
+.hq-facets{display:flex; flex-direction:column; gap:8px;}
+.hq-facet{background:var(--card); border:1px solid var(--border); border-radius:11px; overflow:hidden;}
+.hq-facet.is-empty{opacity:.6;}
+.hq-facet summary{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px;
+                  cursor:pointer; list-style:none;}
+.hq-facet summary::-webkit-details-marker{display:none;}
+.hq-facet-n{font-family:var(--font-display); color:var(--white); font-weight:600; font-size:14px;}
+.hq-facet-c{font-size:11.5px; color:var(--slate-500); flex:none;}
+.hq-facet-b{padding:0 16px 15px; border-top:1px solid var(--border);}
+.hq-facet-note{font-size:12.5px; color:var(--slate-500); line-height:1.55; margin:11px 0;}
+.hq-secs{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:10px;}
+.hq-items{margin:0; padding-left:2px;}
+.hq-items li{position:relative; padding-left:18px; margin-bottom:6px; font-size:13px; color:var(--slate-300); line-height:1.5;}
+.hq-items li:before{content:"—"; position:absolute; left:0; color:var(--blue-bright);}
+
+/* Fact recall */
+.hq-facts{display:flex; flex-direction:column; gap:10px;}
+.hq-fact{background:var(--card); border:1px solid var(--border); border-left:3px solid var(--slate-500);
+         border-radius:11px; padding:14px 16px; transition:.2s var(--ease);}
+.hq-fact.r-no{border-left-color:#F87171;}
+.hq-fact.r-part{border-left-color:var(--g3);}
+.hq-fact.r-yes{border-left-color:var(--green);}
+.hq-fact-t{font-family:var(--font-display); color:var(--white); font-weight:600; font-size:14.5px;}
+.hq-fact-d{font-size:13px; color:var(--slate-400); line-height:1.55; margin:5px 0 10px;}
+.hq-fact-rate{display:flex; gap:7px; flex-wrap:wrap;}
+.hq-rate{font-size:11.5px; padding:5px 11px; border-radius:7px; border:1px solid var(--border);
+         color:var(--slate-400); cursor:pointer; transition:.2s var(--ease);}
+.hq-rate:hover{color:var(--white); border-color:var(--border-strong);}
+.hq-rate.on{background:var(--blue-soft); color:var(--white); border-color:var(--border-strong);}
+
+/* SBQ */
+.hq-skills{display:flex; flex-direction:column; gap:12px;}
+.hq-skill{background:var(--card); border:1px solid var(--border); border-radius:13px; padding:17px 19px;}
+.hq-skill-h{display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap;}
+.hq-skill-n{font-family:var(--font-display); color:var(--white); font-weight:600; font-size:1.04rem;}
+.hq-skill-q{font-size:12.5px; color:var(--slate-500); font-style:italic; margin-top:3px;}
+.hq-weak{font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:4px 10px;
+         border-radius:6px; border:1px solid transparent; flex:none;}
+.w-untested{background:rgba(148,163,184,.12); color:var(--slate-400); border-color:var(--border);}
+.w-thin{background:rgba(148,163,184,.14); color:var(--slate-300); border-color:var(--border-strong);}
+.w-weak{background:rgba(248,113,113,.16); color:#FCA5A5; border-color:rgba(248,113,113,.4);}
+.w-shaky{background:rgba(251,191,36,.15); color:#FDE68A; border-color:rgba(251,191,36,.4);}
+.w-solid{background:rgba(52,211,153,.13); color:#6EE7B7; border-color:rgba(52,211,153,.38);}
+.hq-skill-m{display:flex; flex-wrap:wrap; gap:6px 18px; margin:13px 0; font-size:12.5px; color:var(--slate-400);}
+.hq-skill-m b{color:var(--white); font-variant-numeric:tabular-nums;}
+.hq-log{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+.hq-log input{background:var(--bg); border:1px solid var(--border); color:var(--white); padding:8px 11px;
+              border-radius:8px; font-size:13px; font-family:var(--font);}
+.hq-log input[type=number]{width:88px;}
+.hq-log input[type=text]{flex:1; min-width:220px;}
+.hq-log input:focus{outline:2px solid var(--blue); outline-offset:1px;}
+.hq-of{font-size:12.5px; color:var(--slate-500);}
+.hq-att{display:flex; flex-wrap:wrap; gap:7px; margin-top:12px;}
+.hq-att-x{display:inline-flex; align-items:center; gap:7px; font-size:11.5px; padding:5px 10px; border-radius:7px;
+          background:var(--bg); border:1px solid var(--border); color:var(--slate-300);}
+.hq-x{color:var(--slate-500); font-size:14px; line-height:1; cursor:pointer;}
+.hq-x:hover{color:#FCA5A5;}
+
+/* SEQ */
+.hq-plan{background:var(--card); border:1px solid var(--border); border-radius:13px; padding:20px 22px; margin-bottom:20px;}
+.hq-plan h4{font-size:1.06rem; color:var(--blue-bright); margin-bottom:7px;}
+.hq-flow{margin:16px 0;}
+.hq-flow-step{text-align:center;}
+.hq-flow-k{display:inline-block; font-size:11px; font-weight:700; letter-spacing:.13em; padding:6px 15px;
+           border-radius:7px; background:var(--blue-soft); color:var(--blue-bright); border:1px solid var(--border-strong);}
+.hq-flow-d{font-size:12.5px; color:var(--slate-400); margin-top:6px; line-height:1.5; max-width:520px; margin-left:auto; margin-right:auto;}
+.hq-flow-arrow{color:var(--slate-500); font-size:15px; margin:7px 0;}
+.hq-seqs{display:flex; flex-direction:column; gap:12px;}
+.hq-seq{background:var(--card); border:1px solid var(--border); border-radius:13px; padding:17px 19px;}
+.hq-seq-h{display:flex; align-items:center; gap:11px; margin-bottom:12px;}
+.hq-seq-n{flex:1; font-family:var(--font-display); color:var(--white); font-weight:600; font-size:1.02rem;}
+.hq-seq-c{font-size:12.5px; color:var(--slate-500); font-variant-numeric:tabular-nums;}
+.hq-checks{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:13px;}
+.hq-check{display:inline-flex; align-items:center; gap:8px; font-size:12.5px; padding:7px 12px; border-radius:9px;
+          border:1px solid var(--border); color:var(--slate-300); cursor:pointer; transition:.2s var(--ease);}
+.hq-check:hover{border-color:var(--border-strong); color:var(--white);}
+.hq-check.on{background:rgba(52,211,153,.07); border-color:rgba(52,211,153,.32); color:var(--white);}
+.hq-check .hq-step-box{width:18px; height:18px; border-radius:5px; font-size:10px; margin-top:0;}
+
+/* Session */
+.hq-mins{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;}
+.hq-min{font-size:13px; padding:9px 16px; border-radius:9px; border:1px solid var(--border);
+        color:var(--slate-400); cursor:pointer; transition:.2s var(--ease);}
+.hq-min:hover{color:var(--white); border-color:var(--border-strong);}
+.hq-min.on{background:var(--blue); color:#fff; border-color:var(--blue);}
+.hq-plan-total{font-size:12px; letter-spacing:.11em; text-transform:uppercase; color:var(--slate-500); font-weight:700; margin-bottom:12px;}
+.hq-blocks{display:flex; flex-direction:column; gap:10px;}
+.hq-block{display:flex; align-items:stretch; gap:15px; background:var(--card); border:1px solid var(--border);
+          border-radius:12px; padding:15px 17px;}
+.hq-block-m{flex:none; width:56px; font-family:var(--font-display); font-size:1.5rem; font-weight:700; color:var(--white);
+            line-height:1; font-variant-numeric:tabular-nums; display:flex; flex-direction:column; gap:3px;}
+.hq-block-m span{font-size:10px; letter-spacing:.11em; text-transform:uppercase; color:var(--slate-500); font-weight:700;}
+.hq-block-b{flex:1; min-width:0;}
+.hq-block-n{font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--blue-bright); font-weight:700;}
+.hq-block-t{font-family:var(--font-display); color:var(--white); font-weight:600; font-size:1rem; margin:4px 0 5px;}
+.hq-block-h{font-size:13px; color:var(--slate-400); line-height:1.55;}
+.hq-block-go{flex:none; align-self:center; color:var(--slate-500); font-size:17px; cursor:pointer; transition:.2s var(--ease);}
+.hq-block-go:hover{color:var(--white);}
+
+/* Exam */
+.hq-mix{font-size:13.5px; color:var(--slate-100); background:var(--blue-soft); border:1px solid var(--border-strong);
+        border-radius:9px; padding:11px 15px; margin-bottom:15px;}
+.hq-phases{display:grid; grid-template-columns:1fr; gap:10px;}
+@media(min-width:700px){.hq-phases{grid-template-columns:repeat(4,1fr);}}
+.hq-phase{background:var(--card); border:1px solid var(--border); border-radius:11px; padding:14px 15px; opacity:.55;}
+.hq-phase.on{opacity:1; border-color:var(--blue); background:var(--blue-soft);}
+.hq-phase-n{font-family:var(--font-display); color:var(--white); font-weight:600; font-size:.98rem;}
+.hq-phase-w{font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:var(--slate-500); font-weight:700; margin:4px 0 7px;}
+.hq-phase-m{font-size:12px; color:var(--slate-400); line-height:1.5;}
+
+@media(max-width:560px){
+  .hq-detail-stat{text-align:left;}
+  .hq-block{gap:12px; padding:13px 14px;}
+  .hq-block-m{width:46px; font-size:1.25rem;}
+}
 
 /* ── Motion ──────────────────────────────────────────────────── */
 @keyframes riseIn{from{opacity:0; transform:translateY(7px);} to{opacity:1; transform:none;}}
@@ -707,6 +952,11 @@ header{
 </style>
 </head>
 <body>
+<div class="update-bar" id="updateBar" role="status">
+  <span class="ub-dot"></span>
+  <span class="ub-text" id="updateText">A new version is ready.</span>
+  <button class="ub-btn" id="updateBtn" type="button">Reload</button>
+</div>
 <header>
   <div class="container">
     <div class="head-inner">
@@ -732,6 +982,11 @@ header{
 <main class="container" id="app"></main>
 
 <script>
+/* Which build this file is. Declared first because the footer renders it long
+   before the update machinery at the bottom of this script runs.
+   Must match the BUILD constant in sw.js. */
+const BUILD = '2026-08-18b';
+
 /* ============================================================
    DATA — Singapore O-Level (2026). Definitions written in the
    phrasing examiners look for. Verify against the official SEAB
@@ -6140,7 +6395,8 @@ function stripTags(s){ return String(s).replace(/<[^>]*>/g,' ').replace(/\s+/g,'
 
 const TAB_LABELS = { physics:'Physics', chemistry:'Chemistry', phylesson:'Phy Lessons',
                      chemlesson:'Chem Lessons', emath:'E-Math', amath:'A-Math',
-                     history:'History', histskills:'Hist Answers', engskills:'Eng Answers',
+                     history:'History', histhq:'History HQ',
+                     histskills:'Hist Answers', engskills:'Eng Answers',
                      studyskills:'Study Method', histcards:'Hist Cards', engcards:'Eng Cards',
                      social:'Social Studies', soccards:'Soc Cards' };
 
@@ -6628,6 +6884,8 @@ let state = {
   askQuery:'',
   mem:{ session:null, idx:0, revealed:false, got:0 },
   deckId:null, deckEdit:null, deckOrder:null,
+  hq:{ v:'dash', id:null, mins:60 },
+  openCh:null,        // a chapter another tab asked us to open on arrival
 };
 let cdTimer = null;
 
@@ -6659,6 +6917,7 @@ const NAV_GROUPS = [
     ['physics','Physics','tab-phys'], ['phylesson','Phy Lessons','tab-phylesson'],
     ['chemistry','Chemistry','tab-chem'], ['chemlesson','Chem Lessons','tab-chemlesson'] ]},
   { g:'Humanities', items:[
+    ['histhq','History HQ','tab-histhq'],
     ['history','History','tab-hist'], ['histcards','Hist Cards','tab-histcards'],
     ['histskills','Hist Answers','tab-histskills'], ['social','Social Studies','tab-social'],
     ['soccards','Soc Cards','tab-soccards'] ]},
@@ -6721,6 +6980,7 @@ function render(){
   if(state.subject==='memorise'){ renderMemorise(); updateMemBadge(); return; }
   if(state.subject==='custom'){ renderCustom(); return; }
   if(state.subject==='ask'){ renderAsk(); return; }
+  if(state.subject==='histhq'){ renderHQ(); window.scrollTo({top:0, behavior:'instant'}); return; }
   if(SYLLABUS_SUBJECTS.includes(state.subject)){ renderSyllabus(DATA[state.subject], state.subject); return; }
   renderDeck(DATA[state.subject]);
   window.scrollTo({top:0, behavior:'instant'});
@@ -8058,9 +8318,11 @@ function renderSyllabus(S, key){
   </div>
   <div id="chapters" style="margin-top:32px;">`;
 
+  const openAt = state.openCh;
+  state.openCh = null;
   S.chapters.forEach((ch, i)=>{
     html += `
-    <div class="chapter ${i===0?'open':''}" data-ch="${i}">
+    <div class="chapter ${i===(openAt===null?0:openAt)?'open':''}" data-ch="${i}">
       <div class="chapter-head">
         <div class="chapter-num">${ch.n}</div>
         <div class="ch-title">
@@ -8078,6 +8340,10 @@ function renderSyllabus(S, key){
   document.querySelectorAll('.chapter-head').forEach(head=>{
     head.addEventListener('click', ()=> head.parentElement.classList.toggle('open'));
   });
+  if(openAt){
+    const el = document.querySelector('.chapter[data-ch="'+openAt+'"]');
+    if(el){ el.scrollIntoView({block:'start', behavior:'instant'}); return; }
+  }
   window.scrollTo({top:0, behavior:'instant'});
 }
 
@@ -9301,6 +9567,1076 @@ function renderSection(s){
   return '';
 }
 
+/* ============================================================
+   HISTORY HQ — a study-management layer over the History material
+
+   This tab writes no history. Every fact it shows is read out of HISTORY,
+   HIST_CARDS and HIST_SKILLS, which are your own notes. What it adds is the
+   management around them: what to study, in what order, when it is due again,
+   what you can actually recall, and what you keep getting wrong.
+
+   The one rule it enforces: reading is not mastery. A topic only turns green
+   when the seven steps are done, you have rated your own recall as confident,
+   and it has survived three spaced retrievals.
+   ============================================================ */
+
+/* ---- The ten units, straight out of HISTORY ---- */
+const HQ_TOPICS = HISTORY.chapters.map(ch => ({
+  id: 'h' + ch.n, n: ch.n, ch,
+  title: ch.title.replace(/\s*★\s*/g, ' ').replace(/\s+/g, ' ').trim(),
+  sbq: ch.title.includes('★'),          // a source-based case study can be set on it
+}));
+function hqTopic(id){ return HQ_TOPICS.find(t => t.id === id); }
+
+/* Cards for a unit — HIST_CARDS topics are numbered to match the chapters. */
+function hqCards(t){
+  const grp = HIST_CARDS.topics.find(x => parseInt(x.name, 10) === t.n);
+  return grp ? grp.cards : [];
+}
+
+/* ---- Facets: where in your notes each kind of material lives -----------
+   Sections are sorted by their own headings and types. Nothing is invented:
+   if a unit has no timeline, its "Key dates" facet is empty and says so. */
+const HQ_FACETS = [
+  ['core',     'Core knowledge',    'The narrative — read this first.'],
+  ['causes',   'Causes',            'Why it happened.'],
+  ['events',   'Key events',        'What happened, in order.'],
+  ['conseq',   'Consequences',      'What it led to.'],
+  ['people',   'Important people',  'Names you can be asked to place.'],
+  ['dates',    'Important dates',   'Dates worth quoting as evidence.'],
+  ['evidence', 'Evidence & examples','Terms and specifics that support a point.'],
+  ['factors',  'Factors & relative importance', 'The material a "how far" essay compares.'],
+  ['sbq',      'SBQ-relevant',      'Can a source-based case study be set here?'],
+  ['seq',      'SEQ-relevant',      'The essay demands the syllabus states.'],
+];
+
+/* Names that appear in the material. Filtered per unit by actually looking
+   for them, so nobody is listed in a unit that never mentions them. */
+const HQ_PEOPLE = ['Hitler','Goebbels','Hindenburg','Stresemann','Wilson','Mussolini',
+  'Chamberlain','Stalin','Inukai','Churchill','Truman','Roosevelt','Kim Il Sung',
+  'Syngman Rhee','Ho Chi Minh','Ngo Dinh Diem','Eisenhower','Kennedy','Johnson',
+  'Nixon','Gorbachev','Reagan','Brezhnev'];
+
+function hqPlain(x){ return String(x).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim(); }
+
+function hqChapterText(t){
+  let s = '';
+  t.ch.sections.forEach(sec => {
+    if(!Array.isArray(sec.body)) return;
+    sec.body.forEach(b => {
+      if(typeof b === 'string') s += ' ' + hqPlain(b);
+      else if(b && typeof b === 'object') s += ' ' + hqPlain(b.t || '') + ' ' + hqPlain(b.d || '');
+    });
+  });
+  hqCards(t).forEach(c => { s += ' ' + c.t + ' ' + c.d + ' ' + (c.x || ''); });
+  return s;
+}
+
+/* Which facets a single section feeds. A section can feed more than one:
+   "core" is the whole narrative of the unit, and causes / consequences /
+   factors are lenses onto that same material rather than separate sections. */
+function hqSectionFacets(sec){
+  const h = sec.h || '';
+  if(sec.type === 'timeline') return ['events', 'dates'];
+  if(sec.type === 'terms')    return ['evidence'];
+  if(/what the syllabus asks/i.test(h)) return ['seq'];
+  const f = ['core'];
+  if(/circumstance|leading to|ineffective|mistrust|worsening|decline|emergence|developments|reasons? for|^why|growing/i.test(h)) f.push('causes');
+  if(/impact|aftermath|consequence|outcome|collapse|^the end$|armistice/i.test(h)) f.push('conseq');
+  if(/strength|weakness|comparing|factor|role of key players|consolidation|intensification|influence|expansionist|appeasement/i.test(h)) f.push('factors');
+  return f;
+}
+
+/* The whole facet index for one unit. */
+function hqFacets(t){
+  const out = {};
+  HQ_FACETS.forEach(([k]) => out[k] = { sections: [], items: [] });
+  t.ch.sections.forEach(sec => {
+    hqSectionFacets(sec).forEach(k => { if(out[k]) out[k].sections.push(sec.h); });
+    if(sec.type === 'timeline') out.dates.items = out.dates.items.concat(sec.body.map(e => e.d + ' — ' + e.t));
+    if(sec.type === 'terms')    out.evidence.items = out.evidence.items.concat(sec.body);
+  });
+  const txt = hqChapterText(t);
+  out.people.items = HQ_PEOPLE.filter(p => txt.includes(p));
+  if(out.people.items.length) out.people.sections = ['Named across this unit'];
+  // Both answers are useful, so this facet is never blank: knowing a unit
+  // cannot carry a case study is what tells you to spend the time on essays.
+  out.sbq.items = t.sbq
+    ? ['★ Prescribed case-study topic — Section A can be set on this unit, so know the sources cold.',
+       'Section B essays are never set on the same topic as that year\'s case study.']
+    : ['Not a prescribed case-study topic — Section A cannot be set here.',
+       'Study this unit for Section B essays instead.'];
+  out.sbq.sections = [t.sbq ? 'Prescribed ★' : 'Essay-only'];
+  return out;
+}
+
+/* ---- The seven-step sequence. Method, not content. ---- */
+const HQ_STEPS = [
+  { n:1, k:'understand', name:'Understand',    do:'Read the unit once in the History tab, for the story — not for memorising.' },
+  { n:2, k:'recall',     name:'Active recall', do:'Close the notes. Say or write what you remember, then check what you missed.' },
+  { n:3, k:'evidence',   name:'Evidence',      do:'Memorise the dates, names and examples below until you can produce them cold.' },
+  { n:4, k:'causation',  name:'Causation',     do:'For each cause, say it as CAUSE → HOW IT CONTRIBUTED → RESULT.' },
+  { n:5, k:'compare',    name:'Comparison',    do:'Rank the factors: most important, second, least — and why one outweighs another.' },
+  { n:6, k:'sbq',        name:'SBQ',           do:'Practise the source skills that apply to this unit.' },
+  { n:7, k:'seq',        name:'SEQ',           do:'Plan and write an essay on this unit using the planning template.' },
+];
+
+/* ---- Spaced repetition -------------------------------------------------
+   1 → 3 → 7 → 14 → 30 days. A failed review drops back one rung, so the
+   next look is sooner. Three passes in a row jumps two rungs, so material
+   that is genuinely secure stops eating time. */
+const HQ_LADDER = [1, 3, 7, 14, 30];
+
+const HQ_KEY = 'osh-topic', HQ_FACT = 'osh-fact', HQ_SBQ = 'osh-sbq',
+      HQ_SEQ = 'osh-seq', HQ_ERR = 'osh-err', HQ_EXAM = 'osh-exam';
+
+function hqLoad(key, dflt){ try{ return JSON.parse(localStorage.getItem(key) || dflt); }catch(e){ return JSON.parse(dflt); } }
+function hqSave(key, v){ localStorage.setItem(key, JSON.stringify(v)); }
+
+function hqAll(){ return hqLoad(HQ_KEY, '{}'); }
+function hqRec(id){
+  const a = hqAll();
+  return a[id] || { steps:{}, recall:null, stage:0, reps:[], last:null, due:null };
+}
+function hqPut(id, rec){ const a = hqAll(); a[id] = rec; hqSave(HQ_KEY, a); }
+
+function hqStepsDone(r){ return HQ_STEPS.filter(s => r.steps && r.steps[s.k]).length; }
+function hqPasses(r){ return (r.reps || []).filter(x => x.ok).length; }
+
+function hqReview(id, ok){
+  const r = hqRec(id), today = midnight(new Date());
+  r.reps = (r.reps || []).concat([{ d: ymd(today), ok }]);
+  if(ok){
+    const last3 = r.reps.slice(-3);
+    const streak = last3.length === 3 && last3.every(x => x.ok);
+    r.stage = Math.min(HQ_LADDER.length, (r.stage || 0) + (streak ? 2 : 1));
+  }else{
+    r.stage = Math.max(0, (r.stage || 0) - 1);
+  }
+  r.last = ymd(today);
+  r.due  = ymd(addDays(today, HQ_LADDER[Math.min(r.stage, HQ_LADDER.length - 1)]));
+  hqPut(id, r);
+}
+
+/* Reading is not mastery: all seven steps, a confident self-rating, three
+   spaced passes with the 7-day gap behind it — and the most recent retrieval
+   must have been one of the passes. Failing a review takes the badge away
+   again, which is the whole point of testing yourself. */
+function hqMastered(r){
+  const last = (r.reps || [])[(r.reps || []).length - 1];
+  return hqStepsDone(r) === HQ_STEPS.length && r.recall === 'conf' &&
+         (r.stage || 0) >= 3 && hqPasses(r) >= 3 && !(last && !last.ok);
+}
+function hqDue(r, today){ return !!r.due && parseYmd(r.due) <= today; }
+
+function hqStatus(t, today){
+  const r = hqRec(t.id);
+  if(!hqStepsDone(r) && !(r.reps || []).length && !r.recall) return 'new';
+  if(hqDue(r, today)) return 'review';
+  if(hqMastered(r)) return 'mastered';
+  return 'learning';
+}
+const HQ_STATUS = {
+  new:      { dot:'🟥', label:'Not started', cls:'st-new' },
+  learning: { dot:'🟨', label:'Learning',    cls:'st-learn' },
+  review:   { dot:'🟧', label:'Needs review',cls:'st-review' },
+  mastered: { dot:'🟩', label:'Mastered',    cls:'st-master' },
+};
+
+/* Per-topic mastery, 0–100. Weighted so that steps and retrieval dominate
+   and simply opening the notes moves it very little. */
+function hqMastery(t){
+  const r = hqRec(t.id), s = hqSeqRec(t.id);
+  const steps  = hqStepsDone(r) / HQ_STEPS.length * 35;
+  const recall = r.recall === 'conf' ? 25 : r.recall === 'part' ? 12 : 0;
+  const reps   = Math.min(r.stage || 0, 5) / 5 * 25;
+  const seq    = HQ_SEQ_ITEMS.filter(i => s.check && s.check[i.k]).length / HQ_SEQ_ITEMS.length * 15;
+  return Math.round(steps + recall + reps + seq);
+}
+function hqOverall(){
+  return Math.round(HQ_TOPICS.reduce((a, t) => a + hqMastery(t), 0) / HQ_TOPICS.length);
+}
+
+/* ---- Per-fact recall, tracked apart from reading progress ---- */
+function hqFacts(){ return hqLoad(HQ_FACT, '{}'); }
+function hqFactKey(t, card){ return t.id + '|' + card.t; }
+function hqFactRating(t, card){ return hqFacts()[hqFactKey(t, card)] || null; }
+function hqSetFact(t, card, v){
+  const a = hqFacts(), k = hqFactKey(t, card);
+  if(v) a[k] = v; else delete a[k];
+  hqSave(HQ_FACT, a);
+}
+function hqFactCounts(t){
+  const cards = hqCards(t), f = hqFacts();
+  let no = 0, part = 0, yes = 0;
+  cards.forEach(c => {
+    const v = f[hqFactKey(t, c)];
+    if(v === 'no') no++; else if(v === 'part') part++; else if(v === 'yes') yes++;
+  });
+  return { total: cards.length, no, part, yes, unrated: cards.length - no - part - yes };
+}
+
+/* ---- SBQ skills. Each one points at the chapter of HIST_SKILLS that
+   already teaches it — the technique guides are not repeated here. ---- */
+const HQ_SBQ_SKILLS = [
+  { id:'inference', name:'Inference',      cue:'“What can you learn from Source A?”',      ch:2 },
+  { id:'purpose',   name:'Message & Purpose', cue:'“Why was this cartoon published?”',     ch:3 },
+  { id:'compare',   name:'Comparison',     cue:'“How far do these two sources agree?”',    ch:4 },
+  { id:'reliab',    name:'Reliability',    cue:'“How reliable is this source?”',           ch:5 },
+  { id:'proven',    name:'Provenance',     cue:'Who made it, when, for whom, and why',     ch:5 },
+  { id:'surprise',  name:'Surprise / Interpretation', cue:'“Are you surprised by Source C?”', ch:6 },
+  { id:'utility',   name:'Utility',        cue:'“How useful is this source?”',             ch:7 },
+  { id:'cross',     name:'Cross-reference',cue:'“How far do the sources show…?”',          ch:8 },
+];
+function hqSbqAll(){ return hqLoad(HQ_SBQ, '{}'); }
+function hqSbqRec(id){
+  const a = hqSbqAll();
+  return a[id] || { attempts: [], stage: 0, due: null };
+}
+function hqSbqPut(id, r){ const a = hqSbqAll(); a[id] = r; hqSave(HQ_SBQ, a); }
+function hqSbqStats(id){
+  const r = hqSbqRec(id), at = r.attempts || [];
+  const marks = at.reduce((a, x) => a + x.mark, 0), max = at.reduce((a, x) => a + x.max, 0);
+  const pct = max ? Math.round(marks / max * 100) : null;
+  const avg = at.length ? (marks / at.length) : null;
+  let weak;
+  if(!at.length)      weak = { k:'untested', label:'Not attempted' };
+  else if(at.length < 2) weak = { k:'thin',   label:'Too few to judge' };
+  else if(pct < 50)   weak = { k:'weak',      label:'Weak' };
+  else if(pct < 70)   weak = { k:'shaky',     label:'Shaky' };
+  else                weak = { k:'solid',     label:'Solid' };
+  return { n: at.length, pct, avg, weak, last: at.length ? at[at.length - 1].d : null, due: r.due };
+}
+
+/* ---- SEQ ---- */
+const HQ_SEQ_ITEMS = [
+  { k:'factors',   label:'Major factors' },
+  { k:'evidence',  label:'Evidence for each factor' },
+  { k:'explain',   label:'Explanation of each factor' },
+  { k:'compare',   label:'Comparison between factors' },
+  { k:'judgement', label:'Overall judgement' },
+];
+function hqSeqAll(){ return hqLoad(HQ_SEQ, '{}'); }
+function hqSeqRec(id){ const a = hqSeqAll(); return a[id] || { check:{}, attempts:[] }; }
+function hqSeqPut(id, r){ const a = hqSeqAll(); a[id] = r; hqSave(HQ_SEQ, a); }
+
+/* ---- Error log (History only) ---- */
+const HQ_ERR_TYPES = ['Factual error','Forgotten evidence','Weak explanation','Weak analysis',
+                      'Poor comparison','Weak judgement','SBQ technique error','SEQ structure error'];
+function hqErrs(){ return hqLoad(HQ_ERR, '[]'); }
+function hqErrsFor(id){ return hqErrs().filter(e => e.topic === id); }
+
+/* ---- Exam date ---- */
+function hqExam(){ const v = localStorage.getItem(HQ_EXAM); return v ? parseYmd(v) : null; }
+function hqDaysLeft(){
+  const d = hqExam(); if(!d) return null;
+  return Math.round((midnight(d) - midnight(new Date())) / 864e5);
+}
+
+/* ---- Priority ----------------------------------------------------------
+   Six inputs, exactly as briefed: how much the topic matters, how long since
+   you touched it, how well you say you recall it, how many mistakes it has
+   cost you, how much exam practice it has had, and how close the exam is. */
+function hqPriority(t, today){
+  const r = hqRec(t.id), s = hqSeqRec(t.id);
+  let score = t.sbq ? 18 : 10;                                  // importance
+  const days = r.last ? Math.round((today - parseYmd(r.last)) / 864e5) : null;
+  score += days === null ? 18 : Math.min(days / 7, 1) * 18;     // recency
+  score += r.recall === 'conf' ? 0 : r.recall === 'part' ? 12 : r.recall === 'no' ? 22 : 18;
+  score += Math.min(hqErrsFor(t.id).length * 5, 15);            // mistakes
+  const tries = (s.attempts || []).length;
+  score += tries === 0 ? 12 : Math.max(0, 12 - tries * 4);      // exam practice
+  if(hqDue(r, today)) score += 15;                              // overdue
+  const left = hqDaysLeft();
+  if(left !== null) score *= Math.max(1, Math.min(1.5, 1 + (60 - left) / 120));
+  return Math.min(100, Math.round(score));
+}
+function hqBand(p){ return p >= 55 ? 'high' : p >= 32 ? 'med' : 'low'; }
+const HQ_BAND = { high:{dot:'🔴', label:'High'}, med:{dot:'🟡', label:'Medium'}, low:{dot:'🟢', label:'Low'} };
+
+/* ---- What to study now -------------------------------------------------
+   Tasks are generated from your own state, ranked, and the top three shown.
+   Every one names a specific unit or skill — never "revise History". */
+function hqTasks(today){
+  const out = [];
+
+  HQ_TOPICS.forEach(t => {
+    const r = hqRec(t.id), p = hqPriority(t, today);
+    if(hqDue(r, today)){
+      const over = Math.round((today - parseYmd(r.due)) / 864e5);
+      out.push({ w: p + 30, kind:'Review due', title: t.title,
+        why: over > 0 ? `${over} day${over===1?'':'s'} overdue` : 'due today',
+        go:{ v:'topic', id:t.id } });
+    }
+  });
+
+  // Facts you have said you cannot recall are the cheapest marks on the table,
+  // and the brief is explicit that revision follows what you cannot recall —
+  // so these outrank a unit you simply have not opened yet.
+  HQ_TOPICS.forEach(t => {
+    const c = hqFactCounts(t);
+    if(c.no >= 1) out.push({ w: 72 + c.no * 4, kind:'Weak recall', title: t.title,
+      why: `${c.no} fact${c.no===1?'':'s'} you cannot recall`, go:{ v:'topic', id:t.id } });
+  });
+
+  const errDue = hqErrs().filter(e => !e.fixed && parseYmd(e.redo) <= today);
+  if(errDue.length) out.push({ w: 70, kind:'Mistakes', title:'Re-attempt logged mistakes',
+    why: `${errDue.length} due`, go:{ v:'errors' } });
+
+  HQ_TOPICS.forEach(t => {
+    const r = hqRec(t.id), p = hqPriority(t, today);
+    const next = HQ_STEPS.find(s => !(r.steps && r.steps[s.k]));
+    if(next) out.push({ w: p, kind:'Step ' + next.n + ' · ' + next.name, title: t.title,
+      why: next.do, go:{ v:'topic', id:t.id } });
+  });
+
+  HQ_SBQ_SKILLS.forEach(sk => {
+    const st = hqSbqStats(sk.id);
+    if(st.weak.k === 'untested')   out.push({ w: 58, kind:'SBQ', title: sk.name, why:'never practised', go:{ v:'sbq' } });
+    else if(st.weak.k === 'weak')  out.push({ w: 68, kind:'SBQ', title: sk.name, why:`averaging ${st.pct}%`, go:{ v:'sbq' } });
+    // One attempt is not a verdict either way — the honest move is another one,
+    // and a bad first score makes that more urgent, not less.
+    else if(st.weak.k === 'thin')  out.push({ w: st.pct < 60 ? 64 : 52, kind:'SBQ', title: sk.name,
+      why: `one attempt at ${st.pct}% — do another to get a read`, go:{ v:'sbq' } });
+    else if(st.due && parseYmd(st.due) <= today) out.push({ w: 54, kind:'SBQ', title: sk.name, why:'review due', go:{ v:'sbq' } });
+  });
+
+  HQ_TOPICS.filter(t => t.sbq).forEach(t => {
+    const s = hqSeqRec(t.id);
+    if(!(s.attempts || []).length) out.push({ w: 46, kind:'SEQ', title: t.title,
+      why:'no essay planned yet', go:{ v:'seq' } });
+  });
+
+  // One task per unit, the strongest — and at most two of any one kind, so the
+  // shortlist is three things to do rather than the same instruction three times.
+  const seen = new Set(), kinds = {}, keep = [], rest = [];
+  out.sort((a, b) => b.w - a.w).forEach(x => {
+    const k = x.kind.split(' ')[0];
+    if(seen.has(k + '|' + x.title)) return;
+    seen.add(k + '|' + x.title);
+    kinds[k] = (kinds[k] || 0) + 1;
+    (kinds[k] <= 2 ? keep : rest).push(x);
+  });
+  return keep.concat(rest);
+}
+
+/* ---- Session generator -------------------------------------------------
+   The 60-minute shape in the brief (10 weak / 15 recall / 10 evidence /
+   15 SBQ-SEQ / 10 mistakes) scaled to whatever time you have, with the
+   smallest blocks dropped rather than shaved to nothing on a short session.
+   No block is passive reading. */
+const HQ_BLOCKS = [
+  { k:'weak',     w:10, name:'Review weak material' },
+  { k:'recall',   w:15, name:'Active recall' },
+  { k:'evidence', w:10, name:'Evidence memorisation' },
+  { k:'practice', w:15, name:'SBQ / SEQ practice' },
+  { k:'mistakes', w:10, name:'Review mistakes' },
+];
+
+function hqSession(mins, today){
+  const tasks = hqTasks(today);
+  const byTopic = HQ_TOPICS.slice().sort((a, b) => hqPriority(b, today) - hqPriority(a, today));
+  const errDue = hqErrs().filter(e => !e.fixed && parseYmd(e.redo) <= today);
+
+  // Which blocks fit. Below 45 minutes, fewer blocks done properly beats five
+  // token ones.
+  let use = HQ_BLOCKS.slice();
+  if(mins <= 15) use = HQ_BLOCKS.filter(b => ['recall','evidence'].includes(b.k));
+  else if(mins <= 30) use = HQ_BLOCKS.filter(b => ['weak','recall','evidence','practice'].includes(b.k));
+  if(!errDue.length) use = use.filter(b => b.k !== 'mistakes');
+  if(!use.length) use = [HQ_BLOCKS[1]];
+
+  const totW = use.reduce((a, b) => a + b.w, 0);
+  const parts = use.map(b => ({ ...b, mins: Math.max(5, Math.round(mins * b.w / totW / 5) * 5) }));
+  // Rounding to 5s drifts; put the difference on the biggest block.
+  let drift = mins - parts.reduce((a, p) => a + p.mins, 0);
+  if(drift){
+    const big = parts.reduce((a, p) => p.mins > a.mins ? p : a, parts[0]);
+    big.mins = Math.max(5, big.mins + drift);
+  }
+
+  const weakest   = byTopic[0];
+  const worstFact = HQ_TOPICS.map(t => ({ t, c: hqFactCounts(t) }))
+                      .sort((a, b) => b.c.no - a.c.no)[0];
+  const sbqWorst  = HQ_SBQ_SKILLS.map(s => ({ s, st: hqSbqStats(s.id) }))
+                      .sort((a, b) => (a.st.pct === null ? -1 : a.st.pct) - (b.st.pct === null ? -1 : b.st.pct))[0];
+  const seqGap    = HQ_TOPICS.find(t => !(hqSeqRec(t.id).attempts || []).length);
+
+  return parts.map(p => {
+    if(p.k === 'weak'){
+      const due = tasks.find(x => x.kind === 'Review due');
+      const t = due ? hqTopic(due.go.id) : weakest;
+      return { ...p, target: t.title, how:'Re-read only the parts you could not recall last time, then close the notes and rate yourself again.', go:{ v:'topic', id:t.id } };
+    }
+    if(p.k === 'recall'){
+      const t = weakest;
+      return { ...p, target: t.title, how:'Notes closed. Write the causes, the key events and the consequences from memory, then check against the unit and mark what you missed.', go:{ v:'topic', id:t.id } };
+    }
+    if(p.k === 'evidence'){
+      const t = (worstFact && worstFact.c.no) ? worstFact.t : weakest;
+      return { ...p, target: t.title, how:'Drill the dates, names and terms in this unit until you can produce them without the prompt. Rate each one honestly.', go:{ v:'topic', id:t.id } };
+    }
+    if(p.k === 'practice'){
+      if(sbqWorst && (sbqWorst.st.weak.k === 'untested' || sbqWorst.st.weak.k === 'weak'))
+        return { ...p, target:'SBQ · ' + sbqWorst.s.name, how:'Open the technique guide, do one question of this type against the clock, then log the mark.', go:{ v:'sbq' } };
+      const t = seqGap || weakest;
+      return { ...p, target:'SEQ · ' + t.title, how:'Plan one essay with the template — factors, evidence, explanation, comparison, judgement. Write it if the time allows.', go:{ v:'seq' } };
+    }
+    return { ...p, target:`${errDue.length} entr${errDue.length===1?'y':'ies'} due`, how:'Re-attempt each one from scratch before reading your own correction.', go:{ v:'errors' } };
+  });
+}
+
+/* ---- Exam phase --------------------------------------------------------
+   As the exam closes in, the balance moves off learning new material and
+   onto retrieval and timed practice. */
+const HQ_PHASES = [
+  { min:57, name:'Learn',      mix:'New material 50% · recall 30% · practice 20%',
+    note:'Cover ground. Get every unit at least to step 3 so nothing is untouched.' },
+  { min:29, name:'Consolidate',mix:'New material 25% · recall 45% · practice 30%',
+    note:'Close the gaps. Every unit through step 5, and start logging SBQ marks.' },
+  { min:15, name:'Practice',   mix:'Recall 40% · SBQ/SEQ 45% · mistakes 15%',
+    note:'Past-year questions become the main activity. Stop reading, start writing.' },
+  { min:0,  name:'Exam sim',   mix:'Timed papers 60% · weak recall 25% · mistakes 15%',
+    note:'Full papers to time. Only revise what your own error log says is still wrong.' },
+];
+function hqPhase(days){
+  if(days === null) return null;
+  return HQ_PHASES.find(p => days >= p.min) || HQ_PHASES[HQ_PHASES.length - 1];
+}
+
+/* ============================================================
+   HISTORY HQ — views
+   ============================================================ */
+const HQ_VIEWS = [['dash','Dashboard'],['topics','Topics'],['sbq','SBQ'],
+                  ['seq','SEQ'],['errors','Error log'],['session','Session'],['exam','Exam']];
+
+function hqGo(v, id){
+  state.hq.v = v;
+  if(id !== undefined) state.hq.id = id;
+  renderHQ();
+  window.scrollTo({ top:0, behavior:'instant' });
+}
+
+/* Open a chapter of another tab directly — used by the "guide" links so the
+   technique material is never duplicated here. */
+function hqOpenChapter(sub, chIdx){
+  state.openCh = chIdx;
+  goToSubject(sub);
+}
+
+function hqBar(pct, cls){
+  return `<div class="meter"><div class="meter-fill ${cls || ''}" style="width:${Math.max(0, Math.min(100, pct))}%"></div></div>`;
+}
+
+function renderHQ(){
+  const today = midnight(new Date());
+  const v = state.hq.v;
+  let body = '';
+  if(v === 'topics' && state.hq.id) body = hqTopicDetail(hqTopic(state.hq.id), today);
+  else if(v === 'topics')  body = hqTopicList(today);
+  else if(v === 'sbq')     body = hqSbqView(today);
+  else if(v === 'seq')     body = hqSeqView(today);
+  else if(v === 'errors')  body = hqErrView(today);
+  else if(v === 'session') body = hqSessionView(today);
+  else if(v === 'exam')    body = hqExamView(today);
+  else                     body = hqDash(today);
+
+  app.innerHTML = `
+  <section class="subject-hero">
+    <span class="eyebrow">Humanities (History) · 2261 · Paper 2</span>
+    <h2>History HQ</h2>
+    <p>What to study, how to study it, when it is due again, and what you have actually
+       retained. The material itself lives in <b>History</b>, <b>Hist Cards</b> and
+       <b>Hist Answers</b> — this tab manages it.</p>
+  </section>
+  <div class="hq-nav">${HQ_VIEWS.map(([k, label]) =>
+    `<button class="hq-tab ${v===k?'on':''}" data-hq="view" data-v="${k}">${esc(label)}</button>`).join('')}</div>
+  <div class="hq-body">${body}</div>` + footerHTML();
+
+  hqWire(today);
+}
+
+/* ---- 1. Dashboard ---- */
+function hqDash(today){
+  const counts = { new:0, learning:0, review:0, mastered:0 };
+  HQ_TOPICS.forEach(t => counts[hqStatus(t, today)]++);
+  const overall = hqOverall();
+  const tasks   = hqTasks(today).slice(0, 3);
+  const days    = hqDaysLeft();
+
+  const sbqDone = HQ_SBQ_SKILLS.filter(s => hqSbqStats(s.id).n > 0).length;
+  const sbqAtt  = HQ_SBQ_SKILLS.reduce((a, s) => a + hqSbqStats(s.id).n, 0);
+  const seqDone = HQ_TOPICS.filter(t => (hqSeqRec(t.id).attempts || []).length > 0).length;
+  const seqAtt  = HQ_TOPICS.reduce((a, t) => a + (hqSeqRec(t.id).attempts || []).length, 0);
+
+  const upcoming = HQ_TOPICS.map(t => ({ t, r: hqRec(t.id) }))
+    .filter(x => x.r.due)
+    .sort((a, b) => a.r.due.localeCompare(b.r.due))
+    .slice(0, 5);
+
+  return `
+  <div class="hq-now">
+    <div class="hq-now-h">What you should study now</div>
+    ${tasks.length ? tasks.map((x, i) => `
+      <button class="hq-task" data-hq="task" data-i="${i}">
+        <span class="hq-task-n">${i + 1}</span>
+        <span class="hq-task-b">
+          <span class="hq-task-k">${esc(x.kind)}</span>
+          <span class="hq-task-t">${esc(x.title)}</span>
+          <span class="hq-task-w">${esc(x.why)}</span>
+        </span>
+        <span class="hq-task-go">→</span>
+      </button>`).join('')
+    : `<div class="hq-empty">Nothing is due. Open <b>Topics</b> and start a unit.</div>`}
+  </div>
+
+  <div class="stat-row">
+    <div class="tile">
+      <div class="t-label">Overall mastery</div>
+      <div class="t-value">${overall}%</div>
+      ${hqBar(overall, overall >= 80 ? 'hit' : '')}
+      <div class="t-sub">Across all ten units. Reading alone moves this very little.</div>
+    </div>
+    <div class="tile">
+      <div class="t-label">Units</div>
+      <div class="t-value">${counts.mastered}<span class="t-of"> / ${HQ_TOPICS.length}</span></div>
+      <div class="hq-legend">
+        <span>🟥 ${counts.new} not started</span><span>🟨 ${counts.learning} learning</span>
+        <span>🟧 ${counts.review} need review</span><span>🟩 ${counts.mastered} mastered</span>
+      </div>
+    </div>
+    <div class="tile">
+      <div class="t-label">Exam</div>
+      <div class="t-value">${days === null ? '—' : days}</div>
+      <div class="t-sub">${days === null
+        ? 'No date set. <button class="hq-link" data-hq="view" data-v="exam">Set it</button> to prioritise by urgency.'
+        : `days left · ${esc((hqPhase(days) || {}).name || '')} phase`}</div>
+    </div>
+  </div>
+
+  <div class="stat-row">
+    <div class="tile">
+      <div class="t-label">SBQ progress</div>
+      <div class="t-value">${sbqDone}<span class="t-of"> / ${HQ_SBQ_SKILLS.length}</span></div>
+      ${hqBar(sbqDone / HQ_SBQ_SKILLS.length * 100)}
+      <div class="t-sub">skills attempted · ${sbqAtt} question${sbqAtt===1?'':'s'} logged</div>
+    </div>
+    <div class="tile">
+      <div class="t-label">SEQ progress</div>
+      <div class="t-value">${seqDone}<span class="t-of"> / ${HQ_TOPICS.length}</span></div>
+      ${hqBar(seqDone / HQ_TOPICS.length * 100)}
+      <div class="t-sub">units with an essay planned · ${seqAtt} attempt${seqAtt===1?'':'s'}</div>
+    </div>
+    <div class="tile">
+      <div class="t-label">Upcoming reviews</div>
+      ${upcoming.length ? `<div class="hq-due-list">${upcoming.map(x => {
+        const due = parseYmd(x.r.due), late = due <= today;
+        return `<div class="hq-due"><span class="${late?'is-late':''}">${late?'due now':fmtShort(due)}</span>
+                <button class="hq-link" data-hq="open" data-id="${x.t.id}">${esc(x.t.title)}</button></div>`;
+      }).join('')}</div>` : `<div class="t-sub" style="margin-top:12px;">Nothing scheduled yet. Reviews appear once you rate your recall on a unit.</div>`}
+    </div>
+  </div>
+
+  <div class="hq-split">
+    <div class="hq-panel">
+      <h4>Currently studying</h4>
+      ${listOrEmpty(HQ_TOPICS.filter(t => hqStatus(t, today) === 'learning'), today, 'Nothing in progress.')}
+    </div>
+    <div class="hq-panel">
+      <h4>Needs revision</h4>
+      ${listOrEmpty(HQ_TOPICS.filter(t => hqStatus(t, today) === 'review'), today, 'Nothing overdue.')}
+    </div>
+  </div>`;
+}
+
+function listOrEmpty(list, today, empty){
+  if(!list.length) return `<div class="hq-empty">${esc(empty)}</div>`;
+  return list.map(t => `<button class="hq-row" data-hq="open" data-id="${t.id}">
+    <span class="hq-row-t">${esc(t.title)}</span>
+    <span class="hq-row-m">${hqMastery(t)}%</span></button>`).join('');
+}
+
+/* ---- 2. Topic list ---- */
+function hqTopicList(today){
+  const rows = HQ_TOPICS.map(t => {
+    const st = HQ_STATUS[hqStatus(t, today)], p = hqPriority(t, today), b = HQ_BAND[hqBand(p)];
+    const r = hqRec(t.id), fc = hqFactCounts(t);
+    return `<button class="hq-card ${st.cls}" data-hq="open" data-id="${t.id}">
+      <div class="hq-card-top">
+        <span class="hq-num">${t.n}</span>
+        <span class="hq-card-title">${esc(t.title)}${t.sbq?'<span class="hq-star" title="Source-based case study topic">★</span>':''}</span>
+        <span class="hq-pri" title="Priority">${b.dot}</span>
+      </div>
+      <div class="hq-card-q">${esc(t.ch.q)}</div>
+      <div class="hq-card-meta">
+        <span class="hq-status">${st.dot} ${esc(st.label)}</span>
+        <span>${hqStepsDone(r)}/7 steps</span>
+        <span>${fc.yes}/${fc.total} facts</span>
+        ${r.due ? `<span>next ${fmtShort(parseYmd(r.due))}</span>` : ''}
+      </div>
+      ${hqBar(hqMastery(t))}
+    </button>`;
+  }).join('');
+
+  return `<div class="hq-note">Priority weighs how much the unit matters, how long since you
+    touched it, how well you say you recall it, how many mistakes it has cost you, how much
+    exam practice it has had, and how close the exam is. ★ marks the four units a source-based
+    case study can be set on.</div>
+    <div class="hq-grid">${rows}</div>`;
+}
+
+/* ---- 3. Topic detail ---- */
+function hqTopicDetail(t, today){
+  const r = hqRec(t.id), st = HQ_STATUS[hqStatus(t, today)];
+  const p = hqPriority(t, today), band = HQ_BAND[hqBand(p)];
+  const facets = hqFacets(t), cards = hqCards(t), fc = hqFactCounts(t);
+  const errs = hqErrsFor(t.id);
+
+  const steps = HQ_STEPS.map(s => {
+    const on = !!(r.steps && r.steps[s.k]);
+    return `<button class="hq-step ${on?'on':''}" data-hq="step" data-id="${t.id}" data-k="${s.k}">
+      <span class="hq-step-box">${on?'✓':''}</span>
+      <span class="hq-step-b">
+        <span class="hq-step-n">Step ${s.n} · ${esc(s.name)}</span>
+        <span class="hq-step-d">${esc(s.do)}</span>
+      </span></button>`;
+  }).join('');
+
+  const facetRows = HQ_FACETS.map(([k, label, note]) => {
+    const f = facets[k];
+    const has = f.sections.length || f.items.length;
+    return `<details class="hq-facet ${has?'':'is-empty'}">
+      <summary><span class="hq-facet-n">${esc(label)}</span>
+        <span class="hq-facet-c">${has ? (f.items.length || f.sections.length) : 'none in your notes'}</span></summary>
+      <div class="hq-facet-b">
+        <p class="hq-facet-note">${esc(note)}</p>
+        ${f.sections.length ? `<div class="hq-secs">${f.sections.map(s => `<span class="keyterm">${esc(s)}</span>`).join('')}</div>` : ''}
+        ${f.items.length ? `<ul class="hq-items">${f.items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>` : ''}
+        ${has ? '' : `<p class="hq-facet-note">Your notes carry no material tagged this way for this unit. Nothing has been invented to fill the gap.</p>`}
+      </div></details>`;
+  }).join('');
+
+  const factRows = cards.length ? cards.map(c => {
+    const v = hqFactRating(t, c);
+    return `<div class="hq-fact ${v?('r-'+v):''}">
+      <div class="hq-fact-t">${esc(c.t)}</div>
+      <div class="hq-fact-d">${esc(c.d)}</div>
+      <div class="hq-fact-rate">
+        ${[['no','❌','Can\'t recall'],['part','🟡','Partial'],['yes','🟢','Confident']].map(([kk, ic, lb]) =>
+          `<button class="hq-rate ${v===kk?'on':''}" data-hq="fact" data-id="${t.id}" data-card="${esc(c.t)}" data-v="${kk}">${ic} ${lb}</button>`).join('')}
+      </div></div>`;
+  }).join('') : `<div class="hq-empty">No cards for this unit in Hist Cards.</div>`;
+
+  const reps = (r.reps || []).slice(-6).reverse();
+
+  return `
+  <button class="hq-back" data-hq="view" data-v="topics">← All units</button>
+  <div class="hq-detail-head">
+    <div>
+      <h3>${t.n}. ${esc(t.title)}${t.sbq?'<span class="hq-star">★</span>':''}</h3>
+      <p class="hq-detail-q">${esc(t.ch.q)}</p>
+    </div>
+    <div class="hq-detail-stat">
+      <span class="hq-status">${st.dot} ${esc(st.label)}</span>
+      <span class="hq-status">${band.dot} ${esc(band.label)} priority</span>
+    </div>
+  </div>
+
+  <div class="stat-row">
+    <div class="tile"><div class="t-label">Mastery</div><div class="t-value">${hqMastery(t)}%</div>${hqBar(hqMastery(t))}
+      <div class="t-sub">${hqMastered(r) ? 'All seven steps, confident recall, three spaced passes.' : 'Needs all seven steps, a confident rating, and three spaced passes.'}</div></div>
+    <div class="tile"><div class="t-label">Recall of facts</div>
+      <div class="t-value">${fc.yes}<span class="t-of"> / ${fc.total}</span></div>
+      ${hqBar(fc.total ? fc.yes / fc.total * 100 : 0)}
+      <div class="t-sub">❌ ${fc.no} · 🟡 ${fc.part} · 🟢 ${fc.yes} · unrated ${fc.unrated}</div></div>
+    <div class="tile"><div class="t-label">Spaced repetition</div>
+      <div class="t-value">${r.stage || 0}<span class="t-of"> / ${HQ_LADDER.length}</span></div>
+      <div class="t-sub">${r.due ? `Next review ${fmtShort(parseYmd(r.due))}${hqDue(r, today)?' — due now':''}` : 'Not scheduled. Rate your recall below to start the ladder.'}</div>
+      <div class="t-sub">Ladder: ${HQ_LADDER.join(' → ')} days</div></div>
+  </div>
+
+  <div class="hq-sec"><h4>How to study this unit</h4>
+    <p class="hq-sec-note">Work down in order. Ticking a step records that you did it —
+      it does not claim you know the unit; that is what the recall rating and the reviews are for.</p>
+    <div class="hq-steps">${steps}</div>
+    <div class="hq-jump">
+      <button class="mini-btn" data-hq="jump" data-sub="history" data-ch="${t.n - 1}">Open the notes for this unit →</button>
+      <button class="mini-btn" data-hq="view" data-v="sbq">SBQ skills →</button>
+      <button class="mini-btn" data-hq="view" data-v="seq">SEQ planning →</button>
+    </div>
+  </div>
+
+  <div class="hq-sec"><h4>Can you recall it?</h4>
+    <p class="hq-sec-note">Rate this from memory, with the notes shut. This is what schedules
+      the next review — and a poor rating pushes the unit back down the ladder.</p>
+    <div class="hq-recall">
+      ${[['no','❌','Can\'t recall'],['part','🟡','Partially recall'],['conf','🟢','Recall confidently']].map(([k, ic, lb]) =>
+        `<button class="hq-rbtn ${r.recall===k?'on':''}" data-hq="recall" data-id="${t.id}" data-v="${k}">${ic} ${esc(lb)}</button>`).join('')}
+    </div>
+    ${reps.length ? `<div class="hq-reps">${reps.map(x =>
+      `<span class="hq-rep ${x.ok?'ok':'no'}">${x.ok?'✓':'✗'} ${fmtShort(parseYmd(x.d))}</span>`).join('')}</div>` : ''}
+  </div>
+
+  <div class="hq-sec"><h4>What is in your notes for this unit</h4>
+    <p class="hq-sec-note">An index of your own material, sorted by what an examiner asks for.
+      Empty facets are shown as empty rather than filled in.</p>
+    <div class="hq-facets">${facetRows}</div>
+  </div>
+
+  <div class="hq-sec"><h4>Evidence · ${cards.length} recall card${cards.length===1?'':'s'}</h4>
+    <p class="hq-sec-note">Rate each one honestly. Anything marked ❌ is what the dashboard
+      will send you back to first.</p>
+    <div class="hq-facts">${factRows}</div>
+  </div>
+
+  ${errs.length ? `<div class="hq-sec"><h4>Mistakes logged on this unit</h4>
+    ${errs.map(e => `<div class="entry"><div class="entry-top">
+        <span class="chip chip-sched">${esc(e.type)}</span>
+        <span class="entry-topic">${esc(e.q || 'Untitled question')}</span></div>
+      <div class="entry-field"><div class="ef-label">What went wrong</div><p>${esc(e.mistake)}</p></div>
+      <div class="entry-field"><div class="ef-label">Correct information</div><p>${esc(e.correct)}</p></div>
+    </div>`).join('')}</div>` : ''}`;
+}
+
+/* ---- 4. SBQ ------------------------------------------------------------
+   Tracking only. The technique guides, checklists, model structures and the
+   mistake lists already exist in Hist Answers, so each skill links there
+   rather than restating them. */
+function hqSbqView(today){
+  const rows = HQ_SBQ_SKILLS.map(sk => {
+    const st = hqSbqStats(sk.id);
+    return `<div class="hq-skill">
+      <div class="hq-skill-h">
+        <div><div class="hq-skill-n">${esc(sk.name)}</div><div class="hq-skill-q">${esc(sk.cue)}</div></div>
+        <span class="hq-weak w-${st.weak.k}">${esc(st.weak.label)}</span>
+      </div>
+      <div class="hq-skill-m">
+        <span><b>${st.n}</b> attempted</span>
+        <span><b>${st.pct === null ? '—' : st.pct + '%'}</b> accuracy</span>
+        <span><b>${st.avg === null ? '—' : st.avg.toFixed(1)}</b> avg marks</span>
+        <span>last ${st.last ? fmtShort(parseYmd(st.last)) : '—'}</span>
+        <span>next ${st.due ? fmtShort(parseYmd(st.due)) + (parseYmd(st.due) <= today ? ' · due' : '') : '—'}</span>
+      </div>
+      <form class="hq-log" data-hq="sbq-log" data-id="${sk.id}">
+        <input type="number" name="mark" min="0" step="1" placeholder="marks" required />
+        <span class="hq-of">out of</span>
+        <input type="number" name="max" min="1" step="1" placeholder="total" required />
+        <button class="mini-btn" type="submit">Log attempt</button>
+        <button class="mini-btn" type="button" data-hq="jump" data-sub="histskills" data-ch="${sk.ch - 1}">Technique guide →</button>
+      </form>
+      ${(hqSbqRec(sk.id).attempts || []).length ? `<div class="hq-att">${
+        hqSbqRec(sk.id).attempts.slice(-8).reverse().map((a, i) =>
+          `<span class="hq-att-x">${a.mark}/${a.max} · ${fmtShort(parseYmd(a.d))}
+            <button class="hq-x" data-hq="sbq-del" data-id="${sk.id}" data-d="${esc(a.id)}">×</button></span>`).join('')
+      }</div>` : ''}
+    </div>`;
+  }).join('');
+
+  return `<div class="hq-note">Log every source question you attempt and the app works out
+    where you are weakest, then feeds that into what it tells you to study. It does not mark
+    your answer — the recipes, checklists, model answers and common mistakes for each type are
+    in <b>Hist Answers</b>, one chapter per question type.</div>
+    <div class="hq-skills">${rows}</div>`;
+}
+
+/* ---- 5. SEQ ---- */
+function hqSeqView(today){
+  const rows = HQ_TOPICS.map(t => {
+    const s = hqSeqRec(t.id), done = HQ_SEQ_ITEMS.filter(i => s.check && s.check[i.k]).length;
+    return `<div class="hq-seq">
+      <div class="hq-seq-h">
+        <span class="hq-num">${t.n}</span>
+        <span class="hq-seq-n">${esc(t.title)}${t.sbq?'<span class="hq-star">★</span>':''}</span>
+        <span class="hq-seq-c">${done}/${HQ_SEQ_ITEMS.length}</span>
+      </div>
+      <div class="hq-checks">${HQ_SEQ_ITEMS.map(i =>
+        `<button class="hq-check ${s.check && s.check[i.k] ? 'on':''}" data-hq="seq-check" data-id="${t.id}" data-k="${i.k}">
+          <span class="hq-step-box">${s.check && s.check[i.k] ? '✓':''}</span>${esc(i.label)}</button>`).join('')}
+      </div>
+      <form class="hq-log" data-hq="seq-log" data-id="${t.id}">
+        <input type="text" name="q" placeholder="Question you attempted — e.g. “How far was appeasement to blame?”" required />
+        <button class="mini-btn" type="submit">Log attempt</button>
+      </form>
+      ${(s.attempts || []).length ? `<div class="hq-att">${s.attempts.slice(-6).reverse().map(a =>
+        `<span class="hq-att-x">${esc(a.q)} · ${fmtShort(parseYmd(a.d))}
+          <button class="hq-x" data-hq="seq-del" data-id="${t.id}" data-d="${esc(a.id)}">×</button></span>`).join('')}</div>`
+        : `<div class="hq-empty sm">No essay attempted on this unit yet.</div>`}
+    </div>`;
+  }).join('');
+
+  return `
+  <div class="hq-plan">
+    <h4>Planning template</h4>
+    <p class="hq-sec-note">Every "how far" essay is the same shape. Fill it in before you write
+      a sentence — the plan is what earns the top level, not the prose.</p>
+    <div class="hq-flow">
+      ${[['QUESTION','What exactly is being claimed? Underline the factor named in the question.'],
+         ['FACTORS','The named factor, plus at least two others that mattered.'],
+         ['EVIDENCE','A date, a name or a specific for each factor. No evidence, no marks.'],
+         ['EXPLANATION','For each: HOW did it contribute? Link the fact back to the question.'],
+         ['COMPARISON','Which mattered most, and why does it outweigh the others?'],
+         ['JUDGEMENT','Answer the question directly. "To a large extent, because…"']].map(([k, d], i) => `
+        <div class="hq-flow-step">
+          <div class="hq-flow-k">${esc(k)}</div>
+          <div class="hq-flow-d">${esc(d)}</div>
+          ${i < 5 ? '<div class="hq-flow-arrow">↓</div>' : ''}
+        </div>`).join('')}
+    </div>
+    <button class="mini-btn" data-hq="jump" data-sub="histskills" data-ch="9">Essay technique in Hist Answers →</button>
+  </div>
+  <div class="hq-seqs">${rows}</div>`;
+}
+
+/* ---- 6. Error log ---- */
+function hqErrView(today){
+  const all = hqErrs().slice().sort((a, b) => a.redo.localeCompare(b.redo));
+  const due = all.filter(e => !e.fixed && parseYmd(e.redo) <= today);
+
+  // What the log itself says you should revise: the units and the mistake
+  // types you keep repeating.
+  const byTopic = {}, byType = {};
+  all.forEach(e => { byTopic[e.topic] = (byTopic[e.topic] || 0) + 1; byType[e.type] = (byType[e.type] || 0) + 1; });
+  const topTopics = Object.keys(byTopic).sort((a, b) => byTopic[b] - byTopic[a]).slice(0, 3);
+  const topTypes  = Object.keys(byType).sort((a, b) => byType[b] - byType[a]).slice(0, 3);
+
+  const list = all.length ? all.map(e => {
+    const t = hqTopic(e.topic), isDue = !e.fixed && parseYmd(e.redo) <= today;
+    return `<div class="entry ${isDue?'is-due':''}">
+      <div class="entry-top">
+        <span class="chip chip-sched">${esc(e.type)}</span>
+        <span class="entry-topic">${esc(t ? t.title : e.topic)}</span>
+        ${e.fixed ? '<span class="chip chip-sched">✓ Re-attempted</span>'
+          : isDue ? '<span class="chip chip-due">↻ Re-attempt due</span>'
+                  : `<span class="chip chip-sched">↻ ${fmtShort(parseYmd(e.redo))}</span>`}
+      </div>
+      ${e.q ? `<div class="entry-field"><div class="ef-label">Question</div><p>${esc(e.q)}</p></div>` : ''}
+      <div class="entry-field"><div class="ef-label">My mistake</div><p>${esc(e.mistake)}</p></div>
+      <div class="entry-field"><div class="ef-label">Correct information</div><p>${esc(e.correct)}</p></div>
+      <div class="entry-actions">
+        <button class="mini-btn" data-hq="err-fix" data-id="${e.id}">${e.fixed?'Mark not done':'Mark re-attempted'}</button>
+        <button class="mini-btn danger" data-hq="err-del" data-id="${e.id}">Delete</button>
+      </div>
+    </div>`;
+  }).join('') : `<div class="hq-empty">Nothing logged yet. Every entry schedules its own re-attempt four days later.</div>`;
+
+  return `
+  ${all.length ? `<div class="hq-note"><b>What this log says to revise.</b>
+    ${topTopics.length ? `Most mistakes: ${topTopics.map(id => {
+      const t = hqTopic(id); return `<button class="hq-link" data-hq="open" data-id="${id}">${esc(t?t.title:id)}</button> (${byTopic[id]})`;
+    }).join(' · ')}. ` : ''}
+    ${topTypes.length ? `Most common kind: ${topTypes.map(k => `<b>${esc(k)}</b> (${byType[k]})`).join(' · ')}.` : ''}
+    ${due.length ? ` <b>${due.length}</b> re-attempt${due.length===1?'':'s'} due now.` : ''}</div>` : ''}
+
+  <form class="log-form" data-hq="err-add">
+    <div class="fld-row">
+      <div class="fld"><label for="he-topic">Topic</label>
+        <select id="he-topic" name="topic">${HQ_TOPICS.map(t => `<option value="${t.id}">${t.n}. ${esc(t.title)}</option>`).join('')}</select></div>
+      <div class="fld"><label for="he-type">Type of mistake</label>
+        <select id="he-type" name="type">${HQ_ERR_TYPES.map(t => `<option>${esc(t)}</option>`).join('')}</select></div>
+    </div>
+    <div class="fld"><label for="he-q">Question</label>
+      <input id="he-q" name="q" type="text" placeholder="e.g. “How useful is Source B to a historian studying the Berlin Blockade?”" /></div>
+    <div class="fld"><label for="he-mistake">My mistake</label>
+      <textarea id="he-mistake" name="mistake" placeholder="e.g. Said the source was unreliable because it was biased, and stopped there" required></textarea></div>
+    <div class="fld"><label for="he-correct">Correct information</label>
+      <textarea id="he-correct" name="correct" placeholder="e.g. Bias is what makes it useful — explain what the bias reveals about the purpose" required></textarea></div>
+    <div class="fld"><label for="he-date">Date</label>
+      <input id="he-date" name="date" type="date" value="${ymd(today)}" required /></div>
+    <button class="btn-solid" type="submit">Add to log</button>
+  </form>
+  <div style="margin-top:8px;">${list}</div>`;
+}
+
+/* ---- 7. Session generator ---- */
+function hqSessionView(today){
+  const mins = state.hq.mins || 60;
+  const plan = hqSession(mins, today);
+  const total = plan.reduce((a, p) => a + p.mins, 0);
+
+  return `
+  <div class="hq-note">Pick how long you have. The plan is built from your own state — the units
+    you are weakest on, the facts you said you could not recall, the skill with the worst average,
+    and the mistakes that are due. No block is passive reading.</div>
+  <div class="hq-mins">${[15, 30, 45, 60, 90, 120].map(m =>
+    `<button class="hq-min ${m===mins?'on':''}" data-hq="mins" data-v="${m}">${m < 60 ? m + ' min' : (m/60) + ' hr' + (m>60?'':'')}</button>`).join('')}</div>
+  <div class="hq-plan-total">${total} minutes · ${plan.length} block${plan.length===1?'':'s'}</div>
+  <div class="hq-blocks">${plan.map((p, i) => `
+    <div class="hq-block">
+      <div class="hq-block-m">${p.mins}<span>min</span></div>
+      <div class="hq-block-b">
+        <div class="hq-block-n">${esc(p.name)}</div>
+        <div class="hq-block-t">${esc(p.target)}</div>
+        <div class="hq-block-h">${esc(p.how)}</div>
+      </div>
+      <button class="hq-block-go" data-hq="goblock" data-v="${esc(p.go.v)}" data-id="${esc(p.go.id || '')}">→</button>
+    </div>`).join('')}</div>`;
+}
+
+/* ---- 8. Exam countdown ---- */
+function hqExamView(today){
+  const exam = hqExam(), days = hqDaysLeft(), phase = hqPhase(days);
+  const counts = { new:0, learning:0, review:0, mastered:0 };
+  HQ_TOPICS.forEach(t => counts[hqStatus(t, today)]++);
+  const sbqLeft = HQ_SBQ_SKILLS.filter(s => hqSbqStats(s.id).n < 3).length;
+  const seqLeft = HQ_TOPICS.filter(t => !(hqSeqRec(t.id).attempts || []).length).length;
+
+  return `
+  <form class="log-form" data-hq="exam-set">
+    <div class="fld"><label for="hx-date">History Paper 2 date</label>
+      <input id="hx-date" name="date" type="date" value="${exam ? ymd(exam) : ''}" required /></div>
+    <button class="btn-solid" type="submit">${exam ? 'Update date' : 'Set exam date'}</button>
+    ${exam ? '<button class="mini-btn" type="button" data-hq="exam-clear" style="margin-left:9px;">Clear</button>' : ''}
+  </form>
+  ${exam ? `
+  <div class="stat-row">
+    <div class="tile"><div class="t-label">Days remaining</div><div class="t-value">${days}</div>
+      <div class="t-sub">${esc(fmtShort(exam))} ${exam.getFullYear()}</div></div>
+    <div class="tile"><div class="t-label">Units left to master</div>
+      <div class="t-value">${HQ_TOPICS.length - counts.mastered}<span class="t-of"> / ${HQ_TOPICS.length}</span></div>
+      <div class="t-sub">🟥 ${counts.new} not started · 🟧 ${counts.review} need review</div></div>
+    <div class="tile"><div class="t-label">Practice outstanding</div>
+      <div class="t-value">${sbqLeft + seqLeft}</div>
+      <div class="t-sub">${sbqLeft} SBQ skill${sbqLeft===1?'':'s'} under three attempts · ${seqLeft} unit${seqLeft===1?'':'s'} with no essay</div></div>
+  </div>
+  <div class="hq-sec"><h4>Where you are: ${esc(phase.name)}</h4>
+    <p class="hq-sec-note">${esc(phase.note)}</p>
+    <div class="hq-mix">${esc(phase.mix)}</div>
+    <div class="hq-phases">${HQ_PHASES.map(p => {
+      const on = p.name === phase.name;
+      return `<div class="hq-phase ${on?'on':''}">
+        <div class="hq-phase-n">${esc(p.name)}</div>
+        <div class="hq-phase-w">${p.min ? p.min + '+ days out' : 'final fortnight'}</div>
+        <div class="hq-phase-m">${esc(p.mix)}</div></div>`;
+    }).join('')}</div>
+    <p class="hq-sec-note" style="margin-top:14px;">The balance shifts away from new material and
+      onto retrieval, past-year questions and timed papers as the date closes in. The dashboard's
+      priority scores shift with it automatically.</p>
+  </div>`
+  : `<div class="hq-empty">Set the date and this becomes a countdown with a phase plan, and every
+      priority score starts accounting for how close the exam is.</div>`}`;
+}
+
+/* ---- Wiring. One delegated handler per render. ---- */
+function hqWire(today){
+  app.querySelectorAll('[data-hq]').forEach(el => {
+    const act = el.dataset.hq;
+
+    if(act === 'view')  return el.addEventListener('click', () => hqGo(el.dataset.v, null));
+    if(act === 'open')  return el.addEventListener('click', () => hqGo('topics', el.dataset.id));
+    if(act === 'mins')  return el.addEventListener('click', () => { state.hq.mins = +el.dataset.v; renderHQ(); });
+    if(act === 'jump')  return el.addEventListener('click', () => hqOpenChapter(el.dataset.sub, +el.dataset.ch));
+
+    if(act === 'goblock') return el.addEventListener('click', () => {
+      const v = el.dataset.v, id = el.dataset.id;
+      hqGo(v === 'topic' ? 'topics' : v, id || null);
+    });
+
+    if(act === 'task') return el.addEventListener('click', () => {
+      const x = hqTasks(today)[+el.dataset.i]; if(!x) return;
+      hqGo(x.go.v === 'topic' ? 'topics' : x.go.v, x.go.id || null);
+    });
+
+    if(act === 'step') return el.addEventListener('click', () => {
+      const r = hqRec(el.dataset.id), k = el.dataset.k;
+      r.steps = r.steps || {};
+      r.steps[k] = !r.steps[k];
+      hqPut(el.dataset.id, r);
+      renderHQ();
+    });
+
+    if(act === 'recall') return el.addEventListener('click', () => {
+      const id = el.dataset.id, v = el.dataset.v, r = hqRec(id);
+      const same = r.recall === v;
+      r.recall = same ? null : v;
+      hqPut(id, r);
+      // A rating is a retrieval attempt, so it drives the ladder: confident
+      // counts as a pass, anything less sends the unit back a rung.
+      if(!same) hqReview(id, v === 'conf');
+      renderHQ();
+    });
+
+    if(act === 'fact') return el.addEventListener('click', () => {
+      const t = hqTopic(el.dataset.id);
+      const card = hqCards(t).find(c => c.t === el.dataset.card); if(!card) return;
+      const cur = hqFactRating(t, card);
+      hqSetFact(t, card, cur === el.dataset.v ? null : el.dataset.v);
+      renderHQ();
+    });
+
+    if(act === 'seq-check') return el.addEventListener('click', () => {
+      const id = el.dataset.id, r = hqSeqRec(id);
+      r.check = r.check || {};
+      r.check[el.dataset.k] = !r.check[el.dataset.k];
+      hqSeqPut(id, r); renderHQ();
+    });
+
+    if(act === 'sbq-log') return el.addEventListener('submit', ev => {
+      ev.preventDefault();
+      const id = el.dataset.id, r = hqSbqRec(id);
+      const mark = +el.mark.value, max = +el.max.value;
+      if(!(max > 0) || mark < 0 || mark > max){ alert('Marks must be between 0 and the total.'); return; }
+      r.attempts = (r.attempts || []).concat([{ id:'a'+Date.now(), d: ymd(today), mark, max }]);
+      // Skills ride the same ladder as topics: a pass moves it out, a poor
+      // score brings it back sooner.
+      const ok = mark / max >= 0.6;
+      r.stage = ok ? Math.min(HQ_LADDER.length, (r.stage || 0) + 1) : Math.max(0, (r.stage || 0) - 1);
+      r.due = ymd(addDays(today, HQ_LADDER[Math.min(r.stage, HQ_LADDER.length - 1)]));
+      hqSbqPut(id, r); renderHQ();
+    });
+
+    if(act === 'sbq-del') return el.addEventListener('click', () => {
+      const r = hqSbqRec(el.dataset.id);
+      r.attempts = (r.attempts || []).filter(a => a.id !== el.dataset.d);
+      hqSbqPut(el.dataset.id, r); renderHQ();
+    });
+
+    if(act === 'seq-log') return el.addEventListener('submit', ev => {
+      ev.preventDefault();
+      const id = el.dataset.id, r = hqSeqRec(id);
+      const q = el.q.value.trim(); if(!q) return;
+      r.attempts = (r.attempts || []).concat([{ id:'a'+Date.now(), d: ymd(today), q }]);
+      hqSeqPut(id, r); renderHQ();
+    });
+
+    if(act === 'seq-del') return el.addEventListener('click', () => {
+      const r = hqSeqRec(el.dataset.id);
+      r.attempts = (r.attempts || []).filter(a => a.id !== el.dataset.d);
+      hqSeqPut(el.dataset.id, r); renderHQ();
+    });
+
+    if(act === 'err-add') return el.addEventListener('submit', ev => {
+      ev.preventDefault();
+      const date = el.date.value || ymd(today);
+      hqSave(HQ_ERR, hqErrs().concat([{
+        id:'x'+Date.now(), topic: el.topic.value, type: el.type.value,
+        q: el.q.value.trim(), mistake: el.mistake.value.trim(), correct: el.correct.value.trim(),
+        date, redo: ymd(addDays(parseYmd(date), 4)), fixed:false,
+      }]));
+      renderHQ();
+    });
+
+    if(act === 'err-fix') return el.addEventListener('click', () => {
+      const a = hqErrs(), e = a.find(x => x.id === el.dataset.id);
+      if(e){ e.fixed = !e.fixed; hqSave(HQ_ERR, a); renderHQ(); }
+    });
+
+    if(act === 'err-del') return el.addEventListener('click', () => {
+      if(!confirm('Delete this entry?')) return;
+      hqSave(HQ_ERR, hqErrs().filter(x => x.id !== el.dataset.id)); renderHQ();
+    });
+
+    if(act === 'exam-set') return el.addEventListener('submit', ev => {
+      ev.preventDefault();
+      if(el.date.value) localStorage.setItem(HQ_EXAM, el.date.value);
+      renderHQ();
+    });
+
+    if(act === 'exam-clear') return el.addEventListener('click', () => {
+      localStorage.removeItem(HQ_EXAM); renderHQ();
+    });
+  });
+}
+
 function footerHTML(){
   return `
   <div class="foot">
@@ -9308,15 +10644,132 @@ function footerHTML(){
       <b>Check before you trust it:</b> Definitions follow the Singapore O-Level 2026 syllabuses (Pure Physics 6091, Pure Chemistry 6092, Elective History — Express) and are phrased the way examiners award marks — but cross-check them against your own school notes and the official SEAB syllabus.
       <div style="margin-top:9px;">The exam dates here were taken from your brief, not from an official source. <b>Confirm every date against the official SEAB / MOE examination timetable</b> before planning around it.</div>
     </div>
-    <p style="margin-top:22px;">Personal study tool · Plan · Error log · Memorise · My Cards · Physics · Chemistry · History · Social Studies · English</p>
+    <p style="margin-top:22px;">Personal study tool · Plan · Error log · Memorise · My Cards · Physics · Chemistry · History HQ · History · Social Studies · English</p>
     <p>Your schedule, error log, memorise rotation, your own decks and "learnt" progress are saved in this browser only — clearing site data will erase them. Export your decks from <b>My Cards</b> to keep a copy.</p>
+    <div class="build-line">
+      <span>Build <span class="build-id" id="buildId">${esc(BUILD)}</span></span>
+      <span id="buildState"></span>
+      <button type="button" data-act="check-update">Check for updates</button>
+      <button type="button" data-act="hard-reset">Clear offline copy</button>
+    </div>
   </div>`;
 }
+
+/* The footer is re-inserted on every render, so these are delegated once. */
+document.addEventListener('click', e=>{
+  const b = e.target.closest('[data-act]'); if(!b) return;
+  if(b.dataset.act === 'hard-reset'){ hardReset(); return; }
+  if(b.dataset.act === 'check-update'){
+    const out = document.getElementById('buildState');
+    if(out) out.textContent = '· checking…';
+    Promise.all([checkDeployedBuild(), workerBuild()]).then(([live, worker])=>{
+      if(!out) return;
+      if(!live)             out.textContent = '· could not reach the server';
+      else if(live !== BUILD) out.textContent = '· ' + live + ' is live — reload to get it';
+      else if(worker && worker !== BUILD) out.textContent = '· offline copy is stale (' + worker + ')';
+      else                  out.textContent = '· up to date';
+    });
+  }
+});
 
 navGroup = groupOf(state.subject);
 renderNav();
 render();
 updateMemBadge();
+
+/* ============================================================
+   STAYING UP TO DATE
+
+   The app is a single cached HTML file behind a service worker, on a host
+   that sleeps when idle. That combination used to fail silently: the cached
+   copy was served, nothing said so, and a deploy looked like it had never
+   happened. So the build is now stamped into the page, the worker reports the
+   build it actually installed, and the deployed sw.js is read straight off the
+   network to see what the server is really serving. Any mismatch is shown.
+
+   BUILD is declared at the top of this script and must match sw.js.
+   ============================================================ */
+
+function showUpdateBar(msg){
+  const bar = document.getElementById('updateBar');
+  const txt = document.getElementById('updateText');
+  if(!bar || bar.classList.contains('show')) return;
+  if(txt && msg) txt.textContent = msg;
+  bar.classList.add('show');
+}
+
+/* Tell a worker that is installed-but-waiting to take over now. The reload
+   comes from the controllerchange listener once it does. */
+async function applyUpdate(){
+  try{
+    const reg = await navigator.serviceWorker.getRegistration();
+    if(reg && reg.waiting) reg.waiting.postMessage('skip-waiting');
+  }catch(e){}
+  // If no worker was waiting, a plain reload still picks up the new HTML,
+  // because navigations go to the network first.
+  setTimeout(()=>location.reload(), 600);
+}
+
+function watchForUpdate(reg){
+  if(reg.waiting) showUpdateBar('A new version is ready.');
+  reg.addEventListener('updatefound', ()=>{
+    const sw = reg.installing;
+    if(!sw) return;
+    sw.addEventListener('statechange', ()=>{
+      // Only meaningful when something was already controlling the page —
+      // on a first-ever install there is nothing to update from.
+      if(sw.state === 'installed' && navigator.serviceWorker.controller){
+        showUpdateBar('A new version is ready.');
+      }
+    });
+  });
+}
+
+/* Ask the worker which build it installed. */
+function workerBuild(){
+  return new Promise(resolve=>{
+    const sw = navigator.serviceWorker && navigator.serviceWorker.controller;
+    if(!sw) return resolve(null);
+    const ch = new MessageChannel();
+    const t = setTimeout(()=>resolve(null), 1500);
+    ch.port1.onmessage = e=>{ clearTimeout(t); resolve((e.data||{}).build || null); };
+    try{ sw.postMessage({ type:'version' }, [ch.port2]); }catch(e){ clearTimeout(t); resolve(null); }
+  });
+}
+
+/* Read the BUILD out of the deployed sw.js, bypassing every cache. This is the
+   one check that still works when the worker is stuck, because it answers
+   "what is the server actually serving right now?" */
+async function deployedBuild(){
+  try{
+    const res = await fetch('sw.js?fresh=' + Date.now(), { cache:'no-store' });
+    if(!res.ok) return null;
+    const m = (await res.text()).match(/BUILD\s*=\s*'([^']+)'/);
+    return m ? m[1] : null;
+  }catch(e){ return null; }
+}
+
+async function checkDeployedBuild(){
+  const live = await deployedBuild();
+  if(live && live !== BUILD) showUpdateBar('Version ' + live + ' is live — you are on ' + BUILD + '.');
+  return live;
+}
+
+/* Last resort: tear out the worker and every cache, then reload clean. */
+async function hardReset(){
+  if(!confirm('Clear the offline copy and reload from the server?\n\nYour saved work (plan, error log, decks, progress) is not affected.')) return;
+  try{
+    const regs = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(regs.map(r=>r.unregister()));
+  }catch(e){}
+  try{
+    const keys = await caches.keys();
+    await Promise.all(keys.map(k=>caches.delete(k)));
+  }catch(e){}
+  location.replace(location.pathname + '?fresh=' + Date.now());
+}
+
+document.getElementById('updateBtn').addEventListener('click', applyUpdate);
 
 /* ============================================================
    Installable app: register the service worker so the deck works
@@ -9326,19 +10779,32 @@ updateMemBadge();
   // Only over http(s) — opening the file directly, or inside a sandboxed
   // frame, has no service worker and that is fine.
   const canRegister = 'serviceWorker' in navigator && location.protocol.startsWith('http');
+  // Independently of the worker, confirm once that the build in front of the
+  // user is the one the server is serving. Delayed so it never competes with
+  // first paint.
+  if(location.protocol.startsWith('http')) setTimeout(checkDeployedBuild, 2500);
   if(canRegister){
     window.addEventListener('load', ()=>{
-      navigator.serviceWorker.register('sw.js').then(reg=>{
-        // A new version was deployed while the old one is still controlling
-        // the page — let it take over on the next load rather than stalling.
-        reg.addEventListener('updatefound', ()=>{
-          const sw = reg.installing;
-          if(!sw) return;
-          sw.addEventListener('statechange', ()=>{
-            if(sw.state === 'installed' && navigator.serviceWorker.controller) sw.postMessage('skip-waiting');
-          });
+      // updateViaCache:'none' so the browser never answers the update check
+      // from its own HTTP cache — otherwise a cached sw.js hides every deploy.
+      navigator.serviceWorker.register('sw.js', { updateViaCache:'none' }).then(reg=>{
+        watchForUpdate(reg);
+        reg.update().catch(()=>{});
+        // A long-lived tab (or an installed app left open for days) never
+        // navigates, so nothing would ever trigger a check. Do it whenever the
+        // app comes back to the foreground.
+        document.addEventListener('visibilitychange', ()=>{
+          if(document.visibilityState === 'visible'){ reg.update().catch(()=>{}); checkDeployedBuild(); }
         });
       }).catch(()=>{ /* offline support is a bonus, never a hard failure */ });
+    });
+
+    // If a new worker takes control, the HTML in front of the user is the old
+    // one. Reload once so the page and the worker are the same build.
+    let reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', ()=>{
+      if(reloading) return; reloading = true;
+      location.reload();
     });
   }
 
