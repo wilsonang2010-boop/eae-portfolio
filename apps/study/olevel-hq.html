@@ -103,6 +103,33 @@ header{
 }
 .install-btn:hover{color:var(--white); border-color:var(--blue);}
 .install-btn.show{display:block;}
+
+/* Safari fires no install event — the only way in is Share ▸ Add to Dock,
+   which nothing on screen would otherwise tell you. The button opens these
+   steps instead of installing directly. */
+.install{position:relative;}
+.install-how{
+  position:absolute; top:calc(100% + 9px); right:0; z-index:70; width:288px;
+  background:var(--card); border:1px solid var(--border-strong);
+  border-radius:12px; padding:15px 16px; text-align:left;
+  box-shadow:0 18px 44px rgba(0,0,0,.6); animation:riseIn .22s var(--ease) both;
+}
+.install-how h4{font-size:13.5px; color:var(--white); font-weight:600; margin-bottom:4px;}
+.install-how p{font-size:12.5px; color:var(--slate-400); line-height:1.55; margin-bottom:10px;}
+.install-how ol{margin:0 0 4px; padding-left:17px;}
+.install-how li{font-size:12.5px; color:var(--slate-300); line-height:1.75;}
+.install-how kbd{
+  font-family:var(--font); font-size:11.5px; color:var(--blue-bright);
+  background:var(--blue-soft); border:1px solid var(--border-strong);
+  border-radius:5px; padding:1px 6px; white-space:nowrap;
+}
+.install-how .ih-close{
+  margin-top:9px; font-family:var(--font); font-size:12px; cursor:pointer;
+  color:var(--slate-400); background:none; border:none; padding:0;
+}
+.install-how .ih-close:hover{color:var(--white);}
+@media(max-width:560px){ .install-how{width:min(288px, calc(100vw - 32px)); right:-8px;} }
+
 /* Running as an installed app: no point linking back to the portfolio page. */
 @media(display-mode:standalone){ .home-link{display:none;} }
 .home-link:hover{color:var(--white); border-color:var(--border-strong);}
@@ -1080,7 +1107,7 @@ header{
 /* Which build this file is. Declared first because the footer renders it long
    before the update machinery at the bottom of this script runs.
    Must match the BUILD constant in sw.js. */
-const BUILD = '2026-08-20b';
+const BUILD = '2026-08-20c';
 
 /* Flipped to true by build-standalone.py in the single-file download. That
    copy has no server behind it, so there is nothing to check for updates
@@ -11027,6 +11054,17 @@ document.addEventListener('click', e=>{
   }
 });
 
+/* ?tab=physics opens straight into that tab. The manifest's shortcuts point
+   here, which is what puts Plan / Physics / Chemistry / My Cards in the Dock
+   icon's right-click menu once the app is installed. An unknown name is
+   ignored rather than left on a blank screen. */
+(function openRequestedTab(){
+  try{
+    const want = new URL(location.href).searchParams.get('tab');
+    if(want && NAV_GROUPS.some(g => g.items.some(it => it[0] === want))) state.subject = want;
+  }catch(e){}
+})();
+
 navGroup = groupOf(state.subject);
 renderNav();
 render();
@@ -11165,26 +11203,104 @@ document.getElementById('updateBtn').addEventListener('click', applyUpdate);
     });
   }
 
-  const btn = document.getElementById('installBtn');
-  if(!btn) return;
+  /* Installing takes two entirely different routes, and this only knew one.
+     Chromium fires `beforeinstallprompt` and installs in a click. Safari —
+     the browser most likely to be open on a Mac — fires nothing at all: the
+     only way in is Share ▸ Add to Dock, which the page has to say out loud
+     or it is never found. So the button either installs directly or explains
+     where the menu item is, and it stays away once we are already installed. */
+  const wrap = document.getElementById('install');
+  const btn  = document.getElementById('installBtn');
+  const how  = document.getElementById('installHow');
+  if(!wrap || !btn || !how) return;
+
+  const installed = () =>
+    matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  if(installed()) return;                    // already an app — nothing to offer
+
+  const ua     = navigator.userAgent;
+  const iOS    = /iPad|iPhone|iPod/.test(ua) ||
+                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const webkit = /^((?!chrome|android|crios|fxios|edgios).)*safari/i.test(ua);
+
+  /* Safari 17 (Sonoma) put the item in the Share menu; before that a Mac
+     could not install a web app at all, so the panel names what it needs. */
+  const STEPS = {
+    dock: {
+      title: 'Add to Dock',
+      lead:  'Safari can keep this in your Dock as its own app — own window, no address bar, and it opens offline.',
+      list:  ['Click <kbd>Share</kbd> in the toolbar, or File ▸ Share.',
+              'Choose <kbd>Add to Dock</kbd>.',
+              'Name it and click <kbd>Add</kbd>.'],
+      note:  'Needs Safari 17 or later (macOS Sonoma). On anything older, open this in Chrome and the same button installs it in one click.',
+    },
+    ios: {
+      title: 'Add to Home Screen',
+      lead:  'Keeps this on your home screen as its own app, and it opens offline.',
+      list:  ['Tap <kbd>Share</kbd> at the bottom of Safari.',
+              'Scroll to <kbd>Add to Home Screen</kbd>.',
+              'Tap <kbd>Add</kbd>.'],
+      note:  '',
+    },
+  };
+
+  function openPanel(kind){
+    const s = STEPS[kind];
+    how.innerHTML =
+      '<h4>' + s.title + '</h4>' +
+      '<p>' + s.lead + '</p>' +
+      '<ol>' + s.list.map(li => '<li>' + li + '</li>').join('') + '</ol>' +
+      (s.note ? '<p style="margin:9px 0 0">' + s.note + '</p>' : '') +
+      '<button class="ih-close" type="button">Close</button>';
+    how.hidden = false;
+    btn.setAttribute('aria-expanded', 'true');
+  }
+  function closePanel(){
+    how.hidden = true;
+    btn.setAttribute('aria-expanded', 'false');
+  }
+
+  how.addEventListener('click', e=>{ if(e.target.closest('.ih-close')) closePanel(); });
+  document.addEventListener('click', e=>{
+    if(!how.hidden && !wrap.contains(e.target)) closePanel();
+  });
+  document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closePanel(); });
+
   let prompt = null;
 
   window.addEventListener('beforeinstallprompt', e=>{
     e.preventDefault();          // keep the browser's own mini-bar out of the way
     prompt = e;
+    btn.textContent = 'Install app';
     btn.classList.add('show');
   });
 
+  /* Chromium answers within a tick of load. Anything still without a prompt
+     by now is a browser that will never send one, so the button falls back
+     to the manual route rather than staying hidden forever. */
+  addEventListener('load', ()=>{
+    setTimeout(()=>{
+      if(prompt || !webkit || installed()) return;
+      btn.textContent = iOS ? 'Add to Home Screen' : 'Add to Dock';
+      btn.classList.add('show');
+    }, 1200);
+  });
+
   btn.addEventListener('click', async ()=>{
-    if(!prompt) return;
-    prompt.prompt();
-    await prompt.userChoice;
-    prompt = null;
-    btn.classList.remove('show');
+    if(!how.hidden){ closePanel(); return; }
+    if(prompt){
+      prompt.prompt();
+      const { outcome } = await prompt.userChoice;
+      prompt = null;
+      if(outcome === 'accepted') btn.classList.remove('show');
+      return;
+    }
+    openPanel(iOS ? 'ios' : 'dock');
   });
 
   window.addEventListener('appinstalled', ()=>{
     prompt = null;
+    closePanel();
     btn.classList.remove('show');
   });
 })();

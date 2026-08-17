@@ -9,10 +9,15 @@
   "display_override": ["standalone", "minimal-ui"],
   "background_color": "#000000",
   "theme_color": "#000000",
-  "orientation": "portrait-primary",
   "categories": ["education", "productivity"],
   "lang": "en-SG",
   "dir": "ltr",
+  "shortcuts": [
+    { "name": "Plan",      "short_name": "Plan",    "url": "./?tab=plan" },
+    { "name": "Physics",   "short_name": "Physics", "url": "./?tab=physics" },
+    { "name": "Chemistry", "short_name": "Chem",    "url": "./?tab=chemistry" },
+    { "name": "My Cards",  "short_name": "Cards",   "url": "./?tab=custom" }
+  ],
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
