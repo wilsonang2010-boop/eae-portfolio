@@ -8,7 +8,7 @@
    page compares itself against to decide whether it is looking at a stale
    copy. The same string must appear in index.html — see BUILD there. */
 
-const BUILD = '2026-08-20b';
+const BUILD = '2026-08-20d';
 const CACHE = 'olevel-hq-' + BUILD;
 
 /* The host sleeps when idle and can take the better part of a minute to wake.

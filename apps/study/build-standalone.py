@@ -54,10 +54,14 @@ once(r'<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512\.p
 once(r'<link rel="apple-touch-icon" href="icons/apple-touch-icon\.png" />\n', '', 'drop apple icon')
 
 # 3. The "← Portfolio" link points at a sibling page that is not part of the
-#    download, and the install button belongs to the installable web copy.
+#    download, and the install affordance — button and its Add to Dock panel —
+#    belongs to the installable web copy. A file:// page cannot be installed,
+#    so the whole block goes rather than offering steps that lead nowhere.
 once(r'\s*<a class="home-link" href="\.\./index\.html">← Portfolio</a>', '', 'drop portfolio link')
-once(r'\s*<button class="install-btn" id="installBtn" type="button">Install app</button>', '',
-     'drop install button')
+once(r'\s*<div class="install" id="install">\s*'
+     r'<button class="install-btn" id="installBtn" type="button" aria-expanded="false">'
+     r'Install app</button>\s*'
+     r'<div class="install-how" id="installHow" hidden></div>\s*</div>', '', 'drop install block')
 
 # 4. Title, so a downloaded file is recognisable in a folder and in the tab.
 once(r'<title>[^<]*</title>', '<title>O-Level HQ — offline copy</title>', 'title')

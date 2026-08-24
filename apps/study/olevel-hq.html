@@ -103,6 +103,33 @@ header{
 }
 .install-btn:hover{color:var(--white); border-color:var(--blue);}
 .install-btn.show{display:block;}
+
+/* Safari fires no install event — the only way in is Share ▸ Add to Dock,
+   which nothing on screen would otherwise tell you. The button opens these
+   steps instead of installing directly. */
+.install{position:relative;}
+.install-how{
+  position:absolute; top:calc(100% + 9px); right:0; z-index:70; width:288px;
+  background:var(--card); border:1px solid var(--border-strong);
+  border-radius:12px; padding:15px 16px; text-align:left;
+  box-shadow:0 18px 44px rgba(0,0,0,.6); animation:riseIn .22s var(--ease) both;
+}
+.install-how h4{font-size:13.5px; color:var(--white); font-weight:600; margin-bottom:4px;}
+.install-how p{font-size:12.5px; color:var(--slate-400); line-height:1.55; margin-bottom:10px;}
+.install-how ol{margin:0 0 4px; padding-left:17px;}
+.install-how li{font-size:12.5px; color:var(--slate-300); line-height:1.75;}
+.install-how kbd{
+  font-family:var(--font); font-size:11.5px; color:var(--blue-bright);
+  background:var(--blue-soft); border:1px solid var(--border-strong);
+  border-radius:5px; padding:1px 6px; white-space:nowrap;
+}
+.install-how .ih-close{
+  margin-top:9px; font-family:var(--font); font-size:12px; cursor:pointer;
+  color:var(--slate-400); background:none; border:none; padding:0;
+}
+.install-how .ih-close:hover{color:var(--white);}
+@media(max-width:560px){ .install-how{width:min(288px, calc(100vw - 32px)); right:-8px;} }
+
 /* Running as an installed app: no point linking back to the portfolio page. */
 @media(display-mode:standalone){ .home-link{display:none;} }
 .home-link:hover{color:var(--white); border-color:var(--border-strong);}
@@ -702,6 +729,85 @@ header{
 .prac .pa p{color:var(--slate-100); font-size:14px; line-height:1.62;}
 .prac .pa p + .lab{margin-top:14px;}
 
+/* ── Source papers ───────────────────────────────────────────
+   Section A is printed to a fixed shape: a background paragraph, then
+   lettered sources each closing with their provenance, then 1(a)–(e) with
+   the marks in brackets. Practising on anything laid out differently
+   teaches you to find things where the real paper does not put them, so
+   this reproduces the paper's furniture rather than restyling it. */
+.exam{border:1px solid var(--border-strong); border-radius:14px; overflow:hidden; margin:6px 0 4px;}
+.exam-head{
+  display:flex; flex-wrap:wrap; align-items:baseline; gap:9px 14px;
+  padding:12px 18px; background:var(--blue-soft); border-bottom:1px solid var(--border-strong);
+}
+.exam-head .eh-t{font-family:var(--font-display); font-size:14px; font-weight:600; color:var(--white);}
+.exam-head .eh-m{font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--blue-bright); font-weight:700;}
+.exam-head .eh-s{margin-left:auto; font-size:12px; color:var(--slate-400);}
+.exam-body{padding:18px;}
+.exam-bg{
+  font-size:14px; line-height:1.66; color:var(--slate-100);
+  border-left:2px solid var(--border-strong); padding:2px 0 2px 15px; margin-bottom:20px;
+}
+.exam-bg b{color:var(--white);}
+.exam-inst{font-size:12.5px; color:var(--slate-400); margin-bottom:16px; font-style:italic;}
+
+.src{background:var(--bg); border:1px solid var(--border); border-radius:11px; padding:15px 17px; margin-bottom:13px;}
+.src-lab{
+  font-family:var(--font-display); font-size:11.5px; font-weight:700; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--blue-bright); margin-bottom:8px;
+}
+.src-lab .sl-kind{color:var(--slate-400); font-weight:600; letter-spacing:.06em; text-transform:none; margin-left:8px;}
+.src-body{font-size:14.5px; line-height:1.7; color:var(--slate-100);}
+.src-body p + p{margin-top:10px;}
+.src-body em{color:var(--white); font-style:italic;}
+.src-prov{
+  margin-top:11px; padding-top:10px; border-top:1px dashed var(--border);
+  font-size:12.5px; line-height:1.55; color:var(--slate-400); font-style:italic; text-align:right;
+}
+/* A cartoon cannot be reproduced here, so it is described instead — flagged
+   so it is never mistaken for the picture the real booklet would print. */
+.src.is-visual{border-style:dashed;}
+.src .vis-note{
+  font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; font-weight:700;
+  color:var(--amber); margin-bottom:9px;
+}
+.src .vis-desc{font-size:14px; line-height:1.7; color:var(--slate-100);}
+.src .vis-cap{margin-top:10px; font-size:14px; color:var(--white);}
+
+.exam-q{display:flex; gap:12px; align-items:baseline; padding:13px 0; border-top:1px solid var(--border);}
+.exam-q:first-of-type{border-top:1px solid var(--border-strong); margin-top:6px;}
+.exam-q .qn{flex:none; font-family:var(--font-display); font-weight:600; color:var(--white); font-size:14px; min-width:34px;}
+.exam-q .qt{flex:1; font-size:14.5px; line-height:1.66; color:var(--slate-100);}
+.exam-q .qt .lead{color:var(--white); font-weight:500;}
+.exam-q .qm{flex:none; font-size:13px; color:var(--blue-bright); font-weight:600;}
+.exam-total{text-align:right; font-size:12.5px; color:var(--slate-400); padding-top:12px; border-top:1px solid var(--border-strong); margin-top:2px;}
+
+/* What the examiner is actually paying for, kept shut until you have written. */
+.ms{margin-top:14px;}
+.ms > summary{
+  cursor:pointer; list-style:none; display:flex; align-items:center; gap:10px;
+  font-size:12px; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--slate-400); border:1px dashed var(--border-strong); border-radius:9px; padding:10px 14px;
+}
+.ms > summary::-webkit-details-marker{display:none;}
+.ms[open] > summary{color:var(--blue-bright); border-style:solid;}
+.ms-in{padding:15px 2px 2px;}
+.ms-in .lab{font-size:10.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--blue-bright); margin:0 0 6px;}
+.ms-in p{font-size:14px; line-height:1.64; color:var(--slate-100);}
+.ms-in p + .lab{margin-top:15px;}
+.ms-in ul{margin:2px 0 0; padding-left:19px;}
+.ms-in li{font-size:14px; line-height:1.68; color:var(--slate-100); margin-bottom:5px;}
+.ms-in .model{
+  background:var(--bg); border:1px solid var(--border); border-left:2px solid var(--blue);
+  border-radius:9px; padding:13px 15px; margin-top:8px; font-size:14px; line-height:1.7; color:var(--slate-100);
+}
+@media(max-width:560px){
+  .exam-body{padding:14px;}
+  .exam-head{padding:11px 14px;}
+  .exam-head .eh-s{margin-left:0; width:100%;}
+  .src-prov{text-align:left;}
+}
+
 /* ── Diagrams (SVG, generated at render time) ────────────────── */
 .diagram-wrap{margin:16px 0; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:16px; text-align:center; overflow-x:auto;}
 .diagram-wrap svg{max-width:100%; height:auto; width:340px;}
@@ -1080,7 +1186,7 @@ header{
 /* Which build this file is. Declared first because the footer renders it long
    before the update machinery at the bottom of this script runs.
    Must match the BUILD constant in sw.js. */
-const BUILD = '2026-08-20b';
+const BUILD = '2026-08-20d';
 
 /* Flipped to true by build-standalone.py in the single-file download. That
    copy has no server behind it, so there is nothing to check for updates
@@ -5080,6 +5186,7 @@ const HIST_SKILLS = {
         { h:"Why this matters more than anything", type:"text", body:[
           "Section A is always Question 1(a) to (e) — five sub-questions worth 30 marks in total. The <b>first four</b> are set on specific sources; the <b>fifth</b> requires you to use evidence from <b>multiple</b> sources to analyse, explain and judge an issue. The marks for each part are printed in brackets on the paper.",
           "Every sub-question rewards a <b>specific skill</b>. Write a brilliant reliability answer to an inference question and you score almost nothing, because you answered a question that was not asked. So before you write a single word, find the command phrase and match it to the recipe below.",
+          "<span style=\"color:var(--slate-400)\">This tab teaches the recipes. <b>Hist Sources</b> is where you practise them on real documents — drills on one question type at a time, then four complete Section A papers, one for each topic the case study is ever set on.</span>",
         ]},
         { h:"The wording → question type table", type:"diagram", body:{ type:"table",
           caption:"Match the phrasing to the type, then follow that chapter's recipe.",
@@ -7005,15 +7112,746 @@ function subjClass(s){
 function getLog(){ try{ return JSON.parse(localStorage.getItem('osp-log')||'[]'); }catch(e){ return []; } }
 function saveLog(a){ localStorage.setItem('osp-log', JSON.stringify(a)); }
 
+const HIST_SOURCES = {
+  eyebrow:"Elective History · Express · Section A source practice",
+  title:"History — Real Sources and Full Practice Papers",
+  intro:"Every source here is a real historical document, printed with its real provenance. The question types are drilled one at a time on single sources, then assembled into four complete Section A papers — background paragraph, lettered source booklet, 1(a) to (e), marks in brackets — laid out exactly as SEAB prints them. Write the answer first; the mark scheme is behind a button for a reason.",
+  cards:[
+    { h:"Only four topics", p:"Section A is only ever set on Nazi Germany, the outbreak of war in Europe, the origins of the Cold War in Europe, or the Korean War. There is one full paper here for each of the four, so the whole examinable set is covered." },
+    { h:"Real documents", p:"Article 231, the Enabling Act, the Fulton speech, the Truman Doctrine, UN Resolution 82 — these are the actual texts, cut to the paper's 150-word limit. Chapter 12 lists where every single one comes from and flags the ones that are condensed." },
+    { h:"Write before you reveal", p:"A mark scheme read before you write teaches you nothing except that the answer looked reasonable. Write it out in full, in exam conditions, then open the button and mark yourself against the levels." },
+  ],
+  chapters:[
+
+    /* ─────────────── PART A ─────────────── */
+    { n:1, part:{k:'Start here', t:'How Section A is printed', d:'The paper has a fixed shape. Knowing where everything sits saves reading time you cannot spare, and stops you hunting for a provenance line that was never where you looked.'},
+      title:"Reading the source booklet", q:"Where everything is, and what to do in the first four minutes.",
+      sections:[
+        { h:"What is in front of you", type:"text", body:[
+          "Section A is <b>Question 1</b>, worth <b>30 marks</b>, and it is compulsory. You get a <b>background paragraph</b> setting the scene, then up to <b>six sources</b> lettered A to F, none longer than 150 words, then five sub-questions <b>1(a)</b> to <b>1(e)</b> with the marks printed in brackets.",
+          "Every source ends with a <b>provenance line</b> in italics: who wrote it, what it is, and when. That line is not decoration — it is where most of the marks in the reliability, purpose and usefulness questions come from. Read it <b>before</b> you read the source.",
+          "Sources are <b>deliberately mixed</b>: a speech against a private letter, an official document against a cartoon, one side against the other. The mixture is the point. The paper is testing whether you notice that a public speech and a private diary entry are doing different jobs.",
+        ]},
+        { h:"The first four minutes", type:"bullets", body:[
+          "<b>Read the background paragraph twice.</b> It names the issue the whole case study is about, and 1(e) is always a version of that issue.",
+          "<b>Read 1(e) before you read the sources.</b> It is worth 8 marks and needs every source. Knowing the hypothesis as you read means you are sorting sources into supports / does not support on the first pass instead of the third.",
+          "<b>Annotate provenance as you go.</b> One word in the margin: <i>Nazi</i>, <i>British</i>, <i>private</i>, <i>public</i>, <i>1946</i>. That margin is your reliability answer already written.",
+          "<b>Note who is missing.</b> If four sources are Western and none is Soviet, that absence is a usefulness point worth a mark.",
+        ]},
+        { h:"Marks, and what they buy", type:"diagram", body:{ type:"table",
+          caption:"The split varies slightly year to year, but the shape does not. 1(e) is always last and always worth the most.",
+          head:["Question","Type","Marks","What it needs"],
+          rows:[
+            ["1(a)","Inference","5","Two developed inferences, each proved with a quotation"],
+            ["1(b)","Comparison","5","Similarity and difference in the <i>argument</i>, both proved"],
+            ["1(c)","Message / purpose","6","The big point, plus why publish it <i>then</i>, plus contextual knowledge"],
+            ["1(d)","Reliability / usefulness","6","Provenance and content, both ways, then a verdict"],
+            ["1(e)","Hypothesis","8","All sources grouped both ways, cross-referenced, then a judgement"],
+          ]}},
+        { h:"The rule that outranks all the others", type:"text", body:[
+          "<b>Never quote and stop.</b> A quotation on its own sits at Level 1 of every mark scheme in this paper. The shape is always the same three moves: make the <b>point</b>, prove it with the <b>source</b>, then explain what it <b>means</b>. Point, evidence, explanation — every answer, every time.",
+          "The technique for each type — the exact stems, the model answers and the mistakes that cap you — is in <b>Hist Answers</b>, chapters 2 to 8. This tab is where you practise it on real material.",
+        ]},
+      ]},
+
+    /* ─────────────── PART B — DRILLS ─────────────── */
+    { n:2, part:{k:'Part B · One type at a time', t:'Drills on single sources', d:'Each question type, on a real source, with the exam wording and the marks as they would be printed. Do these until the shape is automatic, then move to the full papers in Part C.'},
+      title:"Inference — “What can you learn?”", q:"Read beyond the words. Two inferences, both proved.",
+      sections:[
+        { h:"What earns the marks", type:"text", body:[
+          "You are being asked what the source <b>suggests</b> that it does not actually say. Restating the content in your own words scores nothing. For 5 marks give <b>two developed inferences</b>, each one supported by a short quotation and then explained.",
+          "The stem that works: <i>“This source suggests that… This is shown when the source says ‘…’, which implies that…”</i>",
+        ]},
+        { h:"Drill 1 — the Treaty of Versailles", type:"html", body:`<div class="exam">
+          <div class="exam-head"><span class="eh-t">Inference drill</span><span class="eh-m">5 marks</span><span class="eh-s">Suggested time: 7 min</span></div>
+          <div class="exam-body">
+            <div class="exam-bg">In June 1919 the defeated Germany was presented with the terms of the Treaty of Versailles. The German delegation was not permitted to negotiate. <b>Article 231</b> became the most resented clause in the whole settlement.</div>
+            <div class="src">
+              <div class="src-lab">Source A<span class="sl-kind">Treaty article</span></div>
+              <div class="src-body"><p>The Allied and Associated Governments affirm and Germany accepts the responsibility of Germany and her allies for causing all the loss and damage to which the Allied and Associated Governments and their nationals have been subjected as a consequence of the war imposed upon them by the aggression of Germany and her allies.</p></div>
+              <div class="src-prov">Article 231 of the Treaty of Versailles, signed 28 June 1919.</div>
+            </div>
+            <div class="exam-q"><span class="qn">(a)</span><span class="qt"><span class="lead">Study Source A.</span> What can you learn from this source about how the Allies treated Germany in 1919? Explain your answer using details of the source.</span><span class="qm">[5]</span></div>
+          </div>
+        </div>
+        <details class="ms"><summary>Mark scheme and model answer</summary><div class="ms-in">
+          <div class="lab">What the examiner is buying</div>
+          <ul>
+            <li><b>L1 (1 mark)</b> — copies or paraphrases the source. “Germany accepted responsibility for the war.”</li>
+            <li><b>L2 (2–3)</b> — one valid inference supported by the source.</li>
+            <li><b>L3 (4–5)</b> — two developed inferences, each proved with a quotation and explained.</li>
+          </ul>
+          <div class="lab">Model answer</div>
+          <div class="model">This source suggests that the Allies intended to place the blame for the war entirely on Germany rather than share it. The source says Germany accepts responsibility for <i>“all the loss and damage”</i> caused <i>“by the aggression of Germany and her allies”</i>, which implies the Allies saw themselves as blameless victims and Germany as the sole guilty party.<br><br>The source also suggests that Germany had no real choice in accepting this. The wording <i>“affirm and Germany accepts”</i> places the Allied governments first as the ones who decide and Germany second as the one who merely accepts, implying the terms were imposed rather than agreed. This hints at the humiliation that made Germans call it a <i>Diktat</i>.</div>
+          <div class="lab">Where marks are lost</div>
+          <p>Writing only one inference caps you at 3. Explaining <i>why</i> the Allies felt this way is knowledge, not inference — it earns nothing here, because the question asks only what you can learn <b>from the source</b>.</p>
+        </div></details>`},
+        { h:"Drill 2 — Germany in the Depression", type:"html", body:`<div class="exam">
+          <div class="exam-head"><span class="eh-t">Inference drill</span><span class="eh-m">5 marks</span><span class="eh-s">Suggested time: 7 min</span></div>
+          <div class="exam-body">
+            <div class="exam-bg">The Wall Street Crash of October 1929 ended the American loans that the Weimar economy depended on. The table below was compiled from official German government statistics.</div>
+            <div class="src">
+              <div class="src-lab">Source B<span class="sl-kind">Statistics</span></div>
+              <div class="src-body">
+                <p><b>German unemployment and Nazi seats in the Reichstag</b></p>
+                <p>May 1928 — unemployed 1.4 million; Nazi seats 12 (2.6% of the vote)<br>
+                September 1930 — unemployed 3.0 million; Nazi seats 107 (18.3%)<br>
+                July 1932 — unemployed 5.6 million; Nazi seats 230 (37.3%)<br>
+                November 1932 — unemployed 5.8 million; Nazi seats 196 (33.1%)<br>
+                March 1933 — unemployed 6.0 million; Nazi seats 288 (43.9%)</p>
+              </div>
+              <div class="src-prov">Figures from official German unemployment returns and published Reichstag election results, 1928–1933.</div>
+            </div>
+            <div class="exam-q"><span class="qn">(a)</span><span class="qt"><span class="lead">Study Source B.</span> What can you learn from this source about Nazi support between 1928 and 1933? Explain your answer using details of the source.</span><span class="qm">[5]</span></div>
+          </div>
+        </div>
+        <details class="ms"><summary>Mark scheme and model answer</summary><div class="ms-in">
+          <div class="lab">Model answer</div>
+          <div class="model">This source suggests that Nazi support rose as economic conditions worsened. In May 1928, with 1.4 million unemployed, the Nazis held only 12 seats, but by July 1932, with 5.6 million unemployed, they held 230. The two rising together implies that the Depression, rather than the party's ideas alone, was driving Germans towards the Nazis.<br><br>The source also suggests that this support was not guaranteed to keep growing. Between July and November 1932 the Nazi vote <i>fell</i> from 37.3% to 33.1% even though unemployment rose slightly to 5.8 million. This implies the Nazis had passed their electoral peak, and that something other than voting — such as Hitler being appointed Chancellor in January 1933 — explains the jump to 288 seats in March.</div>
+          <div class="lab">Why the second inference is the difference</div>
+          <p>Almost everyone spots “more unemployment, more Nazis”. The November 1932 dip is the detail that separates a Level 2 answer from a Level 3 one, because noticing it requires actually reading the numbers instead of assuming the trend.</p>
+        </div></details>`},
+      ]},
+
+    { n:3, title:"Message and purpose — cartoons", q:"What is the big point, and why print it that week?",
+      sections:[
+        { h:"Two different questions", type:"text", body:[
+          "<b>Message</b> asks what the cartoonist is <b>saying</b>. <b>Purpose</b> asks what they wanted the audience to <b>do or feel</b>, and crucially <b>why at that moment</b>. A purpose answer without a date is not a purpose answer.",
+          "Both need you to decode the <b>symbols</b> first: who is drawn, how they are drawn, what is labelled, what is exaggerated. Then say what the whole thing adds up to.",
+          "<span style=\"color:var(--slate-400)\">These are real, well-documented cartoons, but a picture cannot be printed here — each one is described in words, and flagged as a description. In the real booklet you would see the image itself.</span>",
+        ]},
+        { h:"Drill 3 — the League without America", type:"html", body:`<div class="exam">
+          <div class="exam-head"><span class="eh-t">Message and purpose drill</span><span class="eh-m">6 marks</span><span class="eh-s">Suggested time: 9 min</span></div>
+          <div class="exam-body">
+            <div class="exam-bg">President Woodrow Wilson proposed the League of Nations in his Fourteen Points and championed it at the Paris Peace Conference. The United States Senate then refused to ratify the Treaty of Versailles, and America never joined the League it had designed.</div>
+            <div class="src is-visual">
+              <div class="src-lab">Source C<span class="sl-kind">Cartoon</span></div>
+              <div class="vis-note">Description of the cartoon</div>
+              <div class="vis-desc">A stone bridge spans a chasm between two cliffs. Each block of the bridge is lettered with the name of a member state, forming an arch labelled <i>League of Nations</i>. The keystone at the very top of the arch — the block without which the bridge cannot stand — is missing, leaving a gap. The absent keystone lies on the ground, labelled <i>U.S.A.</i> Uncle Sam reclines on it, relaxed and uninterested, while the incomplete bridge stands useless behind him.</div>
+              <div class="vis-cap">Caption: <b>“This League of Nations Bridge was designed by the President of the U.S.A.”</b></div>
+              <div class="src-prov">‘The Gap in the Bridge’, a cartoon by Leonard Raven-Hill, published in <i>Punch</i>, a British satirical magazine, 10 December 1919.</div>
+            </div>
+            <div class="exam-q"><span class="qn">(c)</span><span class="qt"><span class="lead">Study Source C.</span> What is the message of this cartoon? Explain your answer using details of the source and your knowledge.</span><span class="qm">[6]</span></div>
+          </div>
+        </div>
+        <details class="ms"><summary>Mark scheme and model answer</summary><div class="ms-in">
+          <div class="lab">What the examiner is buying</div>
+          <ul>
+            <li><b>L1 (1)</b> — describes the drawing without interpreting it.</li>
+            <li><b>L2 (2–3)</b> — decodes some symbols but stops short of the overall point.</li>
+            <li><b>L3 (4–5)</b> — states the message and proves it from details of the cartoon.</li>
+            <li><b>L4 (6)</b> — as L3, plus contextual knowledge that explains why the cartoonist held that view.</li>
+          </ul>
+          <div class="lab">Model answer</div>
+          <div class="model">The message of this cartoon is that the League of Nations was fatally weakened from the very start by the absence of the United States. The bridge is drawn as an arch of member states, but the <b>keystone</b> is missing — and a keystone is the one block that holds an arch up, so the cartoonist is saying the League cannot bear any weight without America. The gap is not a minor absence but the structural flaw.<br><br>The cartoonist sharpens this with irony. The caption points out that the bridge <i>“was designed by the President of the U.S.A.”</i>, and Uncle Sam is drawn lounging on the very block that is needed, comfortable and unbothered. The message is therefore also an accusation: America proposed this system, then walked away from it and left everyone else standing on something that could not work.<br><br>My own knowledge supports this reading. Wilson devised the League in his Fourteen Points, but the Senate rejected the Treaty of Versailles in November 1919 in favour of isolationism, so the League opened in 1920 without the world's strongest economy. Without America, economic sanctions — the League's main weapon — could always be broken by trade with the USA, which is exactly what happened over Manchuria and Abyssinia.</div>
+          <div class="lab">The trap</div>
+          <p>Describing the bridge in careful detail and never saying what it <i>means</i> is a Level 1 answer, no matter how long it is. Decode, then conclude.</p>
+        </div></details>`},
+        { h:"Drill 4 — who was funding Hitler", type:"html", body:`<div class="exam">
+          <div class="exam-head"><span class="eh-t">Message and purpose drill</span><span class="eh-m">6 marks</span><span class="eh-s">Suggested time: 9 min</span></div>
+          <div class="exam-body">
+            <div class="exam-bg">By 1932 the Nazi Party was the largest in the Reichstag, and was spending enormous sums on rallies, uniforms, newspapers and election campaigns. Its opponents on the left argued that this money came from wealthy industrialists who wanted Hitler to destroy the trade unions.</div>
+            <div class="src is-visual">
+              <div class="src-lab">Source D<span class="sl-kind">Photomontage</span></div>
+              <div class="vis-note">Description of the image</div>
+              <div class="vis-desc">A photomontage of Hitler shown as if X-rayed while making a speech, one arm raised. Through the transparent body the viewer sees his spine, which is not bone but a tall stack of gold coins running from his throat to his stomach. The mouth is open in mid-shout. Behind the swastika armband the ribcage is empty.</div>
+              <div class="vis-cap">Caption: <b>“Adolf the Superman: Swallows gold and spouts junk.”</b></div>
+              <div class="src-prov">Photomontage by John Heartfield, published in <i>AIZ</i> (<i>Arbeiter-Illustrierte-Zeitung</i>), a German communist workers' magazine, 17 July 1932 — five days before the Reichstag election.</div>
+            </div>
+            <div class="exam-q"><span class="qn">(c)</span><span class="qt"><span class="lead">Study Source D.</span> Why was this source published in July 1932? Explain your answer using details of the source and your knowledge.</span><span class="qm">[6]</span></div>
+          </div>
+        </div>
+        <details class="ms"><summary>Mark scheme and model answer</summary><div class="ms-in">
+          <div class="lab">Purpose needs three things</div>
+          <ul>
+            <li>The <b>message</b> — what it says.</li>
+            <li>The <b>intended effect</b> — what the audience is meant to think or do.</li>
+            <li>The <b>timing</b> — why <i>this week</i> and not any other. This is the mark most candidates leave on the table.</li>
+          </ul>
+          <div class="lab">Model answer</div>
+          <div class="model">This source was published to persuade German workers not to vote for Hitler in the election five days later, by exposing him as a fraud paid for by the rich.<br><br>The message is that Hitler's nationalism is bought. His spine is drawn as a column of gold coins, which suggests that what holds him up is not conviction or courage but money from wealthy backers — a man with a backbone of cash has no principles of his own. The caption sharpens it into an accusation of dishonesty: he <i>“swallows gold and spouts junk”</i>, so the speeches pouring out of the open mouth are worthless noise bought with someone else's money. Calling him <i>“Adolf the Superman”</i> mocks the heroic image Nazi propaganda had built.<br><br>The intended effect follows from who published it and when. <i>AIZ</i> was a communist workers' magazine, and its readers were exactly the working-class voters the Nazis were competing for. It appeared on 17 July 1932, days before the 31 July election in which the Nazis won 230 seats and became the largest party. My knowledge is that industrialists such as Thyssen did give money to the Nazis, and that the KPD and NSDAP were fighting street battles for the same working-class support, so the montage is an election weapon: it tries to turn Hitler's greatest asset, his image as the voice of ordinary Germans, into evidence that he is the servant of the wealthy.</div>
+        </div></details>`},
+      ]},
+
+    { n:4, title:"Comparison — “How far do these agree?”", q:"Compare the argument, not the wallpaper.",
+      sections:[
+        { h:"What counts as a comparison", type:"text", body:[
+          "You must find <b>both</b> a similarity and a difference in what the two sources are <b>arguing</b>, and prove each from both sources. Two sources being about the same event is not a similarity. Two sources being written in different years is not a difference.",
+          "The stem: <i>“The sources agree that… Source A says ‘…’ and Source B says ‘…’. However, they disagree about… Source A argues ‘…’ whereas Source B claims ‘…’.”</i> Then a one-line verdict on which outweighs.",
+        ]},
+        { h:"Drill 5 — Munich, two verdicts", type:"html", body:`<div class="exam">
+          <div class="exam-head"><span class="eh-t">Comparison drill</span><span class="eh-m">5 marks</span><span class="eh-s">Suggested time: 8 min</span></div>
+          <div class="exam-body">
+            <div class="exam-bg">On 29–30 September 1938 Britain, France, Germany and Italy signed the Munich Agreement, handing the Sudetenland to Germany. Czechoslovakia was not invited. Chamberlain returned to London the next day; Parliament debated the agreement the following week.</div>
+            <div class="src">
+              <div class="src-lab">Source E<span class="sl-kind">Speech</span></div>
+              <div class="src-body"><p>My good friends, this is the second time in our history that there has come back from Germany to Downing Street peace with honour. I believe it is peace for our time. Go home and get a nice quiet sleep.</p></div>
+              <div class="src-prov">Neville Chamberlain, British Prime Minister, speaking to a crowd outside 10 Downing Street on his return from Munich, 30 September 1938.</div>
+            </div>
+            <div class="src">
+              <div class="src-lab">Source F<span class="sl-kind">Speech</span></div>
+              <div class="src-body">
+                <p>We have sustained a total and unmitigated defeat. All is over. Silent, mournful, abandoned, broken, Czechoslovakia recedes into the darkness.</p>
+                <p>£1 was demanded at the pistol's point. When it was given, £2 were demanded at the pistol's point. Finally the dictator consented to take £1 17s. 6d. and the rest in promises of goodwill for the future.</p>
+                <p>And do not suppose that this is the end. This is only the beginning of the reckoning.</p>
+              </div>
+              <div class="src-prov">Winston Churchill, a Conservative Member of Parliament, speaking in the House of Commons debate on the Munich Agreement, 5 October 1938.</div>
+            </div>
+            <div class="exam-q"><span class="qn">(b)</span><span class="qt"><span class="lead">Study Sources E and F.</span> How far do these two sources agree? Explain your answer using details of the sources.</span><span class="qm">[5]</span></div>
+          </div>
+        </div>
+        <details class="ms"><summary>Mark scheme and model answer</summary><div class="ms-in">
+          <div class="lab">What the examiner is buying</div>
+          <ul>
+            <li><b>L1 (1)</b> — describes the two sources separately with no comparison.</li>
+            <li><b>L2 (2–3)</b> — finds either a similarity or a difference, supported.</li>
+            <li><b>L3 (4–5)</b> — both, each proved from both sources, with a verdict.</li>
+          </ul>
+          <div class="lab">Model answer</div>
+          <div class="model">The two sources agree on the bare fact that Britain gave Germany what it demanded and avoided war for the moment. Chamberlain says he has brought back <i>“peace for our time”</i>, and Churchill accepts that the dictator was <i>“consented to take”</i> what was handed over, so neither disputes that a settlement was reached without fighting.<br><br>They disagree completely about what that settlement was worth. Chamberlain calls it <i>“peace with honour”</i> and tells the crowd to <i>“get a nice quiet sleep”</i>, presenting it as a genuine and lasting success. Churchill calls the very same agreement <i>“a total and unmitigated defeat”</i> and warns it is <i>“only the beginning of the reckoning”</i>, presenting it as a surrender that has made war more likely. Where Chamberlain sees honour, Churchill sees extortion, comparing the German demands to money taken <i>“at the pistol's point”</i>.<br><br>Overall the disagreement far outweighs the agreement. They describe the same event but draw opposite conclusions about whether Britain gained or lost by it.</div>
+          <div class="lab">Where marks are lost</div>
+          <p>“Source E is by the Prime Minister and Source F is by an MP” is provenance, not comparison — it belongs in a reliability answer. Compare what they <b>argue</b>.</p>
+        </div></details>`},
+      ]},
+
+    { n:5, title:"Reliability — “How reliable is this source?”", q:"Not whether it is true. Whether it can be trusted, and for what.",
+      sections:[
+        { h:"The shape that scores", type:"text", body:[
+          "Argue <b>both ways</b> and then judge. Reliable because…, unreliable because…, therefore. Take your reasons from <b>two places</b>: the <b>provenance</b> (who, what, when, for whom) and the <b>content</b> (is it checkable against what you know, is the language loaded).",
+          "The killer move is <b>purpose</b>: a source is not unreliable merely because it is biased — it is unreliable <i>for a particular purpose</i>. A Nazi speech is unreliable evidence of what was happening, but excellent evidence of what the Nazis wanted Germans to believe.",
+        ]},
+        { h:"Drill 6 — Hitler explains himself", type:"html", body:`<div class="exam">
+          <div class="exam-head"><span class="eh-t">Reliability drill</span><span class="eh-m">6 marks</span><span class="eh-s">Suggested time: 9 min</span></div>
+          <div class="exam-body">
+            <div class="exam-bg">On 27 February 1933, four weeks after Hitler became Chancellor and six days before a general election, the Reichstag building was destroyed by fire. A Dutch communist, Marinus van der Lubbe, was found at the scene. The next day the government issued the decree below.</div>
+            <div class="src">
+              <div class="src-lab">Source G<span class="sl-kind">Government decree</span></div>
+              <div class="src-body">
+                <p>Articles 114, 115, 117, 118, 123, 124 and 153 of the Constitution of the German Reich are suspended until further notice.</p>
+                <p>Thus, restrictions on personal liberty, on the right of free expression of opinion, including freedom of the press, on the right of assembly and association, and violations of the privacy of postal, telegraphic and telephonic communications, and warrants for house searches, orders for confiscations, as well as restrictions on property, are also permissible beyond the legal limits otherwise prescribed.</p>
+              </div>
+              <div class="src-prov">From the Decree of the Reich President for the Protection of People and State (the ‘Reichstag Fire Decree’), signed by President Hindenburg at the request of Hitler's cabinet, 28 February 1933. Condensed.</div>
+            </div>
+            <div class="exam-q"><span class="qn">(d)</span><span class="qt"><span class="lead">Study Source G.</span> How reliable is this source as evidence about how the Nazis established their control of Germany? Explain your answer using details of the source and your knowledge.</span><span class="qm">[6]</span></div>
+          </div>
+        </div>
+        <details class="ms"><summary>Mark scheme and model answer</summary><div class="ms-in">
+          <div class="lab">Model answer</div>
+          <div class="model">This source is highly reliable as evidence of the <b>legal method</b> the Nazis used, but it must be handled carefully as evidence of their <b>motives</b>.<br><br>It is reliable because of what it is. This is not a speech or a memoir written afterwards but the decree itself — the actual instrument of power, signed by President Hindenburg on 28 February 1933. A government cannot misrepresent its own legislation, because the text is what the police then acted on. Its content is checkable: it names the exact constitutional articles suspended, and lists precisely which freedoms are removed — press, assembly, privacy of post, protection from search and confiscation. As evidence that the Nazis dismantled civil liberties through legal machinery rather than open illegality, it could hardly be bettered.<br><br>It is less reliable as evidence of <i>why</i>. The decree presents itself as being for <i>“the Protection of People and State”</i>, which is the Nazis' own framing of an emergency, and the source gives no independent proof that a communist uprising was actually imminent. Issued by a government that had every reason to exaggerate the threat six days before an election, the justification is exactly what a regime seizing power would say. My knowledge is that the decree was used at once to arrest around four thousand communists, that the KPD was effectively removed from the March election, and that the decree was never lifted — it remained the legal basis of the police state until 1945. That use tells against the innocent reading of its stated purpose.<br><br>Overall it is very reliable for what was done and how, and unreliable for the claimed reason it was done — which still makes it useful, because the gap between the stated purpose and the actual use is itself the evidence.</div>
+          <div class="lab">The mistake that caps you at Level 2</div>
+          <p>“It is unreliable because it is a Nazi source and Nazis lied.” Origin alone is not an argument. Say what about this particular source, for this particular purpose, can and cannot be trusted.</p>
+        </div></details>`},
+      ]},
+
+    { n:6, title:"Surprise — “Does this surprise you?”", q:"The question is really: does this match what I already know?",
+      sections:[
+        { h:"How the type works", type:"text", body:[
+          "Answer <b>both sides</b>. Something in the source will fit what you know — that is the not-surprised half. Something will cut against it, or against another source in the booklet — that is the surprised half. Then decide which is stronger.",
+          "The examiner is testing <b>cross-referencing</b> and <b>contextual knowledge</b>, so every half needs either another source or a fact from your own knowledge attached to it. ‘I am surprised because it is shocking’ scores nothing.",
+        ]},
+        { h:"Drill 7 — the Nazi–Soviet Pact", type:"html", body:`<div class="exam">
+          <div class="exam-head"><span class="eh-t">Surprise drill</span><span class="eh-m">6 marks</span><span class="eh-s">Suggested time: 9 min</span></div>
+          <div class="exam-body">
+            <div class="exam-bg">Nazism and communism had been sworn enemies throughout the 1930s. Hitler had built his movement on anti-communism, and the Soviet Union had called for collective security against fascism. On 23 August 1939 the two governments signed a non-aggression pact in Moscow.</div>
+            <div class="src">
+              <div class="src-lab">Source H<span class="sl-kind">Treaty</span></div>
+              <div class="src-body">
+                <p><b>Article I.</b> Both High Contracting Parties obligate themselves to desist from any act of violence, any aggressive action, and any attack on each other, either individually or jointly with other Powers.</p>
+                <p><b>Secret Additional Protocol, Article II.</b> In the event of a territorial and political rearrangement of the areas belonging to the Polish state, the spheres of influence of Germany and the U.S.S.R. shall be bounded approximately by the line of the rivers Narew, Vistula and San.</p>
+              </div>
+              <div class="src-prov">From the Treaty of Non-Aggression between Germany and the Union of Soviet Socialist Republics and its Secret Additional Protocol, signed in Moscow, 23 August 1939. The Protocol was kept secret and not published at the time.</div>
+            </div>
+            <div class="exam-q"><span class="qn">(d)</span><span class="qt"><span class="lead">Study Source H.</span> Does this source surprise you? Explain your answer using details of the source and your knowledge.</span><span class="qm">[6]</span></div>
+          </div>
+        </div>
+        <details class="ms"><summary>Mark scheme and model answer</summary><div class="ms-in">
+          <div class="lab">Model answer</div>
+          <div class="model"><b>This source surprises me</b> because the two signatories were ideological enemies. Hitler had made anti-communism the centre of his entire programme, banning the KPD in 1933 and signing the Anti-Comintern Pact in 1936, while Stalin's USSR had spent the decade urging collective security against fascism and had backed the Republicans against Franco in Spain. That these two governments should <i>“desist from any act of violence, any aggressive action, and any attack on each other”</i> reverses everything both had said publicly for six years.<br><br>The Secret Protocol is more surprising still. A non-aggression pact is at least defensible as caution, but Article II divides Poland — a third country, and one both had promised not to menace — along <i>“the line of the rivers Narew, Vistula and San”</i>. This is not two enemies agreeing to leave each other alone; it is two enemies agreeing to carve up a neighbour together, which is the opposite of the peaceful intent the public treaty advertised.<br><br><b>On reflection it does not surprise me</b>, because it served both men's immediate interests. Hitler's real aim was Poland, and the one thing he could not risk was the war on two fronts that had destroyed Germany in 1918; a pact with Stalin bought him a free hand in the west. Stalin had been excluded from the Munich Conference in 1938 and had good reason to think Britain and France would happily see Germany turn east, so buying time to rearm — and taking eastern Poland while doing it — was rational. Both were signing for advantage, not friendship, which is exactly why it lasted only until June 1941.<br><br>Overall the ideological reversal is startling, but once the strategic calculations are set beside it, the pact is what two opportunists would be expected to do.</div>
+          <div class="lab">The structure to copy</div>
+          <p>Surprised (with evidence) → still surprised, sharper point → not surprised (with knowledge) → verdict. Both halves, always.</p>
+        </div></details>`},
+      ]},
+
+    { n:7, title:"Usefulness — “How useful is this source?”", q:"Useful for finding out what, exactly?",
+      sections:[
+        { h:"Useful is never a yes or no", type:"text", body:[
+          "Every source is useful <b>for something</b> and useless for something else. Name the purpose. A biased source is often the <b>most</b> useful thing in the booklet, because attitudes are exactly what bias reveals.",
+          "Cover three things: what the <b>content</b> tells you, what the <b>provenance</b> adds, and what the source <b>leaves out</b> — the limitation. Then judge.",
+        ]},
+        { h:"Drill 8 — the Iron Curtain speech", type:"html", body:`<div class="exam">
+          <div class="exam-head"><span class="eh-t">Usefulness drill</span><span class="eh-m">6 marks</span><span class="eh-s">Suggested time: 9 min</span></div>
+          <div class="exam-body">
+            <div class="exam-bg">By early 1946 the Soviet Union had installed governments friendly to Moscow across the countries its army had occupied in Eastern Europe. Churchill, who had lost the 1945 general election and was no longer Prime Minister, was invited to speak at a small college in Missouri with President Truman sitting on the platform beside him.</div>
+            <div class="src">
+              <div class="src-lab">Source I<span class="sl-kind">Speech</span></div>
+              <div class="src-body">
+                <p>From Stettin in the Baltic to Trieste in the Adriatic, an iron curtain has descended across the Continent. Behind that line lie all the capitals of the ancient states of Central and Eastern Europe. Warsaw, Berlin, Prague, Vienna, Budapest, Belgrade, Bucharest and Sofia; all these famous cities and the populations around them lie in what I must call the Soviet sphere.</p>
+                <p>I do not believe that Soviet Russia desires war. What they desire is the fruits of war and the indefinite expansion of their power and doctrines.</p>
+              </div>
+              <div class="src-prov">Winston Churchill, speaking at Westminster College, Fulton, Missouri, USA, 5 March 1946. Condensed.</div>
+            </div>
+            <div class="exam-q"><span class="qn">(d)</span><span class="qt"><span class="lead">Study Source I.</span> How useful is this source to a historian studying the origins of the Cold War? Explain your answer using details of the source and your knowledge.</span><span class="qm">[6]</span></div>
+          </div>
+        </div>
+        <details class="ms"><summary>Mark scheme and model answer</summary><div class="ms-in">
+          <div class="lab">Model answer</div>
+          <div class="model">This source is very useful as evidence of <b>Western attitudes</b> hardening in early 1946, though it is far less useful as an account of what the Soviet Union was actually doing.<br><br>Its content is useful because it captures the moment suspicion was put into words that stuck. Churchill names the division geographically, <i>“from Stettin in the Baltic to Trieste in the Adriatic”</i>, and lists eight capitals now in <i>“the Soviet sphere”</i>, which shows Western leaders already thought of Europe as permanently split rather than temporarily occupied. His distinction that the USSR does not want <i>“war”</i> but wants <i>“the fruits of war and the indefinite expansion of their power”</i> is useful precisely because it is the argument later used to justify containment: the threat is defined as expansion, not invasion, which is a threat that never ends and so requires permanent resistance.<br><br>The provenance adds to the usefulness. Churchill was out of office, so he could say what serving politicians could not, yet Truman sat on the platform beside him, which suggests the American government wanted these ideas aired without owning them. That makes the speech useful evidence of the direction of US policy a full year before the Truman Doctrine of March 1947.<br><br>Its limitation is that it is one side arguing a case. It is a public speech by a lifelong anti-communist designed to persuade an American audience out of isolationism, so the emotive image of an <i>“iron curtain”</i> is chosen for effect. It says nothing of the Soviet view that a friendly buffer zone was necessary after twice being invaded through Poland, and nothing of Stalin's reply calling the speech a call to war. A historian would need Soviet sources such as the Novikov telegram alongside it.<br><br>Overall it is highly useful for understanding how the West came to see the USSR, and how that perception was sold to the American public — but it is evidence of an argument, not a neutral description of events.</div>
+          <div class="lab">The move that gets Level 4</div>
+          <p>Turning the limitation into a use: “because it is one-sided, it is excellent evidence of that side's thinking.” That sentence is worth a mark on its own.</p>
+        </div></details>`},
+      ]},
+
+    /* ─────────────── PART C — FULL PAPERS ─────────────── */
+    { n:8, part:{k:'Part C · Full papers', t:'Four complete Section A papers', d:'One for each of the four topics Section A is ever set on. Thirty marks, five sub-questions, six sources, laid out as the paper lays them out. Give yourself 50 minutes and do the whole thing in one sitting before opening a single mark scheme.'},
+      title:"Paper 1 — Nazi Germany, 1933–34", q:"How far was Nazi control established by legal means?",
+      sections:[
+        { h:"Instructions", type:"text", body:[
+          "<b>50 minutes.</b> Answer all parts of Question 1. The marks are printed in brackets. Read the background information and all six sources before you begin writing.",
+        ]},
+        { h:"The paper", type:"html", body:`<div class="exam">
+          <div class="exam-head"><span class="eh-t">Paper 2 · Section A · Question 1</span><span class="eh-m">30 marks</span><span class="eh-s">Nazi Germany · 50 minutes</span></div>
+          <div class="exam-body">
+            <div class="exam-bg"><b>Background information.</b> Adolf Hitler was appointed Chancellor of Germany on 30 January 1933. He led a coalition government in which only three of the twelve cabinet posts were held by Nazis, and President Hindenburg retained the power to dismiss him. Eighteen months later Hitler was the unchallenged dictator of Germany. This case study examines <b>how that control was established</b>.</div>
+            <div class="exam-inst">Study the sources carefully, and then answer all parts of Question 1.</div>
+
+            <div class="src">
+              <div class="src-lab">Source A<span class="sl-kind">Radio broadcast</span></div>
+              <div class="src-body">
+                <p>More than fourteen years have passed since the unhappy day when the German people, blinded by promises made by those at home and abroad, forgot the highest values of our past, of the Reich, of its honour and its freedom, and thereby lost everything.</p>
+                <p>The National Government will therefore regard it as its first and supreme task to restore to the German people unity of mind and will. It will preserve and defend the foundations on which the strength of our nation rests. It will take under its firm protection Christianity as the basis of our morality, and the family as the nucleus of our nation and our state.</p>
+              </div>
+              <div class="src-prov">From Hitler's ‘Appeal to the German People’, his first radio broadcast as Chancellor, 1 February 1933. Condensed.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source B<span class="sl-kind">Law</span></div>
+              <div class="src-body">
+                <p><b>Article 1.</b> In addition to the procedure prescribed by the constitution, laws of the Reich may also be enacted by the government of the Reich.</p>
+                <p><b>Article 2.</b> Laws enacted by the government of the Reich may deviate from the constitution as long as they do not affect the institutions of the Reichstag.</p>
+                <p><b>Article 4.</b> This law takes effect on the day of its publication. It ceases to be valid on 1 April 1937, or if the present government is replaced by another.</p>
+              </div>
+              <div class="src-prov">From the Law to Remedy the Distress of People and Reich (the ‘Enabling Act’), passed by the Reichstag by 444 votes to 94 and signed into law on 23 March 1933. Condensed.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source C<span class="sl-kind">Speech</span></div>
+              <div class="src-body">
+                <p>In this historic hour, we German Social Democrats solemnly pledge ourselves to the principles of humanity and justice, of freedom and socialism. No Enabling Act gives you the power to destroy ideas which are eternal and indestructible.</p>
+                <p>We greet the persecuted and the oppressed. We greet our friends in the Reich. Their steadfastness and loyalty deserve admiration. Freedom and life can be taken from us, but not our honour.</p>
+              </div>
+              <div class="src-prov">Otto Wels, leader of the Social Democratic Party, speaking in the Reichstag against the Enabling Act, 23 March 1933. SA men lined the walls of the chamber as he spoke. Condensed.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source D<span class="sl-kind">Speech</span></div>
+              <div class="src-body">
+                <p>If anyone reproaches me and asks why I did not resort to the regular courts of justice for conviction of the offenders, then all I can say is this: in this hour I was responsible for the fate of the German nation, and thereby I became the supreme judge of the German people.</p>
+                <p>I gave the order to shoot the ringleaders in this treason, and I further gave the order to burn out down to the raw flesh the ulcers of this poisoning of the wells in our domestic life.</p>
+              </div>
+              <div class="src-prov">Hitler, speaking to the Reichstag on 13 July 1934, two weeks after the killing of Ernst Röhm and the leadership of the SA in the ‘Night of the Long Knives’. Condensed.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source E<span class="sl-kind">Oath</span></div>
+              <div class="src-body">
+                <p>I swear by God this sacred oath: I will render unconditional obedience to Adolf Hitler, the Führer of the German Reich and people, Supreme Commander of the Armed Forces, and will be ready as a brave soldier to risk my life at any time for this oath.</p>
+              </div>
+              <div class="src-prov">The oath of loyalty sworn by every officer and soldier of the German armed forces from 2 August 1934, the day President Hindenburg died. The previous oath had been sworn to the constitution.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source F<span class="sl-kind">Private diary</span></div>
+              <div class="src-body">
+                <p>The 'Reich Chancellor Adolf Hitler'. What a fine ring it has. Everyone is talking about the Enabling Act, no one about the arrests. The middle classes have their order back and are grateful for it.</p>
+                <p>I keep asking myself how it was possible so quickly, and I keep coming back to the same answer: it was made to look lawful. If they had come with guns alone, people would have resisted. They came with a majority in the Reichstag, and people called it government.</p>
+              </div>
+              <div class="src-prov">Adapted from the diaries of a German university lecturer, Dresden, spring 1933. This source has been rewritten for the purposes of this question — see chapter 12.</div>
+            </div>
+
+            <div class="exam-q"><span class="qn">(a)</span><span class="qt"><span class="lead">Study Source A.</span> What can you learn from this source about how Hitler presented his new government to the German people? Explain your answer using details of the source.</span><span class="qm">[5]</span></div>
+            <div class="exam-q"><span class="qn">(b)</span><span class="qt"><span class="lead">Study Sources B and C.</span> How far do these two sources agree about the Enabling Act? Explain your answer using details of the sources.</span><span class="qm">[5]</span></div>
+            <div class="exam-q"><span class="qn">(c)</span><span class="qt"><span class="lead">Study Source D.</span> Why did Hitler make this speech in July 1934? Explain your answer using details of the source and your knowledge.</span><span class="qm">[6]</span></div>
+            <div class="exam-q"><span class="qn">(d)</span><span class="qt"><span class="lead">Study Source E.</span> How useful is this source as evidence about how the Nazis secured control of Germany? Explain your answer using details of the source and your knowledge.</span><span class="qm">[6]</span></div>
+            <div class="exam-q"><span class="qn">(e)</span><span class="qt"><span class="lead">Study all the sources.</span> ‘The Nazis established control of Germany by legal means.’ How far do these sources support this statement? Explain your answer using details of the sources and your knowledge.</span><span class="qm">[8]</span></div>
+            <div class="exam-total">Total for Question 1: 30 marks</div>
+          </div>
+        </div>
+        <details class="ms"><summary>Mark scheme — 1(a) to 1(d)</summary><div class="ms-in">
+          <div class="lab">1(a) Inference — 5 marks</div>
+          <p>Two developed inferences, each proved. Credit: that Hitler presented the government as a <b>restoration</b> rather than a revolution — <i>“restore to the German people unity”</i>, <i>“the foundations on which the strength of our nation rests”</i> — implying he wanted to appear safe and conservative to voters afraid of upheaval. And that he blamed Germany's collapse on <b>betrayal</b> — the people were <i>“blinded by promises made by those at home and abroad”</i> and so <i>“lost everything”</i> — implying the stab-in-the-back myth was being used to explain 1918 without accepting military defeat. Also credit the appeal to <i>“Christianity”</i> and <i>“the family”</i> as reassurance to conservative and Catholic Germans.</p>
+          <div class="lab">1(b) Comparison — 5 marks</div>
+          <p><b>Agreement:</b> both accept the Act transfers real legislative power to the government — Source B states laws <i>“may deviate from the constitution”</i>, and Source C's protest that <i>“no Enabling Act gives you the power”</i> concedes that an Act is being passed and power is changing hands. <b>Disagreement:</b> Source B presents it as ordinary lawmaking, bounded and temporary — it lapses <i>“on 1 April 1937”</i> and cannot touch <i>“the institutions of the Reichstag”</i> — while Source C presents it as the destruction of freedom, answered with <i>“freedom and life can be taken from us, but not our honour”</i>. B frames a legal procedure; C frames a dictatorship. Verdict: they agree only on the mechanism, and disagree entirely on what it means.</p>
+          <div class="lab">1(c) Purpose — 6 marks</div>
+          <p>Needs message + intended effect + <b>timing</b>. Hitler is justifying murder to a nation that had just watched its government kill without trial. He claims necessity — <i>“I was responsible for the fate of the German nation”</i> — and elevates himself above the law by declaring himself <i>“the supreme judge of the German people”</i>, seeking to make illegality look like duty. The violent imagery of burning out <i>“ulcers”</i> frames the victims as disease, so their killing becomes surgery rather than crime. <b>Timing:</b> July 1934, with Hindenburg visibly dying and the army alarmed by Röhm's ambition to absorb it into the SA. Hitler needed the army's acceptance to succeed Hindenburg; the speech reassures the generals that the SA threat is gone and that he acted to protect the state. Within a month Hindenburg was dead and the army swore the oath in Source E.</p>
+          <div class="lab">1(d) Usefulness — 6 marks</div>
+          <p><b>Useful</b> because it is the instrument itself, and because of the precise wording: obedience is sworn to <i>“Adolf Hitler”</i> as a <b>person</b>, not to Germany, the constitution or the office, and it is <i>“unconditional”</i>. That is direct evidence of how the state was personalised. The date, 2 August 1934, is the day Hindenburg died — evidence of how fast the last check on Hitler was converted into an advantage. <b>Limitation:</b> it shows what soldiers were required to say, not what they believed; it says nothing about civilians, about terror, or about how much of the population consented. <b>Verdict:</b> very useful for the mechanism binding the army to Hitler personally, less useful for measuring genuine support.</p>
+        </div></details>
+        <details class="ms"><summary>Mark scheme — 1(e) the hypothesis question</summary><div class="ms-in">
+          <div class="lab">How 8 marks are awarded</div>
+          <ul>
+            <li><b>L1 (1–2)</b> — writes about the sources with no grouping and no argument.</li>
+            <li><b>L2 (3–4)</b> — uses sources on one side only.</li>
+            <li><b>L3 (5–6)</b> — groups sources <b>both</b> ways, each group proved by quotation.</li>
+            <li><b>L4 (7–8)</b> — both groups, plus cross-referencing between sources, plus a reasoned judgement that does more than repeat the groups.</li>
+          </ul>
+          <div class="lab">Sources that support the statement</div>
+          <p><b>B</b> is the strongest: the Enabling Act was passed by a Reichstag vote of 444 to 94 and set out in numbered articles with an expiry date, so dictatorship arrived through the statute book. <b>A</b> supports it too, since Hitler campaigns in the language of constitutional restoration rather than revolution. <b>E</b> shows even the army's subjection taking the form of a legal oath. <b>F</b> makes the point explicitly: it <i>“was made to look lawful”</i>, and that appearance is what disarmed resistance.</p>
+          <div class="lab">Sources that do not support it</div>
+          <p><b>C</b> undercuts B decisively once you read its provenance: SA men lined the chamber as Wels spoke, so the 444 votes were cast under intimidation and the legality is a shell. <b>D</b> destroys the claim outright — Hitler admits he did not <i>“resort to the regular courts of justice”</i> and declares himself <i>“the supreme judge”</i>, which is the opposite of legal means. <b>E</b> cuts both ways: an oath is a legal form, but swearing <i>“unconditional obedience”</i> to a man rather than to the constitution abolishes the very legality it performs.</p>
+          <div class="lab">What a Level 4 judgement sounds like</div>
+          <div class="model">These sources show that Nazi control was established through legal <b>forms</b>, but that those forms were made to work by violence, and so the statement is true only in the narrowest sense.<br><br>The legality is real enough on the surface. Source B is an Act of the Reichstag, passed 444 to 94, and it even limits itself with an expiry date of 1 April 1937 — on paper, a government acting within the constitution. Source F explains why that mattered: because it <i>“was made to look lawful”</i>, the middle classes <i>“called it government”</i> rather than a coup, and did not resist.<br><br>But the sources also show what stood behind the paperwork. Source C's provenance is decisive when cross-referenced with Source B: the same vote that Source B records as law was taken with SA men lining the walls of the chamber, and the KPD deputies who would have voted against were already in prison under the Reichstag Fire Decree. A majority obtained by removing and frightening the opposition is a legal form emptied of legal meaning. Source D then abandons the pretence altogether, with Hitler openly stating he bypassed <i>“the regular courts of justice”</i> and became <i>“the supreme judge”</i> — an admission of murder delivered to the legislature itself.<br><br>My own knowledge supports this reading. The Reichstag Fire Decree of February 1933 suspended civil liberties before the March election; around four thousand communists were arrested; other parties were banned or dissolved by July 1933. The Enabling Act was legal only because everyone who would have voted it down had been removed first.<br><br>Overall the sources support the statement as a description of <b>method</b> and contradict it as a description of <b>substance</b>. The Nazis were careful to keep a legal appearance, precisely because that appearance made the violence acceptable — Source F identifies this as the reason it worked at all. Legality was the instrument of the takeover, not its character.</div>
+        </div></details>`},
+      ]},
+
+    { n:9, title:"Paper 2 — The outbreak of war in Europe", q:"Was war in 1939 the result of Hitler's plans or of Allied failure?",
+      sections:[
+        { h:"Instructions", type:"text", body:[
+          "<b>50 minutes.</b> Answer all parts of Question 1. The marks are printed in brackets.",
+        ]},
+        { h:"The paper", type:"html", body:`<div class="exam">
+          <div class="exam-head"><span class="eh-t">Paper 2 · Section A · Question 1</span><span class="eh-m">30 marks</span><span class="eh-s">Outbreak of war in Europe · 50 minutes</span></div>
+          <div class="exam-body">
+            <div class="exam-bg"><b>Background information.</b> Between 1936 and 1939 Hitler remilitarised the Rhineland, annexed Austria, took the Sudetenland at the Munich Conference and then occupied the rest of Czechoslovakia. Britain and France protested but did not fight. On 1 September 1939 Germany invaded Poland, and two days later Britain and France declared war. Historians have argued ever since about <b>where responsibility for the war lies</b>.</div>
+            <div class="exam-inst">Study the sources carefully, and then answer all parts of Question 1.</div>
+
+            <div class="src">
+              <div class="src-lab">Source A<span class="sl-kind">Official record of a meeting</span></div>
+              <div class="src-body">
+                <p>The Führer stated that the aim of German policy was to make secure and to preserve the racial community and to enlarge it. It was therefore a question of space.</p>
+                <p>German policy had to reckon with two hate-inspired antagonists, Britain and France. The German question could be solved only by means of force, and this was never without attendant risk. There remained still to be answered the questions ‘when’ and ‘how’.</p>
+              </div>
+              <div class="src-prov">From the Hossbach Memorandum, the record kept by Colonel Friedrich Hossbach of a secret meeting between Hitler and his military and foreign policy chiefs, 5 November 1937. Condensed.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source B<span class="sl-kind">Radio broadcast</span></div>
+              <div class="src-body">
+                <p>How horrible, fantastic, incredible it is that we should be digging trenches and trying on gas-masks here because of a quarrel in a far away country between people of whom we know nothing.</p>
+                <p>However much we may sympathise with a small nation confronted by a big and powerful neighbour, we cannot in all circumstances undertake to involve the whole British Empire in a war simply on her account. If we have to fight it must be on larger issues than that.</p>
+              </div>
+              <div class="src-prov">Neville Chamberlain, British Prime Minister, broadcasting to the nation during the Czechoslovak crisis, 27 September 1938 — two days before the Munich Conference. Condensed.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source C<span class="sl-kind">Agreement</span></div>
+              <div class="src-body">
+                <p>Germany, the United Kingdom, France and Italy, taking into consideration the agreement already reached in principle for the cession to Germany of the Sudeten German territory, have agreed on the following terms and conditions governing the said cession and the measures consequent thereon.</p>
+                <p>The evacuation will begin on 1st October. The United Kingdom, France and Italy agree that the evacuation of the territory shall be completed by the 10th October, without any existing installations having been destroyed.</p>
+              </div>
+              <div class="src-prov">From the Munich Agreement, signed by Germany, Britain, France and Italy, 29–30 September 1938. Czechoslovakia was not present at the conference and was not a signatory. Condensed.</div>
+            </div>
+
+            <div class="src is-visual">
+              <div class="src-lab">Source D<span class="sl-kind">Cartoon</span></div>
+              <div class="vis-note">Description of the cartoon</div>
+              <div class="vis-desc">Hitler and Stalin meet over the body of a dead soldier lying face down between them, labelled <i>Poland</i>. Both men are drawn bowing to each other with elaborate courtesy, hats sweeping low. Their expressions are politely insincere; neither looks at the corpse at their feet.</div>
+              <div class="vis-cap">Caption: Hitler — <b>“The scum of the earth, I believe?”</b> &nbsp; Stalin — <b>“The bloody assassin of the workers, I presume?”</b></div>
+              <div class="src-prov">‘Rendezvous’, a cartoon by David Low, published in the <i>Evening Standard</i>, a British newspaper, 20 September 1939 — three weeks after the Nazi–Soviet Pact and two weeks after the invasion of Poland.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source E<span class="sl-kind">Speech to commanders</span></div>
+              <div class="src-body">
+                <p>Our enemies are little worms. I saw them at Munich. Now Poland is in the position in which I wanted her. I am only afraid that at the last moment some swine will make a proposal for mediation.</p>
+                <p>The destruction of Poland has priority. The aim is the elimination of living forces, not the arrival at a certain line. Be hard, be without mercy. The stronger man is right.</p>
+              </div>
+              <div class="src-prov">Hitler, addressing his senior commanders at Obersalzberg, 22 August 1939 — the day before the Nazi–Soviet Pact was signed. Several versions of this speech survive from different note-takers; this text is condensed and its exact wording is disputed. See chapter 12.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source F<span class="sl-kind">Radio broadcast</span></div>
+              <div class="src-body">
+                <p>This morning the British Ambassador in Berlin handed the German Government a final note stating that unless we heard from them by 11 o'clock that they were prepared at once to withdraw their troops from Poland, a state of war would exist between us. I have to tell you now that no such undertaking has been received, and that consequently this country is at war with Germany.</p>
+                <p>You can imagine what a bitter blow it is to me that all my long struggle to win peace has failed.</p>
+              </div>
+              <div class="src-prov">Neville Chamberlain, broadcasting to the nation, 11.15 a.m., 3 September 1939. Condensed.</div>
+            </div>
+
+            <div class="exam-q"><span class="qn">(a)</span><span class="qt"><span class="lead">Study Source A.</span> What can you learn from this source about Hitler's intentions in 1937? Explain your answer using details of the source.</span><span class="qm">[5]</span></div>
+            <div class="exam-q"><span class="qn">(b)</span><span class="qt"><span class="lead">Study Sources B and C.</span> How far do these two sources agree about how the Czechoslovak crisis should be settled? Explain your answer using details of the sources.</span><span class="qm">[5]</span></div>
+            <div class="exam-q"><span class="qn">(c)</span><span class="qt"><span class="lead">Study Source D.</span> What is the message of this cartoon? Explain your answer using details of the source and your knowledge.</span><span class="qm">[6]</span></div>
+            <div class="exam-q"><span class="qn">(d)</span><span class="qt"><span class="lead">Study Source E.</span> How reliable is this source as evidence about Hitler's aims in 1939? Explain your answer using details of the source and your knowledge.</span><span class="qm">[6]</span></div>
+            <div class="exam-q"><span class="qn">(e)</span><span class="qt"><span class="lead">Study all the sources.</span> ‘War broke out in 1939 because Britain and France appeased Hitler.’ How far do these sources support this statement? Explain your answer using details of the sources and your knowledge.</span><span class="qm">[8]</span></div>
+            <div class="exam-total">Total for Question 1: 30 marks</div>
+          </div>
+        </div>
+        <details class="ms"><summary>Mark scheme — 1(a) to 1(d)</summary><div class="ms-in">
+          <div class="lab">1(a) Inference — 5 marks</div>
+          <p>Credit: that Hitler had decided on <b>expansion</b> well before any specific crisis — the aim was to <i>“enlarge”</i> the racial community and it was <i>“a question of space”</i>, implying territorial conquest was the fixed goal, not a response to events. And that he had already accepted <b>war</b> as the method — the German question <i>“could be solved only by means of force”</i>, with only <i>“when”</i> and <i>“how”</i> left open, implying the decision in principle was taken in 1937 and everything after was timing. Also credit that he identified Britain and France as the obstacles.</p>
+          <div class="lab">1(b) Comparison — 5 marks</div>
+          <p><b>Agreement:</b> both accept that the Sudeten question should be settled by agreement between the great powers rather than by war — Source B refuses to <i>“involve the whole British Empire in a war simply on her account”</i>, and Source C is that settlement, reached by four powers. <b>Disagreement:</b> Source B is hesitant and troubled, calling the situation <i>“horrible, fantastic, incredible”</i> and expressing sympathy for <i>“a small nation confronted by a big and powerful neighbour”</i>, whereas Source C is flat, procedural and final, fixing dates for <i>“evacuation”</i> with no sympathy expressed and Czechoslovakia not even a signatory. Credit strongly any candidate who notes that B talks about the Czechs and C disposes of them. Verdict: same policy, but B agonises over what C simply executes.</p>
+          <div class="lab">1(c) Message — 6 marks</div>
+          <p>The message is that the Nazi–Soviet Pact was a cynical and dishonest bargain between two enemies who despised each other, and that Poland was its victim. The elaborate bowing and the formal politeness of <i>“I believe?”</i> and <i>“I presume?”</i> mock the diplomatic courtesies, while the insults inside those courtesies — <i>“the scum of the earth”</i>, <i>“the bloody assassin of the workers”</i> — show each man saying exactly what he thinks of the other even as they cooperate. The dead soldier labelled <i>Poland</i> lying ignored at their feet is the point: the meeting is only possible because a country has been destroyed, and neither man will look at what he has done. Knowledge: the Pact of 23 August 1939 contained a secret protocol dividing Poland; Germany invaded on 1 September and the USSR on 17 September; Low was drawing for a British audience that had just gone to war.</p>
+          <div class="lab">1(d) Reliability — 6 marks</div>
+          <p><b>Reliable</b> because of audience and timing: Hitler is speaking privately to his own commanders nine days before the invasion, with no need to deceive them and every need to be understood, so this is likelier to be his real thinking than any public speech. Its content matches what he then did — Poland was invaded, and the war there was waged with the brutality <i>“be without mercy”</i> implies. It also cross-references with Source A: the same appetite for force, two years on. <b>Unreliable</b> because the provenance is weak — the note itself says several versions survive from different note-takers and the exact wording is disputed, so individual phrases cannot be quoted as verbatim Hitler. It is also a general's-briefing performance, designed to steel commanders, so the bravado about <i>“little worms”</i> may be motivational rather than considered. <b>Verdict:</b> reliable for the direction and ruthlessness of his intent, unreliable for precise words.</p>
+        </div></details>
+        <details class="ms"><summary>Mark scheme — 1(e) the hypothesis question</summary><div class="ms-in">
+          <div class="lab">Sources that support the statement</div>
+          <p><b>B</b> and <b>C</b> together are the case for appeasement causing the war: Chamberlain publicly rules out fighting for Czechoslovakia, then the four powers hand over the Sudetenland without the Czechs in the room. <b>E</b> supplies the consequence in Hitler's own mouth — <i>“Our enemies are little worms. I saw them at Munich”</i> — which cross-references directly with B and C to show that the concession taught him the democracies would not fight. <b>D</b> can be used here too: the Pact that made war possible was available to Hitler partly because Stalin, excluded from Munich, no longer expected the West to resist.</p>
+          <div class="lab">Sources that do not support it</div>
+          <p><b>A</b> is decisive against: Hitler had settled on force in November 1937, ten months <b>before</b> Munich, so the intention pre-dates the appeasement said to have caused it. <b>E</b> also cuts the other way — the fear that <i>“some swine will make a proposal for mediation”</i> shows he wanted war rather than concessions, and would have been frustrated, not satisfied, by more appeasement. <b>F</b> shows Britain did eventually fight, over Poland, which is hard to square with appeasement as a fixed cause of war.</p>
+          <div class="lab">What a Level 4 judgement sounds like</div>
+          <div class="model">These sources show that appeasement shaped <b>when and where</b> the war began, but not <b>whether</b> it would begin at all, so the statement mistakes a contributing cause for the cause.<br><br>The support is real. Source B shows Chamberlain publicly refusing to fight for a country <i>“of which we know nothing”</i>, and Source C is the result: four powers redrawing Czechoslovakia's borders with no Czech signature on the page. Source E then supplies the consequence in Hitler's own words to his commanders — <i>“Our enemies are little worms. I saw them at Munich”</i>. Cross-referenced, these three make a coherent chain: the concession at Munich taught Hitler that Britain and France would not fight, and he acted on that lesson over Poland eleven months later.<br><br>But Source A breaks the chain at its start. In November 1937 — before Austria, before Munich, before any of the concessions the statement blames — Hitler had already told his own military chiefs that the German question <i>“could be solved only by means of force”</i>, leaving only <i>“when”</i> and <i>“how”</i>. A decision taken ten months before Munich cannot have been caused by Munich. Source E confirms this reading from the other end: a man made aggressive by appeasement would welcome further concessions, yet Hitler's fear in August 1939 is that <i>“some swine will make a proposal for mediation”</i> and rob him of his war.<br><br>My knowledge is that the Hossbach meeting followed the rearmament programme begun in 1935 and the Four Year Plan of 1936, and that <i>Lebensraum</i> in the east had been Hitler's stated aim since <i>Mein Kampf</i>. Source F shows the policy did have a limit — Britain declared war over Poland — which suggests appeasement was abandoned once its failure was clear, not pursued to the end.<br><br>Overall the sources support the statement as an account of how Hitler was <b>emboldened</b>, and contradict it as an account of why he wanted war. Appeasement made the war come on Hitler's terms and at his chosen moment; Source A shows he had chosen war before appeasement had anything to do with it.</div>
+        </div></details>`},
+      ]},
+
+    { n:10, title:"Paper 3 — Origins of the Cold War in Europe", q:"Who was responsible for the breakdown between the wartime allies?",
+      sections:[
+        { h:"Instructions", type:"text", body:[
+          "<b>50 minutes.</b> Answer all parts of Question 1. Note that this paper deliberately balances American and Soviet sources — the grouping in 1(e) will not work if you only read one side.",
+        ]},
+        { h:"The paper", type:"html", body:`<div class="exam">
+          <div class="exam-head"><span class="eh-t">Paper 2 · Section A · Question 1</span><span class="eh-m">30 marks</span><span class="eh-s">Origins of the Cold War · 50 minutes</span></div>
+          <div class="exam-body">
+            <div class="exam-bg"><b>Background information.</b> The USA and USSR had been allies against Germany. Within two years of victory they were hostile powers. By 1947 Europe was divided, with American aid flowing west and Soviet-backed governments installed east. Each side insisted it was reacting defensively to the other. This case study examines <b>how the wartime alliance broke down</b>.</div>
+            <div class="exam-inst">Study the sources carefully, and then answer all parts of Question 1.</div>
+
+            <div class="src">
+              <div class="src-lab">Source A<span class="sl-kind">Diplomatic telegram</span></div>
+              <div class="src-body">
+                <p>The foreign policy of the United States, which reflects the imperialist tendencies of American monopolistic capital, is characterised in the postwar period by a striving for world supremacy.</p>
+                <p>All this indicates that in the United States a decision is being taken to limit the role of the Soviet Union in the solution of the most important international questions. Obvious indications of the U.S. effort to establish world dominance are also to be found in the increase in military potential in peacetime and in the establishment of a large number of naval and air bases both in the United States and beyond its borders.</p>
+              </div>
+              <div class="src-prov">From the Novikov Telegram, sent by Nikolai Novikov, Soviet Ambassador to the United States, to the Soviet foreign ministry in Moscow, 27 September 1946. It was a confidential internal assessment, not published at the time. Condensed.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source B<span class="sl-kind">Speech to Congress</span></div>
+              <div class="src-body">
+                <p>At the present moment in world history nearly every nation must choose between alternative ways of life. The choice is too often not a free one.</p>
+                <p>One way of life is based upon the will of the majority, and is distinguished by free institutions, representative government, free elections, guarantees of individual liberty, freedom of speech and religion, and freedom from political oppression. The second way of life is based upon the will of a minority forcibly imposed upon the majority.</p>
+                <p>I believe that it must be the policy of the United States to support free peoples who are resisting attempted subjugation by armed minorities or by outside pressures.</p>
+              </div>
+              <div class="src-prov">President Harry S. Truman, addressing a joint session of the United States Congress to request aid for Greece and Turkey, 12 March 1947. Condensed.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source C<span class="sl-kind">Speech</span></div>
+              <div class="src-body">
+                <p>It is logical that the United States should do whatever it is able to do to assist in the return of normal economic health in the world, without which there can be no political stability and no assured peace. Our policy is directed not against any country or doctrine but against hunger, poverty, desperation and chaos.</p>
+                <p>Any government that is willing to assist in the task of recovery will find full cooperation on the part of the United States Government.</p>
+              </div>
+              <div class="src-prov">George Marshall, United States Secretary of State, speaking at Harvard University, 5 June 1947, announcing what became the Marshall Plan. Condensed.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source D<span class="sl-kind">Speech</span></div>
+              <div class="src-body">
+                <p>Two camps have taken shape in the world: the imperialist and anti-democratic camp, with the aim of establishing the world domination of American imperialism, and the anti-imperialist and democratic camp, with the aim of undermining imperialism and strengthening democracy.</p>
+                <p>The Marshall Plan is merely a variant of the Truman Doctrine adapted to the conditions of postwar Europe. Its essence consists in an attempt to form a bloc of states bound by obligations to the United States.</p>
+              </div>
+              <div class="src-prov">Andrei Zhdanov, senior Soviet official, speaking at the founding conference of the Cominform in Poland, September 1947. Condensed.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source E<span class="sl-kind">Newspaper interview</span></div>
+              <div class="src-body">
+                <p>Mr Churchill now takes the stand of the warmongers. A racial theory is set out, maintaining that only English-speaking nations are superior nations, called upon to decide the destinies of the entire world.</p>
+                <p>The Germans made an invasion of the U.S.S.R. through Finland, Poland, Romania, Bulgaria and Hungary. What can there be surprising about the fact that the Soviet Union, anxious for its future safety, is trying to see to it that governments loyal in their attitude to the Soviet Union should exist in these countries?</p>
+              </div>
+              <div class="src-prov">Joseph Stalin, in an interview published in <i>Pravda</i>, the official newspaper of the Soviet Communist Party, 14 March 1946 — nine days after Churchill's ‘iron curtain’ speech at Fulton. Condensed.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source F<span class="sl-kind">Statistics</span></div>
+              <div class="src-body">
+                <p><b>Marshall Plan aid received, 1948–1951 (US$ millions)</b></p>
+                <p>United Kingdom 3,297 · France 2,296 · Italy 1,204 · West Germany 1,448 · Netherlands 1,128<br>
+                Total to 16 participating Western European countries: approximately 13,300</p>
+                <p>Aid received by the Soviet Union and the states of Eastern Europe: <b>nil</b>. All were invited; all declined or were instructed by Moscow to decline.</p>
+              </div>
+              <div class="src-prov">Figures compiled from United States government records of the European Recovery Program, 1948–1951.</div>
+            </div>
+
+            <div class="exam-q"><span class="qn">(a)</span><span class="qt"><span class="lead">Study Source A.</span> What can you learn from this source about Soviet views of the United States in 1946? Explain your answer using details of the source.</span><span class="qm">[5]</span></div>
+            <div class="exam-q"><span class="qn">(b)</span><span class="qt"><span class="lead">Study Sources C and D.</span> How far do these two sources agree about the purpose of the Marshall Plan? Explain your answer using details of the sources.</span><span class="qm">[5]</span></div>
+            <div class="exam-q"><span class="qn">(c)</span><span class="qt"><span class="lead">Study Source B.</span> Why did Truman make this speech in March 1947? Explain your answer using details of the source and your knowledge.</span><span class="qm">[6]</span></div>
+            <div class="exam-q"><span class="qn">(d)</span><span class="qt"><span class="lead">Study Source E.</span> How reliable is this source as evidence about Soviet motives in Eastern Europe? Explain your answer using details of the source and your knowledge.</span><span class="qm">[6]</span></div>
+            <div class="exam-q"><span class="qn">(e)</span><span class="qt"><span class="lead">Study all the sources.</span> ‘The Soviet Union was responsible for the breakdown of the wartime alliance.’ How far do these sources support this statement? Explain your answer using details of the sources and your knowledge.</span><span class="qm">[8]</span></div>
+            <div class="exam-total">Total for Question 1: 30 marks</div>
+          </div>
+        </div>
+        <details class="ms"><summary>Mark scheme — 1(a) to 1(d)</summary><div class="ms-in">
+          <div class="lab">1(a) Inference — 5 marks</div>
+          <p>Credit: that the USSR saw American policy as <b>deliberately expansionist</b> rather than defensive — the US is <i>“striving for world supremacy”</i> and taking <i>“a decision… to limit the role of the Soviet Union”</i> — implying Moscow read every American move as directed against it. And that Soviet suspicion rested on <b>evidence it could see</b>, not only ideology: the <i>“increase in military potential in peacetime”</i> and the network of <i>“naval and air bases… beyond its borders”</i>, implying a country planning peaceful coexistence would be demobilising instead. Also credit the Marxist framing — <i>“imperialist tendencies of American monopolistic capital”</i> — implying hostility was seen as built into capitalism itself and therefore permanent.</p>
+          <div class="lab">1(b) Comparison — 5 marks</div>
+          <p><b>Agreement:</b> both accept the Plan will bind participating states closely to the United States — Marshall offers <i>“full cooperation”</i> to any government that joins, and Zhdanov describes exactly that as <i>“a bloc of states bound by obligations to the United States”</i>. The mechanism is not in dispute. <b>Disagreement:</b> about motive. Source C insists the policy is <i>“not against any country or doctrine but against hunger, poverty, desperation and chaos”</i>, presenting it as humanitarian and open to all; Source D calls it <i>“merely a variant of the Truman Doctrine”</i>, presenting it as a weapon of American domination in disguise. Verdict: they describe the same programme and disagree entirely about whether it is generosity or control.</p>
+          <div class="lab">1(c) Purpose — 6 marks</div>
+          <p>Message + effect + <b>timing</b>. Truman needed Congress to fund Greece and Turkey, so the speech reduces a specific aid request to a global moral choice between <i>“alternative ways of life”</i> — one with <i>“free elections”</i> and <i>“freedom of speech and religion”</i>, the other <i>“forcibly imposed”</i>. Framing it this way converts a Mediterranean expense into the defence of civilisation, which is far easier to vote for. <b>Timing:</b> Britain had told Washington in February 1947 that it could no longer afford to support Greece against communist insurgents; Truman faced a Republican Congress elected on cutting spending and a public expecting demobilisation after the war. He had weeks, not months, and needed a reason large enough to overturn a century of peacetime isolationism. The doctrine of supporting <i>“free peoples… resisting attempted subjugation”</i> is deliberately unlimited, committing the USA to containment everywhere.</p>
+          <div class="lab">1(d) Reliability — 6 marks</div>
+          <p><b>Reliable</b> for Soviet <b>strategic reasoning</b>, and the historical claim in it is checkable: Germany did invade the USSR through those states, and Soviet wartime losses were around 27 million, so the demand for <i>“governments loyal in their attitude to the Soviet Union”</i> reflects a real security problem, not an invented one. <b>Unreliable</b> because of what it is: a public interview in <i>Pravda</i>, the Party's own newspaper, answering Churchill nine days after Fulton — a propaganda reply, not a private assessment. The attack on Churchill as a <i>“warmonger”</i> with a <i>“racial theory”</i> is abuse rather than argument. Crucially, the phrase <i>“loyal in their attitude”</i> conceals what was actually done: rigged elections in Poland in 1947, the Czechoslovak coup of 1948. The source is silent on method. <b>Cross-reference:</b> Source A, written privately a few months later, argues the same case without the invective — which suggests the underlying fear was genuine even where this presentation of it is not. <b>Verdict:</b> reliable evidence of the security argument Moscow made, unreliable as a full account of what Moscow did.</p>
+        </div></details>
+        <details class="ms"><summary>Mark scheme — 1(e) the hypothesis question</summary><div class="ms-in">
+          <div class="lab">Sources that support the statement</div>
+          <p><b>B</b> presents American policy as a <b>response</b> to peoples facing <i>“subjugation by armed minorities or by outside pressures”</i>. <b>C</b> makes the American offer explicitly open — <i>“any government that is willing”</i> — so the division of Europe follows a Soviet refusal, not an American exclusion. <b>F</b> proves that refusal in figures: every Eastern state was invited and every one declined or was instructed to. <b>D</b> supports the statement from the Soviet side by declaring the world already split into <i>“two camps”</i> in 1947, which is a Soviet choice to divide rather than cooperate.</p>
+          <div class="lab">Sources that do not support it</div>
+          <p><b>A</b> shows a USSR reacting to what it saw as American expansion — bases <i>“beyond its borders”</i> and rising peacetime military spending — and, being a confidential telegram, this is genuine belief rather than propaganda. <b>E</b> gives the security case: invasion routes through Poland, Romania and Hungary make a buffer zone defensive rather than aggressive. <b>D</b> also cuts the other way, since it explicitly names the <i>Truman Doctrine</i> as what the Soviet response was answering — cross-reference with B, which came six months earlier.</p>
+          <div class="lab">What a Level 4 judgement sounds like</div>
+          <div class="model">These sources show a breakdown driven by <b>mutual misreading</b> rather than by one side's aggression, so the statement is only half of what the evidence supports.<br><br>The case against the USSR is strong on the documents. Source C offers recovery aid to <i>“any government that is willing”</i>, and Source F shows that every Eastern European state was invited and every one received nothing, having declined or been instructed to decline. If the offer was genuinely open, the closing of the eastern half of Europe was a Soviet decision. Source D confirms it in Soviet words: Zhdanov announces that <i>“two camps have taken shape”</i>, which is an active choice to divide Europe into blocs.<br><br>But Source A undermines the idea that the USSR was simply the aggressor. Its provenance is what matters — a confidential telegram from an ambassador to his own ministry, never published, and so free of the propaganda purpose that weakens Source E. Novikov reports genuine belief that the USA was <i>“striving for world supremacy”</i>, citing evidence Soviet officials could actually observe: peacetime rearmament and bases <i>“beyond its borders”</i>. Cross-referencing this with Source B is decisive: Truman's promise to support <i>“free peoples”</i> everywhere is exactly the unlimited commitment that would confirm Soviet fears, and it came six months <b>before</b> Zhdanov's two-camps speech. Each side's defensive move was the other's proof of aggression.<br><br>Source E adds the security argument that a British or American reader would dismiss but a historian cannot: Germany really did invade through Poland, Romania and Hungary, and the USSR really did lose around 27 million people. That does not excuse the rigged Polish election of 1947 or the Czechoslovak coup of 1948, on which Source E is conveniently silent — but it does mean the demand for friendly neighbours was not manufactured.<br><br>Overall the sources support the statement as far as <b>action in Eastern Europe</b> is concerned, and contradict it as an account of <b>cause</b>. The most reliable source here, Source A, shows the USSR responding to American behaviour with the same fear the Americans felt; the alliance broke down because two states with incompatible systems each read the other's insurance as a threat. Responsibility is shared, with the Soviet Union bearing more of it for the methods used behind the iron curtain than for the breakdown itself.</div>
+        </div></details>`},
+      ]},
+
+    { n:11, title:"Paper 4 — The Korean War", q:"Why did a civil war in Korea become a war between the superpowers?",
+      sections:[
+        { h:"Instructions", type:"text", body:[
+          "<b>50 minutes.</b> Answer all parts of Question 1. The marks are printed in brackets.",
+        ]},
+        { h:"The paper", type:"html", body:`<div class="exam">
+          <div class="exam-head"><span class="eh-t">Paper 2 · Section A · Question 1</span><span class="eh-m">30 marks</span><span class="eh-s">The Korean War · 50 minutes</span></div>
+          <div class="exam-body">
+            <div class="exam-bg"><b>Background information.</b> Korea was divided at the 38th parallel in 1945, with a communist state under Kim Il Sung in the north and an American-backed state under Syngman Rhee in the south. On 25 June 1950 North Korean forces crossed the parallel. Within days the United States had committed troops under a United Nations flag, and by November Chinese forces had entered the war. This case study examines <b>why the conflict escalated</b>.</div>
+            <div class="exam-inst">Study the sources carefully, and then answer all parts of Question 1.</div>
+
+            <div class="src">
+              <div class="src-lab">Source A<span class="sl-kind">Speech</span></div>
+              <div class="src-body">
+                <p>The defensive perimeter runs along the Aleutians to Japan and then goes to the Ryukyus. We hold important defence positions in the Ryukyu Islands, and these we will continue to hold. The defensive perimeter runs from the Ryukyus to the Philippine Islands.</p>
+                <p>So far as the military security of other areas of the Pacific is concerned, it must be clear that no person can guarantee these areas against military attack. Should such an attack occur, the initial reliance must be on the people attacked to resist it.</p>
+              </div>
+              <div class="src-prov">Dean Acheson, United States Secretary of State, speaking to the National Press Club, Washington, 12 January 1950. Korea and Taiwan were not named inside the perimeter. Condensed.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source B<span class="sl-kind">UN resolution</span></div>
+              <div class="src-body">
+                <p>The Security Council, determining that the armed attack upon the Republic of Korea by forces from North Korea constitutes a breach of the peace,</p>
+                <p><b>I.</b> Calls for the immediate cessation of hostilities; and calls upon the authorities of North Korea to withdraw forthwith their armed forces to the 38th parallel.</p>
+                <p><b>III.</b> Calls upon all Member States to render every assistance to the United Nations in the execution of this resolution and to refrain from giving assistance to the North Korean authorities.</p>
+              </div>
+              <div class="src-prov">United Nations Security Council Resolution 82, adopted 25 June 1950 by 9 votes to 0. The Soviet Union, which held a veto, was absent — it had been boycotting the Council since January 1950 over its refusal to seat communist China. Condensed.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source C<span class="sl-kind">Presidential statement</span></div>
+              <div class="src-body">
+                <p>The attack upon Korea makes it plain beyond all doubt that communism has passed beyond the use of subversion to conquer independent nations and will now use armed invasion and war.</p>
+                <p>Accordingly I have ordered United States air and sea forces to give the Korean Government troops cover and support. I have also directed that the Seventh Fleet prevent any attack on Formosa.</p>
+              </div>
+              <div class="src-prov">President Harry S. Truman, public statement, 27 June 1950 — two days after the invasion and before the Security Council had authorised the use of force. Condensed.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source D<span class="sl-kind">Diplomatic warning</span></div>
+              <div class="src-body">
+                <p>The Chinese Foreign Minister stated that if American troops crossed the 38th parallel, China would be forced to intervene in Korea. He said China did not intend to sit back with folded hands and let the Americans come to their border.</p>
+                <p>He drew a distinction between South Korean troops crossing the parallel and American troops doing so. It was the presence of American forces on the Yalu River that China would not accept.</p>
+              </div>
+              <div class="src-prov">From the report sent to London and Washington by K. M. Panikkar, the Indian Ambassador to China, describing his meeting with Zhou Enlai in Beijing on the night of 2–3 October 1950. The warning was passed on but was largely dismissed in Washington as bluff. Condensed.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source E<span class="sl-kind">Letter read to Congress</span></div>
+              <div class="src-body">
+                <p>It seems strangely difficult for some to realise that here in Asia is where the communist conspirators have elected to make their play for global conquest, and that we have joined the issue thus raised on the battlefield.</p>
+                <p>There is no substitute for victory. If we lose this war to communism in Asia the fall of Europe is inevitable; win it and Europe most probably would avoid war and yet preserve freedom.</p>
+              </div>
+              <div class="src-prov">From a letter by General Douglas MacArthur, commander of United Nations forces in Korea, to Congressman Joseph Martin, read aloud in the House of Representatives on 5 April 1951. Truman dismissed MacArthur from command six days later. Condensed.</div>
+            </div>
+
+            <div class="src">
+              <div class="src-lab">Source F<span class="sl-kind">Statistics</span></div>
+              <div class="src-body">
+                <p><b>Estimated deaths, Korean War, June 1950 – July 1953</b></p>
+                <p>Korean civilians: approximately 2–3 million<br>
+                North Korean and Chinese forces: approximately 1.5 million<br>
+                South Korean forces: approximately 137,000<br>
+                United States forces: approximately 36,500<br>
+                Other United Nations forces: approximately 3,000</p>
+                <p>The armistice line of July 1953 ran close to the 38th parallel — approximately where the war had begun.</p>
+              </div>
+              <div class="src-prov">Figures compiled from standard published estimates. Casualty totals for this war vary considerably between sources.</div>
+            </div>
+
+            <div class="exam-q"><span class="qn">(a)</span><span class="qt"><span class="lead">Study Source A.</span> What can you learn from this source about American policy in Asia in January 1950? Explain your answer using details of the source.</span><span class="qm">[5]</span></div>
+            <div class="exam-q"><span class="qn">(b)</span><span class="qt"><span class="lead">Study Sources B and C.</span> How far do these two sources agree about how the invasion should be answered? Explain your answer using details of the sources.</span><span class="qm">[5]</span></div>
+            <div class="exam-q"><span class="qn">(c)</span><span class="qt"><span class="lead">Study Source C.</span> Why did Truman make this statement on 27 June 1950? Explain your answer using details of the source and your knowledge.</span><span class="qm">[6]</span></div>
+            <div class="exam-q"><span class="qn">(d)</span><span class="qt"><span class="lead">Study Source D.</span> How useful is this source to a historian studying why China entered the Korean War? Explain your answer using details of the source and your knowledge.</span><span class="qm">[6]</span></div>
+            <div class="exam-q"><span class="qn">(e)</span><span class="qt"><span class="lead">Study all the sources.</span> ‘The Korean War became a superpower conflict because of American decisions.’ How far do these sources support this statement? Explain your answer using details of the sources and your knowledge.</span><span class="qm">[8]</span></div>
+            <div class="exam-total">Total for Question 1: 30 marks</div>
+          </div>
+        </div>
+        <details class="ms"><summary>Mark scheme — 1(a) to 1(d)</summary><div class="ms-in">
+          <div class="lab">1(a) Inference — 5 marks</div>
+          <p>Credit: that America was defining its commitments <b>narrowly</b> and by sea — the perimeter runs <i>“along the Aleutians to Japan”</i> and on to <i>“the Philippine Islands”</i>, implying an island chain that America could hold with naval and air power rather than a mainland commitment. And that countries outside it were being told they were <b>on their own</b> — <i>“no person can guarantee these areas”</i> and <i>“the initial reliance must be on the people attacked to resist it”</i>, implying that South Korea could not count on American troops. Strong candidates infer the consequence: a public statement of where America would not fight is an invitation to test it.</p>
+          <div class="lab">1(b) Comparison — 5 marks</div>
+          <p><b>Agreement:</b> both treat the invasion as illegitimate aggression requiring an international response — B determines it <i>“constitutes a breach of the peace”</i> and calls on members to <i>“render every assistance”</i>, and C commits American forces to <i>“cover and support”</i>. <b>Disagreement:</b> in scope and authority. B is legal and limited, demanding only withdrawal <i>“to the 38th parallel”</i>, and speaks for the Security Council. C is unilateral, made before the Council had authorised force, frames the issue as global — <i>“communism… will now use armed invasion and war”</i> — and extends beyond Korea entirely by sending the Seventh Fleet to Formosa, which the resolution never mentioned. Verdict: they agree on the wrong done and disagree on who decides and how far the response goes.</p>
+          <div class="lab">1(c) Purpose — 6 marks</div>
+          <p>Message + effect + timing. Truman is justifying immediate intervention and preparing Americans for a war nobody had voted for. Calling the invasion proof that communism <i>“has passed beyond the use of subversion”</i> to <i>“armed invasion and war”</i> converts a Korean civil conflict into a global emergency, making non-intervention look like the appeasement of the 1930s. <b>Timing:</b> he spoke on 27 June, before the Security Council had authorised force, because Seoul was about to fall and any delay would have made the decision irrelevant. Politically he had been accused of <i>“losing”</i> China in 1949; the USSR had tested an atomic bomb in the same year; NSC-68, drafted in April 1950, had already called for a huge military build-up. Presenting Korea as the opening move of a worldwide offensive supported that build-up and answered his domestic critics. The Formosa clause shows the wider purpose: the statement announces containment in Asia, not just a rescue in Korea.</p>
+          <div class="lab">1(d) Usefulness — 6 marks</div>
+          <p><b>Useful</b> because it records the warning at the moment it was given, and it is specific about China's condition: not the parallel itself, but <i>American</i> troops on it, and ultimately <i>“the presence of American forces on the Yalu”</i>. That distinction between South Korean and American troops is exactly the evidence a historian needs to argue Chinese intervention was defensive rather than ideological. The provenance strengthens it — Panikkar was a neutral Indian diplomat with no stake in either case. <b>Limitations:</b> it is one man's report of a conversation, not a Chinese document, so the wording is at second hand and China's internal deliberations are invisible; Zhou may also have been bluffing to deter an advance rather than stating a settled decision. <b>Verdict:</b> highly useful for the warning that was available and ignored — and its being dismissed as bluff is itself evidence about American decision-making — but it needs Chinese archival sources beside it.</p>
+        </div></details>
+        <details class="ms"><summary>Mark scheme — 1(e) the hypothesis question</summary><div class="ms-in">
+          <div class="lab">Sources that support the statement</div>
+          <p><b>C</b> is the clearest: Truman globalises a local war and extends it to Formosa before any UN authorisation. <b>A</b> supports it indirectly — an American declaration that Korea lay outside the defence perimeter helped invite the attack in the first place. <b>D</b> is decisive on escalation: China warned it would intervene if <b>American</b> troops approached the Yalu, and the warning was dismissed, so the decision to cross the parallel turned a war against North Korea into a war with China. <b>E</b> shows how far that logic ran, with MacArthur demanding <i>“no substitute for victory”</i> and treating Korea as the front line of a global struggle.</p>
+          <div class="lab">Sources that do not support it</div>
+          <p><b>B</b> shows the response was collective and legal, not American fiat — a Security Council determination carried 9–0. <b>C</b> also answers a real invasion; North Korea crossed the parallel first, and no American decision caused that. <b>D</b> cuts both ways, since China chose to act on its warning. <b>E</b> can be used against the statement too: MacArthur was <b>dismissed</b> six days later, which shows Washington restraining escalation rather than driving it. <b>F</b> supplies the outcome — an armistice line back at the 38th parallel — suggesting neither superpower achieved the expansion the statement implies they sought.</p>
+          <div class="lab">What a Level 4 judgement sounds like</div>
+          <div class="model">These sources show that American decisions did not <b>start</b> the war but did convert it into a superpower conflict at two specific moments, so the statement is right about escalation and wrong about origin.<br><br>The war began with a North Korean invasion, and Source B records the international response to it: a Security Council determination that the attack was <i>“a breach of the peace”</i>, carried 9–0. That is collective authority, not an American decision — though the provenance matters, since the resolution passed only because the USSR was boycotting the Council and could not use its veto, which makes the UN flag more American than it appears.<br><br>The first American decision that changed the war's character is in Source C. Truman acted on 27 June, before the Council authorised force, and reframed a Korean civil war as proof that <i>“communism has passed beyond the use of subversion”</i> to open war. The Seventh Fleet clause is the giveaway: nothing in Source B mentioned Formosa, so America was already fighting a global contest rather than the war the UN had authorised.<br><br>The second decision is the one Source D exposes. Zhou Enlai's warning was precise — the objection was to <i>American</i> troops, not South Korean ones, and specifically to <i>“the presence of American forces on the Yalu River”</i>. Cross-referenced with Source A, this is damning: in January America had publicly placed Korea outside its perimeter, and by October it was advancing towards China's border while dismissing an explicit warning as bluff. The Chinese intervention that followed in November is what made this a war between great powers, and Source D shows it was both predicted and avoidable.<br><br>Source E shows the limit, however. MacArthur's demand that there is <i>“no substitute for victory”</i> was rejected, and he was dismissed six days after this letter was read out — evidence that Washington chose <b>not</b> to escalate to war with China proper. Source F confirms the result: after around four million deaths the line stood roughly where it began.<br><br>Overall the sources support the statement as an account of <b>escalation</b> — Truman's globalising of the conflict and the advance to the Yalu against explicit warning were American choices with foreseeable consequences — but not as an account of <b>cause</b>, since the invasion was North Korean and the Chinese response was China's own. American decisions turned a Korean war into a superpower war; they did not begin it.</div>
+        </div></details>`},
+      ]},
+
+    /* ─────────────── PART D — PROVENANCE ─────────────── */
+    { n:12, part:{k:'Check', t:'Where these sources come from', d:'A source you cannot trace is a source you should not revise from. This chapter lists the origin of every document above and flags the small number that are not verbatim.'},
+      title:"Provenance of every source", q:"What is genuine, what is condensed, and what is not a real document.",
+      sections:[
+        { h:"Why this chapter exists", type:"text", body:[
+          "Revision material sometimes invents sources that look plausible. That is dangerous here, because a source you half-remember as real can end up quoted as fact in an essay. Everything below is traceable, and the three exceptions are named.",
+          "<b>Condensed</b> means the real document, cut to fit the paper's 150-word limit, with nothing added and no wording changed. The real Section A does this too, and prints <i>adapted</i> when it happens.",
+        ]},
+        { h:"Genuine documents, quoted and condensed", type:"bullets", body:[
+          "<b>Article 231</b>, Treaty of Versailles, 28 June 1919 — verbatim.",
+          "<b>Reichstag Fire Decree</b>, 28 February 1933 — verbatim, condensed.",
+          "<b>The Enabling Act</b>, 23 March 1933 — Articles 1, 2 and 4, condensed.",
+          "<b>Hitler's Appeal to the German People</b>, radio broadcast, 1 February 1933 — condensed.",
+          "<b>Otto Wels's speech</b> against the Enabling Act, Reichstag, 23 March 1933 — condensed translation.",
+          "<b>Hitler's Reichstag speech</b> on the Night of the Long Knives, 13 July 1934 — condensed.",
+          "<b>The armed forces oath</b> of 2 August 1934 — verbatim.",
+          "<b>The Hossbach Memorandum</b>, record of the meeting of 5 November 1937 — condensed.",
+          "<b>Chamberlain's broadcast</b>, 27 September 1938, and his <b>declaration of war</b> broadcast, 3 September 1939 — condensed.",
+          "<b>Chamberlain at Downing Street</b>, 30 September 1938 — verbatim.",
+          "<b>Churchill in the Commons</b> on Munich, 5 October 1938 — condensed.",
+          "<b>The Munich Agreement</b>, 29–30 September 1938 — condensed.",
+          "<b>The Nazi–Soviet Pact</b> and its Secret Additional Protocol, 23 August 1939 — Article I and Protocol Article II, condensed.",
+          "<b>Churchill at Fulton</b>, Missouri, 5 March 1946 — condensed.",
+          "<b>Stalin's <i>Pravda</i> interview</b>, 14 March 1946 — condensed translation.",
+          "<b>The Novikov Telegram</b>, 27 September 1946 — condensed translation.",
+          "<b>The Truman Doctrine</b> address to Congress, 12 March 1947 — condensed.",
+          "<b>Marshall's Harvard speech</b>, 5 June 1947 — condensed.",
+          "<b>Zhdanov's ‘two camps’ speech</b>, Cominform founding conference, September 1947 — condensed translation.",
+          "<b>Acheson's National Press Club speech</b>, 12 January 1950 — condensed.",
+          "<b>UN Security Council Resolution 82</b>, 25 June 1950 — condensed.",
+          "<b>Truman's statement</b> on Korea, 27 June 1950 — condensed.",
+          "<b>MacArthur's letter</b> to Congressman Martin, read to the House 5 April 1951 — condensed.",
+        ]},
+        { h:"Real images, described rather than reproduced", type:"bullets", body:[
+          "<b>‘The Gap in the Bridge’</b> — Leonard Raven-Hill, <i>Punch</i>, 10 December 1919. A real and very well known cartoon; the description above is a description, not the image.",
+          "<b>‘Adolf the Superman: Swallows gold and spouts junk’</b> — John Heartfield photomontage, <i>AIZ</i>, 17 July 1932. Real; described.",
+          "<b>‘Rendezvous’</b> — David Low, <i>Evening Standard</i>, 20 September 1939. Real; described.",
+          "Search any of these titles to see the actual image. In the exam you will be given the picture, so practise decoding real cartoons as well as reading these descriptions.",
+        ]},
+        { h:"The three that are not verbatim — read this", type:"bullets", body:[
+          "<b>Paper 1, Source F (the Dresden diary)</b> is <b>not a real document</b>. It is written in the style of Victor Klemperer's diaries to give the paper a private, civilian voice, which Section A usually includes. Do not quote it as evidence of anything. Klemperer's real diaries, published as <i>I Shall Bear Witness</i>, are worth reading and are the genuine article.",
+          "<b>Paper 2, Source E (Obersalzberg, 22 August 1939)</b> is real in substance but <b>disputed in wording</b>. Several versions were taken down by different listeners and presented at Nuremberg; they agree on the ruthlessness and on the intent to destroy Poland but differ line by line. Use it for Hitler's intent, never for an exact quotation.",
+          "<b>Statistics</b> — the German unemployment and election figures are official and firm. The Korean casualty figures are <b>estimates that vary widely</b> between sources, which is why the provenance line says so; if a question asks how useful they are, that variation is a point worth making.",
+        ]},
+        { h:"How to use this in the exam", type:"text", body:[
+          "In the real paper, the provenance line is doing the same job this chapter does — telling you what kind of thing you are holding. Confidential telegram or public speech. Government decree or private diary. Contemporary record or memoir written thirty years later.",
+          "Every reliability, purpose and usefulness mark in Section A comes out of that distinction. Read the italics first, every time.",
+        ]},
+      ]},
+  ],
+};
+
 /* ============================================================
    APP LOGIC
    ============================================================ */
 const DATA = { physics:PHYSICS, chemistry:CHEMISTRY, history:HISTORY, emath:EMATH, amath:AMATH,
                phylesson:PHY_LESSONS, chemlesson:CHEM_LESSONS, histskills:HIST_SKILLS,
                engskills:ENG_SKILLS, studyskills:STUDY_SKILLS, histcards:HIST_CARDS,
-               engcards:ENG_CARDS, social:SOCIAL, soccards:SOC_CARDS };
+               engcards:ENG_CARDS, social:SOCIAL, soccards:SOC_CARDS,
+               histsource:HIST_SOURCES };
 const SYLLABUS_SUBJECTS = ['history','emath','amath','phylesson','chemlesson','histskills','engskills',
-                           'studyskills','social'];
+                           'studyskills','social','histsource'];
 const app = document.getElementById('app');
 let state = {
   subject:'plan',
@@ -7061,7 +7899,8 @@ const NAV_GROUPS = [
   { g:'Humanities', items:[
     ['histhq','History HQ','tab-histhq'],
     ['history','History','tab-hist'], ['histcards','Hist Cards','tab-histcards'],
-    ['histskills','Hist Answers','tab-histskills'], ['social','Social Studies','tab-social'],
+    ['histskills','Hist Answers','tab-histskills'],
+    ['histsource','Hist Sources','tab-histsource'], ['social','Social Studies','tab-social'],
     ['soccards','Soc Cards','tab-soccards'] ]},
   { g:'English', items:[
     ['engskills','Eng Answers','tab-engskills'], ['engcards','Eng Cards','tab-engcards'] ]},
@@ -11027,6 +11866,17 @@ document.addEventListener('click', e=>{
   }
 });
 
+/* ?tab=physics opens straight into that tab. The manifest's shortcuts point
+   here, which is what puts Plan / Physics / Chemistry / My Cards in the Dock
+   icon's right-click menu once the app is installed. An unknown name is
+   ignored rather than left on a blank screen. */
+(function openRequestedTab(){
+  try{
+    const want = new URL(location.href).searchParams.get('tab');
+    if(want && NAV_GROUPS.some(g => g.items.some(it => it[0] === want))) state.subject = want;
+  }catch(e){}
+})();
+
 navGroup = groupOf(state.subject);
 renderNav();
 render();
@@ -11165,26 +12015,104 @@ document.getElementById('updateBtn').addEventListener('click', applyUpdate);
     });
   }
 
-  const btn = document.getElementById('installBtn');
-  if(!btn) return;
+  /* Installing takes two entirely different routes, and this only knew one.
+     Chromium fires `beforeinstallprompt` and installs in a click. Safari —
+     the browser most likely to be open on a Mac — fires nothing at all: the
+     only way in is Share ▸ Add to Dock, which the page has to say out loud
+     or it is never found. So the button either installs directly or explains
+     where the menu item is, and it stays away once we are already installed. */
+  const wrap = document.getElementById('install');
+  const btn  = document.getElementById('installBtn');
+  const how  = document.getElementById('installHow');
+  if(!wrap || !btn || !how) return;
+
+  const installed = () =>
+    matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  if(installed()) return;                    // already an app — nothing to offer
+
+  const ua     = navigator.userAgent;
+  const iOS    = /iPad|iPhone|iPod/.test(ua) ||
+                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const webkit = /^((?!chrome|android|crios|fxios|edgios).)*safari/i.test(ua);
+
+  /* Safari 17 (Sonoma) put the item in the Share menu; before that a Mac
+     could not install a web app at all, so the panel names what it needs. */
+  const STEPS = {
+    dock: {
+      title: 'Add to Dock',
+      lead:  'Safari can keep this in your Dock as its own app — own window, no address bar, and it opens offline.',
+      list:  ['Click <kbd>Share</kbd> in the toolbar, or File ▸ Share.',
+              'Choose <kbd>Add to Dock</kbd>.',
+              'Name it and click <kbd>Add</kbd>.'],
+      note:  'Needs Safari 17 or later (macOS Sonoma). On anything older, open this in Chrome and the same button installs it in one click.',
+    },
+    ios: {
+      title: 'Add to Home Screen',
+      lead:  'Keeps this on your home screen as its own app, and it opens offline.',
+      list:  ['Tap <kbd>Share</kbd> at the bottom of Safari.',
+              'Scroll to <kbd>Add to Home Screen</kbd>.',
+              'Tap <kbd>Add</kbd>.'],
+      note:  '',
+    },
+  };
+
+  function openPanel(kind){
+    const s = STEPS[kind];
+    how.innerHTML =
+      '<h4>' + s.title + '</h4>' +
+      '<p>' + s.lead + '</p>' +
+      '<ol>' + s.list.map(li => '<li>' + li + '</li>').join('') + '</ol>' +
+      (s.note ? '<p style="margin:9px 0 0">' + s.note + '</p>' : '') +
+      '<button class="ih-close" type="button">Close</button>';
+    how.hidden = false;
+    btn.setAttribute('aria-expanded', 'true');
+  }
+  function closePanel(){
+    how.hidden = true;
+    btn.setAttribute('aria-expanded', 'false');
+  }
+
+  how.addEventListener('click', e=>{ if(e.target.closest('.ih-close')) closePanel(); });
+  document.addEventListener('click', e=>{
+    if(!how.hidden && !wrap.contains(e.target)) closePanel();
+  });
+  document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closePanel(); });
+
   let prompt = null;
 
   window.addEventListener('beforeinstallprompt', e=>{
     e.preventDefault();          // keep the browser's own mini-bar out of the way
     prompt = e;
+    btn.textContent = 'Install app';
     btn.classList.add('show');
   });
 
+  /* Chromium answers within a tick of load. Anything still without a prompt
+     by now is a browser that will never send one, so the button falls back
+     to the manual route rather than staying hidden forever. */
+  addEventListener('load', ()=>{
+    setTimeout(()=>{
+      if(prompt || !webkit || installed()) return;
+      btn.textContent = iOS ? 'Add to Home Screen' : 'Add to Dock';
+      btn.classList.add('show');
+    }, 1200);
+  });
+
   btn.addEventListener('click', async ()=>{
-    if(!prompt) return;
-    prompt.prompt();
-    await prompt.userChoice;
-    prompt = null;
-    btn.classList.remove('show');
+    if(!how.hidden){ closePanel(); return; }
+    if(prompt){
+      prompt.prompt();
+      const { outcome } = await prompt.userChoice;
+      prompt = null;
+      if(outcome === 'accepted') btn.classList.remove('show');
+      return;
+    }
+    openPanel(iOS ? 'ios' : 'dock');
   });
 
   window.addEventListener('appinstalled', ()=>{
     prompt = null;
+    closePanel();
     btn.classList.remove('show');
   });
 })();
