@@ -951,7 +951,7 @@ body.resting.timer-mini .app{ padding-bottom:8px }
 /* Kept in step with the service worker cache name, so Settings can show which
    build is actually running — updates now wait for you to accept them, and
    "did the fix land?" is otherwise unanswerable from the phone. */
-const APP_BUILD = "v25";
+const APP_BUILD = "v26";
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 // Indexed by Date.getDay(): Sun..Sat. Five training days, Tue and Sat fixed rest.
 const SCHEDULE = ["Upper","Push","Rest","Pull","Legs","Shoulders","Rest"];
@@ -1010,20 +1010,22 @@ const TEMPLATES = {
     { group:"Triceps",   name:"Tricep Pushdown",  warmup:false, sets:3, reps:12 },
     { group:"Triceps",   name:"Tricep Extension", warmup:false, sets:3, reps:12 },
   ],
-  /* Sunday — chest and back, and nothing else. Every movement here is one that
-     Monday and Wednesday don't use, so it adds volume instead of repeating
-     them. Back-leaning on purpose: Monday is the next day, and its heavy bench
-     shouldn't be walking into a chest session from the night before.
+  /* Sunday — chest and back, and nothing else.
 
-     Chest Press rather than a second barbell bench, and Dumbbell Fly rather
-     than Cable Crossover: a crossover holds two cable columns, which is a lot
-     of a busy gym for one person. A fly off a bench is one station and the
-     same movement. */
+     The chest work is the same two movements as Monday, by request. The rep
+     schemes are what keep the days apart: Bench Press is 3x10 here against
+     Monday's 4x6, and Pec Fly 3x12 against Monday's 3x10 — Sunday is the
+     lighter, higher-rep session of the pair. Worth knowing that Monday is the
+     very next day, so the two chest sessions land back to back; moving this day
+     to Saturday would put a rest day between them.
+
+     Back is where the day's real volume sits, and none of it repeats Wednesday:
+     Barbell Row is the heavy horizontal pull Wednesday doesn't have. */
   Upper: [
-    { group:"Back",  name:"Barbell Row",  warmup:true,  sets:4, reps:8, bar:true },
-    { group:"Chest", name:"Chest Press",  warmup:false, sets:3, reps:10 },
+    { group:"Back",  name:"Barbell Row",  warmup:true,  sets:4, reps:8,  bar:true },
+    { group:"Chest", name:"Bench Press",  warmup:false, sets:3, reps:10, bar:true },
     { group:"Back",  name:"Lat Pulldown", warmup:false, sets:3, reps:10 },
-    { group:"Chest", name:"Dumbbell Fly", warmup:false, sets:3, reps:12 },
+    { group:"Chest", name:"Pec Fly",      warmup:false, sets:3, reps:12 },
     { group:"Back",  name:"Seated Row",   warmup:false, sets:3, reps:10 },
   ],
 };

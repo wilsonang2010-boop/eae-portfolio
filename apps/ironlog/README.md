@@ -29,11 +29,13 @@ session ran long. They now have **Friday to themselves**, trained first while fr
 three delt heads lead, and arms follow as accessory work. Nothing else is added to that day.
 
 The other days were cut down to match. Monday is chest and triceps only. Sunday is chest
-and back only — every movement on it is one Monday and Wednesday don't use, so it adds
-volume rather than repeating them, and it leans toward back on purpose because Monday's
-heavy bench is the very next session. Its chest work is **Chest Press** and **Dumbbell
-Fly**: a cable crossover holds two cable columns at once, which is a lot of a busy gym for
-one person, and a fly off a bench is one station and the same movement.
+and back only. Its chest work is the same two movements as Monday — **Bench Press** and
+**Pec Fly** — with the rep schemes keeping the days apart: 3 × 10 and 3 × 12 here against
+Monday's 4 × 6 and 3 × 10, so Sunday is the lighter, higher-rep session of the pair. Monday
+is the very next day, so those two chest sessions land back to back; moving Upper to
+Saturday would put a rest day between them. The back work is where the day's real volume
+sits, and none of it repeats Wednesday — Barbell Row is the heavy horizontal pull
+Wednesday doesn't have.
 
 Arms are trained twice: heavy on their compound day (biceps Wednesday, triceps Monday) and
 lighter, higher-rep on Friday.
