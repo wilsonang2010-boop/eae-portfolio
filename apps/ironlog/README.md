@@ -10,52 +10,73 @@ history, and stats — inspired by apps like Strong and Hevy but tailored to one
 
 | Day | Workout | Focus |
 |-----|---------|-------|
-| Monday | **Push** | Chest + Triceps |
+| Monday | **Shoulders** | Shoulders + Biceps + Triceps |
 | Tuesday | Rest | — |
-| Wednesday | **Pull** | Back + Biceps |
-| Thursday | **Legs** *or* **Dunk** | Leg strength, or jump work |
-| Friday | **Shoulders** | Shoulders + Biceps + Triceps |
+| Wednesday | **Push** | Chest + Triceps |
+| Thursday | **Pull** | Back + Biceps |
+| Friday | **Legs** *or* **Dunk** | Leg strength, or jump work |
 | Saturday | Rest | — |
 | Sunday | **Upper** | Chest + Back |
 
-Five training days, with Tuesday and Saturday fixed rest. The app opens straight to today's
+Five training days, with Tuesday and Saturday rest. The app opens straight to today's
 workout; rest days show _"Rest Day 💪 Recovery is part of progress."_ The split is editable
 in **Settings → Your programme**, so any day can be reassigned.
+
+### Why this order
+
+The day order isn't arbitrary — it's chosen so **no muscle group is trained on consecutive
+days**. Upper is the awkward one: it repeats chest (with Push) and back (with Pull), so it
+has to sit opposite both at once. Push and Pull share nothing with each other, so they can
+run back to back, which frees Upper to land opposite the pair. Shoulders carries the arm
+work, so it needs a buffer from both and takes the far side. Legs sits before the Saturday
+rest, so squats and jumps get a day off after them.
+
+| Muscle | Trained on | Days apart |
+|---|---|---|
+| Chest | Wed, Sun | 4 / 3 |
+| Back | Thu, Sun | 3 / 4 |
+| Biceps | Thu, Mon | 4 / 3 |
+| Triceps | Wed, Mon | 5 / 2 |
+| Shoulders | Mon | — |
+| Legs | Fri | — |
+
+Triceps are the one uneven pair, and the 2-day gap runs Monday's light 3 × 12 accessory
+work into Wednesday's heavy day — which is the right way round. An earlier arrangement put
+Upper on the day before Push, which meant benching two evenings running; this one puts four
+days and three days between those sessions instead.
 
 ### Why it's shaped this way
 
 Shoulders used to sit at the end of Push day and were the thing that got skipped once the
-session ran long. They now have **Friday to themselves**, trained first while fresh: all
+session ran long. They now have **Monday to themselves**, trained first while fresh: all
 three delt heads lead, and arms follow as accessory work. Nothing else is added to that day.
 
 The other days were cut down to match. Monday is chest and triceps only. Sunday is chest
-and back only. Its chest work is the same two movements as Monday — **Bench Press** and
-**Pec Fly** — with the rep schemes keeping the days apart: 3 × 10 and 3 × 12 here against
-Monday's 4 × 6 and 3 × 10, so Sunday is the lighter, higher-rep session of the pair. Monday
-is the very next day, so those two chest sessions land back to back; moving Upper to
-Saturday would put a rest day between them. The back work is where the day's real volume
-sits, and none of it repeats Wednesday — Barbell Row is the heavy horizontal pull
-Wednesday doesn't have.
+and back only. Its chest work is the same two movements as Push day — **Bench Press** and
+**Pec Fly** — with the rep schemes keeping them apart: 3 × 10 and 3 × 12 here against Push's
+4 × 6 and 3 × 10, so Sunday is the lighter, higher-rep session of the pair, four days after
+the heavy one. The back work is where the day's real volume sits, and none of it repeats
+Pull day — Barbell Row is the heavy horizontal pull Pull day doesn't have.
 
-Arms are trained twice: heavy on their compound day (biceps Wednesday, triceps Monday) and
-lighter, higher-rep on Friday.
+Arms are trained twice: heavy on their compound day (triceps Wednesday, biceps Thursday)
+and lighter, higher-rep on Monday.
 
 | Muscle | Trained on | Direct sets/week |
 |---|---|---|
-| Chest | Mon, Sun | 16 |
-| Back | Wed, Sun | 19 |
-| Shoulders | Fri | 11 |
-| Biceps | Wed, Fri | 12 |
-| Triceps | Mon, Fri | 12 |
-| Legs | Thu | 17 (Legs) |
-| Jumps | Thu | 13 jump sets + 7 (Dunk) |
+| Chest | Wed, Sun | 16 |
+| Back | Thu, Sun | 19 |
+| Shoulders | Mon | 11 |
+| Biceps | Thu, Mon | 12 |
+| Triceps | Wed, Mon | 12 |
+| Legs | Fri | 17 (Legs) |
+| Jumps | Fri | 13 jump sets + 7 (Dunk) |
 
-### Thursday: two days you choose between
+### Friday: two days you choose between
 
 Nine exercises in one session was too long to finish well, and jumps done tired train the
-wrong thing. So Thursday is two separate days and you pick one with the **⇄** button on
-Today. Thursday defaults to **Legs**; switch to **Dunk** on the weeks you want to chase the
-rim.
+wrong thing. So Friday is two separate days and you pick one with the **⇄** button on
+Today. Friday defaults to **Legs**; switch to **Dunk** on the weeks you want to chase the
+rim. Either way, Saturday's rest follows it.
 
 **Legs** — strength, no jumping.
 

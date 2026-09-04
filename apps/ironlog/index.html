@@ -951,13 +951,25 @@ body.resting.timer-mini .app{ padding-bottom:8px }
 /* Kept in step with the service worker cache name, so Settings can show which
    build is actually running — updates now wait for you to accept them, and
    "did the fix land?" is otherwise unanswerable from the phone. */
-const APP_BUILD = "v26";
+const APP_BUILD = "v27";
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-// Indexed by Date.getDay(): Sun..Sat. Five training days, Tue and Sat fixed rest.
-const SCHEDULE = ["Upper","Push","Rest","Pull","Legs","Shoulders","Rest"];
+/* Indexed by Date.getDay(): Sun..Sat. Five training days; Tue and Sat stay rest.
+
+   The order is chosen so no muscle is trained on consecutive days. Upper is the
+   awkward one — it repeats both chest (with Push) and back (with Pull), so it
+   has to sit opposite both at once. Push and Pull share nothing with each
+   other, so they can go back to back, which frees Upper to land opposite the
+   pair of them. Shoulders needs a buffer from both (it carries the arm work),
+   so it takes the far side.
+
+   Resulting gaps: chest 4/3 days, back 3/4, biceps 3/4, triceps 2/5 — and the
+   triceps' 2-day gap runs light day into heavy day, which is the right way
+   round. Legs sits before the Saturday rest, so squats and jumps get a day off
+   after them. */
+const SCHEDULE = ["Upper","Shoulders","Rest","Push","Pull","Legs","Rest"];
 
 const TEMPLATES = {
-  /* Monday — chest and triceps only. Shoulders used to live here and were the
+  /* Wednesday — chest and triceps only. Shoulders used to live here and were the
      thing that got dropped when the session ran long; they have their own day
      now, so this one is short enough to actually finish. */
   Push: [
@@ -967,7 +979,7 @@ const TEMPLATES = {
     { group:"Triceps", name:"Tricep Pushdown",  warmup:true,  sets:3, reps:10 },
     { group:"Triceps", name:"Tricep Extension", warmup:false, sets:3, reps:12 },
   ],
-  // Wednesday — unchanged. It was already exactly back + biceps.
+  // Thursday — unchanged. It was already exactly back + biceps.
   Pull: [
     { group:"Back",   name:"Lat Pulldown",     warmup:true,  sets:3, reps:8 },
     { group:"Back",   name:"Assisted Pull-up", warmup:false, sets:3, reps:8 },
@@ -975,11 +987,11 @@ const TEMPLATES = {
     { group:"Biceps", name:"Bicep Curl",       warmup:true,  sets:3, reps:8 },
     { group:"Biceps", name:"Hammer Curl",      warmup:false, sets:3, reps:8 },
   ],
-  /* Thursday, as two days you choose between with the ⇄ button. Nine exercises
+  /* Friday, as two days you choose between with the ⇄ button. Nine exercises
      in one session was too long to finish well, and jumps done tired train the
      wrong thing — so the jump work and the strength work are separate now.
-     Legs is what Thursday defaults to; swap to Dunk on the weeks you want to
-     chase the rim. */
+     Legs is what Friday defaults to; swap to Dunk on the weeks you want to
+     chase the rim. Either way the Saturday rest follows it. */
   Legs: [
     { group:"Weights", name:"Back Squat",            warmup:true,  sets:4, reps:5,  bar:true },
     { group:"Weights", name:"Romanian Deadlift",     warmup:false, sets:3, reps:6,  bar:true },
@@ -998,7 +1010,7 @@ const TEMPLATES = {
     { group:"Weights",     name:"Trap Bar Jump", warmup:true,  sets:4, reps:3,  bar:true },
     { group:"Weights",     name:"Calf Raise",    warmup:false, sets:3, reps:12 },
   ],
-  /* Friday — the dedicated shoulder day. All three delt heads come first and
+  /* Monday — the dedicated shoulder day. All three delt heads come first and
      get the most sets; arms are the accessory work afterwards, deliberately
      lighter and higher-rep than their heavy day earlier in the week. */
   Shoulders: [
@@ -1012,15 +1024,14 @@ const TEMPLATES = {
   ],
   /* Sunday — chest and back, and nothing else.
 
-     The chest work is the same two movements as Monday, by request. The rep
-     schemes are what keep the days apart: Bench Press is 3x10 here against
-     Monday's 4x6, and Pec Fly 3x12 against Monday's 3x10 — Sunday is the
-     lighter, higher-rep session of the pair. Worth knowing that Monday is the
-     very next day, so the two chest sessions land back to back; moving this day
-     to Saturday would put a rest day between them.
+     The chest work is the same two movements as Push day, by request, so the
+     rep schemes are what separate them: Bench Press 3x10 here against Push's
+     4x6, Pec Fly 3x12 against 3x10. This is the lighter, higher-rep session of
+     the pair, and the week is ordered so the two sit four days and three days
+     apart rather than on consecutive evenings.
 
-     Back is where the day's real volume sits, and none of it repeats Wednesday:
-     Barbell Row is the heavy horizontal pull Wednesday doesn't have. */
+     None of the back work repeats Pull day: Barbell Row is the heavy
+     horizontal pull Pull day doesn't have. */
   Upper: [
     { group:"Back",  name:"Barbell Row",  warmup:true,  sets:4, reps:8,  bar:true },
     { group:"Chest", name:"Bench Press",  warmup:false, sets:3, reps:10, bar:true },
