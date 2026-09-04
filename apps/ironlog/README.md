@@ -1,54 +1,79 @@
 # IronLog
 
-A personal, mobile-first workout tracker built around a **Push / Pull / Legs** weekly
-split. True-black theme with pink accents, an automatic rest timer, history, and stats —
-inspired by apps like Strong and Hevy but tailored to one routine.
+A personal, mobile-first workout tracker built around a **five-day** weekly split — Push,
+Pull, Legs, Shoulders, Upper. True-black theme with pink accents, an automatic rest timer,
+history, and stats — inspired by apps like Strong and Hevy but tailored to one routine.
 
 **Live:** https://wilsonang2010-boop.github.io/eae-portfolio/apps/ironlog/
 
 ## Weekly schedule
 
-| Day | Workout |
-|-----|---------|
-| Monday | Push |
-| Tuesday | Pull |
-| Wednesday | Legs |
-| Thursday | Push |
-| Friday | Pull |
-| Saturday | Rest Day 💪 |
-| Sunday | Legs |
+| Day | Workout | Focus |
+|-----|---------|-------|
+| Monday | **Push** | Chest + Triceps |
+| Tuesday | Rest | — |
+| Wednesday | **Pull** | Back + Biceps |
+| Thursday | **Legs** | Legs + vertical jump |
+| Friday | **Shoulders** | Shoulders + Biceps + Triceps |
+| Saturday | Rest | — |
+| Sunday | **Upper** | Chest + Back |
 
-The app opens straight to **today's** workout based on the current day. Saturday shows
-_"Rest Day 💪 Recovery is part of progress."_ This is the default — the split is editable
+Five training days, with Tuesday and Saturday fixed rest. The app opens straight to today's
+workout; rest days show _"Rest Day 💪 Recovery is part of progress."_ The split is editable
 in **Settings → Your programme**, so any day can be reassigned.
 
-### Dunk day
+### Why it's shaped this way
 
-A fifth workout type sits alongside Push / Pull / Legs, built for one goal: getting off
-the floor. **Legs is untouched** — Dunk is an alternative, not a replacement. Switch
-between them with the ⇄ button on Today for a single session, or reassign a weekday in
-**Settings → Your programme** to make it permanent.
+Shoulders used to sit at the end of Push day and were the thing that got skipped once the
+session ran long. They now have **Friday to themselves**, trained first while fresh: all
+three delt heads lead, and arms follow as accessory work. Nothing else is added to that day.
+
+The other days were cut down to match. Monday is chest and triceps only. Sunday is chest
+and back only — every movement on it is one Monday and Wednesday don't use, so it adds
+volume rather than repeating them, and it leans toward back on purpose because Monday's
+heavy bench is the very next session.
+
+Arms are trained twice: heavy on their compound day (biceps Wednesday, triceps Monday) and
+lighter, higher-rep on Friday.
+
+| Muscle | Trained on | Direct sets/week |
+|---|---|---|
+| Chest | Mon, Sun | 16 |
+| Back | Wed, Sun | 19 |
+| Shoulders | Fri | 11 |
+| Biceps | Wed, Fri | 12 |
+| Triceps | Mon, Fri | 12 |
+| Legs | Thu | 18 (+10 jump sets) |
+
+### Thursday: legs and the vertical jump
+
+Five training days leaves no room for a separate jump day, so the old Legs and Dunk
+sessions are merged. Jump work leads while the nervous system is fresh, then loaded power,
+then strength:
 
 | # | Exercise | Sets × Reps | Why |
 |---|---|---|---|
-| 1 | Pogo Jump | 3 × 12 | Ankle stiffness — the cheapest centimetres there are |
-| 2 | Approach Jump | 5 × 3 | The actual skill: penultimate step, arm swing, max intent |
-| 3 | Depth Jump | 4 × 3 | Reactive strength, the shortest ground contact you can manage |
-| 4 | Single-Leg Bound | 3 × 4 | A running dunk takes off from one leg |
-| 5 | Trap Bar Jump | 5 × 3 | Rate of force development under load |
-| 6 | Back Squat | 4 × 5 | Maximal strength — the base everything else scales from |
-| 7 | Romanian Deadlift | 3 × 6 | Hamstrings and hips, where extension power comes from |
-| 8 | Bulgarian Split Squat | 3 × 8 | Single-leg strength, matching the takeoff |
-| 9 | Standing Calf Raise | 4 × 12 | Plantarflexion, and landing resilience |
-| 10 | Hanging Leg Raise | 3 × 10 | Trunk stiffness, so force reaches the floor |
+| 1 | Approach Jump | 4 × 3 | The actual skill: penultimate step, arm swing, max intent |
+| 2 | Depth Jump | 3 × 3 | Reactive strength, shortest ground contact you can manage |
+| 3 | Pogo Jump | 3 × 12 | Ankle stiffness — the cheapest centimetres there are |
+| 4 | Trap Bar Jump | 4 × 3 | Rate of force development under load |
+| 5 | Back Squat | 4 × 5 | Maximal strength, the base everything scales from |
+| 6 | Romanian Deadlift | 3 × 6 | Hamstrings and hips, where extension power comes from |
+| 7 | Bulgarian Split Squat | 3 × 8 | Single-leg strength, matching the takeoff |
+| 8 | Calf Raise | 4 × 12 | Plantarflexion, and landing resilience |
+| 9 | Hanging Leg Raise | 3 × 10 | Trunk stiffness, so force reaches the floor |
 
-The order is deliberate: skill and reactive work first while the nervous system is fresh,
-then power, then strength, then the accessories. Jumps are tagged plyometric so the rest
-timer treats them correctly, and the three barbell lifts drive the plate calculator.
+Every jump is a maximal attempt — a jump you're too tired to do well trains the wrong
+thing. Box Jump, Single-Leg Bound, Leg Press and Leg Curl came off the default list to keep
+the session finishable; they're still one tap away under **Add exercise**.
 
-Quality beats volume here — every jump is a maximal attempt, and a jump you're too tired
-to do well is training the wrong thing. Two dunk sessions a week is plenty alongside the
-rest of the split.
+### Migrating an existing install
+
+The weekly split and the per-day exercise lists are both overridable, and a stored override
+beats the built-in template permanently — so a restructured programme would land in the
+code and never reach the screen. A one-time migration (`programVersion`) clears those
+overrides once. **Logged history is untouched**: past sessions keep the exercises they were
+actually done with.
 
 ## Features
 
@@ -79,8 +104,8 @@ rest of the split.
 - **Summary** — sets completed, duration, completion %, and a calorie estimate.
 - **History** — a session joins the log the moment you tick your first set, so the
   calendar, stats and streak stay live mid-workout and an unfinished day is never lost.
-  Month calendar with completed days, a recent list, **search and Push/Pull/Legs
-  filters**, and tap-to-view/edit past sessions.
+  Month calendar with completed days, a recent list, **search and per-day filters**, and
+  tap-to-view/edit past sessions.
 - **Session flexibility** — **add an exercise to today's session** (pick from everything
   you've logged before, or define a new one), optionally keeping it in that day's
   programme. Add or remove sets, add a warm-up, skip an exercise when a
@@ -97,7 +122,7 @@ rest of the split.
 - **Exercise detail** — tap any exercise name for its full history, volume and estimated
   1RM trend charts, its PR, and **every note you've written against it**.
 - **Your programme** — the weekly split is editable (tap any day to cycle
-  Push / Pull / Legs / Rest), and each day's exercise list can be **reordered, pruned,
+  Push / Pull / Legs / Shoulders / Upper / Rest), and each day's exercise list can be **reordered, pruned,
   or extended with your own movements** — name, muscle group, sets, reps, and
   barbell / warm-up / plyometric flags. Sessions already logged keep the exercises
   they were done with.
@@ -140,6 +165,19 @@ Past 900px the shell turns on its side: the bottom tab bar becomes a **sidebar**
 reading column centres in the space that's left. It is deliberately not wider than that —
 a set row stretched across a 1400px window is harder to use, not easier. Below 900px
 nothing changes, so the phone layout is exactly as it was.
+
+## Logo
+
+A barbell on a 22° tilt, in filled rounded shapes. The previous mark failed on craft rather
+than concept: square corners in an app whose every surface is radius 14–22, one uniform
+stroke weight so plates and bar read as a single flat "H", and drawn out to the edges with
+no breathing room. The tilt is what stops it reading as a letter, and four plates with two
+weights of emphasis give it a silhouette that survives down to 28px.
+
+The mark is defined once and everything derives from it — the in-app logo, the Today tab
+icon (in stroke form, so it sits in the nav's line-icon set), and all six PNGs. Maskable
+icons run full-bleed with the mark inside the safe circle; the Apple touch icon is square
+because iOS applies its own corner mask.
 
 ## Theme
 

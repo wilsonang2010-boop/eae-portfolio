@@ -141,7 +141,7 @@ input{font-family:inherit}
   border:1px solid var(--border);
   display:grid;place-items:center;
 }
-.brand .logo svg{width:20px;height:20px}
+.brand .logo svg{width:22px;height:22px}
 .brand h1{font-size:20px;font-weight:800;letter-spacing:-.02em;margin:0}
 .brand .sub{margin-left:auto;text-align:right;font-size:12px;color:var(--muted);line-height:1.25}
 .brand .sub b{color:var(--text);font-weight:600;display:block;font-size:13px}
@@ -825,7 +825,7 @@ body.resting.timer-mini .app{ padding-bottom:8px }
   <header class="topbar">
     <div class="brand">
       <span class="logo" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M4 9v6M6.5 7.5v9M17.5 7.5v9M20 9v6M6.5 12h11" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><g transform="rotate(-22 12 12)" fill="var(--accent)"><rect x="2.2" y="8.8" width="2.4" height="6.4" rx="1"/><rect x="5.8" y="6.2" width="3" height="11.6" rx="1.3"/><rect x="8.3" y="10.9" width="7.4" height="2.2" rx="1.1"/><rect x="15.2" y="6.2" width="3" height="11.6" rx="1.3"/><rect x="19.4" y="8.8" width="2.4" height="6.4" rx="1"/></g></svg>
       </span>
       <h1>IronLog</h1>
       <div class="sub"><b id="topDay">—</b><span id="topDate">—</span></div>
@@ -899,7 +899,7 @@ body.resting.timer-mini .app{ padding-bottom:8px }
 <!-- Bottom nav -->
 <nav class="nav">
   <button data-tab="today" class="active">
-    <svg viewBox="0 0 24 24"><path d="M4 9v6M6.5 7.5v9M17.5 7.5v9M20 9v6M6.5 12h11" stroke-linecap="round"/></svg>
+    <svg viewBox="0 0 24 24"><g transform="rotate(-22 12 12)"><path d="M3.4 9.5v5M7.3 7v10M16.7 7v10M20.6 9.5v5M7.3 12h9.4" stroke-linecap="round"/></g></svg>
     Today
   </button>
   <button data-tab="history">
@@ -951,20 +951,23 @@ body.resting.timer-mini .app{ padding-bottom:8px }
 /* Kept in step with the service worker cache name, so Settings can show which
    build is actually running — updates now wait for you to accept them, and
    "did the fix land?" is otherwise unanswerable from the phone. */
-const APP_BUILD = "v23";
+const APP_BUILD = "v24";
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-// Indexed by Date.getDay(): Sun..Sat
-const SCHEDULE = ["Legs","Push","Pull","Legs","Push","Pull","Rest"];
+// Indexed by Date.getDay(): Sun..Sat. Five training days, Tue and Sat fixed rest.
+const SCHEDULE = ["Upper","Push","Rest","Pull","Legs","Shoulders","Rest"];
 
 const TEMPLATES = {
+  /* Monday — chest and triceps only. Shoulders used to live here and were the
+     thing that got dropped when the session ran long; they have their own day
+     now, so this one is short enough to actually finish. */
   Push: [
-    { group:"Chest",     name:"Bench Press",       warmup:true,  sets:3, reps:8, bar:true },
-    { group:"Chest",     name:"Pec Fly",           warmup:false, sets:3, reps:8 },
-    { group:"Shoulders", name:"Shoulder Press",    warmup:true,  sets:3, reps:8, bar:true },
-    { group:"Shoulders", name:"Lateral Raises",    warmup:false, sets:3, reps:8 },
-    { group:"Triceps",   name:"Tricep Pushdown",   warmup:true,  sets:3, reps:8 },
-    { group:"Triceps",   name:"Tricep Extension",  warmup:false, sets:3, reps:8 },
+    { group:"Chest",   name:"Bench Press",      warmup:true,  sets:4, reps:6,  bar:true },
+    { group:"Chest",   name:"Dips",             warmup:false, sets:3, reps:8 },
+    { group:"Chest",   name:"Pec Fly",          warmup:false, sets:3, reps:10 },
+    { group:"Triceps", name:"Tricep Pushdown",  warmup:true,  sets:3, reps:10 },
+    { group:"Triceps", name:"Tricep Extension", warmup:false, sets:3, reps:12 },
   ],
+  // Wednesday — unchanged. It was already exactly back + biceps.
   Pull: [
     { group:"Back",   name:"Lat Pulldown",     warmup:true,  sets:3, reps:8 },
     { group:"Back",   name:"Assisted Pull-up", warmup:false, sets:3, reps:8 },
@@ -972,23 +975,42 @@ const TEMPLATES = {
     { group:"Biceps", name:"Bicep Curl",       warmup:true,  sets:3, reps:8 },
     { group:"Biceps", name:"Hammer Curl",      warmup:false, sets:3, reps:8 },
   ],
-  Dunk: [
-    { group:"Plyometrics", name:"Approach Jump",    warmup:false, sets:5, reps:3,  plyo:true },
-    { group:"Plyometrics", name:"Pogo Jump",        warmup:false, sets:3, reps:12, plyo:true },
-    { group:"Plyometrics", name:"Depth Jump",       warmup:false, sets:4, reps:3,  plyo:true },
-    { group:"Plyometrics", name:"Single-Leg Bound", warmup:false, sets:3, reps:4,  plyo:true },
-    { group:"Plyometrics", name:"Box Jump",         warmup:false, sets:3, reps:5,  plyo:true },
-    { group:"Weights",     name:"Trap Bar Jump",    warmup:true,  sets:5, reps:3,  bar:true },
-    { group:"Weights",     name:"Calf Raise",       warmup:false, sets:3, reps:12 },
-  ],
+  /* Thursday — the old Legs and Dunk days merged. Five training days leaves no
+     room for a separate jump session, so the jump work leads here while the
+     nervous system is fresh and the strength work follows it. */
   Legs: [
-    { group:"Weights",     name:"Back Squat",             warmup:true,  sets:4, reps:5,  bar:true },
-    { group:"Weights",     name:"Romanian Deadlift",      warmup:false, sets:3, reps:6,  bar:true },
-    { group:"Weights",     name:"Bulgarian Split Squat",  warmup:false, sets:3, reps:8 },
-    { group:"Weights",     name:"Leg Press",              warmup:true,  sets:3, reps:8,  bar:true },
-    { group:"Weights",     name:"Leg Curl",               warmup:false, sets:3, reps:8 },
-    { group:"Weights",     name:"Calf Raise",             warmup:false, sets:4, reps:12 },
-    { group:"Core",        name:"Hanging Leg Raise",      warmup:false, sets:3, reps:10 },
+    { group:"Plyometrics", name:"Approach Jump",         warmup:false, sets:4, reps:3,  plyo:true },
+    { group:"Plyometrics", name:"Depth Jump",            warmup:false, sets:3, reps:3,  plyo:true },
+    { group:"Plyometrics", name:"Pogo Jump",             warmup:false, sets:3, reps:12, plyo:true },
+    { group:"Weights",     name:"Trap Bar Jump",         warmup:true,  sets:4, reps:3,  bar:true },
+    { group:"Weights",     name:"Back Squat",            warmup:true,  sets:4, reps:5,  bar:true },
+    { group:"Weights",     name:"Romanian Deadlift",     warmup:false, sets:3, reps:6,  bar:true },
+    { group:"Weights",     name:"Bulgarian Split Squat", warmup:false, sets:3, reps:8 },
+    { group:"Weights",     name:"Calf Raise",            warmup:false, sets:4, reps:12 },
+    { group:"Core",        name:"Hanging Leg Raise",     warmup:false, sets:3, reps:10 },
+  ],
+  /* Friday — the dedicated shoulder day. All three delt heads come first and
+     get the most sets; arms are the accessory work afterwards, deliberately
+     lighter and higher-rep than their heavy day earlier in the week. */
+  Shoulders: [
+    { group:"Shoulders", name:"Shoulder Press",   warmup:true,  sets:4, reps:8, bar:true },
+    { group:"Shoulders", name:"Lateral Raises",   warmup:false, sets:4, reps:12 },
+    { group:"Shoulders", name:"Rear Delt Fly",    warmup:false, sets:3, reps:12 },
+    { group:"Biceps",    name:"Bicep Curl",       warmup:false, sets:3, reps:12 },
+    { group:"Biceps",    name:"Hammer Curl",      warmup:false, sets:3, reps:12 },
+    { group:"Triceps",   name:"Tricep Pushdown",  warmup:false, sets:3, reps:12 },
+    { group:"Triceps",   name:"Tricep Extension", warmup:false, sets:3, reps:12 },
+  ],
+  /* Sunday — chest and back, and nothing else. Every movement here is one that
+     Monday and Wednesday don't use, so it adds volume instead of repeating
+     them. Back-leaning on purpose: Monday is the next day, and its heavy bench
+     shouldn't be walking into a chest session from the night before. */
+  Upper: [
+    { group:"Back",  name:"Barbell Row",            warmup:true,  sets:4, reps:8, bar:true },
+    { group:"Chest", name:"Incline Dumbbell Press", warmup:false, sets:3, reps:10 },
+    { group:"Back",  name:"Lat Pulldown",           warmup:false, sets:3, reps:10 },
+    { group:"Chest", name:"Cable Crossover",        warmup:false, sets:3, reps:15 },
+    { group:"Back",  name:"Seated Row",             warmup:false, sets:3, reps:10 },
   ],
 };
 
@@ -1055,7 +1077,29 @@ function showStorageBanner(show){
 const K_SET = "IL_SETTINGS", K_HIST = "IL_HISTORY", K_CUR = "IL_CURRENT",
       K_TIMER = "IL_TIMER", K_BODY = "IL_BODYLOG";
 
-let settings = Object.assign({}, DEFAULT_SETTINGS, LS.get(K_SET, {}));
+/* One-time programme migration.
+
+   Both the weekly split and the per-day exercise lists are overridable, and a
+   stored override beats TEMPLATES permanently — so a restructured programme
+   would arrive in the code and never reach the screen. Anyone still carrying
+   overrides from the old six-day split has them cleared once, which is exactly
+   what asking for a restructure means. Read from the *stored* object rather
+   than the merged one: after the merge every install looks current, including
+   the ones that need migrating.
+
+   Logged history is untouched — it lives under a different key, and past
+   sessions keep the exercises they were actually done with. */
+const PROGRAM_VERSION = 2;
+const storedSettings = LS.get(K_SET, null);
+let settings = Object.assign({}, DEFAULT_SETTINGS, storedSettings || {});
+if (storedSettings && (storedSettings.programVersion || 1) < PROGRAM_VERSION){
+  settings.schedule = null;      // back to the built-in five-day split
+  settings.plan = {};            // back to the built-in exercise lists
+}
+if (settings.programVersion !== PROGRAM_VERSION){
+  settings.programVersion = PROGRAM_VERSION;
+  LS.set(K_SET, settings);
+}
 let history  = LS.get(K_HIST, {});   // { "YYYY-MM-DD": workout }
 let current  = LS.get(K_CUR, null);  // today's in-progress/finished workout
 let bodylog  = LS.get(K_BODY, {});   // { "YYYY-MM-DD": kg }
@@ -1074,7 +1118,7 @@ function todayISO(){ return isoDate(new Date()); }
 /* The split and the exercise lists both start from the built-in constants and
    are overridden once edited, so an untouched install behaves exactly as
    before and a customised one never falls back mid-session. */
-const WORKOUT_TYPES = ["Push","Pull","Legs","Dunk","Rest"];
+const WORKOUT_TYPES = ["Push","Pull","Legs","Shoulders","Upper","Rest"];
 function scheduleFor(dow){
   const s = settings.schedule;
   return (Array.isArray(s) && WORKOUT_TYPES.includes(s[dow])) ? s[dow] : SCHEDULE[dow];
@@ -1462,7 +1506,7 @@ function chooseWorkout(){
   openSheet(`
     <h3 class="sh-title">Train something else</h3>
     <p class="sh-sub">Today is scheduled as <b>${scheduled}</b>. Pick any session — useful if you missed a day.</p>
-    ${["Push","Pull","Legs","Dunk"].map(t=>`<button class="btn${t===cur?" primary":""}" data-t="${t}" style="margin-bottom:10px">${t} Day</button>`).join("")}
+    ${["Push","Pull","Legs","Shoulders","Upper"].map(t=>`<button class="btn${t===cur?" primary":""}" data-t="${t}" style="margin-bottom:10px">${t} Day</button>`).join("")}
     ${cur!=="Rest" ? `<button class="btn" id="mkRest" style="margin-bottom:10px">Make it a rest day</button>` : ""}
     <button class="btn ghost" id="pickClose">Cancel</button>`);
   $("#sheet").querySelectorAll("button[data-t]").forEach(b=> b.onclick = ()=>{
@@ -2844,7 +2888,7 @@ function renderHistory(){
       ${histQuery ? `<button class="search-clear" id="histClear" aria-label="Clear search">✕</button>` : ""}
     </div>
     <div class="chips" id="histChips">
-      ${["All","Push","Pull","Legs","Dunk"].map(t=>`<button class="chip${histFilter===t?" on":""}" data-f="${t}">${t}</button>`).join("")}
+      ${["All","Push","Pull","Legs","Shoulders","Upper"].map(t=>`<button class="chip${histFilter===t?" on":""}" data-f="${t}">${t}</button>`).join("")}
     </div>
     <div class="section-title" id="histTitle">Recent workouts</div>
     <div id="histList"></div>`;
@@ -2919,11 +2963,17 @@ function histRow(w){
 }
 
 function typeIcon(type){
-  const path = type==="Push" ? '<path d="M4 9v6M6.5 7.5v9M17.5 7.5v9M20 9v6M6.5 12h11" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/>'
-    : type==="Pull" ? '<path d="M12 3v10m0 0 4-4m-4 4-4-4M6 20h12" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>'
-    // Dunk: a ball arcing up to a rim.
-    : type==="Dunk" ? '<path d="M5 19h14M7 19V9m10 10V9M7 9h10" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="4.5" r="2.5" stroke="var(--accent)" stroke-width="2.2"/>'
-    : '<path d="M7 4v16M17 4v16M7 9h10M7 15h10" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/>';
+  const A = 'stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"';
+  const path =
+      type==="Push"  ? `<path d="M4 9v6M6.5 7.5v9M17.5 7.5v9M20 9v6M6.5 12h11" ${A}/>`
+    : type==="Pull"  ? `<path d="M12 3v10m0 0 4-4m-4 4-4-4M6 20h12" ${A}/>`
+    // Legs took over the jump work, so it takes the ball-and-rim mark with it.
+    : type==="Legs"  ? `<path d="M5 19h14M7 19V9m10 10V9M7 9h10" ${A}/><circle cx="12" cy="4.5" r="2.5" ${A}/>`
+    // Shoulders: a figure with the arms raised out — a lateral raise.
+    : type==="Shoulders" ? `<circle cx="12" cy="5.2" r="2.5" ${A}/><path d="M12 9.4v6.4M4.5 12.6h15M8.5 19.8h7" ${A}/>`
+    // Upper: opposing arrows — one pressing away, one pulling back.
+    : type==="Upper" ? `<path d="M4 9h8M9 6l3 3-3 3M20 15h-8m3-3-3 3 3 3" ${A}/>`
+    : `<path d="M7 4v16M17 4v16M7 9h10M7 15h10" ${A}/>`;
   return `<svg viewBox="0 0 24 24" fill="none">${path}</svg>`;
 }
 
@@ -3374,7 +3424,7 @@ function renderSettings(){
              <div class="desc">Tap a day to change it${settings.schedule ? " · customised" : ""}</div></div>
         <div class="ctl">${settings.schedule ? `<span class="link">Reset</span>` : `<span class="desc">Default</span>`}</div>
       </div>
-      ${["Push","Pull","Legs","Dunk"].map(t=>`
+      ${["Push","Pull","Legs","Shoulders","Upper"].map(t=>`
         <div class="set-row exed-row" data-t="${t}">
           <div><div class="lab">${t} exercises</div>
                <div class="desc">${templateFor(t).length} exercises${planIsCustom(t)?" · edited":""}</div></div>
