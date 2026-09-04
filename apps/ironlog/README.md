@@ -13,7 +13,7 @@ history, and stats — inspired by apps like Strong and Hevy but tailored to one
 | Monday | **Push** | Chest + Triceps |
 | Tuesday | Rest | — |
 | Wednesday | **Pull** | Back + Biceps |
-| Thursday | **Legs** | Legs + vertical jump |
+| Thursday | **Legs** *or* **Dunk** | Leg strength, or jump work |
 | Friday | **Shoulders** | Shoulders + Biceps + Triceps |
 | Saturday | Rest | — |
 | Sunday | **Upper** | Chest + Back |
@@ -31,7 +31,9 @@ three delt heads lead, and arms follow as accessory work. Nothing else is added 
 The other days were cut down to match. Monday is chest and triceps only. Sunday is chest
 and back only — every movement on it is one Monday and Wednesday don't use, so it adds
 volume rather than repeating them, and it leans toward back on purpose because Monday's
-heavy bench is the very next session.
+heavy bench is the very next session. Its chest work is **Chest Press** and **Dumbbell
+Fly**: a cable crossover holds two cable columns at once, which is a lot of a busy gym for
+one person, and a fly off a bench is one station and the same movement.
 
 Arms are trained twice: heavy on their compound day (biceps Wednesday, triceps Monday) and
 lighter, higher-rep on Friday.
@@ -43,29 +45,41 @@ lighter, higher-rep on Friday.
 | Shoulders | Fri | 11 |
 | Biceps | Wed, Fri | 12 |
 | Triceps | Mon, Fri | 12 |
-| Legs | Thu | 18 (+10 jump sets) |
+| Legs | Thu | 17 (Legs) |
+| Jumps | Thu | 13 jump sets + 7 (Dunk) |
 
-### Thursday: legs and the vertical jump
+### Thursday: two days you choose between
 
-Five training days leaves no room for a separate jump day, so the old Legs and Dunk
-sessions are merged. Jump work leads while the nervous system is fresh, then loaded power,
-then strength:
+Nine exercises in one session was too long to finish well, and jumps done tired train the
+wrong thing. So Thursday is two separate days and you pick one with the **⇄** button on
+Today. Thursday defaults to **Legs**; switch to **Dunk** on the weeks you want to chase the
+rim.
+
+**Legs** — strength, no jumping.
+
+| # | Exercise | Sets × Reps | Why |
+|---|---|---|---|
+| 1 | Back Squat | 4 × 5 | Maximal strength, the base everything scales from |
+| 2 | Romanian Deadlift | 3 × 6 | Hamstrings and hips, where extension power comes from |
+| 3 | Bulgarian Split Squat | 3 × 8 | Single-leg strength, matching the takeoff |
+| 4 | Leg Curl | 3 × 10 | Direct hamstring work the hinge doesn't cover |
+| 5 | Calf Raise | 4 × 12 | Plantarflexion, and landing resilience |
+| 6 | Hanging Leg Raise | 3 × 10 | Trunk stiffness, so force reaches the floor |
+
+**Dunk** — jumps first and freshest, then one loaded power movement, then ankles. Every rep
+is a maximal attempt, so the day is deliberately short.
 
 | # | Exercise | Sets × Reps | Why |
 |---|---|---|---|
 | 1 | Approach Jump | 4 × 3 | The actual skill: penultimate step, arm swing, max intent |
 | 2 | Depth Jump | 3 × 3 | Reactive strength, shortest ground contact you can manage |
-| 3 | Pogo Jump | 3 × 12 | Ankle stiffness — the cheapest centimetres there are |
-| 4 | Trap Bar Jump | 4 × 3 | Rate of force development under load |
-| 5 | Back Squat | 4 × 5 | Maximal strength, the base everything scales from |
-| 6 | Romanian Deadlift | 3 × 6 | Hamstrings and hips, where extension power comes from |
-| 7 | Bulgarian Split Squat | 3 × 8 | Single-leg strength, matching the takeoff |
-| 8 | Calf Raise | 4 × 12 | Plantarflexion, and landing resilience |
-| 9 | Hanging Leg Raise | 3 × 10 | Trunk stiffness, so force reaches the floor |
+| 3 | Box Jump | 3 × 5 | Concentric drive without the landing cost |
+| 4 | Pogo Jump | 3 × 12 | Ankle stiffness — the cheapest centimetres there are |
+| 5 | Trap Bar Jump | 4 × 3 | Rate of force development under load |
+| 6 | Calf Raise | 3 × 12 | Plantarflexion, and landing resilience |
 
-Every jump is a maximal attempt — a jump you're too tired to do well trains the wrong
-thing. Box Jump, Single-Leg Bound, Leg Press and Leg Curl came off the default list to keep
-the session finishable; they're still one tap away under **Add exercise**.
+Leg Press and Single-Leg Bound stay off both default lists; they're one tap away under
+**Add exercise**.
 
 ### Migrating an existing install
 
